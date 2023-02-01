@@ -1,14 +1,18 @@
 import Container from 'react-bootstrap/Container'
+import Image from 'react-bootstrap/Image'
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import Offcanvas from 'react-bootstrap/Offcanvas'
+import Logo from "../assets/cmu-logo.svg"
 
 const Header = () => (
     <>
         <Navbar bg="light" expand={false}>
         <Container>
             <Navbar.Toggle aria-controls="navbar"  className="ml-3"/>
-            <Navbar.Brand href="#">Hello, user</Navbar.Brand>
+            <Navbar.Brand href="#">
+                <Image src={Logo} />
+            </Navbar.Brand>
                 Icons
             </Container>
             <Navbar.Offcanvas
