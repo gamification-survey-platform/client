@@ -2,7 +2,6 @@ import { useState } from "react"
 import { Card } from "react-bootstrap";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import axios from "axios";
 import { useNavigate } from 'react-router-dom'
 
 
@@ -18,7 +17,7 @@ const Landing = () => {
 
     return (
         <Card style={{ width: '50%' }} className="mx-auto mt-5">
-            <Form className="m-5">
+            <Form className="m-5" onSubmit={handleLogin}>
                 <h2>
                     Welcome! Let's get started.
                 </h2>

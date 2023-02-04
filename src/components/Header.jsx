@@ -28,7 +28,7 @@ const Header = () => (
                 <Nav className="flex-grow-1 pe-3">
                 <Nav.Link href="/dashboard">Dashboard</Nav.Link>
                 <Nav.Link href="/profile">Profile</Nav.Link>
-                <Nav.Link href="/courses">Course</Nav.Link>
+                <Nav.Link href="/courses">Courses</Nav.Link>
                 <Nav.Link href="/admin">Intructor Admin</Nav.Link>
                 </Nav>
             </Offcanvas.Body>

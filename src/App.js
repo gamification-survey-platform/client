@@ -7,8 +7,10 @@ import "./index.css";
 import Landing from './pages/Landing';
 import Home from './pages/Home';
 import Profile from './pages/Profile';
+import Courses from './pages/Courses'
 import CourseDetails from './pages/CourseDetails';
 import CourseAssignments from './pages/CourseAssignments';
+import CourseMembers from './pages/CourseMembers';
 import './App.css';
 
 const router = createBrowserRouter([
@@ -25,12 +27,20 @@ const router = createBrowserRouter([
     element: <Profile />,
   },
   {
-    path: "/course/:course_id/view",
+    path: "/courses",
+    element: <Courses />,
+  },
+  {
+    path: "/courses/:course_id/details",
     element: <CourseDetails />
   },
   {
-    path: "/course/:course_id/assignments",
+    path: "/courses/:course_id/assignments",
     element: <CourseAssignments />
+  },
+  {
+    path: "/courses/:course_id/members",
+    element: <CourseMembers />
   }
 ]);
 

@@ -35,8 +35,8 @@ const Home = () => {
                             <Card.Text>
                                 {course.semester}
                             </Card.Text>
-                            <Button variant="primary" href={`/course/${course.course_number}/view`} className="m-1">Course Details</Button>
-                            <Button variant="primary" href={`/course/${course.course_number}/assignments`} className="m-1">Assignments</Button>
+                            <Button variant="primary" href={`/courses/${course.course_number}/details`} className="m-1">Course Details</Button>
+                            <Button variant="primary" href={`/courses/${course.course_number}/assignments`} className="m-1">Assignments</Button>
                         </Card.Body>
                     </Card>
                 </div>
