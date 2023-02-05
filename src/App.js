@@ -8,6 +8,10 @@ import Courses from './pages/Courses'
 import CourseDetails from './pages/CourseDetails'
 import CourseAssignments from './pages/CourseAssignments'
 import CourseMembers from './pages/CourseMembers'
+import AssignmentDetails from './pages/AssignmentDetails'
+import AssignmentSurvey from './pages/AssignmentSurvey'
+import AssignmentReports from './pages/AssignmentReports'
+import AssignmentEdit from './pages/AssignmentEdit'
 import NotFoundPage from './pages/NotFoundPage'
 
 const router = createBrowserRouter([
@@ -60,6 +64,38 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <CourseMembers />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/courses/:course_id/assignments/:assignment_id/view',
+    element: (
+      <ProtectedRoute>
+        <AssignmentDetails />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/courses/:course_id/assignments/:assignment_id/survey',
+    element: (
+      <ProtectedRoute>
+        <AssignmentSurvey />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/courses/:course_id/assignments/:assignment_id/reports',
+    element: (
+      <ProtectedRoute>
+        <AssignmentReports />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/courses/:course_id/assignments/:assignment_id/edit',
+    element: (
+      <ProtectedRoute>
+        <AssignmentEdit />
       </ProtectedRoute>
     )
   },

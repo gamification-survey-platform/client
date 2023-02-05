@@ -34,6 +34,7 @@ export const mockCourses = [
 export const mockAssignments = [
   {
     name: 'test',
+    id: 1,
     type: 'Individual',
     score: 100,
     availableDate: new Date(),
@@ -41,6 +42,7 @@ export const mockAssignments = [
   },
   {
     name: 'test2',
+    id: 2,
     type: 'Group',
     score: 100,
     availableDate: new Date(),
