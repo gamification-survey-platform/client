@@ -1,26 +1,28 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { login } from './api'
+import { current, createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { login as loginApi } from './api'
 
-const loginThunk = createAsyncThunk('user/login', async ({ username, password }) => {
-  const response = await login({ username, password })
+export const login = createAsyncThunk('user/login', async ({ username, password }) => {
+  const response = await loginApi({ username, password })
+  return response.data
 })
 
 const userSlice = createSlice({
   name: 'user',
   initialState: {
-    firstName: 'Name',
-    lastName: 'Name',
-    andrewId: 'AndrewID',
-    email: 'andrewID@andrew.cmu.edu',
-    role: 'user'
+    user: null,
+    status: null
   },
-  reducers: {
-    setUser: (state) => {},
-    editUser: (state, action) => {
-      state = { ...action.payload }
+  extraReducers: {
+    [login.pending]: (state) => {
+      return { ...state, status: 'pending' }
     },
-    deleteUser: () => {}
+    [login.fulfilled]: (state, action) => {
+      return { user: action.payload, status: 'success' }
+    },
+    [login.rejected]: (state) => {
+      return { ...state, status: 'failed' }
+    }
   }
 })
-export const { setUser, editUser, deleteUser } = userSlice.actions
+
 export default userSlice.reducer

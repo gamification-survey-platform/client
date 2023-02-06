@@ -3,19 +3,16 @@ import { useSelector, useDispatch } from 'react-redux'
 import userSelector from '../store/selectors'
 import { Container, Image, Form, Row, Col, Button } from 'react-bootstrap'
 import DefaultImage from '../assets/default.jpg'
-import { editUser } from '../store/userSlice'
 
 const Profile = () => {
-  const user = useSelector(userSelector)
-  const dispatch = useDispatch()
+  const { user } = useSelector(userSelector)
   const [currentUser, setCurrentUser] = useState(user)
   const [editing, setEditing] = useState(false)
-  const { firstName, lastName, email, role } = currentUser
+  const { first_name, last_name, email, role } = currentUser
 
   const handleClick = (e) => {
     if (!editing) setEditing(true)
     else {
-      dispatch(editUser(currentUser))
       setEditing(false)
     }
   }
@@ -26,9 +23,9 @@ const Profile = () => {
         <Col xs="3">
           <Image src={DefaultImage} width="100"></Image>
           <h2>
-            {user.firstName} {user.lastName}
+            {user.first_name} {user.last_name}
           </h2>
-          <h3>AndrewID: {user.andrewId}</h3>
+          <h3>AndrewID: {user.andrew_id}</h3>
         </Col>
         <Col xs="9">
           <Form>
@@ -52,8 +49,8 @@ const Profile = () => {
               <Col xs="10">
                 <Form.Control
                   readOnly={!editing}
-                  value={firstName}
-                  onChange={(e) => setCurrentUser({ ...currentUser, firstName: e.target.value })}
+                  value={first_name}
+                  onChange={(e) => setCurrentUser({ ...currentUser, first_name: e.target.value })}
                 />
               </Col>
             </Form.Group>
@@ -65,8 +62,8 @@ const Profile = () => {
               <Col xs="10">
                 <Form.Control
                   readOnly={!editing}
-                  value={lastName}
-                  onChange={(e) => setCurrentUser({ ...currentUser, lastName: e.target.value })}
+                  value={last_name}
+                  onChange={(e) => setCurrentUser({ ...currentUser, last_name: e.target.value })}
                 />
               </Col>
             </Form.Group>

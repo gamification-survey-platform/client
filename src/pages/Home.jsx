@@ -35,15 +35,13 @@ const Home = () => {
               <Button
                 variant="primary"
                 href={`/courses/${course.course_number}/details`}
-                className="m-1"
-              >
+                className="m-1">
                 Course Details
               </Button>
               <Button
                 variant="primary"
                 href={`/courses/${course.course_number}/assignments`}
-                className="m-1"
-              >
+                className="m-1">
                 Assignments
               </Button>
             </Card.Body>

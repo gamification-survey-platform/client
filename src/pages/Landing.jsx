@@ -1,23 +1,38 @@
-import { useState } from 'react'
-import { Card } from 'react-bootstrap'
-import Button from 'react-bootstrap/Button'
-import Form from 'react-bootstrap/Form'
+import { useEffect, useState } from 'react'
+import { Card, Button, Form, Alert } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
+import { login } from '../store/userSlice'
+import userSelector from '../store/selectors'
+import { useSelector, useDispatch } from 'react-redux'
 
 const Landing = () => {
   const [andrewId, setAndrewId] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { user, status } = useSelector(userSelector)
+  const [showError, setShowError] = useState(false)
+
+  useEffect(() => {
+    if (user && status == 'success') {
+      navigate('/dashboard')
+    } else if (!user && status == 'failed') {
+      setShowError(true)
+    }
+  }, [user, status])
 
   const handleLogin = (e) => {
     e.preventDefault()
-    navigate('/dashboard')
+    dispatch(login({ username: andrewId, password }))
   }
 
   return (
     <Card style={{ width: '50%' }} className="mx-auto mt-5">
       <Form className="m-5" onSubmit={handleLogin}>
-        <h2>Welcome! Let's get started.</h2>
+        {
+          // eslint-disable-next-line react/no-unescaped-entities
+          <h2>Welcome! Let's get started.</h2>
+        }
         <h3>Sign in to continue.</h3>
         <Form.Group style={{ textAlign: 'left' }} className="m-5">
           <Form.Label>Andrew ID:</Form.Label>
@@ -42,6 +57,11 @@ const Landing = () => {
         <Button variant="primary" type="submit" onClick={handleLogin}>
           Login
         </Button>
+        {showError && (
+          <Alert className="mt-5" variant="danger">
+            Invalid username/password
+          </Alert>
+        )}
       </Form>
     </Card>
   )
