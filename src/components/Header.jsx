@@ -19,7 +19,7 @@ const Header = () => {
         Icons
       </Container>
       <Navbar.Offcanvas show={open}>
-        <Offcanvas.Header closeButton>
+        <Offcanvas.Header closeButton onClick={() => setOpen(false)}>
           <Offcanvas.Title>Logo</Offcanvas.Title>
         </Offcanvas.Header>
         <Offcanvas.Body>

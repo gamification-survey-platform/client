@@ -4,14 +4,15 @@ import Landing from './pages/Landing'
 import ProtectedRoute from './components/ProtectedRoute'
 import Home from './pages/Home'
 import Profile from './pages/Profile'
-import Courses from './pages/Courses'
-import CourseDetails from './pages/CourseDetails'
-import CourseAssignments from './pages/CourseAssignments'
-import CourseMembers from './pages/CourseMembers'
-import AssignmentDetails from './pages/AssignmentDetails'
-import AssignmentSurvey from './pages/AssignmentSurvey'
-import AssignmentReports from './pages/AssignmentReports'
-import AssignmentEdit from './pages/AssignmentEdit'
+import Courses from './pages/courses/Courses'
+import CourseDetails from './pages/courses/CourseDetails'
+import CourseAssignments from './pages/courses/CourseAssignments'
+import CourseMembers from './pages/courses/CourseMembers'
+import AddCourse from './pages/courses/AddCourse'
+import AssignmentDetails from './pages/assignments/AssignmentDetails'
+import AssignmentSurvey from './pages/assignments/AssignmentSurvey'
+import AssignmentReports from './pages/assignments/AssignmentReports'
+import AssignmentEdit from './pages/assignments/AssignmentEdit'
 import NotFoundPage from './pages/NotFoundPage'
 
 const router = createBrowserRouter([
@@ -64,6 +65,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <CourseMembers />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/courses/add',
+    element: (
+      <ProtectedRoute>
+        <AddCourse />
       </ProtectedRoute>
     )
   },

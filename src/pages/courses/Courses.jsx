@@ -1,10 +1,9 @@
-import Container from 'react-bootstrap/Container'
-import Table from 'react-bootstrap/Table'
-import Button from 'react-bootstrap/Button'
-import { Link } from 'react-router-dom'
-import { mockCourses as courses } from '../utils/mockData'
+import { Container, Table, Button } from 'react-bootstrap'
+import { Link, useNavigate } from 'react-router-dom'
+import { mockCourses as courses } from '../../utils/mockData'
 
 const Courses = () => {
+  const navigate = useNavigate()
   return (
     <Container className="mt-5">
       <Table striped bordered hover>
@@ -50,6 +49,7 @@ const Courses = () => {
           })}
         </tbody>
       </Table>
+      <Button onClick={() => navigate('/courses/add')}>Add Course</Button>
     </Container>
   )
 }

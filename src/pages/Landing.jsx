@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Card, Button, Form, Alert } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
-import { login } from '../store/userSlice'
-import userSelector from '../store/selectors'
+import { login } from '../store/user/userSlice'
+import userSelector from '../store/user/selectors'
 import { useSelector, useDispatch } from 'react-redux'
 
 const Landing = () => {

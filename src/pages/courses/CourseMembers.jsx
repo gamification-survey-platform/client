@@ -1,5 +1,5 @@
 import { Container, Table, Button } from 'react-bootstrap'
-import { mockMembers as members } from '../utils/mockData'
+import { mockMembers as members } from '../../utils/mockData'
 
 const CourseMembers = () => {
   return (

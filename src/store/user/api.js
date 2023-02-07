@@ -1,5 +1,5 @@
 import axios from 'axios'
-import config from '../utils/constants'
+import config from '../../utils/constants'
 
 const login = async ({ username, password }) => {
   try {

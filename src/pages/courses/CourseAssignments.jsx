@@ -1,6 +1,6 @@
 import { Container, Table, Button } from 'react-bootstrap'
 import { Link, useLocation } from 'react-router-dom'
-import { mockAssignments as assignments } from '../utils/mockData'
+import { mockAssignments as assignments } from '../../utils/mockData'
 
 const CourseAssignments = () => {
   const location = useLocation()

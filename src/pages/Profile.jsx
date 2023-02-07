@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import userSelector from '../store/selectors'
+import userSelector from '../store/user/selectors'
 import { Container, Image, Form, Row, Col, Button } from 'react-bootstrap'
 import DefaultImage from '../assets/default.jpg'
 

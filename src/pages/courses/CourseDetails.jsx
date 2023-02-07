@@ -1,5 +1,5 @@
 import { Container } from 'react-bootstrap'
-import { mockCourse as course } from '../utils/mockData'
+import { mockCourse as course } from '../../utils/mockData'
 
 const CourseDetails = () => {
   return (
