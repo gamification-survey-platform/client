@@ -13,6 +13,7 @@ import AssignmentDetails from './pages/assignments/AssignmentDetails'
 import AssignmentSurvey from './pages/assignments/AssignmentSurvey'
 import AssignmentReports from './pages/assignments/AssignmentReports'
 import AssignmentEdit from './pages/assignments/AssignmentEdit'
+import AddSurvey from './pages/survey/AddSurvey'
 import NotFoundPage from './pages/NotFoundPage'
 
 const router = createBrowserRouter([
@@ -105,6 +106,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <AssignmentEdit />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/courses/:course_id/assignments/:assignment_id/survey/add',
+    element: (
+      <ProtectedRoute>
+        <AddSurvey />
       </ProtectedRoute>
     )
   },
