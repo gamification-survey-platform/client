@@ -4,6 +4,9 @@ import config from '../../utils/constants'
 const create = async (course) => {
   try {
     const res = await axios({
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`
+      },
       method: 'POST',
       url: `${config.API_URL}/courses/`,
       data: JSON.stringify(course)
