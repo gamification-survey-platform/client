@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken'
+import { decodeToken } from 'react-jwt'
 import api from '../apiUtils'
 
 const create = async (course) => {
@@ -7,7 +7,7 @@ const create = async (course) => {
     throw new Error('User is not authenticated')
   }
   try {
-    const decodedToken = jwt.decode(token)
+    const decodedToken = decodeToken(token)
     if (!decodedToken.is_staff) {
       throw new Error('User does not have the required role')
     }

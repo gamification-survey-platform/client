@@ -1,27 +1,39 @@
 import { useEffect, useState } from 'react'
 import { Container, Button, Form, Col, Alert } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router'
+import { useNavigate, useParams } from 'react-router'
 import DatePicker from 'react-datepicker'
-import courseSelector from '../../store/course/selectors'
+import { createSurvey } from '../../store/survey/surveySlice'
+import surveySelector from '../../store/survey/selectors'
+import routeSelector from '../../store/routes/selectors'
+import AssignmentSurvey from '../assignments/AssignmentSurvey'
 
 const AddSurvey = () => {
   const [showError, setShowError] = useState(false)
   const [releaseDate, setReleaseDate] = useState(new Date())
   const [dueDate, setDueDate] = useState(new Date())
   const dispatch = useDispatch()
-  const { status } = useSelector(courseSelector)
+  const { survey, status } = useSelector(surveySelector)
+  const params = useParams()
   const navigate = useNavigate()
 
   useEffect(() => {
     if (status === 'failed') setShowError(true)
-    else if (status === 'success') navigate(-1)
+    /*
+    else if (status === 'success') {
+      const { course_id, assignment_id } = survey
+      navigate(`/courses/${course_id}/assignments/${assignment_id}/survey`)
+    }
+    */
   }, [status])
 
   const handleSubmit = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
     const formData = new FormData(event.currentTarget)
     const formObj = Object.fromEntries(formData.entries())
-    //dispatch(createCourse(formObj))
+    const surveyData = { ...formObj, ...params }
+    dispatch(createSurvey(surveyData))
   }
 
   return (

@@ -23,7 +23,7 @@ const Landing = () => {
 
   const handleLogin = (e) => {
     e.preventDefault()
-    dispatch(login({ username: andrewId, password }))
+    dispatch(login({ andrewId, password }))
   }
 
   return (

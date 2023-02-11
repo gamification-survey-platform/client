@@ -1,9 +1,21 @@
 import { Container, Table, Button } from 'react-bootstrap'
-import { Link, useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import surveySelector from '../../store/survey/selectors'
 import { mockAssignments as assignments } from '../../utils/mockData'
 
 const CourseAssignments = () => {
   const location = useLocation()
+  const navigate = useNavigate()
+  const { survey } = useSelector(surveySelector)
+
+  const handleSurveyClick = (e, assignment) => {
+    console.log(e, assignment)
+    e.preventDefault()
+    navigate(`${location.pathname}/${assignment.id}/survey`)
+    //else navigate(`${location.pathname}/${assignment.id}/survey/add`)
+  }
+
   return (
     <Container className="mt-5">
       <Table striped bordered hover>
@@ -19,6 +31,7 @@ const CourseAssignments = () => {
         </thead>
         <tbody>
           {assignments.map((assignment, i) => {
+            console.log(assignment)
             return (
               <tr key={i}>
                 <td>{assignment.name}</td>
@@ -32,9 +45,9 @@ const CourseAssignments = () => {
                   </Link>
                 </td>
                 <td>
-                  <Link to={`${location.pathname}/${assignment.id}/survey`}>
-                    <Button variant="primary">Survey</Button>
-                  </Link>
+                  <Button variant="primary" onClick={(e) => handleSurveyClick(e, assignment)}>
+                    Survey
+                  </Button>
                 </td>
                 <td>
                   <Link to={`${location.pathname}/${assignment.id}/reports`}>
