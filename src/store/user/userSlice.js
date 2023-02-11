@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { setCookie } from '../../utils/cookie'
 import { login as loginApi } from './api'
 
 export const login = createAsyncThunk('user/login', async ({ andrewId, password }) => {
@@ -15,14 +14,10 @@ const userSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(login.pending, (state) => ({ ...state, status: 'pending' }))
-    builder.addCase(login.fulfilled, (state, action) => {
-      const { token } = action.payload
-      setCookie('gamification-cookie', token)
-      return {
-        user: action.payload,
-        status: 'success'
-      }
-    })
+    builder.addCase(login.fulfilled, (state, action) => ({
+      user: action.payload,
+      status: 'success'
+    }))
     builder.addCase(login.rejected, (state) => ({ ...state, status: 'failed' }))
   }
 })
