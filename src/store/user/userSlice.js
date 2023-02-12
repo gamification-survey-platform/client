@@ -6,12 +6,14 @@ export const login = createAsyncThunk('user/login', async ({ andrewId, password 
   return response.data
 })
 
+const initialState = {
+  user: null,
+  status: null
+}
+
 const userSlice = createSlice({
   name: 'user',
-  initialState: {
-    user: null,
-    status: null
-  },
+  initialState,
   extraReducers: (builder) => {
     builder.addCase(login.pending, (state) => ({ ...state, status: 'pending' }))
     builder.addCase(login.fulfilled, (state, action) => ({

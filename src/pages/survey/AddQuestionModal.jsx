@@ -38,9 +38,9 @@ const AddQuestionModal = ({ show, setShow, sectionIdx }) => {
         }
         payload = { options, required }
       } else if (formObj.type === 'mcs') {
-        payload = { numberOfOptions: parseInt(formObj.options) }
+        payload = { numberOfOptions: parseInt(formObj.options), required: !!formObj.required }
       } else if (formObj.type === 'multilineText') {
-        payload = { numberOfLines: parseInt(formObj.lines) }
+        payload = { numberOfLines: parseInt(formObj.lines), required: !!formObj.required }
       }
       const { question, type, ...rest } = formObj
       dispatch(addQuestion({ question: { question, type, ...payload }, sectionIdx }))

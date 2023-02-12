@@ -1,18 +1,19 @@
 import { Container, Table, Button } from 'react-bootstrap'
-import { useSelector } from 'react-redux'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import surveySelector from '../../store/survey/selectors'
 import { mockAssignments as assignments } from '../../utils/mockData'
 
 const CourseAssignments = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { survey } = useSelector(surveySelector)
 
   const handleSurveyClick = (e, assignment) => {
     e.preventDefault()
     navigate(`${location.pathname}/${assignment.id}/survey`)
-    //else navigate(`${location.pathname}/${assignment.id}/survey/add`)
+  }
+
+  const handleAddAssignment = (e) => {
+    e.preventDefault()
+    navigate(`${location.pathname}/add`)
   }
 
   return (
@@ -62,6 +63,9 @@ const CourseAssignments = () => {
           })}
         </tbody>
       </Table>
+      <Button className="m-3" onClick={handleAddAssignment}>
+        Add Assignment
+      </Button>
     </Container>
   )
 }

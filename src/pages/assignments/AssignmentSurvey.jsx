@@ -1,19 +1,33 @@
 import { useEffect, useState } from 'react'
-import { Container, Row, Col, Button } from 'react-bootstrap'
-import { useSelector } from 'react-redux'
-import { useLocation, useNavigate } from 'react-router'
+import { Container, Row, Col, Button, Alert } from 'react-bootstrap'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router'
 import AddSectionModal from '../survey/AddSectionModal'
 import surveySelector from '../../store/survey/selectors'
 import Section from '../survey/Section'
-import routeSelector from '../../store/routes/selectors'
 import AddSurvey from '../survey/AddSurvey'
+import { saveSurvey, resetSurvey } from '../../store/survey/surveySlice'
 
 const AssignmentSurvey = () => {
+  const { survey, status } = useSelector(surveySelector)
+  const dispatch = useDispatch()
   const navigate = useNavigate()
-  const location = useLocation()
-  const { survey } = useSelector(surveySelector)
-  const router = useSelector(routeSelector)
   const [modalOpen, setModalOpen] = useState(false)
+  const [showError, setShowError] = useState(false)
+
+  useEffect(() => {
+    if (status === 'failed') setShowError(true)
+    else if (status === 'success') {
+      dispatch(resetSurvey())
+      navigate(-1)
+    }
+  }, [status])
+
+  const handleSaveSurvey = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    dispatch(saveSurvey(survey))
+  }
 
   return (
     <div>
@@ -47,7 +61,8 @@ const AssignmentSurvey = () => {
             survey.sections.map((section, i) => (
               <Section key={i} section={section} sectionIdx={i} />
             ))}
-          <Button>Save Survey</Button>
+          <Button onClick={handleSaveSurvey}>Save Survey</Button>
+          {showError && <Alert variant="danger">Failed to create course.</Alert>}
         </Container>
       ) : (
         <AddSurvey />

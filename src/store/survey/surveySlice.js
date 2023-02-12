@@ -1,18 +1,35 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { create as createApi } from './api'
+import { get as getApi, save as saveApi } from './api'
 
-export const createSurvey = createAsyncThunk('course/assignment/survey', async (course) => {
-  const response = await createApi(course)
+export const getSurvey = createAsyncThunk(
+  'course/assignment/survey/get',
+  async ({ courseId, assignmentId }) => {
+    const response = await getApi({ courseId, assignmentId })
+    return response.data
+  }
+)
+
+export const saveSurvey = createAsyncThunk('course/assignment/survey/save', async (survey) => {
+  const response = await saveApi(survey)
   return response.data
 })
 
+const initialState = {
+  survey: null,
+  status: null
+}
+
 const surveySlice = createSlice({
   name: 'survey',
-  initialState: {
-    survey: null,
-    status: null
-  },
+  initialState,
   reducers: {
+    resetSurvey: () => initialState,
+    createSurvey: (state, action) => {
+      return {
+        ...state,
+        survey: { ...action.payload, sections: [] }
+      }
+    },
     addSection: (state, action) => {
       const oldSections = state.survey ? state.survey.sections : []
       const newSection = {
@@ -34,15 +51,15 @@ const surveySlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(createSurvey.pending, (state, action) => ({
-      survey: { ...action.meta.arg, sections: [] },
-      status: 'pending'
+    builder.addCase(getSurvey.fulfilled, (state, action) => ({
+      ...action.payload,
+      status: 'success'
     }))
-    builder.addCase(createSurvey.fulfilled, (state) => ({ ...state, status: 'success' }))
-    builder.addCase(createSurvey.rejected, () => ({ survey: null, status: 'failed' }))
+    builder.addCase(saveSurvey.fulfilled, (state) => ({ ...state, status: 'success' }))
+    builder.addCase(saveSurvey.rejected, () => ({ survey: null, status: 'failed' }))
   }
 })
 
-export const { addSection, addQuestion } = surveySlice.actions
+export const { resetSurvey, createSurvey, addSection, addQuestion } = surveySlice.actions
 
 export default surveySlice.reducer

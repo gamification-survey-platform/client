@@ -6,10 +6,15 @@ export const createCourse = createAsyncThunk('course/create', async (course) => 
   return response.data
 })
 
+const initialState = {
+  status: null
+}
+
 const courseSlice = createSlice({
   name: 'course',
-  initialState: {
-    status: null
+  initialState,
+  reducers: {
+    resetCourse: () => initialState
   },
   extraReducers: (builder) => {
     builder.addCase(createCourse.pending, () => ({ status: 'pending' }))
@@ -17,5 +22,7 @@ const courseSlice = createSlice({
     builder.addCase(createCourse.rejected, () => ({ status: 'failed' }))
   }
 })
+
+export const { resetCourse } = courseSlice.actions
 
 export default courseSlice.reducer

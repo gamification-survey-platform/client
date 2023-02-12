@@ -1,37 +1,42 @@
 import { useEffect, useState } from 'react'
 import { Container, Button, Form, Col, Alert } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router'
-import { createCourse } from '../../store/course/courseSlice'
-import courseSelector from '../../store/course/selectors'
+import { useMatch, useNavigate } from 'react-router'
+import { createAssignment, resetAssignment } from '../../store/assignment/assignmentSlice'
+import assignmentSelector from '../../store/assignment/selectors'
 
 const AddAssignment = () => {
   const [validated, setValidated] = useState(false)
   const [showError, setShowError] = useState(false)
   const dispatch = useDispatch()
-  const { status } = useSelector(courseSelector)
+  const { status } = useSelector(assignmentSelector)
+  const {
+    params: { courseId }
+  } = useMatch('courses/:courseId/assignments/add')
   const navigate = useNavigate()
 
   useEffect(() => {
     if (status === 'failed') setShowError(true)
-    else if (status === 'success') navigate(-1)
+    else if (status === 'success') {
+      dispatch(resetAssignment())
+      navigate(-1)
+    }
   }, [status])
 
   const handleSubmit = (event) => {
     const form = event.currentTarget
-    if (form.checkValidity() === false) {
-      event.preventDefault()
-      event.stopPropagation()
-    } else {
+    event.preventDefault()
+    event.stopPropagation()
+    if (form.checkValidity()) {
       const formData = new FormData(event.currentTarget)
       const formObj = Object.fromEntries(formData.entries())
-      dispatch(createCourse(formObj))
+      dispatch(createAssignment({ courseId, assignment: formObj }))
     }
     setValidated(true)
   }
 
   return (
-    <Container className="mt-5 text-left">
+    <Container className="my-5 text-left">
       <Form noValidate validated={validated} onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="blah">
           <Form.Label className="ml-3">Assignment name:</Form.Label>
@@ -51,27 +56,25 @@ const AddAssignment = () => {
             </Form.Control.Feedback>
           </Col>
         </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="ml-3">Type:</Form.Label>
-          <Form.Select name="type">
+        <Form.Group className="mb-3 ml-3">
+          <Form.Label>Type:</Form.Label>
+          <Form.Select className="w-25" name="type">
             <option value="individual">Individual</option>
             <option value="team">Team</option>
           </Form.Select>
         </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="ml-3">Submission type:</Form.Label>
-          <Form.Select name="submissionType">
+        <Form.Group className="mb-3 ml-3">
+          <Form.Label>Submission type:</Form.Label>
+          <Form.Select className="w-25" name="submissionType">
             <option value="file">File</option>
             <option value="url">URL</option>
             <option value="text">Text</option>
           </Form.Select>
-          <Form.Group className="mb-3">
-            <Form.Label className="ml-3">Total Score:</Form.Label>
-            <Col xs="5">
-              <Form.Control required name="score" />
-              <Form.Control.Feedback type="invalid">Please enter valid score</Form.Control.Feedback>
-            </Col>
-          </Form.Group>
+        </Form.Group>
+        <Form.Group className="mb-3 ml-3">
+          <Form.Label>Total Score:</Form.Label>
+          <Form.Control className="w-25" required name="score" />
+          <Form.Control.Feedback type="invalid">Please enter valid score</Form.Control.Feedback>
         </Form.Group>
         <Button className="ml-3" type="submit">
           Create

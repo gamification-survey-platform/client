@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Container, Button, Form, Col, Alert } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router'
-import { createCourse } from '../../store/course/courseSlice'
+import { createCourse, resetCourse } from '../../store/course/courseSlice'
 import courseSelector from '../../store/course/selectors'
 
 const AddCourse = () => {
@@ -14,7 +14,10 @@ const AddCourse = () => {
 
   useEffect(() => {
     if (status === 'failed') setShowError(true)
-    else if (status === 'success') navigate(-1)
+    else if (status === 'success') {
+      dispatch(resetCourse())
+      navigate(-1)
+    }
   }, [status])
 
   const handleSubmit = (event) => {
