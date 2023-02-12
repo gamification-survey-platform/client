@@ -19,12 +19,10 @@ const AddSurvey = () => {
 
   useEffect(() => {
     if (status === 'failed') setShowError(true)
-    /*
     else if (status === 'success') {
       const { course_id, assignment_id } = survey
       navigate(`/courses/${course_id}/assignments/${assignment_id}/survey`)
     }
-    */
   }, [status])
 
   const handleSubmit = (event) => {

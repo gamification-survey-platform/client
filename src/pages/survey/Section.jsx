@@ -1,14 +1,27 @@
-import { Container, Row, Col, Button } from 'react-bootstrap'
+import { Row, Col } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faTrash, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { useState } from 'react'
+import AddQuestionModal from './AddQuestionModal'
+import Question from './question/Question'
 
-const Section = ({ section }) => {
-  const { title, description } = section
+const Section = ({ section, sectionIdx }) => {
+  const [modalOpen, setModalOpen] = useState(false)
+  const { title, description, required, questions } = section
+  let className = 'text-left ml-3'
+  if (required) className += 'required-field'
+  const style = {
+    marginTop: -15,
+    marginBottom: 0,
+    padding: '0 5px',
+    backgroundColor: 'white',
+    width: 'fit-content'
+  }
   return (
-    <div className="border border-light">
+    <div className="border border-light mb-3">
       <Row>
         <Col xs="9">
-          <h3 className="text-left ml-3" style={{ marginTop: -15, marginBottom: 0 }}>
+          <h3 className={className} style={style}>
             {title}
           </h3>
         </Col>
@@ -22,17 +35,7 @@ const Section = ({ section }) => {
               pointerEvents: 'auto',
               cursor: 'pointer'
             }}
-            onClick={console.log}
-          />
-          <FontAwesomeIcon
-            icon={faPenToSquare}
-            style={{
-              fontSize: '2em',
-              color: '#ffc107',
-              margin: 10,
-              pointerEvents: 'auto',
-              cursor: 'pointer'
-            }}
+            onClick={() => setModalOpen(true)}
           />
           <FontAwesomeIcon
             icon={faTrash}
@@ -44,11 +47,15 @@ const Section = ({ section }) => {
               cursor: 'pointer'
             }}
           />
+          <AddQuestionModal sectionIdx={sectionIdx} show={modalOpen} setShow={setModalOpen} />
         </Col>
       </Row>
       <Row>
         <h4 className="text-left ml-3">{description}</h4>
       </Row>
+      {questions.map((question, i) => (
+        <Question key={i} {...question} />
+      ))}
     </div>
   )
 }

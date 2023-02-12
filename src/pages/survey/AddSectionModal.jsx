@@ -20,7 +20,6 @@ const AddSectionModal = ({ show, setShow }) => {
     } else {
       const formData = new FormData(form)
       const formObj = Object.fromEntries(formData.entries())
-      console.log('formObj', formObj)
       dispatch(addSection(formObj))
       handleClose()
     }
@@ -47,7 +46,7 @@ const AddSectionModal = ({ show, setShow }) => {
             <Form.Control.Feedback type="invalid">Please enter a description</Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="m-3">
-            <Form.Check label="Required?"></Form.Check>
+            <Form.Check label="Required?" name="required"></Form.Check>
           </Form.Group>
         </Form>
       </Modal.Body>

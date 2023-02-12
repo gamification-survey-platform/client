@@ -15,3 +15,8 @@ code {
   left: 0px; 
   transform: translate3d(30px, 0px, 0px)!important;
 }
+
+.required-field::before {
+  content: "*";
+  color: red;
+}

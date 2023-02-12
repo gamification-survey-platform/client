@@ -26,6 +26,11 @@ const surveySlice = createSlice({
           sections: [...oldSections, newSection]
         }
       }
+    },
+    addQuestion: (state, action) => {
+      const { sectionIdx, question } = action.payload
+      const sections = [...state.survey.sections]
+      sections[sectionIdx].questions.push(question)
     }
   },
   extraReducers: (builder) => {
@@ -38,6 +43,6 @@ const surveySlice = createSlice({
   }
 })
 
-export const { addSection } = surveySlice.actions
+export const { addSection, addQuestion } = surveySlice.actions
 
 export default surveySlice.reducer

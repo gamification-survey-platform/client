@@ -18,7 +18,7 @@ const AssignmentSurvey = () => {
   return (
     <div>
       {survey ? (
-        <Container className="mt-5">
+        <Container className="my-5">
           <Row>
             <Col xs="6">
               {survey && (
@@ -44,7 +44,10 @@ const AssignmentSurvey = () => {
           <hr />
           {survey &&
             survey.sections &&
-            survey.sections.map((section, i) => <Section key={i} section={section} />)}
+            survey.sections.map((section, i) => (
+              <Section key={i} section={section} sectionIdx={i} />
+            ))}
+          <Button>Save Survey</Button>
         </Container>
       ) : (
         <AddSurvey />

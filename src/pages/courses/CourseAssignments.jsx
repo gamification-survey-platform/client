@@ -10,7 +10,6 @@ const CourseAssignments = () => {
   const { survey } = useSelector(surveySelector)
 
   const handleSurveyClick = (e, assignment) => {
-    console.log(e, assignment)
     e.preventDefault()
     navigate(`${location.pathname}/${assignment.id}/survey`)
     //else navigate(`${location.pathname}/${assignment.id}/survey/add`)
@@ -31,7 +30,6 @@ const CourseAssignments = () => {
         </thead>
         <tbody>
           {assignments.map((assignment, i) => {
-            console.log(assignment)
             return (
               <tr key={i}>
                 <td>{assignment.name}</td>
