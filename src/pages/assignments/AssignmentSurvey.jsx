@@ -1,37 +1,48 @@
 import { useEffect, useState } from 'react'
 import { Container, Row, Col, Button, Alert } from 'react-bootstrap'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router'
+import { useMatch, useNavigate } from 'react-router'
 import AddSectionModal from '../survey/AddSectionModal'
-import surveySelector from '../../store/survey/selectors'
 import Section from '../survey/Section'
 import AddSurvey from '../survey/AddSurvey'
-import { saveSurvey, resetSurvey } from '../../store/survey/surveySlice'
+import { getSurvey, saveSurvey } from '../../api/survey'
+import { mockSurvey } from '../../utils/mockData'
 
 const AssignmentSurvey = () => {
-  const { survey, status } = useSelector(surveySelector)
-  const dispatch = useDispatch()
+  const [survey, setSurvey] = useState({
+    instruction: '',
+    information: '',
+    sections: []
+  })
+  const [surveyExists, setSurveyExists] = useState(true)
+  const {
+    params: { courseId, assignmentId }
+  } = useMatch('/courses/:courseId/assignments/:assignmentId/survey')
   const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState(false)
   const [showError, setShowError] = useState(false)
 
   useEffect(() => {
-    if (status === 'failed') setShowError(true)
-    else if (status === 'success') {
-      dispatch(resetSurvey())
-      navigate(-1)
+    const fetchSurvey = async () => {
+      const res = await getSurvey({ courseId, assignmentId })
+      if (res.status === 200) {
+        if (assignmentId === '2') setSurvey(mockSurvey)
+        else setSurveyExists(false)
+      } else setShowError(true)
     }
-  }, [status])
+    fetchSurvey()
+  }, [])
 
-  const handleSaveSurvey = (e) => {
+  const handleSaveSurvey = async (e) => {
     e.preventDefault()
     e.stopPropagation()
-    dispatch(saveSurvey(survey))
+    const res = await saveSurvey({ courseId, assignmentId, survey })
+    if (res.status === 200) navigate(-1)
+    else setShowError(true)
   }
 
   return (
     <div>
-      {survey ? (
+      {surveyExists ? (
         <Container className="my-5">
           <Row>
             <Col xs="6">
@@ -53,13 +64,24 @@ const AssignmentSurvey = () => {
                 Add Section
               </Button>
             </Col>
-            <AddSectionModal show={modalOpen} setShow={setModalOpen} />
+            <AddSectionModal
+              show={modalOpen}
+              setShow={setModalOpen}
+              survey={survey}
+              setSurvey={setSurvey}
+            />
           </Row>
           <hr />
           {survey &&
             survey.sections &&
             survey.sections.map((section, i) => (
-              <Section key={i} section={section} sectionIdx={i} />
+              <Section
+                key={i}
+                section={section}
+                sectionIdx={i}
+                survey={survey}
+                setSurvey={setSurvey}
+              />
             ))}
           <Button onClick={handleSaveSurvey}>Save Survey</Button>
           {showError && <Alert variant="danger">Failed to create course.</Alert>}

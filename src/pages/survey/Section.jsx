@@ -5,7 +5,7 @@ import { useState } from 'react'
 import AddQuestionModal from './AddQuestionModal'
 import Question from './question/Question'
 
-const Section = ({ section, sectionIdx }) => {
+const Section = ({ section, sectionIdx, survey, setSurvey }) => {
   const [modalOpen, setModalOpen] = useState(false)
   const { title, description, required, questions } = section
   let className = 'text-left ml-3'
@@ -47,7 +47,13 @@ const Section = ({ section, sectionIdx }) => {
               cursor: 'pointer'
             }}
           />
-          <AddQuestionModal sectionIdx={sectionIdx} show={modalOpen} setShow={setModalOpen} />
+          <AddQuestionModal
+            sectionIdx={sectionIdx}
+            show={modalOpen}
+            setShow={setModalOpen}
+            survey={survey}
+            setSurvey={setSurvey}
+          />
         </Col>
       </Row>
       <Row>

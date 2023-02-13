@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { Modal, Button, Form } from 'react-bootstrap'
 import { useDispatch } from 'react-redux'
-import { addSection } from '../../store/survey/surveySlice'
 
-const AddSectionModal = ({ show, setShow }) => {
+const AddSectionModal = ({ show, setShow, survey, setSurvey }) => {
   const [validated, setValidated] = useState(false)
   const formRef = useRef()
   const dispatch = useDispatch()
@@ -20,7 +19,10 @@ const AddSectionModal = ({ show, setShow }) => {
     } else {
       const formData = new FormData(form)
       const formObj = Object.fromEntries(formData.entries())
-      dispatch(addSection(formObj))
+      formObj.required = !!formData.required
+      formObj.questions = []
+      survey.sections.push(formObj)
+      setSurvey(survey)
       handleClose()
     }
     setValidated(true)

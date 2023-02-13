@@ -32,7 +32,7 @@ const CourseAssignments = () => {
     e.preventDefault()
     navigate(`${location.pathname}/add`)
   }
-  console.log(user)
+
   return (
     <Container className="mt-5">
       <Table striped bordered hover>

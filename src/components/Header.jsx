@@ -6,9 +6,12 @@ import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import Offcanvas from 'react-bootstrap/Offcanvas'
 import Logo from '../assets/cmu-logo.svg'
+import { useSelector } from 'react-redux'
+import userSelector from '../store/user/selectors'
 
 const Header = () => {
   const [open, setOpen] = useState(false)
+  const { user } = useSelector(userSelector)
   return (
     <Navbar bg="light" expand={false}>
       <Container>
@@ -33,9 +36,11 @@ const Header = () => {
             <LinkContainer to="/courses" onClick={() => setOpen(false)}>
               <Nav.Link>Courses</Nav.Link>
             </LinkContainer>
-            <LinkContainer to="/admin" onClick={() => setOpen(false)}>
-              <Nav.Link>Intructor Admin</Nav.Link>
-            </LinkContainer>
+            {user && user.role === 'admin' && (
+              <LinkContainer to="/admin" onClick={() => setOpen(false)}>
+                <Nav.Link>Intructor Admin</Nav.Link>
+              </LinkContainer>
+            )}
           </Nav>
         </Offcanvas.Body>
       </Navbar.Offcanvas>

@@ -56,4 +56,10 @@ export const mockAssignments = [
   }
 ]
 
+export const mockSurvey = {
+  instruction: 'Instructions for survey',
+  information: 'Information for survey',
+  sections: []
+}
+
 export const mockCourse = { ...mockCourses[0] }

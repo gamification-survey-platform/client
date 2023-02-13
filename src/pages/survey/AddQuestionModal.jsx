@@ -1,14 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { Modal, Button, Form } from 'react-bootstrap'
-import { useDispatch } from 'react-redux'
-import { addQuestion } from '../../store/survey/surveySlice'
 
-const AddQuestionModal = ({ show, setShow, sectionIdx }) => {
+const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey }) => {
   const [validated, setValidated] = useState(false)
   const [options, setOptions] = useState([])
   const [questionType, setQuestionType] = useState('mc')
   const formRef = useRef()
-  const dispatch = useDispatch()
 
   useEffect(() => {
     setQuestionType('mc')
@@ -43,7 +40,9 @@ const AddQuestionModal = ({ show, setShow, sectionIdx }) => {
         payload = { numberOfLines: parseInt(formObj.lines), required: !!formObj.required }
       }
       const { question, type, ...rest } = formObj
-      dispatch(addQuestion({ question: { question, type, ...payload }, sectionIdx }))
+      const questionObj = { question, type, ...payload }
+      survey.sections[sectionIdx].questions.push(questionObj)
+      setSurvey(survey)
       handleClose()
     }
     setValidated(true)
