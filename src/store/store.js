@@ -1,20 +1,42 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { combineReducers, configureStore } from '@reduxjs/toolkit'
 import { connectRouter } from 'connected-react-router'
 import { createBrowserHistory } from '@remix-run/router'
-import userReducer from './user/userSlice'
-import courseReducer from './course/courseSlice'
-import assignmentReducer from './assignment/assignmentSlice'
-import surveyReducer from './survey/surveySlice'
+import user from './user/userSlice'
+import courses from './courses/coursesSlice'
+import storage from 'redux-persist/lib/storage'
+import {
+  persistReducer,
+  persistStore,
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER
+} from 'redux-persist'
 
+const persistConfig = {
+  key: 'root',
+  storage
+}
 const history = createBrowserHistory()
-const store = configureStore({
-  reducer: {
-    user: userReducer,
-    course: courseReducer,
-    assignment: assignmentReducer,
-    survey: surveyReducer,
-    router: connectRouter(history)
-  }
+
+const rootReducer = combineReducers({
+  user,
+  courses,
+  router: connectRouter(history)
 })
 
-export default store
+const persistedReducer = persistReducer(persistConfig, rootReducer)
+
+export const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
+      }
+    })
+})
+
+export const persistor = persistStore(store)

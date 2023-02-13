@@ -1,9 +1,22 @@
-import { Container, Table, Button } from 'react-bootstrap'
+import { useState } from 'react'
+import { Alert, Container, Table, Button } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import { mockCourses as courses } from '../../utils/mockData'
+import { deleteCourse } from '../../api/courses'
+import coursesSelector from '../../store/courses/selectors'
+import userSelector from '../../store/user/selectors'
 
 const Courses = () => {
   const navigate = useNavigate()
+  const { user } = useSelector(userSelector)
+  const { courses } = useSelector(coursesSelector)
+  const [showError, setShowError] = useState(false)
+
+  const handleDeleteCourse = async (e, courseNumber) => {
+    const res = await deleteCourse(courseNumber)
+    if (res.status !== 200) setShowError(true)
+  }
+
   return (
     <Container className="mt-5">
       <Table striped bordered hover>
@@ -35,21 +48,31 @@ const Courses = () => {
                       View
                     </Button>
                   </Link>
-                  <Link to={`/courses/${course.course_number}/assignments`}>
-                    <Button className="mx-3" variant="warning">
-                      Edit
-                    </Button>
-                  </Link>
-                  <Button className="mx-3" variant="danger">
-                    Delete
-                  </Button>
+                  {user && user.role === 'admin' && (
+                    <>
+                      <Link to={`/courses/${course.course_number}/assignments`}>
+                        <Button className="mx-3" variant="warning">
+                          Edit
+                        </Button>
+                      </Link>
+                      <Button
+                        className="mx-3"
+                        variant="danger"
+                        onClick={(e) => handleDeleteCourse(e, course.course_number)}>
+                        Delete
+                      </Button>
+                    </>
+                  )}
                 </td>
               </tr>
             )
           })}
         </tbody>
       </Table>
-      <Button onClick={() => navigate('/courses/add')}>Add Course</Button>
+      {user && user.role === 'admin' && (
+        <Button onClick={() => navigate('/courses/add')}>Add Course</Button>
+      )}
+      {showError && <Alert variant="danger">Failed to delete course.</Alert>}
     </Container>
   )
 }

@@ -1,28 +1,22 @@
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import DefaultImage from '../assets/default.jpg'
-
-const courses = [
-  {
-    course_number: 1,
-    course_name: 'Foundations of Software Engineering',
-    syllabus: 'Syllabus',
-    semester: 'Spring 2023',
-    visible: true,
-    users: []
-  },
-  {
-    course_number: 2,
-    course_name: 'Software Design and Architecture',
-    syllabus: 'Syllabus',
-    semester: 'Spring 2023',
-    visible: true,
-    users: []
-  }
-]
+import userSelector from '../store/user/selectors'
+import { getCourses } from '../store/courses/coursesSlice'
+import coursesSelector from '../store/courses/selectors'
 
 const Home = () => {
+  const { user } = useSelector(userSelector)
+  const { courses, status } = useSelector(coursesSelector)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (user) dispatch(getCourses(user.andrewId))
+  }, [user])
+
   return (
     <Container fluid className="d-flex mt-5">
       {courses.map((course, i) => (

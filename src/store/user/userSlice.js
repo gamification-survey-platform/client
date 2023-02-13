@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { login as loginApi } from './api'
+import { login as loginApi } from '../../api/login'
+import { mockUser } from '../../utils/mockData'
 
 export const login = createAsyncThunk('user/login', async ({ andrewId, password }) => {
   const response = await loginApi({ andrewId, password })
@@ -17,7 +18,7 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(login.pending, (state) => ({ ...state, status: 'pending' }))
     builder.addCase(login.fulfilled, (state, action) => ({
-      user: action.payload,
+      user: mockUser,
       status: 'success'
     }))
     builder.addCase(login.rejected, (state) => ({ ...state, status: 'failed' }))

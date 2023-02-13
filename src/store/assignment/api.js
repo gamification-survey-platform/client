@@ -1,5 +1,5 @@
 import { decodeToken } from 'react-jwt'
-import api from '../apiUtils'
+import api from '../../api/apiUtils'
 
 const create = async ({ courseId, assignment }) => {
   const token = localStorage.getItem('token')

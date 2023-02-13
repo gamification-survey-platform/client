@@ -1,3 +1,9 @@
+export const mockUser = {
+  andrewId: 'admin1',
+  email: 'admin1@example.com',
+  role: 'admin'
+}
+
 export const mockMembers = [
   {
     andrewId: 'id',

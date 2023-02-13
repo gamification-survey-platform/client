@@ -1,26 +1,14 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Container, Button, Form, Col, Alert } from 'react-bootstrap'
-import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router'
-import { createCourse, resetCourse } from '../../store/course/courseSlice'
-import courseSelector from '../../store/course/selectors'
+import { createCourse } from '../../api/courses'
 
 const AddCourse = () => {
   const [validated, setValidated] = useState(false)
   const [showError, setShowError] = useState(false)
-  const dispatch = useDispatch()
-  const { status } = useSelector(courseSelector)
   const navigate = useNavigate()
 
-  useEffect(() => {
-    if (status === 'failed') setShowError(true)
-    else if (status === 'success') {
-      dispatch(resetCourse())
-      navigate(-1)
-    }
-  }, [status])
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     const form = event.currentTarget
     if (form.checkValidity() === false) {
       event.preventDefault()
@@ -28,7 +16,12 @@ const AddCourse = () => {
     } else {
       const formData = new FormData(event.currentTarget)
       const formObj = Object.fromEntries(formData.entries())
-      dispatch(createCourse(formObj))
+      const res = await createCourse(formObj)
+      if (res.status === 200) {
+        navigate(-1)
+      } else {
+        setShowError(true)
+      }
     }
     setValidated(true)
   }

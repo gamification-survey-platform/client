@@ -1,36 +1,26 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Container, Button, Form, Col, Alert } from 'react-bootstrap'
-import { useDispatch, useSelector } from 'react-redux'
 import { useMatch, useNavigate } from 'react-router'
-import { createAssignment, resetAssignment } from '../../store/assignment/assignmentSlice'
-import assignmentSelector from '../../store/assignment/selectors'
+import { createAssignment } from '../../api/assignments'
 
 const AddAssignment = () => {
   const [validated, setValidated] = useState(false)
   const [showError, setShowError] = useState(false)
-  const dispatch = useDispatch()
-  const { status } = useSelector(assignmentSelector)
   const {
     params: { courseId }
   } = useMatch('courses/:courseId/assignments/add')
   const navigate = useNavigate()
 
-  useEffect(() => {
-    if (status === 'failed') setShowError(true)
-    else if (status === 'success') {
-      dispatch(resetAssignment())
-      navigate(-1)
-    }
-  }, [status])
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     const form = event.currentTarget
     event.preventDefault()
     event.stopPropagation()
     if (form.checkValidity()) {
       const formData = new FormData(event.currentTarget)
       const formObj = Object.fromEntries(formData.entries())
-      dispatch(createAssignment({ courseId, assignment: formObj }))
+      const res = await createAssignment({ courseId, assignment: formObj })
+      if (res.status == 200) navigate(-1)
+      else setShowError(true)
     }
     setValidated(true)
   }

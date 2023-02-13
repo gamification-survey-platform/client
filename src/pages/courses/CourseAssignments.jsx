@@ -1,10 +1,27 @@
+import { useEffect, useState } from 'react'
 import { Container, Table, Button } from 'react-bootstrap'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { mockAssignments as assignments } from '../../utils/mockData'
+import { useSelector } from 'react-redux'
+import { Link, useLocation, useMatch, useNavigate } from 'react-router-dom'
+import { getAssignments } from '../../api/assignments'
+import userSelector from '../../store/user/selectors'
+import { mockAssignments } from '../../utils/mockData'
 
 const CourseAssignments = () => {
   const location = useLocation()
+  const {
+    params: { courseId }
+  } = useMatch('/courses/:courseId/assignments')
   const navigate = useNavigate()
+  const [assignments, setAssignments] = useState([])
+  const { user } = useSelector(userSelector)
+
+  useEffect(() => {
+    const fetchAssignments = async () => {
+      const res = await getAssignments(courseId)
+      if (res.status === 200) setAssignments(mockAssignments)
+    }
+    fetchAssignments()
+  }, [])
 
   const handleSurveyClick = (e, assignment) => {
     e.preventDefault()
@@ -15,7 +32,7 @@ const CourseAssignments = () => {
     e.preventDefault()
     navigate(`${location.pathname}/add`)
   }
-
+  console.log(user)
   return (
     <Container className="mt-5">
       <Table striped bordered hover>
@@ -63,9 +80,11 @@ const CourseAssignments = () => {
           })}
         </tbody>
       </Table>
-      <Button className="m-3" onClick={handleAddAssignment}>
-        Add Assignment
-      </Button>
+      {user && user.role === 'admin' && (
+        <Button className="m-3" onClick={handleAddAssignment}>
+          Add Assignment
+        </Button>
+      )}
     </Container>
   )
 }
