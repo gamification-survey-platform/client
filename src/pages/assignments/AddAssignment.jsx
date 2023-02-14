@@ -18,9 +18,12 @@ const AddAssignment = () => {
     if (form.checkValidity()) {
       const formData = new FormData(event.currentTarget)
       const formObj = Object.fromEntries(formData.entries())
-      const res = await createAssignment({ courseId, assignment: formObj })
-      if (res.status == 200) navigate(-1)
-      else setShowError(true)
+      try {
+        const res = await createAssignment({ courseId, assignment: formObj })
+        if (res.status == 200) navigate(-1)
+      } catch (e) {
+        setShowError(true)
+      }
     }
     setValidated(true)
   }

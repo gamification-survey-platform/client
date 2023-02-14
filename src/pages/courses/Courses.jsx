@@ -13,8 +13,11 @@ const Courses = () => {
   const [showError, setShowError] = useState(false)
 
   const handleDeleteCourse = async (e, courseNumber) => {
-    const res = await deleteCourse(courseNumber)
-    if (res.status !== 200) setShowError(true)
+    try {
+      const res = await deleteCourse(courseNumber)
+    } catch (e) {
+      setShowError(true)
+    }
   }
 
   return (

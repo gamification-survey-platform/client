@@ -14,12 +14,12 @@ const AddCourse = () => {
       event.preventDefault()
       event.stopPropagation()
     } else {
-      const formData = new FormData(event.currentTarget)
-      const formObj = Object.fromEntries(formData.entries())
-      const res = await createCourse(formObj)
-      if (res.status === 200) {
-        navigate(-1)
-      } else {
+      try {
+        const formData = new FormData(event.currentTarget)
+        const formObj = Object.fromEntries(formData.entries())
+        const res = await createCourse(formObj)
+        if (res.status === 200) navigate(-1)
+      } catch (e) {
         setShowError(true)
       }
     }

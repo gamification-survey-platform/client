@@ -23,11 +23,15 @@ const AssignmentSurvey = () => {
 
   useEffect(() => {
     const fetchSurvey = async () => {
-      const res = await getSurvey({ courseId, assignmentId })
-      if (res.status === 200) {
-        if (assignmentId === '2') setSurvey(mockSurvey)
-        else setSurveyExists(false)
-      } else setShowError(true)
+      try {
+        const res = await getSurvey({ courseId, assignmentId })
+        if (res.status === 200) {
+          if (assignmentId === '2') setSurvey(mockSurvey)
+          else setSurveyExists(false)
+        }
+      } catch (e) {
+        setShowError(true)
+      }
     }
     fetchSurvey()
   }, [])
@@ -35,9 +39,12 @@ const AssignmentSurvey = () => {
   const handleSaveSurvey = async (e) => {
     e.preventDefault()
     e.stopPropagation()
-    const res = await saveSurvey({ courseId, assignmentId, survey })
-    if (res.status === 200) navigate(-1)
-    else setShowError(true)
+    try {
+      const res = await saveSurvey({ courseId, assignmentId, survey })
+      if (res.status === 200) navigate(-1)
+    } catch (e) {
+      setShowError(true)
+    }
   }
 
   return (
