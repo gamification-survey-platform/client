@@ -1,14 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap'
-import { useDispatch } from 'react-redux'
 import { useMatch } from 'react-router'
 import { getCourse } from '../../api/courses'
-import { mockCourse as course } from '../../utils/mockData'
+import { mockCourse } from '../../utils/mockData'
 
 const CourseDetails = () => {
   const {
     params: { courseId }
-  } = useMatch('/courses/:courseId')
+  } = useMatch('/courses/:courseId/details')
   const [course, setCourse] = useState({
     course_name: '',
     course_number: '',
@@ -21,7 +20,7 @@ const CourseDetails = () => {
       const res = await getCourse(courseId)
       if (res.status === 200) {
         const course = res.data
-        setCourse(course)
+        setCourse(mockCourse)
       }
     } catch (e) {
       console.error(e)

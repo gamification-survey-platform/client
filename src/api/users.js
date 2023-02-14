@@ -1,12 +1,9 @@
+import { validateUser } from '../utils/validators'
 import api from './apiUtils'
 
 const getUsers = async () => {
-  const token = localStorage.getItem('token')
-  if (!token) {
-    throw new Error('User is not authenticated')
-  }
-
   try {
+    if (!validateUser) throw new Error('User is not authenticated')
     const res = await api.get('users')
     return res.data
   } catch (error) {

@@ -27,4 +27,13 @@ const saveSurvey = async ({ courseId, assignmentId, survey }) => {
   }
 }
 
-export { getSurvey, createSurvey, saveSurvey }
+const deleteSurvey = async ({ courseId, assignmentId }) => {
+  try {
+    const res = await api.delete(`/courses/${courseId}/assignments/${assignmentId}/survey`)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
+export { getSurvey, createSurvey, saveSurvey, deleteSurvey }

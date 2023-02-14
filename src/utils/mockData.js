@@ -56,6 +56,18 @@ export const mockAssignments = [
   }
 ]
 
+export const mockAssignmentDetail = {
+  title: 'My Assignment',
+  type: 'Individual',
+  submission: 'file',
+  totalScore: 100,
+  weight: 100,
+  due: new Date(),
+  description: 'description',
+  comments: ['blah', 'test'],
+  artifactList: []
+}
+
 export const mockSurvey = {
   instruction: 'Instructions for survey',
   information: 'Information for survey',
