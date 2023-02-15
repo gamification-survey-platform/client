@@ -3,7 +3,8 @@ import { connectRouter } from 'connected-react-router'
 import { createBrowserHistory } from '@remix-run/router'
 import user from './user/userSlice'
 import courses from './courses/coursesSlice'
-import storage from 'redux-persist/lib/storage'
+import sessionStorage from 'redux-persist/lib/storage/session'
+
 import {
   persistReducer,
   persistStore,
@@ -17,7 +18,7 @@ import {
 
 const persistConfig = {
   key: 'root',
-  storage
+  storage: sessionStorage
 }
 const history = createBrowserHistory()
 

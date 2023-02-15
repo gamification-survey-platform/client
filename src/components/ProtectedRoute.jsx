@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
 
 const ProtectedRoute = ({ redirectPath = '/', children }) => {
-  const loggedInUser = useSelector(userSelector)
+  const { user: loggedInUser } = useSelector(userSelector)
   if (!loggedInUser) {
     return <Navigate to={redirectPath} />
   }

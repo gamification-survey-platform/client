@@ -15,16 +15,19 @@ const CourseDetails = () => {
     syllabus: ''
   })
 
-  useEffect(async () => {
-    try {
-      const res = await getCourse(courseId)
-      if (res.status === 200) {
-        const course = res.data
-        setCourse(mockCourse)
+  useEffect(() => {
+    const fetchCourseDetails = async () => {
+      try {
+        const res = await getCourse(courseId)
+        if (res.status === 200) {
+          const course = res.data
+          setCourse(mockCourse)
+        }
+      } catch (e) {
+        console.error(e)
       }
-    } catch (e) {
-      console.error(e)
     }
+    fetchCourseDetails()
   }, [])
 
   return (
