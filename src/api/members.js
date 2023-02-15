@@ -1,11 +1,11 @@
 import { validateAdmin, validateUser } from '../utils/validators'
 import api from './apiUtils'
 
-const addMember = async (courseId, memberId) => {
+const addMember = async (courseId, memberId, teamId = null) => {
   try {
     if (!validateUser()) throw new Error('User is not authenticated')
     if (!validateAdmin()) throw new Error('User does not have the appropriate role')
-    const res = await api.post(`courses/${courseId}/members/`, { andrew_id: memberId })
+    const res = await api.post(`courses/${courseId}/members/`, { andrew_id: memberId, teamId })
     return res.data
   } catch (error) {
     throw new Error(error.message)

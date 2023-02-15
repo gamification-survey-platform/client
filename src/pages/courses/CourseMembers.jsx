@@ -7,13 +7,14 @@ import { mockMembers as members } from '../../utils/mockData'
 const CourseMembers = () => {
   const [message, setMessage] = useState('')
   const [addId, setAddId] = useState('')
+  const [teamId, setTeamId] = useState('')
   const { course_id } = useParams()
 
   const handleAddMember = async (event) => {
     event.preventDefault()
     event.stopPropagation()
     try {
-      const res = await addMember(course_id, addId)
+      const res = await addMember(course_id, addId, teamId)
       if (res.status === 200) setMessage({ type: 'success', text: `Successfully added ${addId}` })
     } catch (e) {
       setMessage({ type: 'danger', text: `Failed to add ${addId}` })
@@ -86,6 +87,14 @@ const CourseMembers = () => {
                 className="w-50"
                 value={addId}
                 onChange={(e) => setAddId(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="my-3">
+              <Form.Label>Add Team (optional):</Form.Label>
+              <Form.Control
+                className="w-50"
+                value={teamId}
+                onChange={(e) => setTeamId(e.target.value)}
               />
             </Form.Group>
             <Button onClick={handleAddMember} disabled={!addId}>

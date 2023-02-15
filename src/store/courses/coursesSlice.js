@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { getUserCourses } from '../../api/courses'
-import { mockCourses } from '../../utils/mockData'
 
 export const getCourses = createAsyncThunk('courses/get', async (andrewId) => {
   const response = await getUserCourses(andrewId)
@@ -20,7 +19,7 @@ const coursesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(getCourses.fulfilled, (state, action) => ({
-      courses: mockCourses,
+      courses: action.payload,
       status: 'success'
     }))
     builder.addCase(getCourses.rejected, (state) => ({ ...state, status: 'failed' }))

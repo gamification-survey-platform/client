@@ -8,7 +8,7 @@ const Profile = () => {
   const { user } = useSelector(userSelector)
   const [currentUser, setCurrentUser] = useState(user)
   const [editing, setEditing] = useState(false)
-  const { first_name, last_name, email, role } = currentUser
+  const { firstName, lastName, email, role, dateJoined } = currentUser
 
   const handleClick = (e) => {
     if (!editing) setEditing(true)
@@ -23,9 +23,9 @@ const Profile = () => {
         <Col xs="3">
           <Image src={DefaultImage} width="100"></Image>
           <h2>
-            {user.first_name} {user.last_name}
+            {user.firstName} {user.lastName}
           </h2>
-          <h3>AndrewID: {user.andrew_id}</h3>
+          <h3>AndrewID: {user.andrewId}</h3>
         </Col>
         <Col xs="9">
           <Form>
@@ -49,7 +49,7 @@ const Profile = () => {
               <Col xs="10">
                 <Form.Control
                   readOnly={!editing}
-                  value={first_name}
+                  value={firstName}
                   onChange={(e) => setCurrentUser({ ...currentUser, first_name: e.target.value })}
                 />
               </Col>
@@ -62,7 +62,7 @@ const Profile = () => {
               <Col xs="10">
                 <Form.Control
                   readOnly={!editing}
-                  value={last_name}
+                  value={lastName}
                   onChange={(e) => setCurrentUser({ ...currentUser, last_name: e.target.value })}
                 />
               </Col>
@@ -73,7 +73,7 @@ const Profile = () => {
                 Date Joined
               </Form.Label>
               <Col xs="10">
-                <Form.Control readOnly />
+                <Form.Control readOnly value={dateJoined.toLocaleDateString()} />
               </Col>
             </Form.Group>
             <hr />

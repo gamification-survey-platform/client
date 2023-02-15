@@ -1,34 +1,15 @@
-import { useEffect, useState } from 'react'
 import { Container } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
 import { useMatch } from 'react-router'
-import { getCourse } from '../../api/courses'
-import { mockCourse } from '../../utils/mockData'
+import coursesSelector from '../../store/courses/selectors'
 
 const CourseDetails = () => {
   const {
     params: { courseId }
   } = useMatch('/courses/:courseId/details')
-  const [course, setCourse] = useState({
-    course_name: '',
-    course_number: '',
-    semester: '',
-    syllabus: ''
-  })
 
-  useEffect(() => {
-    const fetchCourseDetails = async () => {
-      try {
-        const res = await getCourse(courseId)
-        if (res.status === 200) {
-          const course = res.data
-          setCourse(mockCourse)
-        }
-      } catch (e) {
-        console.error(e)
-      }
-    }
-    fetchCourseDetails()
-  }, [])
+  const { courses } = useSelector(coursesSelector)
+  const course = courses.find(({ course_number }) => course_number === courseId)
 
   return (
     <Container className="mt-5">
