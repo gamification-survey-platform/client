@@ -16,7 +16,24 @@ const coursesSlice = createSlice({
   name: 'courses',
   initialState,
   reducers: {
-    resetCourse: () => initialState
+    addCourse: (state, action) => ({ ...state, courses: [...state.courses, action.payload] }),
+    editCourse: (state, action) => {
+      console.log(action.payload)
+      const { pk, course: newCourse } = action.payload
+      const newCourses = state.courses.filter((course) => (course.pk === pk ? newCourse : course))
+      return {
+        ...state,
+        courses: newCourses
+      }
+    },
+    deleteCourse: (state, action) => {
+      const coursePk = action.payload
+      const newCourses = state.courses.filter((course) => course.pk !== coursePk)
+      return {
+        ...state,
+        courses: newCourses
+      }
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(getCourses.fulfilled, (state, action) => ({
@@ -28,6 +45,6 @@ const coursesSlice = createSlice({
   }
 })
 
-export const { resetCourse } = coursesSlice.actions
+export const { addCourse, editCourse, deleteCourse } = coursesSlice.actions
 
 export default coursesSlice.reducer

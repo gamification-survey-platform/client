@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Card, Button, Form, Alert } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
-import { login } from '../store/user/userSlice'
+import { login, register, STATUS } from '../store/user/userSlice'
 import userSelector from '../store/user/selectors'
 import { useSelector, useDispatch } from 'react-redux'
 
@@ -11,19 +11,26 @@ const Landing = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const { user, status } = useSelector(userSelector)
-  const [showError, setShowError] = useState(false)
+  const [message, setMessage] = useState()
 
   useEffect(() => {
-    if (user && status == 'success') {
+    if (user && status == STATUS.LOGIN_SUCCESS) {
       navigate('/dashboard')
-    } else if (!user && status == 'failed') {
-      setShowError(true)
+    } else if (!user) {
+      setAndrewId('')
+      setPassword('')
+      setMessage(status)
     }
   }, [user, status])
 
   const handleLogin = (e) => {
     e.preventDefault()
     dispatch(login({ andrewId, password }))
+  }
+
+  const handleRegister = (e) => {
+    e.preventDefault()
+    dispatch(register({ andrewId, password }))
   }
 
   return (
@@ -33,7 +40,7 @@ const Landing = () => {
           // eslint-disable-next-line react/no-unescaped-entities
           <h2>Welcome! Let's get started.</h2>
         }
-        <h3>Sign in to continue.</h3>
+        <h3>Sign in or Register to continue.</h3>
         <Form.Group style={{ textAlign: 'left' }} className="m-5">
           <Form.Label>Andrew ID:</Form.Label>
           <Form.Control
@@ -54,12 +61,36 @@ const Landing = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button variant="primary" type="submit" onClick={handleLogin}>
-          Login
-        </Button>
-        {showError && (
+        <div className="d-flex flex-column w-25 mx-auto my-0">
+          <Button
+            disabled={!andrewId || !password}
+            variant="primary"
+            type="submit"
+            onClick={handleLogin}>
+            Login
+          </Button>
+          <Button
+            disabled={!andrewId || !password}
+            className="mt-3"
+            variant="info"
+            type="submit"
+            onClick={handleRegister}>
+            Register
+          </Button>
+        </div>
+        {message === STATUS.LOGIN_FAILED && (
           <Alert className="mt-5" variant="danger">
-            Invalid username/password
+            Failed to login
+          </Alert>
+        )}
+        {message === STATUS.REGISTRATION_SUCCESS && (
+          <Alert className="mt-5" variant="success">
+            Successfully registered! Please re-enter your AndrewID and password
+          </Alert>
+        )}
+        {message === STATUS.REGISTRATION_FAILED && (
+          <Alert className="mt-5" variant="danger">
+            Failed to register
           </Alert>
         )}
       </Form>

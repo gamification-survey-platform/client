@@ -73,7 +73,7 @@ const Profile = () => {
                 Date Joined
               </Form.Label>
               <Col xs="10">
-                <Form.Control readOnly value={dateJoined.toLocaleDateString()} />
+                <Form.Control readOnly value={dateJoined} />
               </Col>
             </Form.Group>
             <hr />

@@ -1,5 +1,13 @@
 import api from './apiUtils'
-//import { persistor } from '../store/store'
+
+const register = async ({ andrewId, password }) => {
+  try {
+    const res = await api.post(`register/`, { andrew_id: andrewId, password })
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
 
 const login = async ({ andrewId, password }) => {
   try {
@@ -18,4 +26,4 @@ const isAuthenticated = () => {
   return localStorage.getItem('token') !== null
 }
 
-export { login, logout, isAuthenticated }
+export { register, login, logout, isAuthenticated }

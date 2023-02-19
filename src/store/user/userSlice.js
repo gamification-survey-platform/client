@@ -1,6 +1,11 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
-import { login as loginApi, logout as removeToken } from '../../api/login'
+import { login as loginApi, logout as removeToken, register as registerApi } from '../../api/login'
 import { PURGE } from 'redux-persist'
+
+export const register = createAsyncThunk('user/register', async ({ andrewId, password }) => {
+  const response = await registerApi({ andrewId, password })
+  return response.data
+})
 
 export const login = createAsyncThunk('user/login', async ({ andrewId, password }) => {
   const response = await loginApi({ andrewId, password })
@@ -12,6 +17,13 @@ const initialState = {
   status: null
 }
 
+export const STATUS = {
+  LOGIN_SUCCESS: 'LOGIN_SUCCESS',
+  LOGIN_FAILED: 'LOGIN_FAILED',
+  REGISTRATION_SUCCESS: 'REGISTRATION_SUCCESS',
+  REGISTRATION_FAILED: 'REGISTRATION_FAILED'
+}
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -19,7 +31,14 @@ const userSlice = createSlice({
     logout: () => initialState
   },
   extraReducers: (builder) => {
-    builder.addCase(login.pending, (state) => ({ ...state, status: 'pending' }))
+    builder.addCase(register.fulfilled, (state, action) => ({
+      ...state,
+      status: STATUS.REGISTRATION_SUCCESS
+    }))
+    builder.addCase(register.rejected, (state) => ({
+      ...state,
+      status: STATUS.REGISTRATION_FAILED
+    }))
     builder.addCase(login.fulfilled, (state, action) => {
       const {
         andrew_id: andrewId,
@@ -33,10 +52,10 @@ const userSlice = createSlice({
       const user = { andrewId, firstName, lastName, email, isActive, dateJoined, role }
       return {
         user,
-        status: 'success'
+        status: STATUS.LOGIN_SUCCESS
       }
     })
-    builder.addCase(login.rejected, (state) => ({ ...state, status: 'failed' }))
+    builder.addCase(login.rejected, (state) => ({ ...state, status: STATUS.LOGIN_FAILED }))
     builder.addCase(PURGE, () => {
       removeToken()
       initialState

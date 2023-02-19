@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Alert, Container, Table, Button } from 'react-bootstrap'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
-import { deleteCourse } from '../../api/courses'
+import { deleteCourse as deleteCourseApi } from '../../api/courses'
+import { deleteCourse } from '../../store/courses/coursesSlice'
 import coursesSelector from '../../store/courses/selectors'
 import userSelector from '../../store/user/selectors'
 
@@ -11,10 +12,15 @@ const Courses = () => {
   const { user } = useSelector(userSelector)
   const { courses } = useSelector(coursesSelector)
   const [showError, setShowError] = useState(false)
+  const dispatch = useDispatch()
 
-  const handleDeleteCourse = async (e, courseNumber) => {
+  const handleDeleteCourse = async (e, coursePk) => {
     try {
-      const res = await deleteCourse(courseNumber)
+      const res = await deleteCourseApi(coursePk)
+      if (res.status === 200) {
+        setShowError(false)
+        dispatch(deleteCourse(coursePk))
+      }
     } catch (e) {
       setShowError(true)
     }
@@ -53,7 +59,7 @@ const Courses = () => {
                   </Link>
                   {user && user.role === 'admin' && (
                     <>
-                      <Link to={`/courses/${course.course_number}/assignments`}>
+                      <Link to={`/courses/${course.course_number}/edit`}>
                         <Button className="mx-3" variant="warning">
                           Edit
                         </Button>
@@ -61,7 +67,7 @@ const Courses = () => {
                       <Button
                         className="mx-3"
                         variant="danger"
-                        onClick={(e) => handleDeleteCourse(e, course.course_number)}>
+                        onClick={(e) => handleDeleteCourse(e, course.pk)}>
                         Delete
                       </Button>
                     </>
@@ -73,7 +79,9 @@ const Courses = () => {
         </tbody>
       </Table>
       {user && user.role === 'admin' && (
-        <Button onClick={() => navigate('/courses/add')}>Add Course</Button>
+        <Button className="my-5" onClick={() => navigate('/courses/add')}>
+          Add Course
+        </Button>
       )}
       {showError && <Alert variant="danger">Failed to delete course.</Alert>}
     </Container>

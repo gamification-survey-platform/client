@@ -1,11 +1,13 @@
 import { validateAdmin, validateUser } from '../utils/validators'
 import api from './apiUtils'
 
-const createCourse = async (course) => {
+const createCourse = async (courseData) => {
   try {
     if (!validateUser()) throw new Error('User is not authenticated')
     if (!validateAdmin()) throw new Error('User does not have required role')
-    const res = await api.post(`courses/`, { course })
+    const res = await api.post(`courses/`, courseData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -16,18 +18,20 @@ const editCourse = async ({ courseId, course }) => {
   try {
     if (!validateUser()) throw new Error('User is not authenticated')
     if (!validateAdmin()) throw new Error('User does not have required role')
-    const res = await api.put(`courses/${courseId}`, { course })
+    const res = await api.put(`courses/${courseId}/`, course, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
   }
 }
 
-const deleteCourse = async ({ courseId }) => {
+const deleteCourse = async (courseId) => {
   try {
     if (!validateUser()) throw new Error('User is not authenticated')
     if (!validateAdmin()) throw new Error('User does not have required role')
-    const res = await api.delete('/courses', { params: { courseId } })
+    const res = await api.delete('/courses/', { params: { course_id: courseId } })
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
