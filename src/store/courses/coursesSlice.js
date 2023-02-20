@@ -20,7 +20,7 @@ const coursesSlice = createSlice({
     editCourse: (state, action) => {
       console.log(action.payload)
       const { pk, course: newCourse } = action.payload
-      const newCourses = state.courses.filter((course) => (course.pk === pk ? newCourse : course))
+      const newCourses = state.courses.map((course) => (course.pk === pk ? newCourse : course))
       return {
         ...state,
         courses: newCourses
