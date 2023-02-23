@@ -35,6 +35,17 @@ const CourseAssignments = () => {
     navigate(`${location.pathname}/add`)
   }
 
+  const handleEditAssignment = (e, assignment) => {
+    e.preventDefault()
+    navigate(`${location.pathname}/${assignment.id}/edit`, {
+      state: assignment
+    })
+  }
+
+  const handleDeleteAssignment = (e, assignment) => {
+    e.preventDefault()
+  }
+
   return (
     <Container className="mt-5">
       <Table striped bordered hover>
@@ -56,7 +67,7 @@ const CourseAssignments = () => {
                 <td>{assignment.assignment_type}</td>
                 <td>{assignment.total_score}</td>
                 <td>{assignment.date_released.toLocaleString()}</td>
-                <td>{assignment.due_date.toLocaleString()}</td>
+                <td>{assignment.date_due.toLocaleString()}</td>
                 <td>
                   <Link to={`${location.pathname}/${assignment.id}/view`}>
                     <Button variant="secondary">View</Button>
@@ -73,9 +84,14 @@ const CourseAssignments = () => {
                   </Link>
                 </td>
                 <td>
-                  <Link to={`${location.pathname}/${assignment.id}/edit`}>
-                    <Button variant="warning">Edit</Button>
-                  </Link>
+                  <Button variant="warning" onClick={(e) => handleEditAssignment(e, assignment)}>
+                    Edit
+                  </Button>
+                </td>
+                <td>
+                  <Button variant="danger" onClick={(e) => handleDeleteAssignment(e, assignment)}>
+                    Delete
+                  </Button>
                 </td>
               </tr>
             )

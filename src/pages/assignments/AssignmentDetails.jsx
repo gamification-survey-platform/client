@@ -14,7 +14,7 @@ const AssignmentDetails = () => {
     description: '',
     total_score: 0,
     weight: 0,
-    due_date: new Date()
+    date_due: new Date()
   })
   const [error, setShowError] = useState(false)
   const { courses } = useSelector(coursesSelector)
@@ -27,7 +27,7 @@ const AssignmentDetails = () => {
     }
     fetchAssignment()
   }, [])
-  console.log(assignment)
+
   return (
     <Container className="m-3">
       <Row>
@@ -41,7 +41,7 @@ const AssignmentDetails = () => {
           <Row>
             <Col>Total Score: {assignment.total_score}</Col>
             <Col>Weight: {assignment.weight}</Col>
-            <Col>Due date: {assignment.due_date.toDateString()}</Col>
+            <Col>Due date: {assignment.date_due.toDateString()}</Col>
           </Row>
           <hr />
           <p>{assignment.description}</p>

@@ -40,7 +40,6 @@ const AddCourse = () => {
         const res = editingCourse
           ? await editCourseApi({ courseId: editingCourse.pk, course: courseData })
           : await createCourseApi(courseData)
-        console.log(res)
         if (res.status === 200) {
           if (editingCourse) {
             dispatch(editCourse({ pk: editingCourse.pk, course: res.data }))

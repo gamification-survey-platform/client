@@ -1,21 +1,33 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Container, Button, Form, Col, Alert } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
-import { useMatch, useNavigate } from 'react-router'
+import { useLocation, useMatch, useNavigate } from 'react-router'
 import coursesSelector from '../../store/courses/selectors'
 import DatePicker from 'react-datepicker'
 import { useParams } from 'react-router'
-import { createAssignment } from '../../api/assignments'
+import { createAssignment, editAssignment } from '../../api/assignments'
 
-const AddAssignment = (editingAssignment = null) => {
+const AddAssignment = () => {
   const [validated, setValidated] = useState(false)
   const [showError, setShowError] = useState(false)
   const [releaseDate, setReleaseDate] = useState(new Date())
   const [dueDate, setDueDate] = useState(new Date())
+  const formRef = useRef()
   const params = useParams()
+  const { state: editingAssignment } = useLocation()
   const { courses } = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === params.course_id)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (formRef && formRef.current && editingAssignment) {
+      for (let k of Object.keys(editingAssignment)) {
+        if (formRef.current[`${k}`]) {
+          formRef.current[`${k}`].value = editingAssignment[`${k}`]
+        }
+      }
+    }
+  }, [])
   const handleSubmit = async (event) => {
     const form = event.currentTarget
     event.preventDefault()
@@ -25,8 +37,15 @@ const AddAssignment = (editingAssignment = null) => {
       let formObj = Object.fromEntries(formData.entries())
       formObj = { ...formObj, course: selectedCourse.pk }
       try {
-        const res = await createAssignment({ coursePk: selectedCourse.pk, assignment: formObj })
-        if (res.status == 201) navigate(-1)
+        const res = editingAssignment
+          ? await editAssignment({
+              coursePk: selectedCourse.pk,
+              assignment: formObj,
+              assignment_id: editingAssignment.id
+            })
+          : await createAssignment({ coursePk: selectedCourse.pk, assignment: formObj })
+        if (editingAssignment && res.status === 200) navigate(-1)
+        else if (res.status === 201) navigate(-1)
       } catch (e) {
         setShowError(true)
       }
@@ -36,7 +55,7 @@ const AddAssignment = (editingAssignment = null) => {
 
   return (
     <Container className="my-5 text-left">
-      <Form noValidate validated={validated} onSubmit={handleSubmit}>
+      <Form ref={formRef} noValidate validated={validated} onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="blah">
           <Form.Label className="ml-3">Assignment name:</Form.Label>
           <Col xs="5">
@@ -91,7 +110,7 @@ const AddAssignment = (editingAssignment = null) => {
         <Form.Group className="mb-3 ml-3">
           <Form.Label>Due date:</Form.Label>
           <DatePicker
-            name="due_date"
+            name="date_due"
             selected={dueDate}
             onChange={setDueDate}
             showTimeSelect
@@ -108,8 +127,8 @@ const AddAssignment = (editingAssignment = null) => {
           <Form.Control className="w-25" required name="weight" />
           <Form.Control.Feedback type="invalid">Please enter valid weight</Form.Control.Feedback>
         </Form.Group>
-        <Button className="ml-3" type="submit">
-          Create
+        <Button className="ml-3" variant={editingAssignment ? 'warning' : 'primary'} type="submit">
+          {editingAssignment ? 'Edit' : 'Create'}
         </Button>
         {showError && (
           <Alert className="mt-3" variant="danger">
