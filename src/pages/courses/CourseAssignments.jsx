@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux'
 import { Link, useLocation, useMatch, useNavigate } from 'react-router-dom'
 import { getAssignments } from '../../api/assignments'
 import userSelector from '../../store/user/selectors'
+import coursesSelector from '../../store/courses/selectors'
 import { mockAssignments } from '../../utils/mockData'
 
 const CourseAssignments = () => {
@@ -11,13 +12,15 @@ const CourseAssignments = () => {
   const {
     params: { courseId }
   } = useMatch('/courses/:courseId/assignments')
+  const { courses } = useSelector(coursesSelector)
+  const selectedCourse = courses.find((course) => course.course_number === courseId)
   const navigate = useNavigate()
   const [assignments, setAssignments] = useState([])
   const { user } = useSelector(userSelector)
 
   useEffect(() => {
     const fetchAssignments = async () => {
-      const res = await getAssignments(courseId)
+      const res = await getAssignments(selectedCourse.pk)
       if (res.status === 200) setAssignments(mockAssignments)
     }
     fetchAssignments()
