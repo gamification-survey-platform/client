@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Container, Table, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { Link, useLocation, useMatch, useNavigate } from 'react-router-dom'
-import { getAssignments } from '../../api/assignments'
+import { deleteAssignment, getAssignments } from '../../api/assignments'
 import userSelector from '../../store/user/selectors'
 import coursesSelector from '../../store/courses/selectors'
 
@@ -42,8 +42,18 @@ const CourseAssignments = () => {
     })
   }
 
-  const handleDeleteAssignment = (e, assignment) => {
+  const handleDeleteAssignment = async (e, assignment) => {
     e.preventDefault()
+    const res = await deleteAssignment({
+      coursePk: selectedCourse.pk,
+      assignment_id: assignment.id
+    })
+    if (res.status === 204) {
+      const newAssignments = assignments.filter(
+        (assignmentToRemove) => assignmentToRemove.id !== assignment.id
+      )
+      setAssignments(newAssignments)
+    }
   }
 
   return (
