@@ -1,60 +1,54 @@
 import { Col, Container, Row } from 'react-bootstrap'
 import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { getAssignments } from '../../api/assignments'
+import coursesSelector from '../../store/courses/selectors'
 import { mockAssignmentDetail } from '../../utils/mockData'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
   const [assignment, setAssignment] = useState({
-    title: '',
-    type: '',
-    submission: '',
-    totalScore: 0,
-    weight: 0,
-    due: new Date(),
+    assignment_name: '',
+    assignment_type: '',
     description: '',
-    comments: [],
-    artifactList: []
+    total_score: 0,
+    weight: 0,
+    due_date: new Date()
   })
   const [error, setShowError] = useState(false)
+  const { courses } = useSelector(coursesSelector)
+  const selectedCourse = courses.find((course) => course.course_number === course_id)
   useEffect(() => {
     const fetchAssignment = async () => {
-      const res = await getAssignments(course_id, assignment_id)
-      if (res.status === 200) setAssignment(mockAssignmentDetail)
+      const res = await getAssignments(selectedCourse.pk, assignment_id)
+      if (res.status === 200) setAssignment(res.data)
       else setShowError(true)
     }
     fetchAssignment()
   }, [])
-
+  console.log(assignment)
   return (
     <Container className="m-3">
       <Row>
         <Col xs="9">
-          <h3>{assignment.title}</h3>
+          <h3>{assignment.assignment_name}</h3>
           <hr />
           <Row>
-            <Col>Type: {assignment.type}</Col>
-            <Col>Submission: {assignment.submission}</Col>
+            <Col>Type: {assignment.assignment_type}</Col>
           </Row>
           <hr />
           <Row>
-            <Col>Total Score: {assignment.totalScore}</Col>
+            <Col>Total Score: {assignment.total_score}</Col>
             <Col>Weight: {assignment.weight}</Col>
-            <Col>Due date: {assignment.due.toDateString()}</Col>
+            <Col>Due date: {assignment.due_date.toDateString()}</Col>
           </Row>
           <hr />
           <p>{assignment.description}</p>
         </Col>
         <Col xs="2" className="mt-5">
           <h4>Admin Page:</h4>
-          {assignment.artifactList.map((a, i) => (
-            <p key={i}>{a}</p>
-          ))}
           <h5>Comments:</h5>
-          {assignment.comments.map((c, i) => (
-            <p key={i}>{c}</p>
-          ))}
         </Col>
       </Row>
     </Container>

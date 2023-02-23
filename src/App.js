@@ -122,7 +122,7 @@ const router = createBrowserRouter([
     path: '/courses/:course_id/assignments/:assignment_id/edit',
     element: (
       <ProtectedRoute>
-        <AssignmentEdit />
+        <AddAssignment />
       </ProtectedRoute>
     )
   },

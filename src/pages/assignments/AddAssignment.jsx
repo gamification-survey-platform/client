@@ -1,26 +1,32 @@
 import { useState } from 'react'
 import { Container, Button, Form, Col, Alert } from 'react-bootstrap'
+import { useSelector } from 'react-redux'
 import { useMatch, useNavigate } from 'react-router'
+import coursesSelector from '../../store/courses/selectors'
+import DatePicker from 'react-datepicker'
+import { useParams } from 'react-router'
 import { createAssignment } from '../../api/assignments'
 
-const AddAssignment = () => {
+const AddAssignment = (editingAssignment = null) => {
   const [validated, setValidated] = useState(false)
   const [showError, setShowError] = useState(false)
-  const {
-    params: { courseId }
-  } = useMatch('courses/:courseId/assignments/add')
+  const [releaseDate, setReleaseDate] = useState(new Date())
+  const [dueDate, setDueDate] = useState(new Date())
+  const params = useParams()
+  const { courses } = useSelector(coursesSelector)
+  const selectedCourse = courses.find((course) => course.course_number === params.course_id)
   const navigate = useNavigate()
-
   const handleSubmit = async (event) => {
     const form = event.currentTarget
     event.preventDefault()
     event.stopPropagation()
     if (form.checkValidity()) {
       const formData = new FormData(event.currentTarget)
-      const formObj = Object.fromEntries(formData.entries())
+      let formObj = Object.fromEntries(formData.entries())
+      formObj = { ...formObj, course: selectedCourse.pk }
       try {
-        const res = await createAssignment({ courseId, assignment: formObj })
-        if (res.status == 200) navigate(-1)
+        const res = await createAssignment({ coursePk: selectedCourse.pk, assignment: formObj })
+        if (res.status == 201) navigate(-1)
       } catch (e) {
         setShowError(true)
       }
@@ -34,7 +40,7 @@ const AddAssignment = () => {
         <Form.Group className="mb-3" controlId="blah">
           <Form.Label className="ml-3">Assignment name:</Form.Label>
           <Col xs="5">
-            <Form.Control required name="name" />
+            <Form.Control required name="assignment_name" />
             <Form.Control.Feedback type="invalid">
               Please enter an assignment name
             </Form.Control.Feedback>
@@ -51,28 +57,65 @@ const AddAssignment = () => {
         </Form.Group>
         <Form.Group className="mb-3 ml-3">
           <Form.Label>Type:</Form.Label>
-          <Form.Select className="w-25" name="type">
-            <option value="individual">Individual</option>
-            <option value="team">Team</option>
+          <Form.Select className="w-25" name="assignment_type">
+            <option value="Individual">Individual</option>
+            <option value="Team">Team</option>
           </Form.Select>
         </Form.Group>
         <Form.Group className="mb-3 ml-3">
           <Form.Label>Submission type:</Form.Label>
-          <Form.Select className="w-25" name="submissionType">
-            <option value="file">File</option>
-            <option value="url">URL</option>
-            <option value="text">Text</option>
+          <Form.Select className="w-25" name="submission_type">
+            <option value="File">File</option>
+            <option value="URL">URL</option>
+            <option value="Text">Text</option>
           </Form.Select>
         </Form.Group>
         <Form.Group className="mb-3 ml-3">
+          <Form.Label>Review assignment policy:</Form.Label>
+          <Form.Select className="w-25" name="review_assign_policy">
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+          </Form.Select>
+        </Form.Group>
+        <Form.Group className="mb-3 ml-3">
+          <Form.Label>Release date:</Form.Label>
+          <DatePicker
+            name="date_released"
+            selected={releaseDate}
+            onChange={setReleaseDate}
+            showTimeSelect
+            dateFormat="Pp"
+          />
+        </Form.Group>
+        <Form.Group className="mb-3 ml-3">
+          <Form.Label>Due date:</Form.Label>
+          <DatePicker
+            name="due_date"
+            selected={dueDate}
+            onChange={setDueDate}
+            showTimeSelect
+            dateFormat="Pp"
+          />
+        </Form.Group>
+        <Form.Group className="mb-3 ml-3">
           <Form.Label>Total Score:</Form.Label>
-          <Form.Control className="w-25" required name="score" />
+          <Form.Control className="w-25" required name="total_score" />
           <Form.Control.Feedback type="invalid">Please enter valid score</Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group className="mb-3 ml-3">
+          <Form.Label>Weight:</Form.Label>
+          <Form.Control className="w-25" required name="weight" />
+          <Form.Control.Feedback type="invalid">Please enter valid weight</Form.Control.Feedback>
         </Form.Group>
         <Button className="ml-3" type="submit">
           Create
         </Button>
-        {showError && <Alert variant="danger">Failed to create course.</Alert>}
+        {showError && (
+          <Alert className="mt-3" variant="danger">
+            Failed to create assignment.
+          </Alert>
+        )}
       </Form>
     </Container>
   )

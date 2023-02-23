@@ -5,7 +5,6 @@ import { Link, useLocation, useMatch, useNavigate } from 'react-router-dom'
 import { getAssignments } from '../../api/assignments'
 import userSelector from '../../store/user/selectors'
 import coursesSelector from '../../store/courses/selectors'
-import { mockAssignments } from '../../utils/mockData'
 
 const CourseAssignments = () => {
   const location = useLocation()
@@ -21,7 +20,7 @@ const CourseAssignments = () => {
   useEffect(() => {
     const fetchAssignments = async () => {
       const res = await getAssignments(selectedCourse.pk)
-      if (res.status === 200) setAssignments(mockAssignments)
+      if (res.status === 200) setAssignments(res.data)
     }
     fetchAssignments()
   }, [])
@@ -53,11 +52,11 @@ const CourseAssignments = () => {
           {assignments.map((assignment, i) => {
             return (
               <tr key={i}>
-                <td>{assignment.name}</td>
-                <td>{assignment.type}</td>
-                <td>{assignment.score}</td>
-                <td>{assignment.availableDate.toLocaleString()}</td>
-                <td>{assignment.dueDate.toLocaleString()}</td>
+                <td>{assignment.assignment_name}</td>
+                <td>{assignment.assignment_type}</td>
+                <td>{assignment.total_score}</td>
+                <td>{assignment.date_released.toLocaleString()}</td>
+                <td>{assignment.due_date.toLocaleString()}</td>
                 <td>
                   <Link to={`${location.pathname}/${assignment.id}/view`}>
                     <Button variant="secondary">View</Button>

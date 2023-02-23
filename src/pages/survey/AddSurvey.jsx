@@ -9,7 +9,6 @@ const AddSurvey = () => {
   const [showError, setShowError] = useState(false)
   const [releaseDate, setReleaseDate] = useState(new Date())
   const [dueDate, setDueDate] = useState(new Date())
-  const dispatch = useDispatch()
   const params = useParams()
   const navigate = useNavigate()
 

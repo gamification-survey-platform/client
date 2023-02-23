@@ -1,13 +1,22 @@
 import api from '../api/apiUtils'
 import { validateUser, validateAdmin } from '../utils/validators'
 
-const getAssignments = async (coursePk, assignmentId = null) => {
+const formatAssignment = (assignment) => {
+  assignment.total_score = parseFloat(assignment.total_score)
+  assignment.weight = parseFloat(assignment.weight)
+  assignment.due_date = new Date(assignment.due_date)
+  assignment.date_released = new Date(assignment.date_released)
+  return assignment
+}
+
+const getAssignments = async (coursePk, assignment_id = null) => {
   try {
-    if (!validateUser()) throw new Error('User is not authenticated')
-    const url = assignmentId
-      ? `courses/${coursePk}/assignments/${assignmentId}`
-      : `courses/${coursePk}/assignments`
-    const res = await api.get(url)
+    const config = assignment_id ? { params: { assignment_id } } : {}
+    const res = await api.get(`courses/${coursePk}/assignments`, config)
+    console.log(res.data)
+    res.data = assignment_id
+      ? formatAssignment(res.data)
+      : JSON.parse(res.data).map((r) => formatAssignment(r.assignment))
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -18,7 +27,11 @@ const createAssignment = async ({ coursePk, assignment }) => {
   try {
     if (!validateUser()) throw new Error('User is not authenticated')
     if (!validateAdmin()) throw new Error('User does not have required role')
-    const res = await api.post(`courses/${coursePk}/assignments/`, { assignment })
+    const formattedAssignment = formatAssignment(assignment)
+    const res = api.post(`courses/${coursePk}/assignments/`, {
+      course: coursePk,
+      ...formattedAssignment
+    })
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
