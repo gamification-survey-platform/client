@@ -1,21 +1,37 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 import { Container, Table, Form, Button, Alert, Row, Col } from 'react-bootstrap'
 import { useParams } from 'react-router'
-import { addMember, remindMember, removeMember } from '../../api/members'
-import { mockMembers as members } from '../../utils/mockData'
+import { addMember, getMembers, remindMember, removeMember } from '../../api/members'
+import coursesSelector from '../../store/courses/selectors'
 
 const CourseMembers = () => {
+  const [members, setMembers] = useState([])
   const [message, setMessage] = useState('')
   const [addId, setAddId] = useState('')
+  const [memberRole, setMemberRole] = useState('Student')
   const [teamId, setTeamId] = useState('')
   const { course_id } = useParams()
+  const { courses } = useSelector(coursesSelector)
+  const selectedCourse = courses.find((course) => course.course_number === course_id)
+
+  useEffect(() => {
+    const fetchCourseMembers = async () => {
+      const res = await getMembers(selectedCourse.pk)
+      if (res.status === 200) setMembers(res.data.membership)
+    }
+    fetchCourseMembers()
+  }, [])
 
   const handleAddMember = async (event) => {
     event.preventDefault()
     event.stopPropagation()
     try {
-      const res = await addMember(course_id, addId, teamId)
-      if (res.status === 200) setMessage({ type: 'success', text: `Successfully added ${addId}` })
+      const res = await addMember(selectedCourse.pk, addId, memberRole, teamId)
+      if (res.status === 200) {
+        setMembers(res.data.membership)
+        setMessage({ type: 'success', text: `Successfully added ${addId}` })
+      }
     } catch (e) {
       setMessage({ type: 'danger', text: `Failed to add ${addId}` })
     }
@@ -25,7 +41,7 @@ const CourseMembers = () => {
     e.preventDefault()
     e.stopPropagation()
     try {
-      const res = await remindMember(course_id, memberId)
+      const res = await remindMember(selectedCourse.pk, memberId)
       if (res.status === 200)
         setMessage({ type: 'success', text: `Successfully reminded ${memberId}` })
     } catch (e) {
@@ -33,15 +49,18 @@ const CourseMembers = () => {
     }
   }
 
-  const handleRemoveMember = async (e, memberId) => {
+  const handleRemoveMember = async (e, andrewIdToRemove) => {
     e.preventDefault()
     e.stopPropagation()
     try {
-      const res = await removeMember(course_id, memberId)
-      if (res.status === 200)
-        setMessage({ type: 'success', text: `Successfully removed ${memberId}` })
+      const res = await removeMember(selectedCourse.pk, andrewIdToRemove)
+      if (res.status === 204) {
+        const newMembers = members.filter((member) => member.andrew_id !== andrewIdToRemove)
+        setMembers(newMembers)
+        setMessage({ type: 'success', text: `Successfully removed ${andrewIdToRemove}` })
+      }
     } catch (e) {
-      setMessage({ type: 'danger', text: `Failed to remove ${memberId}` })
+      setMessage({ type: 'danger', text: `Failed to remove ${andrewIdToRemove}` })
     }
   }
 
@@ -60,16 +79,16 @@ const CourseMembers = () => {
           {members.map((member, i) => {
             return (
               <tr key={i}>
-                <td>{member.andrewId}</td>
-                <td>{member.role}</td>
+                <td>{member.andrew_id}</td>
+                <td>{member.userRole}</td>
                 <td>{member.team}</td>
                 <td>
-                  <Button variant="info" onClick={(e) => handleRemindMember(e, member.andrewId)}>
+                  <Button variant="info" onClick={(e) => handleRemindMember(e, member.andrew_id)}>
                     Remind
                   </Button>
                 </td>
                 <td>
-                  <Button variant="danger" onClick={(e) => handleRemoveMember(e, member.andrewId)}>
+                  <Button variant="danger" onClick={(e) => handleRemoveMember(e, member.andrew_id)}>
                     Remove
                   </Button>
                 </td>
@@ -82,7 +101,7 @@ const CourseMembers = () => {
         <Col xs="5" className="text-left">
           <Form>
             <Form.Group className="my-3">
-              <Form.Label>Add Member:</Form.Label>
+              <Form.Label>Member andrew_id:</Form.Label>
               <Form.Control
                 className="w-50"
                 value={addId}
@@ -90,7 +109,18 @@ const CourseMembers = () => {
               />
             </Form.Group>
             <Form.Group className="my-3">
-              <Form.Label>Add Team (optional):</Form.Label>
+              <Form.Label>Member role:</Form.Label>
+              <Form.Select
+                className="w-50"
+                value={memberRole}
+                onChange={(e) => setMemberRole(e.target.value)}>
+                <option value="Student">Student</option>
+                <option value="TA">TA</option>
+                <option value="Instructor">Instructor</option>
+              </Form.Select>
+            </Form.Group>
+            <Form.Group className="my-3">
+              <Form.Label>Team (optional):</Form.Label>
               <Form.Control
                 className="w-50"
                 value={teamId}
