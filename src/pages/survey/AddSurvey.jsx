@@ -4,22 +4,29 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import DatePicker from 'react-datepicker'
 import { createSurvey } from '../../api/survey'
+import coursesSelector from '../../store/courses/selectors'
 
 const AddSurvey = () => {
   const [showError, setShowError] = useState(false)
   const [releaseDate, setReleaseDate] = useState(new Date())
   const [dueDate, setDueDate] = useState(new Date())
-  const params = useParams()
+  const { courses } = useSelector(coursesSelector)
+  const { course_id, assignment_id } = useParams()
   const navigate = useNavigate()
+  const selectedCourse = courses.find((course) => course.course_number === course_id)
 
   const handleSubmit = async (event) => {
     event.preventDefault()
     event.stopPropagation()
     const formData = new FormData(event.currentTarget)
     const formObj = Object.fromEntries(formData.entries())
-    const surveyData = { ...formObj, ...params, sections: [] }
+    const surveyData = {
+      course_id: selectedCourse.pk,
+      assignment_id,
+      survey: formObj
+    }
     const res = await createSurvey(surveyData)
-    if (res.status === 201) navigate(-1)
+    if (res.status === 200) navigate(-1)
     else setShowError(true)
   }
 
@@ -27,15 +34,21 @@ const AddSurvey = () => {
     <Container className="mt-5 text-left">
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
+          <Form.Label className="ml-3">Template Name:</Form.Label>
+          <Col>
+            <Form.Control as="textarea" name="template_name" rows={3} />
+          </Col>
+        </Form.Group>
+        <Form.Group className="mb-3">
           <Form.Label className="ml-3">Instruction (optional):</Form.Label>
           <Col>
-            <Form.Control as="textarea" name="instruction" rows={3} />
+            <Form.Control as="textarea" name="instructions" rows={3} />
           </Col>
         </Form.Group>
         <Form.Group className="mb-3">
           <Form.Label className="ml-3">Additional Information (optional):</Form.Label>
           <Col xs="5">
-            <Form.Control as="textarea" name="information" rows={3} />
+            <Form.Control as="textarea" name="other_info" rows={3} />
           </Col>
         </Form.Group>
         <Form.Group className="mb-3 ml-3">
@@ -44,12 +57,19 @@ const AddSurvey = () => {
             selected={releaseDate}
             showTimeSelect
             dateFormat="Pp"
+            name="date_released"
             onChange={setReleaseDate}
           />
         </Form.Group>
         <Form.Group className="mb-3 ml-3">
           <Form.Label>Due date:</Form.Label>
-          <DatePicker selected={dueDate} showTimeSelect dateFormat="Pp" onChange={setDueDate} />
+          <DatePicker
+            name="date_due"
+            selected={dueDate}
+            showTimeSelect
+            dateFormat="Pp"
+            onChange={setDueDate}
+          />
         </Form.Group>
         <Button className="ml-3" type="submit">
           Create

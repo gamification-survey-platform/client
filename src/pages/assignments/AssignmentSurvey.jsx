@@ -25,9 +25,14 @@ const AssignmentSurvey = () => {
     const fetchSurvey = async () => {
       try {
         const res = await getSurvey({ courseId, assignmentId })
+        /*
         if (res.status === 200) {
           if (assignmentId === '2') setSurvey(mockSurvey)
           else setSurveyExists(false)
+        }
+        */
+        if (res.status === 404) {
+          navigate(`/courses/${courseId}/assignments/${assignmentId}/survey/add`)
         }
       } catch (e) {
         setShowError(true)

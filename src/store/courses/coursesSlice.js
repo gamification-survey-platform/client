@@ -18,7 +18,6 @@ const coursesSlice = createSlice({
   reducers: {
     addCourse: (state, action) => ({ ...state, courses: [...state.courses, action.payload] }),
     editCourse: (state, action) => {
-      console.log(action.payload)
       const { pk, course: newCourse } = action.payload
       const newCourses = state.courses.map((course) => (course.pk === pk ? newCourse : course))
       return {

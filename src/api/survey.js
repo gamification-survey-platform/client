@@ -2,16 +2,20 @@ import api from './apiUtils'
 
 const getSurvey = async ({ courseId, assignmentId }) => {
   try {
-    const res = await api.get(`/courses/${courseId}/assignments/${assignmentId}/survey`)
+    const res = await api.get(`/courses/${courseId}/assignments/${assignmentId}/feedback_surveys`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    // Return response to indicate no survey exists
+    return error.response
   }
 }
 
-const createSurvey = async ({ courseId, assignmentId, survey }) => {
+const createSurvey = async ({ course_id, assignment_id, survey }) => {
   try {
-    const res = await api.post(`/courses/${courseId}/assignments/${assignmentId}/survey`, survey)
+    const res = await api.post(
+      `/courses/${course_id}/assignments/${assignment_id}/feedback_surveys/`,
+      survey
+    )
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
