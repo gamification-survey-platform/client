@@ -26,7 +26,7 @@ const AddSurvey = () => {
       survey: formObj
     }
     const res = await createSurvey(surveyData)
-    if (res.status === 200) navigate(-1)
+    if (res.status === 201 || res.status === 200) navigate(-1)
     else setShowError(true)
   }
 

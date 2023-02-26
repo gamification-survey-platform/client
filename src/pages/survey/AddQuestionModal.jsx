@@ -1,17 +1,35 @@
 import { useEffect, useRef, useState } from 'react'
 import { Modal, Button, Form } from 'react-bootstrap'
 
-const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey }) => {
+const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey, editingQuestion }) => {
   const [validated, setValidated] = useState(false)
   const [options, setOptions] = useState([])
-  const [questionType, setQuestionType] = useState('mc')
+  const [questionType, setQuestionType] = useState('MULTIPLECHOICE')
   const formRef = useRef()
 
   useEffect(() => {
-    setQuestionType('mc')
+    setQuestionType('MULTIPLECHOICE')
     setOptions([])
     setValidated(false)
+    if (editingQuestion && formRef.current) {
+      formRef.current.getElementsByTagName('input')[0].value = editingQuestion.text
+      const numInputs = formRef.current.getElementsByTagName('input').length
+      formRef.current.getElementsByTagName('input')[numInputs - 1].checked =
+        editingQuestion.is_required
+      setQuestionType(editingQuestion.question_type)
+      if (editingQuestion.question_type === 'MULTIPLECHOICE') {
+        setOptions(editingQuestion.option_choices)
+      }
+    }
   }, [show])
+
+  useEffect(() => {
+    if (questionType === 'MULTIPLECHOICE' && options.length) {
+      for (let i = 0; i < options.length; i++) {
+        formRef.current.getElementsByTagName('input')[i + 2].value = options[i].text
+      }
+    }
+  }, [options])
 
   const handleClose = () => setShow(false)
 
@@ -24,7 +42,7 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey }) => {
       const formData = new FormData(form)
       const formObj = Object.fromEntries(formData.entries())
       let payload = {}
-      if (formObj.type === 'mc') {
+      if (formObj.question_type === 'MULTIPLECHOICE') {
         let options, required
         if (formObj.required) {
           required = true
@@ -34,13 +52,13 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey }) => {
           options = Object.values(formObj).slice(2)
         }
         payload = { options, required }
-      } else if (formObj.type === 'mcs') {
+      } else if (formObj.question_type === 'NUMBER') {
         payload = { numberOfOptions: parseInt(formObj.options), required: !!formObj.required }
-      } else if (formObj.type === 'multilineText') {
+      } else if (formObj.question_type === 'MULTIPLETEXT') {
         payload = { numberOfLines: parseInt(formObj.lines), required: !!formObj.required }
       }
-      const { question, type, ...rest } = formObj
-      const questionObj = { question, type, ...payload }
+      const { text, question_type, ...rest } = formObj
+      const questionObj = { text, question_type, ...payload }
       survey.sections[sectionIdx].questions.push(questionObj)
       setSurvey(survey)
       handleClose()
@@ -63,23 +81,23 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey }) => {
         <Form ref={formRef} noValidate validated={validated}>
           <Form.Group className="m-3">
             <Form.Label>Question:</Form.Label>
-            <Form.Control required name="question"></Form.Control>
+            <Form.Control required name="text"></Form.Control>
             <Form.Control.Feedback type="invalid">Please enter a question</Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="m-3">
             <Form.Label>Question Type:</Form.Label>
             <Form.Select
-              name="type"
+              name="question_type"
               onChange={(e) => setQuestionType(e.target.value)}
               value={questionType}>
-              <option value="mc">Multiple Choice</option>
-              <option value="mcs">Multiple Choice With Scale</option>
-              <option value="fixedText">Fixed Text</option>
-              <option value="multilineText">Multi-line Text</option>
-              <option value="textarea">Textarea</option>
+              <option value="MULTIPLECHOICE">Multiple Choice</option>
+              <option value="NUMBER">Multiple Choice With Scale</option>
+              <option value="FIXEDTEXT">Fixed Text</option>
+              <option value="MULTIPLETEXT">Multi-line Text</option>
+              <option value="TEXTAREA">Textarea</option>
             </Form.Select>
           </Form.Group>
-          {questionType === 'mc' && (
+          {questionType === 'MULTIPLECHOICE' && (
             <Form.Group className="m-3">
               <Form.Label>Choose number of options</Form.Label>
               <Form.Control
@@ -97,24 +115,27 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey }) => {
               })}
             </Form.Group>
           )}
-          {questionType === 'mcs' && (
+          {questionType === 'NUMBER' && (
             <Form.Group className="m-3">
               <Form.Label>Choose number of options</Form.Label>
-              <Form.Select name="options" onChange={setNumberOfOptions} value={options.length}>
+              <Form.Select
+                name="option_choices"
+                onChange={setNumberOfOptions}
+                value={options.length}>
                 <option value="3">3</option>
                 <option value="5">5</option>
                 <option value="7">7</option>
               </Form.Select>
             </Form.Group>
           )}
-          {questionType === 'multilineText' && (
+          {questionType === 'MULTIPLETEXT' && (
             <Form.Group className="m-3">
               <Form.Label>Choose number of lines</Form.Label>
               <Form.Control name="lines" defaultValue={1}></Form.Control>
             </Form.Group>
           )}
           <Form.Group className="m-3">
-            <Form.Check label="Required?" name="required"></Form.Check>
+            <Form.Check label="Required?" name="is_required"></Form.Check>
           </Form.Group>
         </Form>
       </Modal.Body>

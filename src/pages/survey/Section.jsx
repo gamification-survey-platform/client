@@ -1,15 +1,18 @@
 import { Row, Col } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
 import AddQuestionModal from './AddQuestionModal'
 import Question from './question/Question'
+import AddSectionModal from './AddSectionModal'
 
-const Section = ({ section, sectionIdx, survey, setSurvey }) => {
-  const [modalOpen, setModalOpen] = useState(false)
-  const { title, description, required, questions } = section
+const Section = ({ sectionIdx, survey, setSurvey }) => {
+  const [questionModalOpen, setQuestionModalOpen] = useState(false)
+  const [sectionModalOpen, setSectionModalOpen] = useState(false)
+  const section = survey.sections[sectionIdx]
+  const { title, is_required, questions } = section
   let className = 'text-left ml-3'
-  if (required) className += 'required-field'
+  if (is_required) className += ' required-field'
   const style = {
     marginTop: -15,
     marginBottom: 0,
@@ -17,6 +20,12 @@ const Section = ({ section, sectionIdx, survey, setSurvey }) => {
     backgroundColor: 'white',
     width: 'fit-content'
   }
+
+  const handleDeleteSection = () => {
+    const sections = survey.sections.filter((_, i) => i !== sectionIdx)
+    setSurvey({ ...survey, sections })
+  }
+
   return (
     <div className="border border-light mb-3">
       <Row>
@@ -35,7 +44,18 @@ const Section = ({ section, sectionIdx, survey, setSurvey }) => {
               pointerEvents: 'auto',
               cursor: 'pointer'
             }}
-            onClick={() => setModalOpen(true)}
+            onClick={() => setQuestionModalOpen(true)}
+          />
+          <FontAwesomeIcon
+            icon={faEdit}
+            style={{
+              fontSize: '2em',
+              color: '#ffd43b',
+              margin: 10,
+              pointerEvents: 'auto',
+              cursor: 'pointer'
+            }}
+            onClick={() => setSectionModalOpen(true)}
           />
           <FontAwesomeIcon
             icon={faTrash}
@@ -46,21 +66,32 @@ const Section = ({ section, sectionIdx, survey, setSurvey }) => {
               pointerEvents: 'auto',
               cursor: 'pointer'
             }}
+            onClick={handleDeleteSection}
           />
           <AddQuestionModal
             sectionIdx={sectionIdx}
-            show={modalOpen}
-            setShow={setModalOpen}
+            show={questionModalOpen}
+            setShow={setQuestionModalOpen}
             survey={survey}
             setSurvey={setSurvey}
           />
+          <AddSectionModal
+            show={sectionModalOpen}
+            setShow={setSectionModalOpen}
+            survey={survey}
+            setSurvey={setSurvey}
+            editingSection={section}
+          />
         </Col>
       </Row>
-      <Row>
-        <h4 className="text-left ml-3">{description}</h4>
-      </Row>
       {questions.map((question, i) => (
-        <Question key={i} {...question} />
+        <Question
+          key={i}
+          {...question}
+          survey={survey}
+          setSurvey={setSurvey}
+          sectionIdx={sectionIdx}
+        />
       ))}
     </div>
   )

@@ -10,6 +10,16 @@ const getSurvey = async ({ courseId, assignmentId }) => {
   }
 }
 
+const getSurveyDetails = async ({ courseId, assignmentId }) => {
+  try {
+    const res = await api.get(`/courses/${courseId}/assignments/${assignmentId}/surveys`)
+    return res
+  } catch (error) {
+    // Return response to indicate no survey exists
+    return error.response
+  }
+}
+
 const createSurvey = async ({ course_id, assignment_id, survey }) => {
   try {
     const res = await api.post(
@@ -40,4 +50,4 @@ const deleteSurvey = async ({ courseId, assignmentId }) => {
   }
 }
 
-export { getSurvey, createSurvey, saveSurvey, deleteSurvey }
+export { getSurvey, getSurveyDetails, createSurvey, saveSurvey, deleteSurvey }
