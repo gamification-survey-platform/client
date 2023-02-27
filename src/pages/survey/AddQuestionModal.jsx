@@ -43,24 +43,50 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey, editin
       const formObj = Object.fromEntries(formData.entries())
       let payload = {}
       if (formObj.question_type === 'MULTIPLECHOICE') {
-        let options, required
-        if (formObj.required) {
-          required = true
-          options = Object.values(formObj).slice(2, -1)
+        let option_choices, is_required
+        if (formObj.is_required) {
+          is_required = true
+          option_choices = Object.values(formObj).slice(2, -1)
         } else {
-          required = false
-          options = Object.values(formObj).slice(2)
+          is_required = false
+          option_choices = Object.values(formObj).slice(2)
         }
-        payload = { options, required }
+        if (editingQuestion) {
+          for (let i = 0; i < option_choices.length; i++) {
+            option_choices[i] = {
+              pk: editingQuestion.option_choices[i].pk,
+              text: option_choices[i]
+            }
+          }
+        } else {
+          for (let i = 0; i < option_choices.length; i++) {
+            option_choices[i] = {
+              text: option_choices[i]
+            }
+          }
+        }
+        payload = { option_choices, is_required }
       } else if (formObj.question_type === 'NUMBER') {
-        payload = { numberOfOptions: parseInt(formObj.options), required: !!formObj.required }
+        payload = { option_choices: parseInt(formObj.option_choices), required: !!formObj.required }
       } else if (formObj.question_type === 'MULTIPLETEXT') {
-        payload = { numberOfLines: parseInt(formObj.lines), required: !!formObj.required }
+        payload = { number_of_text: parseInt(formObj.number_of_text), required: !!formObj.required }
       }
       const { text, question_type, ...rest } = formObj
       const questionObj = { text, question_type, ...payload }
-      survey.sections[sectionIdx].questions.push(questionObj)
-      setSurvey(survey)
+      let questions
+      if (editingQuestion) {
+        questions = survey.sections[sectionIdx].questions.map((q) =>
+          q.pk === editingQuestion.pk ? { ...q, ...questionObj } : q
+        )
+      } else {
+        questions = survey.sections[sectionIdx].questions.push(questionObj)
+      }
+      setSurvey({
+        ...survey,
+        sections: survey.sections.map((section, i) =>
+          i === sectionIdx ? { ...section, questions } : section
+        )
+      })
       handleClose()
     }
     setValidated(true)
@@ -75,7 +101,7 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey, editin
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
-        <Modal.Title>Add Question</Modal.Title>
+        <Modal.Title>{editingQuestion ? 'Edit' : 'Add'} Question</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form ref={formRef} noValidate validated={validated}>
@@ -131,7 +157,7 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey, editin
           {questionType === 'MULTIPLETEXT' && (
             <Form.Group className="m-3">
               <Form.Label>Choose number of lines</Form.Label>
-              <Form.Control name="lines" defaultValue={1}></Form.Control>
+              <Form.Control name="number_of_text" defaultValue={1}></Form.Control>
             </Form.Group>
           )}
           <Form.Group className="m-3">
@@ -144,7 +170,7 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey, editin
           Cancel
         </Button>
         <Button variant="primary" type="submit" onClick={handleSubmit}>
-          Add
+          {editingQuestion ? 'Edit' : 'Add'}
         </Button>
       </Modal.Footer>
     </Modal>
