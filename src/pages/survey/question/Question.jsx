@@ -43,7 +43,8 @@ const TextArea = ({ pk }) => {
 }
 
 const Question = (question) => {
-  const { text, question_type, is_required, sectionIdx, survey, setSurvey, ...rest } = question
+  const { text, question_type, is_required, sectionIdx, survey, setSurvey, studentView, ...rest } =
+    question
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
 
   const handleDeleteQuestion = () => {
@@ -70,30 +71,32 @@ const Question = (question) => {
           {question_type === 'MULTIPLETEXT' && <MultiLineText {...rest} />}
           {question_type === 'TEXTAREA' && <TextArea {...rest} />}
         </Col>
-        <Col xs="2">
-          <FontAwesomeIcon
-            icon={faEdit}
-            style={{
-              fontSize: '1em',
-              color: '#ffd43b',
-              margin: 10,
-              pointerEvents: 'auto',
-              cursor: 'pointer'
-            }}
-            onClick={() => setQuestionModalOpen(true)}
-          />
-          <FontAwesomeIcon
-            icon={faTrash}
-            style={{
-              fontSize: '1em',
-              color: '#dc3545',
-              margin: 10,
-              pointerEvents: 'auto',
-              cursor: 'pointer'
-            }}
-            onClick={handleDeleteQuestion}
-          />
-        </Col>
+        {!studentView && (
+          <Col xs="2">
+            <FontAwesomeIcon
+              icon={faEdit}
+              style={{
+                fontSize: '1em',
+                color: '#ffd43b',
+                margin: 10,
+                pointerEvents: 'auto',
+                cursor: 'pointer'
+              }}
+              onClick={() => setQuestionModalOpen(true)}
+            />
+            <FontAwesomeIcon
+              icon={faTrash}
+              style={{
+                fontSize: '1em',
+                color: '#dc3545',
+                margin: 10,
+                pointerEvents: 'auto',
+                cursor: 'pointer'
+              }}
+              onClick={handleDeleteQuestion}
+            />
+          </Col>
+        )}
         <AddQuestionModal
           sectionIdx={sectionIdx}
           show={questionModalOpen}

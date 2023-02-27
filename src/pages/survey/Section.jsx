@@ -5,8 +5,10 @@ import { useState } from 'react'
 import AddQuestionModal from './AddQuestionModal'
 import Question from './question/Question'
 import AddSectionModal from './AddSectionModal'
+import { useSelector } from 'react-redux'
+import userSelector from '../../store/user/selectors'
 
-const Section = ({ sectionIdx, survey, setSurvey }) => {
+const Section = ({ sectionIdx, survey, setSurvey, studentView }) => {
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
   const [sectionModalOpen, setSectionModalOpen] = useState(false)
   const section = survey.sections[sectionIdx]
@@ -34,55 +36,57 @@ const Section = ({ sectionIdx, survey, setSurvey }) => {
             {title}
           </h3>
         </Col>
-        <Col xs="3">
-          <FontAwesomeIcon
-            icon={faPlus}
-            style={{
-              fontSize: '2em',
-              color: '#0a58ca',
-              margin: 10,
-              pointerEvents: 'auto',
-              cursor: 'pointer'
-            }}
-            onClick={() => setQuestionModalOpen(true)}
-          />
-          <FontAwesomeIcon
-            icon={faEdit}
-            style={{
-              fontSize: '2em',
-              color: '#ffd43b',
-              margin: 10,
-              pointerEvents: 'auto',
-              cursor: 'pointer'
-            }}
-            onClick={() => setSectionModalOpen(true)}
-          />
-          <FontAwesomeIcon
-            icon={faTrash}
-            style={{
-              fontSize: '2em',
-              color: '#dc3545',
-              margin: 10,
-              pointerEvents: 'auto',
-              cursor: 'pointer'
-            }}
-            onClick={handleDeleteSection}
-          />
-          <AddQuestionModal
-            sectionIdx={sectionIdx}
-            show={questionModalOpen}
-            setShow={setQuestionModalOpen}
-            survey={survey}
-            setSurvey={setSurvey}
-          />
-          <AddSectionModal
-            show={sectionModalOpen}
-            setShow={setSectionModalOpen}
-            survey={survey}
-            setSurvey={setSurvey}
-            editingSection={section}
-          />
-        </Col>
+        {!studentView && (
+          <Col xs="3">
+            <FontAwesomeIcon
+              icon={faPlus}
+              style={{
+                fontSize: '2em',
+                color: '#0a58ca',
+                margin: 10,
+                pointerEvents: 'auto',
+                cursor: 'pointer'
+              }}
+              onClick={() => setQuestionModalOpen(true)}
+            />
+            <FontAwesomeIcon
+              icon={faEdit}
+              style={{
+                fontSize: '2em',
+                color: '#ffd43b',
+                margin: 10,
+                pointerEvents: 'auto',
+                cursor: 'pointer'
+              }}
+              onClick={() => setSectionModalOpen(true)}
+            />
+            <FontAwesomeIcon
+              icon={faTrash}
+              style={{
+                fontSize: '2em',
+                color: '#dc3545',
+                margin: 10,
+                pointerEvents: 'auto',
+                cursor: 'pointer'
+              }}
+              onClick={handleDeleteSection}
+            />
+            <AddQuestionModal
+              sectionIdx={sectionIdx}
+              show={questionModalOpen}
+              setShow={setQuestionModalOpen}
+              survey={survey}
+              setSurvey={setSurvey}
+            />
+            <AddSectionModal
+              show={sectionModalOpen}
+              setShow={setSectionModalOpen}
+              survey={survey}
+              setSurvey={setSurvey}
+              editingSection={section}
+            />
+          </Col>
+        )}
       </Row>
       {questions.map((question, i) => (
         <Question
@@ -91,6 +95,7 @@ const Section = ({ sectionIdx, survey, setSurvey }) => {
           survey={survey}
           setSurvey={setSurvey}
           sectionIdx={sectionIdx}
+          studentView={studentView}
         />
       ))}
     </div>

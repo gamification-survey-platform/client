@@ -1,15 +1,13 @@
 import { Container } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
-import { useMatch } from 'react-router'
+import { useParams } from 'react-router'
 import coursesSelector from '../../store/courses/selectors'
 
 const CourseDetails = () => {
-  const {
-    params: { courseId }
-  } = useMatch('/courses/:courseId/details')
+  const { course_id } = useParams()
 
   const { courses } = useSelector(coursesSelector)
-  const course = courses.find(({ course_number }) => course_number === courseId)
+  const course = courses.find(({ course_number }) => course_number === course_id)
 
   return (
     <Container className="mt-5">

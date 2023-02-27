@@ -32,9 +32,11 @@ const createSurvey = async ({ course_id, assignment_id, survey }) => {
   }
 }
 
-const saveSurvey = async ({ courseId, assignmentId, survey }) => {
+const saveSurvey = async ({ courseId, assignmentId, survey: survey }) => {
   try {
-    const res = await api.put(`courses/${courseId}/assignments/${assignmentId}/survey`, survey)
+    const res = await api.patch(`courses/${courseId}/assignments/${assignmentId}/surveys/`, {
+      survey_info: survey
+    })
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -43,7 +45,7 @@ const saveSurvey = async ({ courseId, assignmentId, survey }) => {
 
 const deleteSurvey = async ({ courseId, assignmentId }) => {
   try {
-    const res = await api.delete(`/courses/${courseId}/assignments/${assignmentId}/survey`)
+    const res = await api.delete(`/courses/${courseId}/assignments/${assignmentId}/surveys/`)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)

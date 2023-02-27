@@ -12,6 +12,7 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey, editin
     setOptions([])
     setValidated(false)
     if (editingQuestion && formRef.current) {
+      console.log(editingQuestion)
       formRef.current.getElementsByTagName('input')[0].value = editingQuestion.text
       const numInputs = formRef.current.getElementsByTagName('input').length
       formRef.current.getElementsByTagName('input')[numInputs - 1].checked =
@@ -131,11 +132,11 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey, editin
                 required
                 value={options.length === 0 ? '' : options.length}
               />
-              {options.map((_, i) => {
+              {options.map((option, i) => {
                 return (
-                  <Form.Group className="mt-3" key={i}>
+                  <Form.Group className="mt-3" key={option.pk}>
                     <Form.Label>Option {i + 1}</Form.Label>
-                    <Form.Control required name={`option-${i}`} />
+                    <Form.Control required name={`option-${i}`} defaultValue={option.text} />
                   </Form.Group>
                 )
               })}

@@ -1,18 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Container, Table, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
-import { Link, useLocation, useMatch, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
 import { deleteAssignment, getAssignments } from '../../api/assignments'
 import userSelector from '../../store/user/selectors'
 import coursesSelector from '../../store/courses/selectors'
 
 const CourseAssignments = () => {
   const location = useLocation()
-  const {
-    params: { courseId }
-  } = useMatch('/courses/:courseId/assignments')
+  const { course_id } = useParams()
   const { courses } = useSelector(coursesSelector)
-  const selectedCourse = courses.find((course) => course.course_number === courseId)
+  const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
   const [assignments, setAssignments] = useState([])
   const { user } = useSelector(userSelector)
@@ -88,27 +86,35 @@ const CourseAssignments = () => {
                     Survey
                   </Button>
                 </td>
-                <td>
-                  <Link to={`${location.pathname}/${assignment.id}/reports`}>
-                    <Button variant="info">Reports</Button>
-                  </Link>
-                </td>
-                <td>
-                  <Button variant="warning" onClick={(e) => handleEditAssignment(e, assignment)}>
-                    Edit
-                  </Button>
-                </td>
-                <td>
-                  <Button variant="danger" onClick={(e) => handleDeleteAssignment(e, assignment)}>
-                    Delete
-                  </Button>
-                </td>
+                {user.role !== 'Student' && (
+                  <>
+                    <td>
+                      <Link to={`${location.pathname}/${assignment.id}/reports`}>
+                        <Button variant="info">Reports</Button>
+                      </Link>
+                    </td>
+                    <td>
+                      <Button
+                        variant="warning"
+                        onClick={(e) => handleEditAssignment(e, assignment)}>
+                        Edit
+                      </Button>
+                    </td>
+                    <td>
+                      <Button
+                        variant="danger"
+                        onClick={(e) => handleDeleteAssignment(e, assignment)}>
+                        Delete
+                      </Button>
+                    </td>
+                  </>
+                )}
               </tr>
             )
           })}
         </tbody>
       </Table>
-      {user && user.role === 'admin' && (
+      {user.role !== 'Student' && (
         <Button className="m-3" onClick={handleAddAssignment}>
           Add Assignment
         </Button>

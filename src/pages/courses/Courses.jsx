@@ -57,7 +57,7 @@ const Courses = () => {
                       View
                     </Button>
                   </Link>
-                  {user && user.role === 'admin' && (
+                  {user.role !== 'Student' && (
                     <>
                       <Link to={`/courses/${course.course_number}/edit`}>
                         <Button className="mx-3" variant="warning">

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Container, Button, Form, Col, Alert } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
-import { useLocation, useMatch, useNavigate } from 'react-router'
+import { useLocation, useNavigate } from 'react-router'
 import coursesSelector from '../../store/courses/selectors'
 import DatePicker from 'react-datepicker'
 import { useParams } from 'react-router'
