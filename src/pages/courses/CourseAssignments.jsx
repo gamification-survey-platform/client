@@ -2,30 +2,36 @@ import { useEffect, useState } from 'react'
 import { Container, Table, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { Link, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
-import { deleteAssignment, getAssignments } from '../../api/assignments'
+import { deleteAssignment, getCourseAssignments } from '../../api/assignments'
 import userSelector from '../../store/user/selectors'
 import coursesSelector from '../../store/courses/selectors'
 
 const CourseAssignments = () => {
   const location = useLocation()
   const { course_id } = useParams()
+  const [userRole, setUserRole] = useState('Student')
   const { courses } = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
   const [assignments, setAssignments] = useState([])
-  const { user } = useSelector(userSelector)
 
   useEffect(() => {
     const fetchAssignments = async () => {
-      const res = await getAssignments(selectedCourse.pk)
-      if (res.status === 200) setAssignments(res.data)
+      const res = await getCourseAssignments(selectedCourse.pk)
+      if (res.status === 200) {
+        setAssignments(res.data)
+        setUserRole(res.data[0].user_role)
+      }
     }
     fetchAssignments()
   }, [])
 
   const handleSurveyClick = (e, assignment) => {
     e.preventDefault()
-    navigate(`${location.pathname}/${assignment.id}/survey`)
+    console.log(userRole)
+    navigate(`${location.pathname}/${assignment.id}/survey`, {
+      state: { userRole: assignment.user_role }
+    })
   }
 
   const handleAddAssignment = (e) => {
@@ -86,7 +92,7 @@ const CourseAssignments = () => {
                     Survey
                   </Button>
                 </td>
-                {user.role !== 'Student' && (
+                {assignment.user_role !== 'Student' && (
                   <>
                     <td>
                       <Link to={`${location.pathname}/${assignment.id}/reports`}>
@@ -114,7 +120,7 @@ const CourseAssignments = () => {
           })}
         </tbody>
       </Table>
-      {user.role !== 'Student' && (
+      {userRole !== 'Student' && (
         <Button className="m-3" onClick={handleAddAssignment}>
           Add Assignment
         </Button>

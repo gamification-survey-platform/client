@@ -9,14 +9,26 @@ const formatAssignment = (assignment) => {
   return assignment
 }
 
-const getAssignments = async (coursePk, assignment_id = null) => {
+const getAssignment = async (coursePk, assignment_id) => {
   try {
-    const config = assignment_id ? { params: { assignment_id } } : {}
-    const res = await api.get(`courses/${coursePk}/assignments`, config)
+    const res = await api.get(`courses/${coursePk}/assignments`, { params: { assignment_id } })
+    const { user_role, assignment } = res.data
+    res.data = { user_role, assignment: formatAssignment(assignment) }
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
 
-    res.data = assignment_id
-      ? formatAssignment(res.data)
-      : JSON.parse(res.data).map((r) => formatAssignment(r.assignment))
+const getCourseAssignments = async (coursePk) => {
+  try {
+    const res = await api.get(`courses/${coursePk}/assignments`)
+    const { user_role, assignments } = res.data
+    res.data = assignments.map(({ feedback_survey, ...rest }) => ({
+      ...formatAssignment(rest),
+      feedback_survey,
+      user_role
+    }))
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -28,7 +40,6 @@ const createAssignment = async ({ coursePk, assignment }) => {
     if (!validateUser()) throw new Error('User is not authenticated')
     if (!validateAdmin()) throw new Error('User does not have required role')
     const formattedAssignment = formatAssignment(assignment)
-    console.log(formattedAssignment)
     const res = api.post(`courses/${coursePk}/assignments/`, {
       course: coursePk,
       ...formattedAssignment
@@ -64,4 +75,4 @@ const deleteAssignment = async ({ coursePk, assignment_id }) => {
   }
 }
 
-export { getAssignments, createAssignment, editAssignment, deleteAssignment }
+export { getCourseAssignments, getAssignment, createAssignment, editAssignment, deleteAssignment }

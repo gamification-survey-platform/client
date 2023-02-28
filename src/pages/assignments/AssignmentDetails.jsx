@@ -2,9 +2,8 @@ import { Col, Container, Row } from 'react-bootstrap'
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
-import { getAssignments } from '../../api/assignments'
+import { getAssignment } from '../../api/assignments'
 import coursesSelector from '../../store/courses/selectors'
-import { mockAssignmentDetail } from '../../utils/mockData'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
@@ -21,8 +20,8 @@ const AssignmentDetails = () => {
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   useEffect(() => {
     const fetchAssignment = async () => {
-      const res = await getAssignments(selectedCourse.pk, assignment_id)
-      if (res.status === 200) setAssignment(res.data)
+      const res = await getAssignment(selectedCourse.pk, assignment_id)
+      if (res.status === 200) setAssignment(res.data.assignment)
       else setShowError(true)
     }
     fetchAssignment()

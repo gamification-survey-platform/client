@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react'
 import { Container, Row, Col, Button, Alert, Form } from 'react-bootstrap'
-import { useParams, useNavigate } from 'react-router'
+import { useParams, useNavigate, useLocation } from 'react-router'
 import AddSectionModal from '../survey/AddSectionModal'
 import Section from '../survey/Section'
 import { getSurvey, getSurveyDetails, saveSurvey } from '../../api/survey'
@@ -16,16 +16,16 @@ const AssignmentSurvey = () => {
     other_info: '',
     sections: []
   })
-  const [studentView, setStudentView] = useState(false)
+  const {
+    state: { userRole }
+  } = useLocation()
+  const [studentView, setStudentView] = useState(userRole === 'Student')
   const { course_id, assignment_id } = useParams()
-  const { user } = useSelector(userSelector)
-  const useStudentView = studentView || user.role === 'Student'
   const { courses } = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState(false)
   const [showError, setShowError] = useState(false)
-  const formRef = useRef()
 
   useEffect(() => {
     const fetchSurvey = async () => {
@@ -53,16 +53,12 @@ const AssignmentSurvey = () => {
     e.preventDefault()
     e.stopPropagation()
     try {
-      if (formRef.current) {
-        const formData = new FormData(formRef.current)
-        const formObj = Object.fromEntries(formData.entries())
-        const res = await saveSurvey({
-          courseId: selectedCourse.pk,
-          assignmentId: assignment_id,
-          survey
-        })
-        if (res.status === 200) navigate(-1)
-      }
+      const res = await saveSurvey({
+        courseId: selectedCourse.pk,
+        assignmentId: assignment_id,
+        survey
+      })
+      if (res.status === 200) navigate(-1)
     } catch (e) {
       setShowError(true)
     }
@@ -80,16 +76,19 @@ const AssignmentSurvey = () => {
               </div>
             )}
           </Col>
-          <Col>
-            {user.role !== 'Student' && (
-              <Button variant="info" className="m-3" onClick={() => setStudentView(!studentView)}>
-                {useStudentView ? 'Instructor View' : 'Student View'}
+          {userRole !== 'Student' && (
+            <Col>
+              <Button
+                variant="info"
+                className="m-3"
+                onClick={() => setStudentView(!studentView && userRole !== 'Student')}>
+                {studentView ? 'Instructor View' : 'Student View'}
               </Button>
-            )}
-            <Button variant="primary" className="m-3" onClick={() => setModalOpen(true)}>
-              Add Section
-            </Button>
-          </Col>
+              <Button variant="primary" className="m-3" onClick={() => setModalOpen(true)}>
+                Add Section
+              </Button>
+            </Col>
+          )}
           <AddSectionModal
             show={modalOpen}
             setShow={setModalOpen}
@@ -99,7 +98,7 @@ const AssignmentSurvey = () => {
         </Row>
         <hr />
         {survey && survey.sections && (
-          <Form ref={formRef} onSubmit={handleSaveSurvey}>
+          <Form onSubmit={handleSaveSurvey}>
             {survey.sections.map((section, i) => (
               <Section
                 key={i}
