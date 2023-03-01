@@ -1,5 +1,5 @@
 const prod = {
-  API_URL: ''
+  API_URL: 'https://gamification-server.onrender.com/api'
 }
 
 const dev = {
