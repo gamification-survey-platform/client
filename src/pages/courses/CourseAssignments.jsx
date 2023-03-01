@@ -3,14 +3,13 @@ import { Container, Table, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import { Link, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
 import { deleteAssignment, getCourseAssignments } from '../../api/assignments'
-import userSelector from '../../store/user/selectors'
 import coursesSelector from '../../store/courses/selectors'
 
 const CourseAssignments = () => {
   const location = useLocation()
   const { course_id } = useParams()
   const [userRole, setUserRole] = useState('Student')
-  const { courses } = useSelector(coursesSelector)
+  const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
   const [assignments, setAssignments] = useState([])

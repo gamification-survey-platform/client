@@ -21,7 +21,7 @@ const AssignmentSurvey = () => {
   } = useLocation()
   const [studentView, setStudentView] = useState(userRole === 'Student')
   const { course_id, assignment_id } = useParams()
-  const { courses } = useSelector(coursesSelector)
+  const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState(false)

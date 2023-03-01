@@ -12,7 +12,7 @@ const CourseMembers = () => {
   const [memberRole, setMemberRole] = useState('Student')
   const [teamId, setTeamId] = useState('')
   const { course_id } = useParams()
-  const { courses } = useSelector(coursesSelector)
+  const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
 
   useEffect(() => {
@@ -82,16 +82,24 @@ const CourseMembers = () => {
                 <td>{member.andrew_id}</td>
                 <td>{member.userRole}</td>
                 <td>{member.team}</td>
-                <td>
-                  <Button variant="info" onClick={(e) => handleRemindMember(e, member.andrew_id)}>
-                    Remind
-                  </Button>
-                </td>
-                <td>
-                  <Button variant="danger" onClick={(e) => handleRemoveMember(e, member.andrew_id)}>
-                    Remove
-                  </Button>
-                </td>
+                {member.user_role !== 'Student' && (
+                  <>
+                    <td>
+                      <Button
+                        variant="info"
+                        onClick={(e) => handleRemindMember(e, member.andrew_id)}>
+                        Remind
+                      </Button>
+                    </td>
+                    <td>
+                      <Button
+                        variant="danger"
+                        onClick={(e) => handleRemoveMember(e, member.andrew_id)}>
+                        Remove
+                      </Button>
+                    </td>
+                  </>
+                )}
               </tr>
             )
           })}

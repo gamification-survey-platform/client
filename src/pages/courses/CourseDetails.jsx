@@ -6,7 +6,7 @@ import coursesSelector from '../../store/courses/selectors'
 const CourseDetails = () => {
   const { course_id } = useParams()
 
-  const { courses } = useSelector(coursesSelector)
+  const courses = useSelector(coursesSelector)
   const course = courses.find(({ course_number }) => course_number === course_id)
 
   return (

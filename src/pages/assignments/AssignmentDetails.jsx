@@ -16,7 +16,7 @@ const AssignmentDetails = () => {
     date_due: new Date()
   })
   const [error, setShowError] = useState(false)
-  const { courses } = useSelector(coursesSelector)
+  const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   useEffect(() => {
     const fetchAssignment = async () => {

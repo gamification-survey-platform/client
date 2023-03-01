@@ -1,29 +1,18 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import { PURGE } from 'redux-persist'
-import { getUserCourses } from '../../api/courses'
 
-export const getCourses = createAsyncThunk('courses/get', async (andrewId) => {
-  const response = await getUserCourses(andrewId)
-  return response.data
-})
-
-const initialState = {
-  courses: [],
-  status: null
-}
+const initialState = []
 
 const coursesSlice = createSlice({
   name: 'courses',
   initialState,
   reducers: {
-    addCourse: (state, action) => ({ ...state, courses: [...state.courses, action.payload] }),
+    setCourses: (_, action) => action.payload,
+    addCourse: (state, action) => [...state.courses, action.payload],
     editCourse: (state, action) => {
       const { pk, course: newCourse } = action.payload
       const newCourses = state.courses.map((course) => (course.pk === pk ? newCourse : course))
-      return {
-        ...state,
-        courses: newCourses
-      }
+      return newCourses
     },
     deleteCourse: (state, action) => {
       const coursePk = action.payload
@@ -35,15 +24,10 @@ const coursesSlice = createSlice({
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(getCourses.fulfilled, (state, action) => ({
-      courses: action.payload,
-      status: 'success'
-    }))
-    builder.addCase(getCourses.rejected, (state) => ({ ...state, status: 'failed' }))
     builder.addCase(PURGE, () => initialState)
   }
 })
 
-export const { addCourse, editCourse, deleteCourse } = coursesSlice.actions
+export const { setCourses, addCourse, editCourse, deleteCourse } = coursesSlice.actions
 
 export default coursesSlice.reducer

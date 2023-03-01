@@ -1,16 +1,17 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Container, Button, Form, Col, Alert } from 'react-bootstrap'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import DatePicker from 'react-datepicker'
 import { createSurvey } from '../../api/survey'
 import coursesSelector from '../../store/courses/selectors'
+import { isBefore, isInFuture } from '../../utils/dateUtils'
 
 const AddSurvey = () => {
   const [showError, setShowError] = useState(false)
   const [releaseDate, setReleaseDate] = useState(new Date())
   const [dueDate, setDueDate] = useState(new Date())
-  const { courses } = useSelector(coursesSelector)
+  const courses = useSelector(coursesSelector)
   const { course_id, assignment_id } = useParams()
   const navigate = useNavigate()
   const selectedCourse = courses.find((course) => course.course_number === course_id)
@@ -30,13 +31,20 @@ const AddSurvey = () => {
     else setShowError(true)
   }
 
+  const areDatesValid = isBefore(releaseDate, dueDate) && isInFuture(releaseDate)
+
   return (
     <Container className="mt-5 text-left">
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
           <Form.Label className="ml-3">Template Name:</Form.Label>
           <Col>
-            <Form.Control as="textarea" name="template_name" rows={3} />
+            <Form.Control
+              as="textarea"
+              defaultValue="Default Template"
+              name="template_name"
+              rows={3}
+            />
           </Col>
         </Form.Group>
         <Form.Group className="mb-3">
@@ -55,6 +63,7 @@ const AddSurvey = () => {
           <Form.Label>Release date:</Form.Label>
           <DatePicker
             selected={releaseDate}
+            invalid={!areDatesValid}
             showTimeSelect
             dateFormat="Pp"
             name="date_released"
@@ -64,6 +73,7 @@ const AddSurvey = () => {
         <Form.Group className="mb-3 ml-3">
           <Form.Label>Due date:</Form.Label>
           <DatePicker
+            invalid={!areDatesValid}
             name="date_due"
             selected={dueDate}
             showTimeSelect
@@ -71,6 +81,9 @@ const AddSurvey = () => {
             onChange={setDueDate}
           />
         </Form.Group>
+        {!areDatesValid && (
+          <Alert variant="warning">Please select valid release and due dates</Alert>
+        )}
         <Button className="ml-3" type="submit">
           Create
         </Button>

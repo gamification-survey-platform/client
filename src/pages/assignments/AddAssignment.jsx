@@ -6,6 +6,7 @@ import coursesSelector from '../../store/courses/selectors'
 import DatePicker from 'react-datepicker'
 import { useParams } from 'react-router'
 import { createAssignment, editAssignment } from '../../api/assignments'
+import { isBefore, isInFuture } from '../../utils/dateUtils'
 
 const AddAssignment = () => {
   const [validated, setValidated] = useState(false)
@@ -15,7 +16,7 @@ const AddAssignment = () => {
   const formRef = useRef()
   const params = useParams()
   const { state: editingAssignment } = useLocation()
-  const { courses } = useSelector(coursesSelector)
+  const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === params.course_id)
   const navigate = useNavigate()
 
@@ -28,6 +29,7 @@ const AddAssignment = () => {
       }
     }
   }, [])
+
   const handleSubmit = async (event) => {
     const form = event.currentTarget
     event.preventDefault()
@@ -52,6 +54,8 @@ const AddAssignment = () => {
     }
     setValidated(true)
   }
+
+  const areDatesValid = isBefore(releaseDate, dueDate) && isInFuture(releaseDate)
 
   return (
     <Container className="my-5 text-left">
@@ -100,6 +104,7 @@ const AddAssignment = () => {
         <Form.Group className="mb-3 ml-3">
           <Form.Label>Release date:</Form.Label>
           <DatePicker
+            invalid={!areDatesValid}
             name="date_released"
             selected={releaseDate}
             onChange={setReleaseDate}
@@ -110,6 +115,7 @@ const AddAssignment = () => {
         <Form.Group className="mb-3 ml-3">
           <Form.Label>Due date:</Form.Label>
           <DatePicker
+            invalid={!areDatesValid}
             name="date_due"
             selected={dueDate}
             onChange={setDueDate}
@@ -117,14 +123,17 @@ const AddAssignment = () => {
             dateFormat="Pp"
           />
         </Form.Group>
+        {!areDatesValid && (
+          <Alert variant="warning">Please select valid release and due dates</Alert>
+        )}
         <Form.Group className="mb-3 ml-3">
           <Form.Label>Total Score:</Form.Label>
-          <Form.Control className="w-25" required name="total_score" />
+          <Form.Control className="w-25" required name="total_score" type="number" />
           <Form.Control.Feedback type="invalid">Please enter valid score</Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="mb-3 ml-3">
           <Form.Label>Weight:</Form.Label>
-          <Form.Control className="w-25" required name="weight" />
+          <Form.Control className="w-25" required name="weight" type="number" />
           <Form.Control.Feedback type="invalid">Please enter valid weight</Form.Control.Feedback>
         </Form.Group>
         <Button className="ml-3" variant={editingAssignment ? 'warning' : 'primary'} type="submit">

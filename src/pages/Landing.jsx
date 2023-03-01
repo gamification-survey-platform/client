@@ -1,36 +1,45 @@
 import { useEffect, useState } from 'react'
 import { Card, Button, Form, Alert } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
-import { login, register, STATUS } from '../store/user/userSlice'
-import userSelector from '../store/user/selectors'
-import { useSelector, useDispatch } from 'react-redux'
+import { login as loginApi, register as registerApi } from '../api/login'
+import { setUser } from '../store/user/userSlice'
+import { useDispatch } from 'react-redux'
 
 const Landing = () => {
   const [andrewId, setAndrewId] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { user, status } = useSelector(userSelector)
   const [message, setMessage] = useState()
 
-  useEffect(() => {
-    if (user && status == STATUS.LOGIN_SUCCESS) {
-      navigate('/dashboard')
-    } else if (!user) {
-      setAndrewId('')
-      setPassword('')
-      setMessage(status)
-    }
-  }, [user, status])
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault()
-    dispatch(login({ andrewId, password }))
+    try {
+      const res = await loginApi({ andrewId, password })
+      console.log(res)
+      if (res.status === 200) {
+        const { token, ...rest } = res.data
+        dispatch(setUser(rest))
+        navigate('/dashboard')
+      }
+    } catch (e) {
+      console.error(e)
+      setMessage({ type: 'danger', text: 'Failed to login.' })
+    }
   }
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault()
-    dispatch(register({ andrewId, password }))
+    try {
+      const res = await registerApi({ andrewId, password })
+      if (res.status === 200)
+        setMessage({ type: 'success', text: 'Successfully registered! Please login to continue.' })
+    } catch (e) {
+      console.error(e)
+      setMessage({ type: 'danger', text: 'Failed to register.' })
+    }
+    setAndrewId('')
+    setPassword('')
   }
 
   return (
@@ -78,19 +87,9 @@ const Landing = () => {
             Register
           </Button>
         </div>
-        {message === STATUS.LOGIN_FAILED && (
-          <Alert className="mt-5" variant="danger">
-            Failed to login
-          </Alert>
-        )}
-        {message === STATUS.REGISTRATION_SUCCESS && (
-          <Alert className="mt-5" variant="success">
-            Successfully registered! Please re-enter your AndrewID and password
-          </Alert>
-        )}
-        {message === STATUS.REGISTRATION_FAILED && (
-          <Alert className="mt-5" variant="danger">
-            Failed to register
+        {message && (
+          <Alert className="mt-5" variant={message.type}>
+            {message.text}
           </Alert>
         )}
       </Form>

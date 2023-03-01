@@ -9,8 +9,8 @@ import userSelector from '../../store/user/selectors'
 
 const Courses = () => {
   const navigate = useNavigate()
-  const { user } = useSelector(userSelector)
-  const { courses } = useSelector(coursesSelector)
+  const user = useSelector(userSelector)
+  const courses = useSelector(coursesSelector)
   const [showError, setShowError] = useState(false)
   const dispatch = useDispatch()
 
@@ -47,32 +47,40 @@ const Courses = () => {
                   <Link to={`/courses/${course.course_number}/assignments`}>
                     <Button className="mx-3">Assignments</Button>
                   </Link>
+                </td>
+                <td>
                   <Link to={`/courses/${course.course_number}/members`}>
                     <Button className="mx-3" variant="secondary">
                       Members
                     </Button>
                   </Link>
+                </td>
+                <td>
                   <Link to={`/courses/${course.course_number}/details`}>
                     <Button className="mx-3" variant="info">
                       View
                     </Button>
                   </Link>
-                  {user.role !== 'Student' && (
-                    <>
+                </td>
+                {course.user_role !== 'Student' && (
+                  <>
+                    <td>
                       <Link to={`/courses/${course.course_number}/edit`}>
                         <Button className="mx-3" variant="warning">
                           Edit
                         </Button>
                       </Link>
+                    </td>
+                    <td>
                       <Button
                         className="mx-3"
                         variant="danger"
                         onClick={(e) => handleDeleteCourse(e, course.pk)}>
                         Delete
                       </Button>
-                    </>
-                  )}
-                </td>
+                    </td>
+                  </>
+                )}
               </tr>
             )
           })}

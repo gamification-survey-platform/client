@@ -42,11 +42,6 @@ const Header = () => {
             <LinkContainer to="/courses">
               <Nav.Link>Courses</Nav.Link>
             </LinkContainer>
-            {user && user.role === 'admin' && (
-              <LinkContainer to="/admin">
-                <Nav.Link>Intructor Admin</Nav.Link>
-              </LinkContainer>
-            )}
           </Nav>
           <Nav>
             <LinkContainer to="/courses">
@@ -63,25 +58,5 @@ const Header = () => {
     </Navbar>
   )
 }
-/*
-  return (
-    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-      <Container>
 
-        Icons
-      </Container>
-      <Navbar.Offcanvas show={open}>
-        <Offcanvas.Header closeButton onClick={() => setOpen(false)}>
-          <Offcanvas.Title>Logo</Offcanvas.Title>
-        </Offcanvas.Header>
-        <Offcanvas.Body>
-          <Nav className="flex-grow-1 pe-3">
-
-          </Nav>
-        </Offcanvas.Body>
-      </Navbar.Offcanvas>
-    </Navbar>
-  )
-}
-*/
 export default Header
