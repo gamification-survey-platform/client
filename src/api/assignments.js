@@ -9,9 +9,9 @@ const formatAssignment = (assignment) => {
   return assignment
 }
 
-const getAssignment = async (coursePk, assignment_id) => {
+const getAssignment = async ({ course_id, assignment_id }) => {
   try {
-    const res = await api.get(`courses/${coursePk}/assignments`, { params: { assignment_id } })
+    const res = await api.get(`courses/${course_id}/assignments`, { params: { assignment_id } })
     const { user_role, assignment } = res.data
     res.data = { user_role, assignment: formatAssignment(assignment) }
     return res
@@ -20,9 +20,9 @@ const getAssignment = async (coursePk, assignment_id) => {
   }
 }
 
-const getCourseAssignments = async (coursePk) => {
+const getCourseAssignments = async (course_id) => {
   try {
-    const res = await api.get(`courses/${coursePk}/assignments`)
+    const res = await api.get(`courses/${course_id}/assignments`)
     const { user_role, assignments } = res.data
     res.data = assignments.map(({ feedback_survey, ...rest }) => ({
       ...formatAssignment(rest),

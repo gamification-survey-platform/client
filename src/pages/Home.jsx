@@ -40,11 +40,8 @@ const Home = () => {
                     Course Details
                   </Button>
                 </Link>
-                <Link to={`/courses/${course.course_number}/details`}>
-                  <Button
-                    variant="primary"
-                    href={`/courses/${course.course_number}/assignments`}
-                    className="m-1">
+                <Link to={`/courses/${course.course_number}/assignments`}>
+                  <Button variant="primary" className="m-1">
                     Assignments
                   </Button>
                 </Link>

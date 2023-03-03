@@ -3,10 +3,9 @@ import { Container, Row, Col, Button, Alert, Form } from 'react-bootstrap'
 import { useParams, useNavigate, useLocation } from 'react-router'
 import AddSectionModal from '../survey/AddSectionModal'
 import Section from '../survey/Section'
-import { getSurvey, getSurveyDetails, saveSurvey } from '../../api/survey'
+import { getSurveyDetails, saveSurvey } from '../../api/survey'
 import { useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
-import userSelector from '../../store/user/selectors'
 
 const AssignmentSurvey = () => {
   const [survey, setSurvey] = useState({
@@ -30,17 +29,12 @@ const AssignmentSurvey = () => {
   useEffect(() => {
     const fetchSurvey = async () => {
       try {
-        const res = await getSurvey({ courseId: selectedCourse.pk, assignmentId: assignment_id })
-        if (res.status === 404) {
-          navigate(`/courses/${course_id}/assignments/${assignment_id}/survey/add`)
-        } else if (res.status === 200) {
-          const res = await getSurveyDetails({
-            courseId: selectedCourse.pk,
-            assignmentId: assignment_id
-          })
-          if (res.status === 200) {
-            setSurvey(res.data)
-          }
+        const res = await getSurveyDetails({
+          courseId: selectedCourse.pk,
+          assignmentId: assignment_id
+        })
+        if (res.status === 200) {
+          setSurvey(res.data)
         }
       } catch (e) {
         setShowError(true)

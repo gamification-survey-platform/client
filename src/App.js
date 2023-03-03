@@ -142,7 +142,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div className="text-center">
+    <div>
       <RouterProvider router={router} />
     </div>
   )

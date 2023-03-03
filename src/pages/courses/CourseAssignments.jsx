@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Container, Table, Button } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
-import { Link, useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { getSurvey } from '../../api/survey'
 import { deleteAssignment, getCourseAssignments } from '../../api/assignments'
 import coursesSelector from '../../store/courses/selectors'
 
@@ -25,12 +26,19 @@ const CourseAssignments = () => {
     fetchAssignments()
   }, [])
 
-  const handleSurveyClick = (e, assignment) => {
+  const handleSurveyClick = async (e, assignment) => {
     e.preventDefault()
-    console.log(userRole)
-    navigate(`${location.pathname}/${assignment.id}/survey`, {
-      state: { userRole: assignment.user_role }
-    })
+    try {
+      const res = await getSurvey({ courseId: selectedCourse.pk, assignmentId: assignment.id })
+      if (res.status === 200)
+        navigate(`${location.pathname}/${assignment.id}/survey`, {
+          state: { userRole: assignment.user_role }
+        })
+      else if (res.status === 404)
+        navigate(`/courses/${course_id}/assignments/${assignment.id}/survey/add`)
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   const handleAddAssignment = (e) => {
