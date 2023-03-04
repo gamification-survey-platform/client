@@ -12,7 +12,6 @@ import AddCourse from './pages/courses/AddCourse'
 import AssignmentDetails from './pages/assignments/AssignmentDetails'
 import AssignmentSurvey from './pages/assignments/AssignmentSurvey'
 import AssignmentReports from './pages/assignments/AssignmentReports'
-import AssignmentEdit from './pages/assignments/AssignmentEdit'
 import AddAssignment from './pages/assignments/AddAssignment'
 import AddSurvey from './pages/survey/AddSurvey'
 import NotFoundPage from './pages/NotFoundPage'
@@ -142,7 +141,7 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div>
+    <div className="App">
       <RouterProvider router={router} />
     </div>
   )

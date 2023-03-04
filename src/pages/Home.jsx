@@ -30,7 +30,7 @@ const Home = () => {
       <Row>
         {courses.map((course, i) => (
           <div key={i} style={{ width: 300 }}>
-            <Card className="m-3">
+            <Card className="m-3 text-center">
               <Card.Img variant="top" src={DefaultImage} />
               <Card.Body>
                 <Card.Title>{course.course_name}</Card.Title>
