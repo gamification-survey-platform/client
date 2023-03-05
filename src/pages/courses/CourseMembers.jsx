@@ -4,6 +4,7 @@ import { Container, Table, Form, Button, Alert, Row, Col } from 'react-bootstrap
 import { useParams } from 'react-router'
 import { addMember, getMembers, remindMember, removeMember } from '../../api/members'
 import coursesSelector from '../../store/courses/selectors'
+import { isInstructorOrTA } from '../../utils/roles'
 
 const CourseMembers = () => {
   const [members, setMembers] = useState([])
@@ -14,10 +15,11 @@ const CourseMembers = () => {
   const { course_id } = useParams()
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
+  const userRole = selectedCourse ? selectedCourse.user_role : ''
 
   useEffect(() => {
     const fetchCourseMembers = async () => {
-      const res = await getMembers(selectedCourse.pk)
+      const res = await getMembers({ course_id: selectedCourse.pk })
       if (res.status === 200) setMembers(res.data.membership)
     }
     fetchCourseMembers()
@@ -27,7 +29,12 @@ const CourseMembers = () => {
     event.preventDefault()
     event.stopPropagation()
     try {
-      const res = await addMember(selectedCourse.pk, addId, memberRole, teamId)
+      const res = await addMember({
+        course_id: selectedCourse.pk,
+        memberId: addId,
+        memberRole,
+        teamId
+      })
       if (res.status === 200) {
         setMembers(res.data.membership)
         setMessage({ type: 'success', text: `Successfully added ${addId}` })
@@ -41,7 +48,7 @@ const CourseMembers = () => {
     e.preventDefault()
     e.stopPropagation()
     try {
-      const res = await remindMember(selectedCourse.pk, memberId)
+      const res = await remindMember({ course_id: selectedCourse.pk, memberId })
       if (res.status === 200)
         setMessage({ type: 'success', text: `Successfully reminded ${memberId}` })
     } catch (e) {
@@ -53,7 +60,7 @@ const CourseMembers = () => {
     e.preventDefault()
     e.stopPropagation()
     try {
-      const res = await removeMember(selectedCourse.pk, andrewIdToRemove)
+      const res = await removeMember({ course_id: selectedCourse.pk, andrew_id: andrewIdToRemove })
       if (res.status === 204) {
         const newMembers = members.filter((member) => member.andrew_id !== andrewIdToRemove)
         setMembers(newMembers)
@@ -66,13 +73,13 @@ const CourseMembers = () => {
 
   return (
     <Container className="mt-5">
-      <Table striped bordered hover className="my-3">
+      <Table striped bordered hover className="my-3 text-center">
         <thead>
           <tr>
             <th>Andrew ID</th>
             <th>Role</th>
             <th>Team</th>
-            <th></th>
+            {isInstructorOrTA(userRole) && <th></th>}
           </tr>
         </thead>
         <tbody>
@@ -82,7 +89,7 @@ const CourseMembers = () => {
                 <td>{member.andrew_id}</td>
                 <td>{member.userRole}</td>
                 <td>{member.team}</td>
-                {member.user_role !== 'Student' && (
+                {userRole !== 'Student' && (
                   <>
                     <td>
                       <Button
@@ -105,42 +112,44 @@ const CourseMembers = () => {
           })}
         </tbody>
       </Table>
-      <Container className="my-3">
-        <Col xs="5" className="text-left">
-          <Form>
-            <Form.Group className="my-3">
-              <Form.Label>Member andrew_id:</Form.Label>
-              <Form.Control
-                className="w-50"
-                value={addId}
-                onChange={(e) => setAddId(e.target.value)}
-              />
-            </Form.Group>
-            <Form.Group className="my-3">
-              <Form.Label>Member role:</Form.Label>
-              <Form.Select
-                className="w-50"
-                value={memberRole}
-                onChange={(e) => setMemberRole(e.target.value)}>
-                <option value="Student">Student</option>
-                <option value="TA">TA</option>
-                <option value="Instructor">Instructor</option>
-              </Form.Select>
-            </Form.Group>
-            <Form.Group className="my-3">
-              <Form.Label>Team (optional):</Form.Label>
-              <Form.Control
-                className="w-50"
-                value={teamId}
-                onChange={(e) => setTeamId(e.target.value)}
-              />
-            </Form.Group>
-            <Button onClick={handleAddMember} disabled={!addId}>
-              Add
-            </Button>
-          </Form>
-        </Col>
-      </Container>
+      {isInstructorOrTA(userRole) && (
+        <Container className="my-3">
+          <Col xs="5" className="text-left">
+            <Form>
+              <Form.Group className="my-3">
+                <Form.Label>Member andrew_id:</Form.Label>
+                <Form.Control
+                  className="w-50"
+                  value={addId}
+                  onChange={(e) => setAddId(e.target.value)}
+                />
+              </Form.Group>
+              <Form.Group className="my-3">
+                <Form.Label>Member role:</Form.Label>
+                <Form.Select
+                  className="w-50"
+                  value={memberRole}
+                  onChange={(e) => setMemberRole(e.target.value)}>
+                  <option value="Student">Student</option>
+                  <option value="TA">TA</option>
+                  <option value="Instructor">Instructor</option>
+                </Form.Select>
+              </Form.Group>
+              <Form.Group className="my-3">
+                <Form.Label>Team (optional):</Form.Label>
+                <Form.Control
+                  className="w-50"
+                  value={teamId}
+                  onChange={(e) => setTeamId(e.target.value)}
+                />
+              </Form.Group>
+              <Button onClick={handleAddMember} disabled={!addId}>
+                Add
+              </Button>
+            </Form>
+          </Col>
+        </Container>
+      )}
       {message && <Alert variant={message.type}>{message.text}</Alert>}
     </Container>
   )

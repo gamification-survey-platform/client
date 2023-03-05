@@ -1,12 +1,18 @@
-import { useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Form, Row, Col } from 'react-bootstrap'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import AddQuestionModal from '../AddQuestionModal'
 
-const MultipleChoice = ({ pk, option_choices }) => {
+const MultipleChoice = ({ pk, option_choices, answer }) => {
+  const inputRef = useRef()
+  useEffect(() => {
+    if (inputRef && inputRef.current && answer && answer.length) {
+      inputRef.current.value = answer[0]
+    }
+  }, [answer, inputRef])
   return (
-    <Form.Select name={pk}>
+    <Form.Select name={pk} ref={inputRef}>
       {Array.from(option_choices).map((option) => (
         <option key={option.pk}>{option.text}</option>
       ))}
@@ -14,9 +20,16 @@ const MultipleChoice = ({ pk, option_choices }) => {
   )
 }
 
-const MultipleChoiceScale = ({ pk }) => {
+const MultipleChoiceScale = ({ pk, answer }) => {
+  const inputRef = useRef()
+  useEffect(() => {
+    if (inputRef && inputRef.current && answer && answer.length) {
+      inputRef.current.value = answer[0]
+    }
+  }, [answer, inputRef])
+
   return (
-    <Form.Select name={pk}>
+    <Form.Select name={pk} ref={inputRef}>
       {[...Array(10).keys()].map((option, i) => (
         <option key={i}>{option + 1}</option>
       ))}
@@ -24,22 +37,43 @@ const MultipleChoiceScale = ({ pk }) => {
   )
 }
 
-const FixedText = ({ pk }) => {
-  return <Form.Control name={pk} />
+const FixedText = ({ pk, answer }) => {
+  const inputRef = useRef()
+  useEffect(() => {
+    if (inputRef && inputRef.current && answer && answer.length) {
+      inputRef.current.value = answer[0]
+    }
+  }, [answer, inputRef])
+  return <Form.Control name={pk} ref={inputRef} />
 }
 
-const MultiLineText = ({ pk, number_of_text }) => {
+const MultiLineText = ({ pk, number_of_text, answer }) => {
+  const inputRefs = [...Array(number_of_text).keys()].map((_) => useRef())
+  useEffect(() => {
+    if (inputRefs.length && inputRefs[0].current && answer && answer.length) {
+      inputRefs.forEach((ref, i) => {
+        ref.current.value = answer[i]
+      })
+    }
+  }, [answer, inputRefs])
   return (
     <>
       {[...Array(number_of_text).keys()].map((i) => {
-        return <Form.Control name={pk} key={i} className="mb-3" />
+        return <Form.Control name={pk} key={i} ref={inputRefs[i]} className="mb-3" />
       })}
     </>
   )
 }
 
-const TextArea = ({ pk }) => {
-  return <Form.Control as="textarea" name={pk} rows={4} />
+const TextArea = ({ pk, answer }) => {
+  const inputRef = useRef()
+  useEffect(() => {
+    if (inputRef && inputRef.current && answer) {
+      console.log(answer)
+      inputRef.current.value = answer[0]
+    }
+  }, [answer, inputRef])
+  return <Form.Control as="textarea" name={pk} ref={inputRef} rows={4} />
 }
 
 const Question = (question) => {

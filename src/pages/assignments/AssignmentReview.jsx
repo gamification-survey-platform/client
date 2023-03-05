@@ -1,13 +1,12 @@
 import { useEffect, useState, useRef } from 'react'
 import { Container, Row, Col, Button, Alert, Form } from 'react-bootstrap'
-import { useParams, useNavigate, useLocation } from 'react-router'
-import AddSectionModal from '../survey/AddSectionModal'
+import { useParams, useNavigate } from 'react-router'
 import Section from '../survey/Section'
-import { getSurveyDetails, saveSurvey } from '../../api/survey'
 import { useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
+import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
 
-const AssignmentSurvey = () => {
+const AssignmentReview = () => {
   const [survey, setSurvey] = useState({
     pk: -1,
     name: '',
@@ -15,40 +14,47 @@ const AssignmentSurvey = () => {
     other_info: '',
     sections: []
   })
-
-  const [studentView, setStudentView] = useState(false)
-  const { course_id, assignment_id } = useParams()
+  const { course_id, assignment_id, review_id } = useParams()
+  const formRef = useRef()
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
-  const [modalOpen, setModalOpen] = useState(false)
   const [showError, setShowError] = useState(false)
 
   useEffect(() => {
-    const fetchSurvey = async () => {
+    const fetchReview = async () => {
       try {
-        const res = await getSurveyDetails({
+        const res = await getArtifactReview({
           course_id: selectedCourse.pk,
-          assignment_id
+          assignment_id: assignment_id,
+          review_id
         })
         if (res.status === 200) {
           setSurvey(res.data)
+          console.log(res.data)
         }
       } catch (e) {
         setShowError(true)
       }
     }
-    fetchSurvey()
+    fetchReview()
   }, [])
 
-  const handleSaveSurvey = async (e) => {
+  const handleSaveReview = async (e) => {
     e.preventDefault()
     e.stopPropagation()
     try {
-      const res = await saveSurvey({
+      const formData = new FormData(formRef.current)
+      const formObj = Object.fromEntries(formData.entries())
+      const review = Object.keys(formObj).map((question_pk) => ({
+        question_pk,
+        answer_text: formObj[`${question_pk}`]
+      }))
+      const res = await saveArtifactReview({
         course_id: selectedCourse.pk,
-        assignment_id,
-        survey
+        assignment_id: assignment_id,
+        review_id,
+        review: review
       })
       if (res.status === 200) navigate(-1)
     } catch (e) {
@@ -68,24 +74,9 @@ const AssignmentSurvey = () => {
               </div>
             )}
           </Col>
-          <Col>
-            <Button variant="info" className="m-3" onClick={() => setStudentView(!studentView)}>
-              {studentView ? 'Instructor View' : 'Student View'}
-            </Button>
-            <Button variant="primary" className="m-3" onClick={() => setModalOpen(true)}>
-              Add Section
-            </Button>
-          </Col>
-          <AddSectionModal
-            show={modalOpen}
-            setShow={setModalOpen}
-            survey={survey}
-            setSurvey={setSurvey}
-          />
         </Row>
-        <hr />
         {survey && survey.sections && (
-          <Form onSubmit={handleSaveSurvey}>
+          <Form ref={formRef} onSubmit={handleSaveReview}>
             {survey.sections.map((section, i) => (
               <Section
                 key={i}
@@ -93,11 +84,13 @@ const AssignmentSurvey = () => {
                 sectionIdx={i}
                 survey={survey}
                 setSurvey={setSurvey}
-                studentView={studentView}
+                studentView={true}
               />
             ))}
-            <Button type="submit">Save Survey</Button>
-            {showError && <Alert variant="danger">Failed to save survey.</Alert>}
+            <div className="text-center">
+              <Button type="submit">Save Survey</Button>
+              {showError && <Alert variant="danger">Failed to save survey.</Alert>}
+            </div>
           </Form>
         )}
       </Container>
@@ -105,4 +98,4 @@ const AssignmentSurvey = () => {
   )
 }
 
-export default AssignmentSurvey
+export default AssignmentReview

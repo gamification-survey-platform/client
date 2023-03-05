@@ -86,7 +86,7 @@ const Courses = () => {
           })}
         </tbody>
       </Table>
-      {user && user.role === 'admin' && (
+      {user && user.is_staff && (
         <Button className="my-5" onClick={() => navigate('/courses/add')}>
           Add Course
         </Button>

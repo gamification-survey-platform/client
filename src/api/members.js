@@ -1,11 +1,11 @@
 import { validateAdmin, validateUser } from '../utils/validators'
 import api from './apiUtils'
 
-const addMember = async (courseId, memberId, memberRole, teamId = null) => {
+const addMember = async ({ course_id, memberId, memberRole, teamId = null }) => {
   try {
     if (!validateUser()) throw new Error('User is not authenticated')
     if (!validateAdmin()) throw new Error('User does not have the appropriate role')
-    const res = await api.post(`courses/${courseId}/members/`, {
+    const res = await api.post(`courses/${course_id}/members/`, {
       andrew_id: memberId,
       membershipRadios: memberRole,
       team_name: teamId || ''
@@ -16,7 +16,7 @@ const addMember = async (courseId, memberId, memberRole, teamId = null) => {
   }
 }
 
-const getMembers = async (course_id, andrew_id = null) => {
+const getMembers = async ({ course_id, andrew_id = null }) => {
   try {
     if (!validateUser()) throw new Error('User is not authenticated')
     const config = andrew_id ? { params: { andrew_id } } : {}
@@ -27,22 +27,22 @@ const getMembers = async (course_id, andrew_id = null) => {
   }
 }
 
-const remindMember = async (courseId, memberId) => {
+const remindMember = async ({ course_id, memberId }) => {
   try {
     if (!validateUser()) throw new Error('User is not authenticated')
     if (!validateAdmin()) throw new Error('User does not have apprioriate role')
-    const res = await api.post(`courses/${courseId}/members/`)
+    const res = await api.post(`courses/${course_id}/members/`)
     return res.data
   } catch (error) {
     throw new Error(error.message)
   }
 }
 
-const removeMember = async (courseId, andrew_id) => {
+const removeMember = async ({ course_id, andrew_id }) => {
   try {
     if (!validateUser()) throw new Error('User is not authenticated')
     if (!validateAdmin()) throw new Error('User does not have apprioriate role')
-    const res = await api.delete(`courses/${courseId}/members/`, {
+    const res = await api.delete(`courses/${course_id}/members/`, {
       params: { andrew_id }
     })
     return res

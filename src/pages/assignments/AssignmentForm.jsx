@@ -8,7 +8,7 @@ import { useParams } from 'react-router'
 import { createAssignment, editAssignment } from '../../api/assignments'
 import { isBefore, isInFuture } from '../../utils/dateUtils'
 
-const AddAssignment = () => {
+const AssignmentForm = () => {
   const [validated, setValidated] = useState(false)
   const [showError, setShowError] = useState(false)
   const [releaseDate, setReleaseDate] = useState(new Date())
@@ -41,11 +41,11 @@ const AddAssignment = () => {
       try {
         const res = editingAssignment
           ? await editAssignment({
-              coursePk: selectedCourse.pk,
+              course_id: selectedCourse.pk,
               assignment: formObj,
               assignment_id: editingAssignment.id
             })
-          : await createAssignment({ coursePk: selectedCourse.pk, assignment: formObj })
+          : await createAssignment({ course_id: selectedCourse.pk, assignment: formObj })
         if (editingAssignment && res.status === 200) navigate(-1)
         else if (res.status === 201) navigate(-1)
       } catch (e) {
@@ -149,4 +149,4 @@ const AddAssignment = () => {
   )
 }
 
-export default AddAssignment
+export default AssignmentForm

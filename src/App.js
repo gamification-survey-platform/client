@@ -8,13 +8,15 @@ import Courses from './pages/courses/Courses'
 import CourseDetails from './pages/courses/CourseDetails'
 import CourseAssignments from './pages/courses/CourseAssignments'
 import CourseMembers from './pages/courses/CourseMembers'
-import AddCourse from './pages/courses/AddCourse'
 import AssignmentDetails from './pages/assignments/AssignmentDetails'
 import AssignmentSurvey from './pages/assignments/AssignmentSurvey'
 import AssignmentReports from './pages/assignments/AssignmentReports'
-import AddAssignment from './pages/assignments/AddAssignment'
+import AddAssignment from './pages/assignments/AssignmentForm'
 import AddSurvey from './pages/survey/AddSurvey'
 import NotFoundPage from './pages/NotFoundPage'
+import AssignmentReview from './pages/assignments/AssignmentReview'
+import AssignmentForm from './pages/assignments/AssignmentForm'
+import CourseForm from './pages/courses/CourseForm'
 
 const router = createBrowserRouter([
   {
@@ -73,7 +75,7 @@ const router = createBrowserRouter([
     path: '/courses/add',
     element: (
       <ProtectedRoute>
-        <AddCourse />
+        <CourseForm />
       </ProtectedRoute>
     )
   },
@@ -81,7 +83,7 @@ const router = createBrowserRouter([
     path: '/courses/:course_id/edit',
     element: (
       <ProtectedRoute>
-        <AddCourse />
+        <CourseForm />
       </ProtectedRoute>
     )
   },
@@ -89,7 +91,7 @@ const router = createBrowserRouter([
     path: '/courses/:course_id/assignments/add',
     element: (
       <ProtectedRoute>
-        <AddAssignment />
+        <AssignmentForm />
       </ProtectedRoute>
     )
   },
@@ -106,6 +108,14 @@ const router = createBrowserRouter([
     element: (
       <ProtectedRoute>
         <AssignmentSurvey />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/courses/:course_id/assignments/:assignment_id/reviews/:review_id',
+    element: (
+      <ProtectedRoute>
+        <AssignmentReview />
       </ProtectedRoute>
     )
   },

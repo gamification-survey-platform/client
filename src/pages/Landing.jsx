@@ -16,7 +16,6 @@ const Landing = () => {
     e.preventDefault()
     try {
       const res = await loginApi({ andrewId, password })
-      console.log(res)
       if (res.status === 200) {
         const { token, ...rest } = res.data
         dispatch(setUser(rest))

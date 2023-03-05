@@ -7,7 +7,7 @@ import { addCourse, editCourse } from '../../store/courses/coursesSlice'
 import coursesSelector from '../../store/courses/selectors'
 import userSelector from '../../store/user/selectors'
 
-const AddCourse = () => {
+const CourseForm = () => {
   const [validated, setValidated] = useState(false)
   const [showError, setShowError] = useState(false)
   const dispatch = useDispatch()
@@ -38,7 +38,7 @@ const AddCourse = () => {
         const formObj = Object.fromEntries(formData.entries())
         const courseData = { ...formObj, andrew_id: user.andrewId }
         const res = editingCourse
-          ? await editCourseApi({ courseId: editingCourse.pk, course: courseData })
+          ? await editCourseApi({ course_id: editingCourse.pk, course: courseData })
           : await createCourseApi(courseData)
         if (res.status === 200) {
           if (editingCourse) {
@@ -108,4 +108,4 @@ const AddCourse = () => {
   )
 }
 
-export default AddCourse
+export default CourseForm

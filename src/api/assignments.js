@@ -35,13 +35,11 @@ const getCourseAssignments = async (course_id) => {
   }
 }
 
-const createAssignment = async ({ coursePk, assignment }) => {
+const createAssignment = async ({ course_id, assignment }) => {
   try {
-    if (!validateUser()) throw new Error('User is not authenticated')
-    if (!validateAdmin()) throw new Error('User does not have required role')
     const formattedAssignment = formatAssignment(assignment)
-    const res = api.post(`courses/${coursePk}/assignments/`, {
-      course: coursePk,
+    const res = api.post(`courses/${course_id}/assignments/`, {
+      course: course_id,
       ...formattedAssignment
     })
     return res
@@ -50,12 +48,10 @@ const createAssignment = async ({ coursePk, assignment }) => {
   }
 }
 
-const editAssignment = async ({ coursePk, assignment, assignment_id }) => {
+const editAssignment = async ({ course_id, assignment_id, assignment }) => {
   try {
-    if (!validateUser()) throw new Error('User is not authenticated')
-    if (!validateAdmin()) throw new Error('User does not have required role')
     const formattedAssignment = formatAssignment(assignment)
-    const res = await api.put(`courses/${coursePk}/assignments/`, formattedAssignment, {
+    const res = await api.put(`courses/${course_id}/assignments/`, formattedAssignment, {
       params: { assignment_id }
     })
     return res
@@ -66,8 +62,6 @@ const editAssignment = async ({ coursePk, assignment, assignment_id }) => {
 
 const deleteAssignment = async ({ coursePk, assignment_id }) => {
   try {
-    if (!validateUser()) throw new Error('User is not authenticated')
-    if (!validateAdmin()) throw new Error('User does not have required role')
     const res = await api.delete(`courses/${coursePk}/assignments/`, { params: { assignment_id } })
     return res
   } catch (error) {

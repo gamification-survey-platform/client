@@ -5,6 +5,7 @@ import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { getSurvey } from '../../api/survey'
 import { deleteAssignment, getCourseAssignments } from '../../api/assignments'
 import coursesSelector from '../../store/courses/selectors'
+import { isInstructorOrTA } from '../../utils/roles'
 
 const CourseAssignments = () => {
   const location = useLocation()
@@ -68,7 +69,7 @@ const CourseAssignments = () => {
   }
 
   return (
-    <Container className="mt-5">
+    <Container className="mt-5 text-center">
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -94,13 +95,13 @@ const CourseAssignments = () => {
                     <Button variant="secondary">View</Button>
                   </Link>
                 </td>
-                <td>
-                  <Button variant="primary" onClick={(e) => handleSurveyClick(e, assignment)}>
-                    Survey
-                  </Button>
-                </td>
-                {assignment.user_role !== 'Student' && (
+                {isInstructorOrTA(assignment.user_role) && (
                   <>
+                    <td>
+                      <Button variant="primary" onClick={(e) => handleSurveyClick(e, assignment)}>
+                        Survey
+                      </Button>
+                    </td>
                     <td>
                       <Link to={`${location.pathname}/${assignment.id}/reports`}>
                         <Button variant="info">Reports</Button>
@@ -127,7 +128,7 @@ const CourseAssignments = () => {
           })}
         </tbody>
       </Table>
-      {userRole !== 'Student' && (
+      {isInstructorOrTA(userRole) && (
         <Button className="m-3" onClick={handleAddAssignment}>
           Add Assignment
         </Button>

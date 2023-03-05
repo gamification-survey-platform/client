@@ -1,20 +1,25 @@
-import { Col, Container, Row, Form, Button } from 'react-bootstrap'
+import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
 import { useEffect, useState, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { getAssignment } from '../../api/assignments'
 import coursesSelector from '../../store/courses/selectors'
 import { URLSubmission, TextSubmission, FileSubmission } from './Submission'
+import { Link } from 'react-router-dom'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 import { getArtifact, submitArtifact } from '../../api/artifacts'
 import PdfPreview from './PdfPreview'
+import { getArtifactReviews } from '../../api/artifactReview'
+import { isInstructorOrTA } from '../../utils/roles'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
   const inputRef = useRef()
   const [userRole, setUserRole] = useState()
   const [artifact, setArtifact] = useState()
+  const [completedArtifactReviews, setCompletedArtifactReviews] = useState([])
+  const [pendingArtifactReviews, setPendingArtifactReviews] = useState([])
   const [submission, setSubmission] = useState()
   const [assignment, setAssignment] = useState({
     assignment_name: '',
@@ -32,6 +37,14 @@ const AssignmentDetails = () => {
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
 
+  const fetchArtifactReviews = async () => {
+    const res = await getArtifactReviews({ course_id: selectedCourse.pk, assignment_id })
+    if (res.status === 200) {
+      setPendingArtifactReviews(res.data.filter((r) => r.status === 'INCOMPLETE'))
+      setCompletedArtifactReviews(res.data.filter((r) => r.status === 'COMPLETE'))
+    } else setShowError(true)
+  }
+
   const fetchArtifact = async () => {
     const res = await getArtifact({ course_id: selectedCourse.pk, assignment_id })
     if (res.status === 200) {
@@ -48,6 +61,7 @@ const AssignmentDetails = () => {
     }
     fetchAssignment()
     fetchArtifact()
+    fetchArtifactReviews()
   }, [])
 
   const handleSubmit = async (e) => {
@@ -92,10 +106,38 @@ const AssignmentDetails = () => {
           <hr />
           <p>{assignment.description}</p>
         </Col>
+        <Col xs="3">
+          {userRole === 'Student' && (
+            <div className="border-left border-secondary p-3">
+              <div>
+                <h5>Completed Surveys</h5>
+                {completedArtifactReviews.map((review, i) => {
+                  return (
+                    <Link
+                      key={i}
+                      to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
+                      <Button variant="secondary">{review.reviewing}</Button>
+                    </Link>
+                  )
+                })}
+                <h5>Pending Surveys</h5>
+                {pendingArtifactReviews.map((review, i) => {
+                  return (
+                    <Link
+                      key={i}
+                      to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
+                      <Button variant="warning">{review.reviewing}</Button>
+                    </Link>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </Col>
       </Row>
       <Row>
         <Col xs="3">
-          {userRole === 'Student' && (
+          {!isInstructorOrTA(userRole) && (
             <Row>
               {assignment.submission_type === 'URL' && <FileSubmission {...submissionProps} />}
               {assignment.submission_type === 'File' && <FileSubmission {...submissionProps} />}
@@ -107,6 +149,11 @@ const AssignmentDetails = () => {
           <PdfPreview artifact={artifact} />
         </Col>
       </Row>
+      {error && (
+        <Alert className="mt-3" type="danger">
+          Failed to load assignment details.
+        </Alert>
+      )}
     </Container>
   )
 }
