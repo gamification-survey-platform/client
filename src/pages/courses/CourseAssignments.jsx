@@ -6,10 +6,12 @@ import { getSurvey } from '../../api/survey'
 import { deleteAssignment, getCourseAssignments } from '../../api/assignments'
 import coursesSelector from '../../store/courses/selectors'
 import { isInstructorOrTA } from '../../utils/roles'
+import userSelector from '../../store/user/selectors'
 
 const CourseAssignments = () => {
   const location = useLocation()
   const { course_id } = useParams()
+  const user = useSelector(userSelector)
   const [userRole, setUserRole] = useState('Student')
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
@@ -67,7 +69,7 @@ const CourseAssignments = () => {
       setAssignments(newAssignments)
     }
   }
-
+  console.log(assignments)
   return (
     <Container className="mt-5 text-center">
       <Table striped bordered hover>
@@ -95,7 +97,7 @@ const CourseAssignments = () => {
                     <Button variant="secondary">View</Button>
                   </Link>
                 </td>
-                {isInstructorOrTA(assignment.user_role) && (
+                {(isInstructorOrTA(assignment.user_role) || user.is_staff) && (
                   <>
                     <td>
                       <Button variant="primary" onClick={(e) => handleSurveyClick(e, assignment)}>

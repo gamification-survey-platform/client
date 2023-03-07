@@ -11,9 +11,9 @@ const formatAssignment = (assignment) => {
 
 const getAssignment = async ({ course_id, assignment_id }) => {
   try {
-    const res = await api.get(`courses/${course_id}/assignments`, { params: { assignment_id } })
-    const { user_role, assignment } = res.data
-    res.data = { user_role, assignment: formatAssignment(assignment) }
+    const res = await api.get(`courses/${course_id}/assignments/${assignment_id}`)
+    const { user_role, ...rest } = res.data
+    res.data = { user_role, assignment: formatAssignment(rest) }
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -23,8 +23,8 @@ const getAssignment = async ({ course_id, assignment_id }) => {
 const getCourseAssignments = async (course_id) => {
   try {
     const res = await api.get(`courses/${course_id}/assignments`)
-    const { user_role, assignments } = res.data
-    res.data = assignments.map(({ feedback_survey, ...rest }) => ({
+    res.data
+    res.data = res.data.map(({ feedback_survey, user_role, ...rest }) => ({
       ...formatAssignment(rest),
       feedback_survey,
       user_role

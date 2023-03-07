@@ -12,7 +12,6 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey, editin
     setOptions([])
     setValidated(false)
     if (editingQuestion && formRef.current) {
-      console.log(editingQuestion)
       formRef.current.getElementsByTagName('input')[0].value = editingQuestion.text
       const numInputs = formRef.current.getElementsByTagName('input').length
       formRef.current.getElementsByTagName('input')[numInputs - 1].checked =

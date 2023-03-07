@@ -69,7 +69,6 @@ const TextArea = ({ pk, answer }) => {
   const inputRef = useRef()
   useEffect(() => {
     if (inputRef && inputRef.current && answer) {
-      console.log(answer)
       inputRef.current.value = answer[0]
     }
   }, [answer, inputRef])

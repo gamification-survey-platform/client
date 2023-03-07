@@ -11,7 +11,7 @@ import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 import { getArtifact, submitArtifact } from '../../api/artifacts'
 import PdfPreview from './PdfPreview'
 import { getArtifactReviews } from '../../api/artifactReview'
-import { isInstructorOrTA } from '../../utils/roles'
+import { isStudent } from '../../utils/roles'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
@@ -48,9 +48,13 @@ const AssignmentDetails = () => {
   const fetchArtifact = async () => {
     const res = await getArtifact({ course_id: selectedCourse.pk, assignment_id })
     if (res.status === 200) {
-      setArtifact(res.data)
+      const contentDisposition = res.headers['content-disposition']
+      const regex = /attachment; filename=artifact_(\d+)\.pdf/gm
+      const artifact_pk = regex.exec(contentDisposition)[1]
+      setArtifact({ data: res.data, artifact_pk })
     } else setShowError(true)
   }
+
   useEffect(() => {
     const fetchAssignment = async () => {
       const res = await getAssignment({ course_id: selectedCourse.pk, assignment_id })
@@ -60,9 +64,12 @@ const AssignmentDetails = () => {
       } else setShowError(true)
     }
     fetchAssignment()
-    fetchArtifact()
     fetchArtifactReviews()
   }, [])
+
+  useEffect(() => {
+    if (isStudent(userRole)) fetchArtifact()
+  }, [userRole])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -107,7 +114,7 @@ const AssignmentDetails = () => {
           <p>{assignment.description}</p>
         </Col>
         <Col xs="3">
-          {userRole === 'Student' && (
+          {isStudent(userRole) && (
             <div className="border-left border-secondary p-3">
               <div>
                 <h5>Completed Surveys</h5>
@@ -137,17 +144,31 @@ const AssignmentDetails = () => {
       </Row>
       <Row>
         <Col xs="3">
-          {!isInstructorOrTA(userRole) && (
-            <Row>
-              {assignment.submission_type === 'URL' && <FileSubmission {...submissionProps} />}
-              {assignment.submission_type === 'File' && <FileSubmission {...submissionProps} />}
-              {assignment.submission_type === 'Text' && <FileSubmission {...submissionProps} />}
-            </Row>
+          {isStudent(userRole) && (
+            <>
+              <Row>
+                {assignment.submission_type === 'URL' && <FileSubmission {...submissionProps} />}
+                {assignment.submission_type === 'File' && <FileSubmission {...submissionProps} />}
+                {assignment.submission_type === 'Text' && <FileSubmission {...submissionProps} />}
+              </Row>
+              {artifact && (
+                <Row className="text-center m-3">
+                  <Link
+                    to={`/courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact.artifact_pk}/reports`}>
+                    <Button type="info">View Reports</Button>
+                  </Link>
+                </Row>
+              )}
+            </>
           )}
         </Col>
-        <Col xs="2">
-          <PdfPreview artifact={artifact} />
-        </Col>
+        {artifact && (
+          <>
+            <Col xs="2">
+              <PdfPreview artifact={artifact} />
+            </Col>
+          </>
+        )}
       </Row>
       {error && (
         <Alert className="mt-3" type="danger">

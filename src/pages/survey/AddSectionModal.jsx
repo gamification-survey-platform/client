@@ -25,9 +25,7 @@ const AddSectionModal = ({ show, setShow, survey, setSurvey, editingSection }) =
     } else {
       const formData = new FormData(form)
       const formObj = Object.fromEntries(formData.entries())
-      console.log(formObj)
       formObj.is_required = !!formObj.is_required
-      console.log(formObj.is_required, formObj)
       if (editingSection) {
         survey.sections = survey.sections.map((section, i) =>
           section.pk === editingSection.pk ? { ...section, ...formObj } : section
@@ -36,7 +34,6 @@ const AddSectionModal = ({ show, setShow, survey, setSurvey, editingSection }) =
         formObj.questions = []
         survey.sections.push(formObj)
       }
-      console.log(survey)
       setSurvey(survey)
       handleClose()
     }

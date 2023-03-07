@@ -31,7 +31,6 @@ const AssignmentReview = () => {
         })
         if (res.status === 200) {
           setSurvey(res.data)
-          console.log(res.data)
         }
       } catch (e) {
         setShowError(true)

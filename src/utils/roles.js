@@ -4,4 +4,6 @@ const INSTRUCTOR = 'Instructor'
 
 const isInstructorOrTA = (role) => role === TA || role === INSTRUCTOR
 
-export { STUDENT, TA, INSTRUCTOR, isInstructorOrTA }
+const isStudent = (role) => role === STUDENT
+
+export { STUDENT, TA, INSTRUCTOR, isInstructorOrTA, isStudent }

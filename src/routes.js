@@ -8,7 +8,8 @@ import CourseAssignments from './pages/courses/CourseAssignments'
 import CourseMembers from './pages/courses/CourseMembers'
 import AssignmentDetails from './pages/assignments/AssignmentDetails'
 import AssignmentSurvey from './pages/assignments/AssignmentSurvey'
-import AssignmentReports from './pages/assignments/AssignmentReports'
+import AssignmentReports from './pages/reports/AssignmentReports'
+import StudentReport from './pages/reports/StudentReport'
 import AddAssignment from './pages/assignments/AssignmentForm'
 import AddSurvey from './pages/survey/AddSurvey'
 import NotFoundPage from './pages/NotFoundPage'
@@ -122,6 +123,14 @@ const routes = [
     element: (
       <ProtectedRoute>
         <AssignmentReports />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/courses/:course_id/assignments/:assignment_id/artifacts/:artifact_id/reports',
+    element: (
+      <ProtectedRoute>
+        <StudentReport />
       </ProtectedRoute>
     )
   },
