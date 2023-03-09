@@ -51,9 +51,10 @@ const createAssignment = async ({ course_id, assignment }) => {
 const editAssignment = async ({ course_id, assignment_id, assignment }) => {
   try {
     const formattedAssignment = formatAssignment(assignment)
-    const res = await api.put(`courses/${course_id}/assignments/`, formattedAssignment, {
-      params: { assignment_id }
-    })
+    const res = await api.patch(
+      `courses/${course_id}/assignments/${assignment_id}/`,
+      formattedAssignment
+    )
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
