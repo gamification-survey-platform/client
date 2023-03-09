@@ -1,4 +1,5 @@
-import { Container } from 'react-bootstrap'
+//import { Container } from 'react-bootstrap'
+import { Typography, Divider } from 'antd'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import coursesSelector from '../../store/courses/selectors'
@@ -10,16 +11,17 @@ const CourseDetails = () => {
   const course = courses.find(({ course_number }) => course_number === course_id)
 
   return (
-    <Container className="mt-5">
-      <h2>{course.course_name}</h2>
-      <h3>{course.course_number}</h3>
-      <h4>{course.semester}</h4>
-      <hr />
+    <div className="m-5 text-center">
+      <Typography.Title level={2}>{course.course_name}</Typography.Title>
+      <Typography.Title level={3}>{course.course_number}</Typography.Title>
+      <Typography.Title level={4}>{course.semester}</Typography.Title>
+      <Divider />
       <div className="text-left">
-        <p className="font-weight-bold">Syllabus</p>
-        <p>{course.syllabus}</p>
+        <Typography.Text className="font-weight-bold">Syllabus:</Typography.Text>
+        <br />
+        <Typography.Text>{course.syllabus}</Typography.Text>
       </div>
-    </Container>
+    </div>
   )
 }
 
