@@ -1,14 +1,25 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import userSelector from '../store/user/selectors'
-import { Container, Image, Form, Row, Col, Button } from 'react-bootstrap'
+//import { Container, Image, Form, Row, Col, Button } from 'react-bootstrap'
 import DefaultImage from '../assets/default.jpg'
+import { Space, Row, Col, Form, Image, Button, Typography } from 'antd'
+import { useForm } from 'antd/es/form/Form'
+import Input from 'antd/es/input/Input'
 
 const Profile = () => {
-  const { user } = useSelector(userSelector)
+  const user = useSelector(userSelector)
   const [currentUser, setCurrentUser] = useState(user)
   const [editing, setEditing] = useState(false)
-  const { firstName, lastName, email, role, dateJoined } = currentUser
+  const { first_name, last_name, email, date_joined: unformattedDate } = currentUser
+  const [form] = useForm()
+  const date_joined = new Date(unformattedDate).toLocaleDateString('en-us', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  })
+  const initialValues = { first_name, last_name, email, date_joined }
 
   const handleClick = (e) => {
     if (!editing) setEditing(true)
@@ -18,82 +29,42 @@ const Profile = () => {
   }
 
   return (
-    <Container className="mt-5">
-      <Row>
-        <Col xs="3">
-          <Image src={DefaultImage} width="100"></Image>
-          <h2>
-            {user.firstName} {user.lastName}
-          </h2>
-          <h3>AndrewID: {user.andrewId}</h3>
-        </Col>
-        <Col xs="9">
-          <Form>
-            <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
-              <Form.Label column sm="2">
-                Email
-              </Form.Label>
-              <Col xs="10">
-                <Form.Control
-                  readOnly={!editing}
-                  value={email}
-                  onChange={(e) => setCurrentUser({ ...currentUser, email: e.target.value })}
-                />
-              </Col>
-            </Form.Group>
-            <hr />
-            <Form.Group as={Row} className="mb-3" controlId="formPlaintextEmail">
-              <Form.Label column sm="2">
-                First name
-              </Form.Label>
-              <Col xs="10">
-                <Form.Control
-                  readOnly={!editing}
-                  value={firstName}
-                  onChange={(e) => setCurrentUser({ ...currentUser, first_name: e.target.value })}
-                />
-              </Col>
-            </Form.Group>
-            <hr />
-            <Form.Group as={Row} className="mb-3">
-              <Form.Label column sm="2">
-                Last name
-              </Form.Label>
-              <Col xs="10">
-                <Form.Control
-                  readOnly={!editing}
-                  value={lastName}
-                  onChange={(e) => setCurrentUser({ ...currentUser, last_name: e.target.value })}
-                />
-              </Col>
-            </Form.Group>
-            <hr />
-            <Form.Group as={Row} className="mb-3">
-              <Form.Label column sm="2">
-                Date Joined
-              </Form.Label>
-              <Col xs="10">
-                <Form.Control readOnly value={dateJoined} />
-              </Col>
-            </Form.Group>
-            <hr />
-            <Form.Group as={Row} className="mb-3">
-              <Form.Label column sm="2">
-                Role
-              </Form.Label>
-              <Col xs="10">
-                <Form.Control readOnly value={role} />
-              </Col>
-            </Form.Group>
-            <hr />
-          </Form>
-          <Button onClick={handleClick} variant={editing ? 'success' : 'primary'}>
-            {editing ? 'Save' : 'Edit Profile'}
-          </Button>
-        </Col>
-      </Row>
-    </Container>
+    <Row className="mt-5">
+      <Col span={8} offset={2}>
+        <Row justify="center">
+          <Image src={DefaultImage} width={100} style={{ borderRadius: '50%' }} />
+        </Row>
+        <Row justify="center">
+          <Typography.Title level={2}>
+            {user.first_name} {user.last_name}
+          </Typography.Title>
+        </Row>
+        <Row justify="center">
+          <Typography.Title level={3}>AndrewID: {user.andrewId}</Typography.Title>
+        </Row>
+      </Col>
+      <Col span={10} offset={2}>
+        <Form initialValues={initialValues}>
+          <Form.Item name="first_name" label="First name">
+            <Input readOnly={!editing} />
+          </Form.Item>
+          <Form.Item name="last_name" label="Last name">
+            <Input readOnly={!editing} />
+          </Form.Item>
+          <Form.Item name="email" label="Email">
+            <Input readOnly={!editing} />
+          </Form.Item>
+          <Form.Item name="date_joined" label="Date Joined">
+            <Input readOnly />
+          </Form.Item>
+          <Row justify="center">
+            <Button onClick={handleClick} type={editing ? 'primary' : 'default'}>
+              {editing ? 'Save' : 'Edit Profile'}
+            </Button>
+          </Row>
+        </Form>
+      </Col>
+    </Row>
   )
 }
-
 export default Profile

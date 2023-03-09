@@ -1,21 +1,30 @@
-import { useState } from 'react'
-import Container from 'react-bootstrap/Container'
-import Image from 'react-bootstrap/Image'
 import { LinkContainer } from 'react-router-bootstrap'
-import Nav from 'react-bootstrap/Nav'
-import Navbar from 'react-bootstrap/Navbar'
-import Offcanvas from 'react-bootstrap/Offcanvas'
 import Logo from '../assets/cmu-logo.svg'
 import { useDispatch, useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faBell } from '@fortawesome/free-solid-svg-icons'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
+import { Layout, Menu, Image, Typography } from 'antd'
+import { UserOutlined, BookOutlined, LogoutOutlined } from '@ant-design/icons'
+import { useNavigate } from 'react-router'
 
-const Header = () => {
+const items = [
+  {
+    key: '1',
+    icon: <UserOutlined />,
+    label: 'Profile'
+  },
+  {
+    key: '2',
+    icon: <BookOutlined />,
+    label: 'Courses'
+  }
+]
+
+const AppHeader = ({ children }) => {
   const { user } = useSelector(userSelector)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleLogout = async (e) => {
     e.preventDefault()
@@ -25,38 +34,43 @@ const Header = () => {
     await persistor.purge()
     dispatch(logout())
   }
+
+  const handleClick = (e) => {
+    const { key } = e
+    switch (key) {
+      case '1':
+        navigate('/profile')
+        break
+      case '2':
+        navigate('/courses')
+        break
+    }
+  }
+
   return (
-    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-      <Container>
-        <Navbar.Brand href="#">
-          <LinkContainer to="/dashboard">
-            <Image src={Logo} />
+    <Layout style={{ minHeight: '100vh' }}>
+      <Layout.Sider collapsible>
+        <Menu theme="dark" mode="inline" items={items} onClick={handleClick} />
+      </Layout.Sider>
+      <Layout className="site-layout">
+        <Layout.Header
+          style={{
+            paddingLeft: 10,
+            backgroundColor: 'white',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+          <LinkContainer to="/dashboard" style={{ cursor: 'pointer', paddingLeft: 10 }}>
+            <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
-        </Navbar.Brand>{' '}
-        <Navbar.Toggle aria-controls="navbar" className="ml-3" />
-        <Navbar.Collapse>
-          <Nav className="me-auto">
-            <LinkContainer to="/profile">
-              <Nav.Link>Profile</Nav.Link>
-            </LinkContainer>
-            <LinkContainer to="/courses">
-              <Nav.Link>Courses</Nav.Link>
-            </LinkContainer>
-          </Nav>
-          <Nav>
-            <LinkContainer to="/courses">
-              <Nav.Link>
-                <FontAwesomeIcon icon={faBell} size="2xl" />
-              </Nav.Link>
-            </LinkContainer>
-            <LinkContainer to="/courses" onClick={handleLogout}>
-              <Nav.Link>Logout</Nav.Link>
-            </LinkContainer>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+          <LinkContainer to="/" onClick={handleLogout}>
+            <Typography.Text role="button">Logout</Typography.Text>
+          </LinkContainer>
+        </Layout.Header>
+        <Layout.Content>{children}</Layout.Content>
+      </Layout>
+    </Layout>
   )
 }
-
-export default Header
+export default AppHeader
