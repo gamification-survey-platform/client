@@ -1,5 +1,4 @@
 import { useState } from 'react'
-//import { Alert, Container, Table, Button } from 'react-bootstrap'
 import { Table, Button, Alert, Tag } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -117,3 +116,5 @@ const Courses = () => {
     </div>
   )
 }
+
+export default Courses

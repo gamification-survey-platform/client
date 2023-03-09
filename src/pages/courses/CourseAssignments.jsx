@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Container, Table, Button } from 'react-bootstrap'
+import { Table, Button, Tag } from 'antd'
 import { useSelector } from 'react-redux'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { getSurvey } from '../../api/survey'
@@ -7,6 +7,7 @@ import { deleteAssignment, getCourseAssignments } from '../../api/assignments'
 import coursesSelector from '../../store/courses/selectors'
 import { isInstructorOrTA } from '../../utils/roles'
 import userSelector from '../../store/user/selectors'
+import { LinkContainer } from 'react-router-bootstrap'
 
 const CourseAssignments = () => {
   const location = useLocation()
@@ -18,6 +19,108 @@ const CourseAssignments = () => {
   const navigate = useNavigate()
   const [assignments, setAssignments] = useState([])
 
+  const dataSource = assignments.map((assignment, i) => {
+    const date_due = new Date(assignment.date_due).toLocaleDateString('en-us', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+    const date_released = new Date(assignment.date_released).toLocaleDateString('en-us', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+    return { ...assignment, key: i, date_due, date_released }
+  })
+
+  let columns = [
+    {
+      title: 'Assignment Name',
+      dataIndex: 'assignment_name',
+      align: 'center',
+      key: 'assignment_name'
+    },
+    {
+      title: 'Assignment Type',
+      dataIndex: 'assignment_type',
+      align: 'center',
+      key: 'assignment_type'
+    },
+    { title: 'Total Score', dataIndex: 'total_score', align: 'center', key: 'total_score' },
+    { title: 'Release Date', dataIndex: 'date_released', align: 'center', key: 'date_released' },
+    { title: 'Due Date', dataIndex: 'date_due', align: 'center', key: 'date_due' },
+    {
+      title: '',
+      dataIndex: 'view',
+      key: 'view',
+      render: (_, assignment) => {
+        return (
+          <LinkContainer to={`${location.pathname}/${assignment.id}/view`}>
+            <Tag color="blue" role="button">
+              View
+            </Tag>
+          </LinkContainer>
+        )
+      }
+    }
+  ]
+
+  const staffColumns = [
+    {
+      title: '',
+      dataIndex: 'survey',
+      key: 'survey',
+      render: (_, assignment) => {
+        return (
+          <Tag color="green" role="button" onClick={(e) => handleSurveyClick(e, assignment)}>
+            Survey
+          </Tag>
+        )
+      }
+    },
+    {
+      title: '',
+      dataIndex: 'reports',
+      key: 'reports',
+      render: (_, assignment) => {
+        return (
+          <Link to={`${location.pathname}/${assignment.id}/reports`}>
+            <Tag color="geekblue" role="button">
+              Reports
+            </Tag>
+          </Link>
+        )
+      }
+    },
+    {
+      title: '',
+      dataIndex: 'edit',
+      key: 'edit',
+      render: (_, assignment) => {
+        return (
+          <Tag color="gold" role="button" onClick={(e) => handleEditAssignment(e, assignment)}>
+            Edit
+          </Tag>
+        )
+      }
+    },
+    {
+      title: '',
+      dataIndex: 'survey',
+      key: 'survey',
+      render: (_, assignment) => {
+        return (
+          <Tag color="volcano" role="button" onClick={(e) => handleDeleteAssignment(e, assignment)}>
+            Delete
+          </Tag>
+        )
+      }
+    }
+  ]
+
+  if (isInstructorOrTA) columns = columns.concat(staffColumns)
   useEffect(() => {
     const fetchAssignments = async () => {
       const res = await getCourseAssignments(selectedCourse.pk)
@@ -69,73 +172,16 @@ const CourseAssignments = () => {
       setAssignments(newAssignments)
     }
   }
-  console.log(assignments)
+
   return (
-    <Container className="mt-5 text-center">
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Assignment Name</th>
-            <th>Assignment Type</th>
-            <th>Total Score</th>
-            <th>Available After</th>
-            <th>Due Date</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {assignments.map((assignment, i) => {
-            return (
-              <tr key={i}>
-                <td>{assignment.assignment_name}</td>
-                <td>{assignment.assignment_type}</td>
-                <td>{assignment.total_score}</td>
-                <td>{assignment.date_released.toLocaleString()}</td>
-                <td>{assignment.date_due.toLocaleString()}</td>
-                <td>
-                  <Link to={`${location.pathname}/${assignment.id}/view`}>
-                    <Button variant="secondary">View</Button>
-                  </Link>
-                </td>
-                {(isInstructorOrTA(assignment.user_role) || user.is_staff) && (
-                  <>
-                    <td>
-                      <Button variant="primary" onClick={(e) => handleSurveyClick(e, assignment)}>
-                        Survey
-                      </Button>
-                    </td>
-                    <td>
-                      <Link to={`${location.pathname}/${assignment.id}/reports`}>
-                        <Button variant="info">Reports</Button>
-                      </Link>
-                    </td>
-                    <td>
-                      <Button
-                        variant="warning"
-                        onClick={(e) => handleEditAssignment(e, assignment)}>
-                        Edit
-                      </Button>
-                    </td>
-                    <td>
-                      <Button
-                        variant="danger"
-                        onClick={(e) => handleDeleteAssignment(e, assignment)}>
-                        Delete
-                      </Button>
-                    </td>
-                  </>
-                )}
-              </tr>
-            )
-          })}
-        </tbody>
-      </Table>
+    <div className="m-5">
+      <Table columns={columns} dataSource={dataSource} />
       {isInstructorOrTA(userRole) && (
         <Button className="m-3" onClick={handleAddAssignment}>
           Add Assignment
         </Button>
       )}
-    </Container>
+    </div>
   )
 }
 
