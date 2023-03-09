@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { current, createSlice } from '@reduxjs/toolkit'
 import { PURGE } from 'redux-persist'
 
 const initialState = []
@@ -11,7 +11,7 @@ const coursesSlice = createSlice({
     addCourse: (state, action) => [...state.courses, action.payload],
     editCourse: (state, action) => {
       const { pk, course: newCourse } = action.payload
-      const newCourses = state.courses.map((course) => (course.pk === pk ? newCourse : course))
+      const newCourses = state.map((course) => (course.pk === pk ? newCourse : course))
       return newCourses
     },
     deleteCourse: (state, action) => {

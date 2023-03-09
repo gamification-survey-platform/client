@@ -1,14 +1,16 @@
-import { Container, Button } from 'react-bootstrap'
+import { Typography, Button } from 'antd'
 import { Link } from 'react-router-dom'
 
 const NotFoundPage = () => (
-  <Container className="mt-5">
-    <h1>404</h1>
-    <h3>Uh oh! The page you are looking for does not exist.</h3>
+  <div className="mt-5">
+    <Typography.Title level={1}>404</Typography.Title>
+    <Typography.Title level={3}>
+      Uh oh! The page you are looking for does not exist.
+    </Typography.Title>
     <Link to="/">
-      <Button>Go home</Button>
+      <Button type="primary">Go home</Button>
     </Link>
-  </Container>
+  </div>
 )
 
 export default NotFoundPage

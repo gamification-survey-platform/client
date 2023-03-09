@@ -1,110 +1,105 @@
 import { useEffect, useRef, useState } from 'react'
-import { Container, Button, Form, Col, Alert } from 'react-bootstrap'
+//import { Container, Button, Form, Col, Alert } from 'react-bootstrap'
+import { Form, Col, Alert, Input, Upload, Button, Typography } from 'antd'
+import { UploadOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import { createCourse as createCourseApi, editCourse as editCourseApi } from '../../api/courses'
 import { addCourse, editCourse } from '../../store/courses/coursesSlice'
 import coursesSelector from '../../store/courses/selectors'
 import userSelector from '../../store/user/selectors'
+import { useForm } from 'antd/es/form/Form'
 
 const CourseForm = () => {
-  const [validated, setValidated] = useState(false)
-  const [showError, setShowError] = useState(false)
+  const [message, setMessage] = useState(false)
   const dispatch = useDispatch()
   const user = useSelector(userSelector)
   const courses = useSelector(coursesSelector)
   const navigate = useNavigate()
-  const formRef = useRef()
+  const [form] = useForm()
   const params = useParams()
   const editingCourse = courses.find((course) => course.course_number === params.course_id)
-
   useEffect(() => {
-    if (editingCourse && formRef && formRef.current) {
-      for (let k of Object.keys(editingCourse)) {
-        if (formRef.current[`${k}`]) {
-          formRef.current[`${k}`].value = editingCourse[`${k}`]
-        }
-      }
+    if (editingCourse && form) {
+      form.setFieldsValue({ ...editingCourse })
     }
-  }, [editingCourse, formRef, formRef?.current])
+  }, [editingCourse, form])
 
   const handleSubmit = async (event) => {
     event.preventDefault()
     event.stopPropagation()
-    const form = event.currentTarget
-    if (form.checkValidity() !== false) {
+    form.validateFields()
+    if (form.validateFields()) {
       try {
-        const formData = new FormData(event.currentTarget)
-        const formObj = Object.fromEntries(formData.entries())
-        const courseData = { ...formObj, andrew_id: user.andrewId }
+        const courseData = { ...form.getFieldsValue(), andrew_id: user.andrewId }
         const res = editingCourse
           ? await editCourseApi({ course_id: editingCourse.pk, course: courseData })
           : await createCourseApi(courseData)
         if (res.status === 200) {
           if (editingCourse) {
-            dispatch(editCourse({ pk: editingCourse.pk, course: res.data }))
+            dispatch(
+              editCourse({ pk: editingCourse.pk, course: { ...editingCourse, ...res.data } })
+            )
           } else {
             dispatch(addCourse(res.data))
           }
           navigate(-1)
         }
+        setTimeout(() => setMessage(), 2000)
       } catch (e) {
-        setShowError(true)
+        setMessage({
+          type: 'error',
+          message: editingCourse ? 'Failed to edit course.' : 'Failed to create course.'
+        })
+
+        setTimeout(() => setMessage(), 2000)
       }
     }
-    setValidated(true)
   }
-
   return (
-    <Container className="mt-5 text-left">
-      <Form ref={formRef} noValidate validated={validated} onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label className="ml-3">Course Number:</Form.Label>
-          <Col xs="5">
-            <Form.Control required name="course_number" />
-            <Form.Control.Feedback type="invalid">
-              Please enter a course number
-            </Form.Control.Feedback>
-          </Col>
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="ml-3">Course Name:</Form.Label>
-          <Col xs="5">
-            <Form.Control required name="course_name" />
-            <Form.Control.Feedback type="invalid">Please enter a course name</Form.Control.Feedback>
-          </Col>
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="ml-3">Syllabus:</Form.Label>
-          <Col>
-            <Form.Control as="textarea" rows={3} name="syllabus" />
-          </Col>
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="ml-3">Semester:</Form.Label>
-          <Col xs="5">
-            <Form.Control name="semester" />
-          </Col>
-        </Form.Group>
-        <Form.Group className="mb-3 ml-3">
-          <Form.Check label={'Visible?'} name="visible" />
-        </Form.Group>
-        <Form.Group className="mb-3 ml-3">
-          <Form.Label>Choose a course image: </Form.Label>
-          <Form.Control type="file" name="picture" />
-        </Form.Group>
-        <Form.Group className="mb-3 ml-3">
-          <Form.Label>CATME File (Upload Json)</Form.Label>
-          <Form.Control type="file" name="catme" />
-        </Form.Group>
-        <Button className="ml-3" variant={editingCourse ? 'warning' : 'primary'} type="submit">
+    <div className="m-5 text-center">
+      <Typography.Title level={2}>Create Course</Typography.Title>
+      <Form form={form}>
+        <Form.Item
+          label="Course Number"
+          name="course_number"
+          rules={[{ required: true, message: 'Please input a course number' }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Course Name"
+          name="course_name"
+          rules={[{ required: true, message: 'Please input a course name' }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Semester"
+          name="semester"
+          rules={[{ required: true, message: 'Please input a semester' }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          label="Syllabus"
+          name="syllabus"
+          rules={[{ required: true, message: 'Please input an syllabus' }]}>
+          <Input.TextArea rows={6} />
+        </Form.Item>
+        <Form.Item label="Course Image" name="picture" className="text-left">
+          <Upload name="picture">
+            <Button icon={<UploadOutlined />}>Click to upload</Button>
+          </Upload>
+        </Form.Item>
+        <Form.Item label="CATME File" name="catme" className="text-left">
+          <Upload name="catme">
+            <Button icon={<UploadOutlined />}>Upload JSON</Button>
+          </Upload>
+        </Form.Item>
+        <Button type="primary" onClick={handleSubmit}>
           {editingCourse ? 'Edit' : 'Create'}
         </Button>
-        {showError && (
-          <Alert variant="danger">Failed to {editingCourse ? 'edit' : 'create'} course.</Alert>
-        )}
+        {message && <Alert className="mt-3" {...message} />}
       </Form>
-    </Container>
+    </div>
   )
 }
 
