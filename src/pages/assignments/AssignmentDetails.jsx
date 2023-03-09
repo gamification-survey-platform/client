@@ -1,5 +1,6 @@
-import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
+//import { Col, Container, Row, Form, Button, Alert } from 'react-bootstrap'
 import { useEffect, useState, useRef } from 'react'
+import { Row, Col, Form, Button, Tag, Alert, Typography, Divider, Space } from 'antd'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { getAssignment } from '../../api/assignments'
@@ -33,7 +34,7 @@ const AssignmentDetails = () => {
     review_assign_policy: '',
     submission_type: ''
   })
-  const [error, setShowError] = useState(false)
+  const [message, setShowMessage] = useState()
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
 
@@ -42,7 +43,7 @@ const AssignmentDetails = () => {
     if (res.status === 200) {
       setPendingArtifactReviews(res.data.filter((r) => r.status === 'INCOMPLETE'))
       setCompletedArtifactReviews(res.data.filter((r) => r.status === 'COMPLETE'))
-    } else setShowError(true)
+    } else setShowMessage({ type: 'error', message: 'Failed to fetch artifact reviews.' })
   }
 
   const fetchArtifact = async () => {
@@ -52,7 +53,7 @@ const AssignmentDetails = () => {
       const regex = /attachment; filename=artifact_(\d+)\.pdf/gm
       const artifact_pk = regex.exec(contentDisposition)[1]
       setArtifact({ data: res.data, artifact_pk })
-    } else setShowError(true)
+    } else setShowMessage({ type: 'error', message: 'Failed to fetch artifact.' })
   }
 
   useEffect(() => {
@@ -61,7 +62,7 @@ const AssignmentDetails = () => {
       if (res.status === 200) {
         setAssignment(res.data.assignment)
         setUserRole(res.data.user_role)
-      } else setShowError(true)
+      } else setShowMessage({ type: 'error', message: 'Failed to fetch assignment.' })
     }
     fetchAssignment()
     fetchArtifactReviews()
@@ -82,7 +83,7 @@ const AssignmentDetails = () => {
         await fetchArtifact()
       }
     } catch (e) {
-      setShowError(true)
+      setShowMessage({ type: 'error', message: 'Failed to submit assignment.' })
     }
   }
 
@@ -94,72 +95,73 @@ const AssignmentDetails = () => {
   }
 
   return (
-    <Container className="m-3">
+    <div className="m-5">
       <Row>
-        <Col xs="9">
+        <Col span={17}>
           <div className="text-center">
-            <h3>{assignment.assignment_name}</h3>
-            <hr />
-            <Row>
-              <Col>Type: {assignment.assignment_type}</Col>
-            </Row>
-            <hr />
-            <Row>
+            <Typography.Title level={3}>{assignment.assignment_name}</Typography.Title>
+            <Divider />
+            <Space>Type: {assignment.assignment_type}</Space>
+            <Divider />
+            <Space>
               <Col>Total Score: {assignment.total_score}</Col>
               <Col>Weight: {assignment.weight}</Col>
               <Col>Due date: {assignment.date_due.toDateString()}</Col>
-            </Row>
+            </Space>
           </div>
-          <hr />
-          <p>{assignment.description}</p>
+          <Divider />
+          <Typography.Text>{assignment.description}</Typography.Text>
         </Col>
-        <Col xs="3">
+        <Col span={6} offset={1}>
           {isStudent(userRole) && (
-            <div className="border-left border-secondary p-3">
-              <div>
-                <h5>Completed Surveys</h5>
-                {completedArtifactReviews.map((review, i) => {
-                  return (
-                    <Link
-                      key={i}
-                      to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
-                      <Button variant="secondary">{review.reviewing}</Button>
-                    </Link>
-                  )
-                })}
-                <h5>Pending Surveys</h5>
-                {pendingArtifactReviews.map((review, i) => {
-                  return (
-                    <Link
-                      key={i}
-                      to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
-                      <Button variant="warning">{review.reviewing}</Button>
-                    </Link>
-                  )
-                })}
-              </div>
-            </div>
+            <Space direction="vertical" size="middle" className="text-center">
+              <h5>Completed Surveys</h5>
+              {completedArtifactReviews.map((review, i) => {
+                return (
+                  <Link
+                    key={i}
+                    to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
+                    <Tag role="button" color="green">
+                      {review.reviewing}
+                    </Tag>
+                  </Link>
+                )
+              })}
+              <h5>Pending Surveys</h5>
+              {pendingArtifactReviews.map((review, i) => {
+                return (
+                  <Link
+                    key={i}
+                    to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
+                    <Tag role="button" color="gold">
+                      {review.reviewing}
+                    </Tag>
+                  </Link>
+                )
+              })}
+            </Space>
           )}
         </Col>
       </Row>
+      <Divider />
       <Row>
         <Col xs="3">
           {isStudent(userRole) && (
-            <>
+            <Space direction="vertical" className="mt-3">
               <Row>
                 {assignment.submission_type === 'URL' && <FileSubmission {...submissionProps} />}
                 {assignment.submission_type === 'File' && <FileSubmission {...submissionProps} />}
                 {assignment.submission_type === 'Text' && <FileSubmission {...submissionProps} />}
               </Row>
               {artifact && (
-                <Row className="text-center m-3">
+                <Row className="text-center">
                   <Link
                     to={`/courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact.artifact_pk}/reports`}>
-                    <Button type="info">View Reports</Button>
+                    <Button type="primary">View Reports</Button>
                   </Link>
                 </Row>
               )}
-            </>
+            </Space>
           )}
         </Col>
         {artifact && (
@@ -170,12 +172,8 @@ const AssignmentDetails = () => {
           </>
         )}
       </Row>
-      {error && (
-        <Alert className="mt-3" type="danger">
-          Failed to load assignment details.
-        </Alert>
-      )}
-    </Container>
+      {message && <Alert className="mt-3" {...message} />}
+    </div>
   )
 }
 

@@ -19,7 +19,7 @@ const PdfPreview = ({ artifact }) => {
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
   }, [])
-  console.log(data, artifact_pk)
+
   return (
     <div
       className="text-center p-5 ml-5"
