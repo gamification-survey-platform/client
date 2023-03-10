@@ -1,30 +1,27 @@
-import { useEffect, useRef, useState } from 'react'
-import { Modal, Button, Form } from 'react-bootstrap'
+import { useEffect, useState } from 'react'
+import { Modal, Button, Form, Checkbox, Input } from 'antd'
+import { useForm } from 'antd/es/form/Form'
 import { useDispatch } from 'react-redux'
 
-const AddSectionModal = ({ show, setShow, survey, setSurvey, editingSection }) => {
-  const [validated, setValidated] = useState(false)
-  const formRef = useRef()
+const AddSectionModal = ({ open, setOpen, survey, setSurvey, editingSection }) => {
+  const [form] = useForm()
 
   useEffect(() => {
-    setValidated(false)
-    if (editingSection && formRef.current) {
-      const form = formRef.current
-      form.getElementsByTagName('input')[0].value = editingSection.title
-      form.getElementsByTagName('input')[1].checked = editingSection.is_required
+    if (editingSection) {
+      form.setFieldValue(editingSection)
+    } else {
+      form.resetFields()
     }
-  }, [show, formRef])
+  }, [open])
 
-  const handleClose = () => setShow(false)
+  const handleClose = () => setOpen(false)
 
   const handleSubmit = (event) => {
-    const form = formRef.current
-    if (form.checkValidity() === false) {
+    if (!form.validateFields()) {
       event.preventDefault()
       event.stopPropagation()
     } else {
-      const formData = new FormData(form)
-      const formObj = Object.fromEntries(formData.entries())
+      const formObj = form.getFieldsValue()
       formObj.is_required = !!formObj.is_required
       if (editingSection) {
         survey.sections = survey.sections.map((section, i) =>
@@ -37,36 +34,33 @@ const AddSectionModal = ({ show, setShow, survey, setSurvey, editingSection }) =
       setSurvey(survey)
       handleClose()
     }
-    setValidated(true)
   }
 
   return (
-    <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>{editingSection ? 'Edit Section' : 'Add Section'}</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form ref={formRef} noValidate validated={validated}>
-          <Form.Group className="m-3">
-            <Form.Label>Section Title:</Form.Label>
-            <Form.Control required name="title"></Form.Control>
-            <Form.Control.Feedback type="invalid">
-              Please enter a section title
-            </Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="m-3">
-            <Form.Check label="Required?" name="is_required"></Form.Check>
-          </Form.Group>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="danger" onClick={handleClose}>
+    <Modal
+      title={editingSection ? 'Edit Section' : 'Add Section'}
+      open={open}
+      onOk={handleSubmit}
+      onCancel={handleClose}
+      footer={[
+        <Button key="cancel" onClick={handleClose}>
           Cancel
-        </Button>
-        <Button variant="primary" type="submit" onClick={handleSubmit}>
+        </Button>,
+        <Button key="add" type="primary" onClick={handleSubmit}>
           {editingSection ? 'Edit' : 'Add'}
         </Button>
-      </Modal.Footer>
+      ]}>
+      <Form form={form}>
+        <Form.Item
+          name="title"
+          label="Section title"
+          rules={[{ required: true, message: 'Please input a section title' }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item name="is_required" label="Required?" valuePropName="checked">
+          <Checkbox />
+        </Form.Item>
+      </Form>
     </Modal>
   )
 }

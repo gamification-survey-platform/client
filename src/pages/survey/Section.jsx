@@ -1,4 +1,4 @@
-import { Row, Col } from 'react-bootstrap'
+import { Row, Col } from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
@@ -19,7 +19,6 @@ const Section = ({ sectionIdx, survey, setSurvey, studentView }) => {
     marginTop: -15,
     marginBottom: 0,
     padding: '0 5px',
-    backgroundColor: 'white',
     width: 'fit-content'
   }
 
@@ -31,13 +30,13 @@ const Section = ({ sectionIdx, survey, setSurvey, studentView }) => {
   return (
     <div className="border border-light mb-3">
       <Row>
-        <Col xs="9">
+        <Col span={18}>
           <h3 className={className} style={style}>
             {title}
           </h3>
         </Col>
         {!studentView && (
-          <Col xs="3">
+          <Col span={6}>
             <FontAwesomeIcon
               icon={faPlus}
               style={{
@@ -73,14 +72,14 @@ const Section = ({ sectionIdx, survey, setSurvey, studentView }) => {
             />
             <AddQuestionModal
               sectionIdx={sectionIdx}
-              show={questionModalOpen}
-              setShow={setQuestionModalOpen}
+              open={questionModalOpen}
+              setOpen={setQuestionModalOpen}
               survey={survey}
               setSurvey={setSurvey}
             />
             <AddSectionModal
-              show={sectionModalOpen}
-              setShow={setSectionModalOpen}
+              open={sectionModalOpen}
+              setOpen={setSectionModalOpen}
               survey={survey}
               setSurvey={setSurvey}
               editingSection={section}

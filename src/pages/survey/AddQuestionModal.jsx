@@ -1,85 +1,74 @@
-import { useEffect, useRef, useState } from 'react'
-import { Modal, Button, Form } from 'react-bootstrap'
+import { useEffect } from 'react'
+import { Modal, Form, Input, Select, Checkbox } from 'antd'
+import { useForm } from 'antd/es/form/Form'
 
-const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey, editingQuestion }) => {
-  const [validated, setValidated] = useState(false)
-  const [options, setOptions] = useState([])
-  const [questionType, setQuestionType] = useState('MULTIPLECHOICE')
-  const formRef = useRef()
+const AddQuestionModal = ({ open, setOpen, sectionIdx, survey, setSurvey, editingQuestion }) => {
+  const initialValues = { question_type: 'MULTIPLECHOICE', option_choices: 1, number_of_text: 1 }
+  const [form] = useForm()
+  const question_type = Form.useWatch('question_type', form)
+  const option_choices = Form.useWatch('option_choices', form)
+  const options =
+    !isNaN(parseInt(option_choices)) && parseInt(option_choices) > 0
+      ? [...Array(parseInt(option_choices))].map((_, i) => i)
+      : []
 
   useEffect(() => {
-    setQuestionType('MULTIPLECHOICE')
-    setOptions([])
-    setValidated(false)
-    if (editingQuestion && formRef.current) {
-      formRef.current.getElementsByTagName('input')[0].value = editingQuestion.text
-      const numInputs = formRef.current.getElementsByTagName('input').length
-      formRef.current.getElementsByTagName('input')[numInputs - 1].checked =
-        editingQuestion.is_required
-      setQuestionType(editingQuestion.question_type)
+    form.resetFields()
+    if (editingQuestion && form) {
+      form.setFieldsValue(editingQuestion)
       if (editingQuestion.question_type === 'MULTIPLECHOICE') {
-        setOptions(editingQuestion.option_choices)
+        form.setFieldValue('option_choices', editingQuestion.option_choices.length)
       }
     }
-  }, [show])
+  }, [open])
 
   useEffect(() => {
-    if (questionType === 'MULTIPLECHOICE' && options.length) {
-      for (let i = 0; i < options.length; i++) {
-        formRef.current.getElementsByTagName('input')[i + 2].value = options[i].text
-      }
+    if (editingQuestion && question_type === 'MULTIPLECHOICE' && options.length) {
+      options.forEach(
+        async (_, i) =>
+          await form.setFieldValue(`option-${i}`, editingQuestion.option_choices[i].text)
+      )
     }
   }, [options])
 
-  const handleClose = () => setShow(false)
+  const handleClose = () => setOpen(false)
 
-  const handleSubmit = (event) => {
-    const form = formRef.current
-    if (form.checkValidity() === false) {
+  const handleSubmit = async (event) => {
+    const validFields = await form.validateFields()
+    if (!validFields) {
       event.preventDefault()
       event.stopPropagation()
     } else {
-      const formData = new FormData(form)
-      const formObj = Object.fromEntries(formData.entries())
+      const formObj = await form.getFieldsValue()
       let payload = {}
+      console.log(formObj)
       if (formObj.question_type === 'MULTIPLECHOICE') {
-        let option_choices, is_required
-        if (formObj.is_required) {
-          is_required = true
-          option_choices = Object.values(formObj).slice(2, -1)
-        } else {
-          is_required = false
-          option_choices = Object.values(formObj).slice(2)
-        }
+        let option_choices = Object.keys(formObj)
+          .filter((k) => k.startsWith('option-'))
+          .map((k) => formObj[k])
         if (editingQuestion) {
-          for (let i = 0; i < option_choices.length; i++) {
-            option_choices[i] = {
-              pk: editingQuestion.option_choices[i].pk,
-              text: option_choices[i]
-            }
-          }
+          option_choices = option_choices.map((t, i) => ({
+            pk: editingQuestion.option_choices[i].pk,
+            text: t
+          }))
         } else {
-          for (let i = 0; i < option_choices.length; i++) {
-            option_choices[i] = {
-              text: option_choices[i]
-            }
-          }
+          option_choices = option_choices.map((t) => ({ text: t }))
         }
-        payload = { option_choices, is_required }
+        payload = { option_choices }
       } else if (formObj.question_type === 'NUMBER') {
-        payload = { option_choices: parseInt(formObj.option_choices), required: !!formObj.required }
+        payload = { option_choices: parseInt(formObj.option_choices) }
       } else if (formObj.question_type === 'MULTIPLETEXT') {
-        payload = { number_of_text: parseInt(formObj.number_of_text), required: !!formObj.required }
+        payload = { number_of_text: parseInt(formObj.number_of_text) }
       }
-      const { text, question_type, ...rest } = formObj
-      const questionObj = { text, question_type, ...payload }
+      const { text, question_type, is_required, ...rest } = formObj
+      const questionObj = { text, question_type, is_required, ...payload }
       let questions
       if (editingQuestion) {
         questions = survey.sections[sectionIdx].questions.map((q) =>
           q.pk === editingQuestion.pk ? { ...q, ...questionObj } : q
         )
       } else {
-        questions = survey.sections[sectionIdx].questions.push(questionObj)
+        questions = survey.sections[sectionIdx].questions.concat([questionObj])
       }
       setSurvey({
         ...survey,
@@ -88,91 +77,91 @@ const AddQuestionModal = ({ show, setShow, sectionIdx, survey, setSurvey, editin
         )
       })
       handleClose()
+      await form.resetFields()
     }
-    setValidated(true)
-  }
-
-  const setNumberOfOptions = (e) => {
-    const options = parseInt(e.target.value)
-    if (isNaN(options)) setOptions([])
-    else setOptions(Array.from(Array(options).keys()))
   }
 
   return (
-    <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>{editingQuestion ? 'Edit' : 'Add'} Question</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form ref={formRef} noValidate validated={validated}>
-          <Form.Group className="m-3">
-            <Form.Label>Question:</Form.Label>
-            <Form.Control required name="text"></Form.Control>
-            <Form.Control.Feedback type="invalid">Please enter a question</Form.Control.Feedback>
-          </Form.Group>
-          <Form.Group className="m-3">
-            <Form.Label>Question Type:</Form.Label>
-            <Form.Select
-              name="question_type"
-              onChange={(e) => setQuestionType(e.target.value)}
-              value={questionType}>
-              <option value="MULTIPLECHOICE">Multiple Choice</option>
-              <option value="NUMBER">Multiple Choice With Scale</option>
-              <option value="FIXEDTEXT">Fixed Text</option>
-              <option value="MULTIPLETEXT">Multi-line Text</option>
-              <option value="TEXTAREA">Textarea</option>
-            </Form.Select>
-          </Form.Group>
-          {questionType === 'MULTIPLECHOICE' && (
-            <Form.Group className="m-3">
-              <Form.Label>Choose number of options</Form.Label>
-              <Form.Control
-                onChange={setNumberOfOptions}
-                required
-                value={options.length === 0 ? '' : options.length}
-              />
-              {options.map((option, i) => {
-                return (
-                  <Form.Group className="mt-3" key={option.pk}>
-                    <Form.Label>Option {i + 1}</Form.Label>
-                    <Form.Control required name={`option-${i}`} defaultValue={option.text} />
-                  </Form.Group>
-                )
-              })}
-            </Form.Group>
-          )}
-          {questionType === 'NUMBER' && (
-            <Form.Group className="m-3">
-              <Form.Label>Choose number of options</Form.Label>
-              <Form.Select
-                name="option_choices"
-                onChange={setNumberOfOptions}
-                value={options.length}>
-                <option value="3">3</option>
-                <option value="5">5</option>
-                <option value="7">7</option>
-              </Form.Select>
-            </Form.Group>
-          )}
-          {questionType === 'MULTIPLETEXT' && (
-            <Form.Group className="m-3">
-              <Form.Label>Choose number of lines</Form.Label>
-              <Form.Control name="number_of_text" defaultValue={1}></Form.Control>
-            </Form.Group>
-          )}
-          <Form.Group className="m-3">
-            <Form.Check label="Required?" name="is_required"></Form.Check>
-          </Form.Group>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="danger" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button variant="primary" type="submit" onClick={handleSubmit}>
-          {editingQuestion ? 'Edit' : 'Add'}
-        </Button>
-      </Modal.Footer>
+    <Modal
+      title={editingQuestion ? 'Edit Question' : 'Add Question'}
+      open={open}
+      onOk={handleSubmit}
+      onCancel={handleClose}>
+      <Form form={form} initialValues={initialValues}>
+        <Form.Item
+          name="text"
+          label="Question"
+          rules={[{ required: true, message: 'Please enter a question' }]}>
+          <Input />
+        </Form.Item>
+        <Form.Item
+          name="question_type"
+          label="Question Type"
+          rules={[{ required: true, message: 'Please enter a question' }]}>
+          <Select
+            options={[
+              { value: 'MULTIPLECHOICE', label: 'Multiple Choice' },
+              { value: 'NUMBER', label: 'Multiple Choice With Scale' },
+              { value: 'FIXEDTEXT', label: 'Fixed Text' },
+              { value: 'MULTIPLETEXT', label: 'Multi-line Text' },
+              { value: 'TEXTAREA', label: 'Textarea' }
+            ]}
+          />
+        </Form.Item>
+        {question_type === 'MULTIPLECHOICE' && (
+          <div>
+            <Form.Item
+              label="Choose number of options"
+              name="option_choices"
+              rules={[
+                {
+                  required: true,
+                  pattern: new RegExp(/^[1-9]+$/),
+                  message: 'Please enter a number between 1-9'
+                }
+              ]}>
+              <Input type="number" />
+            </Form.Item>
+            {options.length > 0 && (
+              <div>
+                {options.map((opt, i) => {
+                  return (
+                    <Form.Item
+                      key={i}
+                      label={`Option ${i + 1}`}
+                      name={`option-${i}`}
+                      rules={[{ required: true, message: 'Please enter an option' }]}>
+                      <Input />
+                    </Form.Item>
+                  )
+                })}
+              </div>
+            )}
+          </div>
+        )}
+        {question_type === 'NUMBER' && (
+          <Form.Item
+            name="option_choices"
+            label="Number of options"
+            rules={[{ required: true, message: 'Please enter the number of options' }]}>
+            <Select
+              options={[
+                { value: '3', label: '3' },
+                { value: '5', label: '5' },
+                { value: '7', label: '7' }
+              ]}
+            />
+          </Form.Item>
+        )}
+        {question_type === 'MULTIPLETEXT' && (
+          <Form.Item label="Choose number of lines" name="number_of_text">
+            <Input />
+          </Form.Item>
+        )}
+        <Form.Item name="is_required" label="Required?" valuePropName="checked">
+          <Checkbox />
+        </Form.Item>
+      </Form>
     </Modal>
   )
 }
