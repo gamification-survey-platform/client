@@ -1,78 +1,92 @@
-import { useEffect, useState, useRef } from 'react'
-import { Form, Row, Col } from 'react-bootstrap'
+import { useEffect, useState } from 'react'
+import { Form, Row, Col, Select, Input } from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import AddQuestionModal from '../AddQuestionModal'
 
 const MultipleChoice = ({ pk, option_choices, answer }) => {
-  const inputRef = useRef()
   useEffect(() => {
-    if (inputRef && inputRef.current && answer && answer.length) {
-      inputRef.current.value = answer[0]
+    if (answer && answer.length) {
+      console.log(answer)
     }
-  }, [answer, inputRef])
+  }, [answer])
+
   return (
-    <Form.Select name={pk} ref={inputRef}>
-      {Array.from(option_choices).map((option) => (
-        <option key={option.pk}>{option.text}</option>
-      ))}
-    </Form.Select>
+    <Form.Item name={pk}>
+      <Select
+        options={[...Array.from(option_choices)].map((option) => ({
+          label: option.text,
+          value: option.text
+        }))}
+      />
+    </Form.Item>
   )
 }
 
 const MultipleChoiceScale = ({ pk, answer }) => {
-  const inputRef = useRef()
   useEffect(() => {
-    if (inputRef && inputRef.current && answer && answer.length) {
-      inputRef.current.value = answer[0]
+    if (answer && answer.length) {
+      console.log(answer)
     }
-  }, [answer, inputRef])
+  }, [answer])
 
   return (
-    <Form.Select name={pk} ref={inputRef}>
-      {[...Array(10).keys()].map((option, i) => (
-        <option key={i}>{option + 1}</option>
-      ))}
-    </Form.Select>
+    <Form.Item name={pk}>
+      <Select
+        options={[...Array.from(10)].map((i) => ({
+          label: i,
+          value: i
+        }))}
+      />
+    </Form.Item>
   )
 }
 
 const FixedText = ({ pk, answer }) => {
-  const inputRef = useRef()
   useEffect(() => {
-    if (inputRef && inputRef.current && answer && answer.length) {
-      inputRef.current.value = answer[0]
+    if (answer && answer.length) {
+      console.log(answer)
     }
-  }, [answer, inputRef])
-  return <Form.Control name={pk} ref={inputRef} />
+  }, [answer])
+
+  return (
+    <Form.Item name={pk}>
+      <Input />
+    </Form.Item>
+  )
 }
 
 const MultiLineText = ({ pk, number_of_text, answer }) => {
-  const inputRefs = [...Array(number_of_text).keys()].map((_) => useRef())
   useEffect(() => {
-    if (inputRefs.length && inputRefs[0].current && answer && answer.length) {
-      inputRefs.forEach((ref, i) => {
-        ref.current.value = answer[i]
-      })
+    if (answer && answer.length) {
+      console.log(answer)
     }
-  }, [answer, inputRefs])
+  }, [answer])
   return (
     <>
       {[...Array(number_of_text).keys()].map((i) => {
-        return <Form.Control name={pk} key={i} ref={inputRefs[i]} className="mb-3" />
+        return (
+          <Form.Item name={pk} key={i}>
+            <Input />
+          </Form.Item>
+        )
       })}
     </>
   )
 }
 
 const TextArea = ({ pk, answer }) => {
-  const inputRef = useRef()
   useEffect(() => {
-    if (inputRef && inputRef.current && answer) {
-      inputRef.current.value = answer[0]
+    if (answer && answer.length) {
+      console.log(answer)
     }
-  }, [answer, inputRef])
-  return <Form.Control as="textarea" name={pk} ref={inputRef} rows={4} />
+  }, [answer])
+
+  return (
+    <Form.Item name={pk}>
+      <Input.TextArea rows={4} />
+    </Form.Item>
+  )
 }
 
 const Question = (question) => {
@@ -92,12 +106,9 @@ const Question = (question) => {
   }
 
   return (
-    <Form.Group className="m-5">
+    <Form.Item label={text}>
       <Row>
-        <Col xs="5">
-          <Form.Label className={is_required ? 'required-field' : ''}>{text}</Form.Label>
-        </Col>
-        <Col xs="5">
+        <Col span={10}>
           {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...rest} />}
           {question_type === 'NUMBER' && <MultipleChoiceScale {...rest} />}
           {question_type === 'FIXEDTEXT' && <FixedText {...rest} />}
@@ -105,7 +116,7 @@ const Question = (question) => {
           {question_type === 'TEXTAREA' && <TextArea {...rest} />}
         </Col>
         {!studentView && (
-          <Col xs="2">
+          <Col span={4}>
             <FontAwesomeIcon
               icon={faEdit}
               style={{
@@ -132,14 +143,14 @@ const Question = (question) => {
         )}
         <AddQuestionModal
           sectionIdx={sectionIdx}
-          show={questionModalOpen}
-          setShow={setQuestionModalOpen}
+          open={questionModalOpen}
+          setOpen={setQuestionModalOpen}
           survey={survey}
           setSurvey={setSurvey}
           editingQuestion={question}
         />
       </Row>
-    </Form.Group>
+    </Form.Item>
   )
 }
 

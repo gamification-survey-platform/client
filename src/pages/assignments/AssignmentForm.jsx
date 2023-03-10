@@ -12,11 +12,6 @@ import { useForm } from 'antd/es/form/Form'
 const AssignmentForm = () => {
   const [message, setMessage] = useState()
   const [datesValid, setDatesValid] = useState(true)
-  /*
-  const [releaseDate, setReleaseDate] = useState(new Date())
-  const [dueDate, setDueDate] = useState(new Date())
-  const formRef = useRef()
-  */
   const params = useParams()
   const { state: editingAssignment } = useLocation()
   const courses = useSelector(coursesSelector)

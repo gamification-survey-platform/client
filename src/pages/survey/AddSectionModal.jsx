@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Modal, Button, Form, Checkbox, Input } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import { useDispatch } from 'react-redux'
 
 const AddSectionModal = ({ open, setOpen, survey, setSurvey, editingSection }) => {
   const [form] = useForm()

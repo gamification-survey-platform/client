@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-//import { Container, Row, Button, Card } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import DefaultImage from '../assets/default_course.jpg'
 import userSelector from '../store/user/selectors'

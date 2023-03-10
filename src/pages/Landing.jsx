@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-//import { Card, Button, Form, Alert } from 'react-bootstrap'
 import { Card, Row, Form, Space, Typography, Input, Button, Alert } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { login as loginApi, register as registerApi } from '../api/login'

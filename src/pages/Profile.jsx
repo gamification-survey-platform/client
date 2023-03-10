@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import userSelector from '../store/user/selectors'
-//import { Container, Image, Form, Row, Col, Button } from 'react-bootstrap'
 import DefaultImage from '../assets/default.jpg'
 import { Space, Row, Col, Form, Image, Button, Typography } from 'antd'
 import { useForm } from 'antd/es/form/Form'
@@ -44,7 +43,7 @@ const Profile = () => {
         </Row>
       </Col>
       <Col span={10} offset={2}>
-        <Form initialValues={initialValues}>
+        <Form initialValues={initialValues} form={form}>
           <Form.Item name="first_name" label="First name">
             <Input readOnly={!editing} />
           </Form.Item>
