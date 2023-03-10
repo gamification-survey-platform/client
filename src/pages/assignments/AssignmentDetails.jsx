@@ -20,6 +20,7 @@ const AssignmentDetails = () => {
   const [artifact, setArtifact] = useState()
   const [completedArtifactReviews, setCompletedArtifactReviews] = useState([])
   const [pendingArtifactReviews, setPendingArtifactReviews] = useState([])
+  const [lateArtifactReviews, setLateArtifactReviews] = useState([])
   const [submission, setSubmission] = useState()
   const [assignment, setAssignment] = useState({
     assignment_name: '',
@@ -42,6 +43,7 @@ const AssignmentDetails = () => {
     if (res.status === 200) {
       setPendingArtifactReviews(res.data.filter((r) => r.status === 'INCOMPLETE'))
       setCompletedArtifactReviews(res.data.filter((r) => r.status === 'COMPLETE'))
+      setLateArtifactReviews(res.data.filter((r) => r.status === 'LATE'))
     } else setShowMessage({ type: 'error', message: 'Failed to fetch artifact reviews.' })
   }
 
@@ -114,7 +116,7 @@ const AssignmentDetails = () => {
         <Col span={6} offset={1}>
           {isStudent(userRole) && (
             <Space direction="vertical" size="middle" className="text-center">
-              <h5>Completed Surveys</h5>
+              <Typography.Title level={5}>Completed Surveys</Typography.Title>
               {completedArtifactReviews.map((review, i) => {
                 return (
                   <Link
@@ -126,13 +128,25 @@ const AssignmentDetails = () => {
                   </Link>
                 )
               })}
-              <h5>Pending Surveys</h5>
+              <Typography.Title level={5}>Pending Surveys</Typography.Title>
               {pendingArtifactReviews.map((review, i) => {
                 return (
                   <Link
                     key={i}
                     to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
                     <Tag role="button" color="gold">
+                      {review.reviewing}
+                    </Tag>
+                  </Link>
+                )
+              })}
+              <Typography.Title level={5}>Late Surveys</Typography.Title>
+              {lateArtifactReviews.map((review, i) => {
+                return (
+                  <Link
+                    key={i}
+                    to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
+                    <Tag role="button" color="volcano">
                       {review.reviewing}
                     </Tag>
                   </Link>

@@ -1,8 +1,9 @@
 import api from './apiUtils'
 
-const getSurvey = async ({ courseId, assignmentId }) => {
+const getSurvey = async ({ course_id, assignment_id }) => {
   try {
-    const res = await api.get(`/courses/${courseId}/assignments/${assignmentId}/feedback_surveys`)
+    console.log('get survey', course_id, assignment_id)
+    const res = await api.get(`/courses/${course_id}/assignments/${assignment_id}/feedback_surveys`)
     return res
   } catch (error) {
     // Return response to indicate no survey exists
@@ -10,9 +11,9 @@ const getSurvey = async ({ courseId, assignmentId }) => {
   }
 }
 
-const getSurveyDetails = async ({ courseId, assignmentId }) => {
+const getSurveyDetails = async ({ course_id, assignment_id }) => {
   try {
-    const res = await api.get(`/courses/${courseId}/assignments/${assignmentId}/surveys`)
+    const res = await api.get(`/courses/${course_id}/assignments/${assignment_id}/surveys`)
     return res
   } catch (error) {
     // Return response to indicate no survey exists

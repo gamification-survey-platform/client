@@ -52,6 +52,7 @@ const AssignmentSurvey = () => {
         assignment_id,
         survey
       })
+      console.log(survey)
       if (res.status === 200) navigate(-1)
     } catch (e) {
       setMessage({ type: 'error', message: 'Failed to save survey.' })

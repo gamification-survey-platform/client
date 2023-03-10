@@ -1,4 +1,4 @@
-import { Row, Col } from 'antd'
+import { Row, Col, Typography } from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
 import { useState } from 'react'
@@ -13,14 +13,8 @@ const Section = ({ sectionIdx, survey, setSurvey, studentView }) => {
   const [sectionModalOpen, setSectionModalOpen] = useState(false)
   const section = survey.sections[sectionIdx]
   const { title, is_required, questions } = section
-  let className = 'text-left ml-3'
+  let className = 'text-left mb-3'
   if (is_required) className += ' required-field'
-  const style = {
-    marginTop: -15,
-    marginBottom: 0,
-    padding: '0 5px',
-    width: 'fit-content'
-  }
 
   const handleDeleteSection = () => {
     const sections = survey.sections.filter((_, i) => i !== sectionIdx)
@@ -31,9 +25,9 @@ const Section = ({ sectionIdx, survey, setSurvey, studentView }) => {
     <div className="border border-light mb-3">
       <Row>
         <Col span={18}>
-          <h3 className={className} style={style}>
+          <Typography.Title className={className} style={{ marginTop: -15 }} level={3}>
             {title}
-          </h3>
+          </Typography.Title>
         </Col>
         {!studentView && (
           <Col span={6}>

@@ -120,7 +120,7 @@ const CourseAssignments = () => {
     }
   ]
 
-  if (isInstructorOrTA) columns = columns.concat(staffColumns)
+  if (isInstructorOrTA(userRole)) columns = columns.concat(staffColumns)
   useEffect(() => {
     const fetchAssignments = async () => {
       const res = await getCourseAssignments(selectedCourse.pk)

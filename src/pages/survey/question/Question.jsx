@@ -3,11 +3,13 @@ import { Form, Row, Col, Select, Input } from 'antd'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
 import AddQuestionModal from '../AddQuestionModal'
+import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 
 const MultipleChoice = ({ pk, option_choices, answer }) => {
+  const form = useFormInstance()
   useEffect(() => {
     if (answer && answer.length) {
-      console.log(answer)
+      form.setFieldValue(pk, answer[0])
     }
   }, [answer])
 
@@ -24,9 +26,10 @@ const MultipleChoice = ({ pk, option_choices, answer }) => {
 }
 
 const MultipleChoiceScale = ({ pk, answer }) => {
+  const form = useFormInstance()
   useEffect(() => {
     if (answer && answer.length) {
-      console.log(answer)
+      form.setFieldValue(pk, answer[0])
     }
   }, [answer])
 
@@ -43,9 +46,10 @@ const MultipleChoiceScale = ({ pk, answer }) => {
 }
 
 const FixedText = ({ pk, answer }) => {
+  const form = useFormInstance()
   useEffect(() => {
     if (answer && answer.length) {
-      console.log(answer)
+      form.setFieldValue(pk, answer[0])
     }
   }, [answer])
 
@@ -57,17 +61,20 @@ const FixedText = ({ pk, answer }) => {
 }
 
 const MultiLineText = ({ pk, number_of_text, answer }) => {
+  const form = useFormInstance()
   useEffect(() => {
     if (answer && answer.length) {
-      console.log(answer)
+      answer.forEach((a, i) => {
+        form.setFieldValue(`${pk}-${i}`, a)
+      })
     }
   }, [answer])
   return (
     <>
       {[...Array(number_of_text).keys()].map((i) => {
         return (
-          <Form.Item name={pk} key={i}>
-            <Input />
+          <Form.Item key={i} name={`${pk}-${i}`}>
+            <Input key={i} />
           </Form.Item>
         )
       })}
@@ -76,9 +83,10 @@ const MultiLineText = ({ pk, number_of_text, answer }) => {
 }
 
 const TextArea = ({ pk, answer }) => {
+  const form = useFormInstance()
   useEffect(() => {
     if (answer && answer.length) {
-      console.log(answer)
+      form.setFieldValue(pk, answer[0])
     }
   }, [answer])
 
@@ -90,15 +98,21 @@ const TextArea = ({ pk, answer }) => {
 }
 
 const Question = (question) => {
-  const { text, question_type, is_required, sectionIdx, survey, setSurvey, studentView, ...rest } =
-    question
+  const {
+    text,
+    question_type,
+    is_required,
+    sectionIdx,
+    survey,
+    setSurvey,
+    studentView,
+    ...questionProps
+  } = question
+  const { pk } = questionProps
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
 
   const handleDeleteQuestion = () => {
-    const { pk: pkToDelete } = rest
-    const questions = survey.sections[sectionIdx].questions.filter(
-      (question) => question.pk !== pkToDelete
-    )
+    const questions = survey.sections[sectionIdx].questions.filter((question) => question.pk !== pk)
     const sections = survey.sections.map((section, i) =>
       i === sectionIdx ? { ...section, questions } : section
     )
@@ -107,13 +121,14 @@ const Question = (question) => {
 
   return (
     <Form.Item label={text}>
+      {/*rules={[{ required: is_required, message: 'Please complete the above question.' }]}>*/}
       <Row>
         <Col span={10}>
-          {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...rest} />}
-          {question_type === 'NUMBER' && <MultipleChoiceScale {...rest} />}
-          {question_type === 'FIXEDTEXT' && <FixedText {...rest} />}
-          {question_type === 'MULTIPLETEXT' && <MultiLineText {...rest} />}
-          {question_type === 'TEXTAREA' && <TextArea {...rest} />}
+          {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
+          {question_type === 'NUMBER' && <MultipleChoiceScale {...questionProps} />}
+          {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
+          {question_type === 'MULTIPLETEXT' && <MultiLineText {...questionProps} />}
+          {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
         </Col>
         {!studentView && (
           <Col span={4}>

@@ -1,10 +1,11 @@
-import { useEffect, useState, useRef } from 'react'
-import { Container, Row, Col, Button, Alert, Form } from 'react-bootstrap'
+import { useEffect, useState } from 'react'
+import { Row, Col, Button, Alert, Form, Typography } from 'antd'
 import { useParams, useNavigate } from 'react-router'
 import Section from '../survey/Section'
 import { useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
 import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
+import { useForm } from 'antd/es/form/Form'
 
 const AssignmentReview = () => {
   const [survey, setSurvey] = useState({
@@ -15,11 +16,11 @@ const AssignmentReview = () => {
     sections: []
   })
   const { course_id, assignment_id, review_id } = useParams()
-  const formRef = useRef()
+  const [form] = useForm()
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
-  const [showError, setShowError] = useState(false)
+  const [message, setMessage] = useState()
 
   useEffect(() => {
     const fetchReview = async () => {
@@ -33,7 +34,7 @@ const AssignmentReview = () => {
           setSurvey(res.data)
         }
       } catch (e) {
-        setShowError(true)
+        setMessage({ type: 'error', message: 'Failed to save survey.' })
       }
     }
     fetchReview()
@@ -42,58 +43,62 @@ const AssignmentReview = () => {
   const handleSaveReview = async (e) => {
     e.preventDefault()
     e.stopPropagation()
-    try {
-      const formData = new FormData(formRef.current)
-      const formObj = Object.fromEntries(formData.entries())
-      const review = Object.keys(formObj).map((question_pk) => ({
-        question_pk,
-        answer_text: formObj[`${question_pk}`]
-      }))
-      const res = await saveArtifactReview({
-        course_id: selectedCourse.pk,
-        assignment_id: assignment_id,
-        review_id,
-        review: review
-      })
-      if (res.status === 200) navigate(-1)
-    } catch (e) {
-      setShowError(true)
+    if (form.validateFields()) {
+      try {
+        const fields = form.getFieldsValue()
+        const review = Object.keys(fields).map((q_pk, i) => {
+          let question_pk = q_pk
+          let answer_text = form.getFieldValue(`${question_pk}`) || ''
+          if (question_pk.indexOf('-') > 0) {
+            question_pk = question_pk.split('-')[0]
+          }
+          return { question_pk, answer_text }
+        })
+        const res = await saveArtifactReview({
+          course_id: selectedCourse.pk,
+          assignment_id: assignment_id,
+          review_id,
+          review: review
+        })
+        if (res.status === 200) navigate(-1)
+      } catch (e) {
+        setMessage({ type: 'error', message: 'Failed to save survey.' })
+      }
     }
   }
+
   return (
-    <div>
-      <Container className="my-5">
-        <Row>
-          <Col xs="6">
-            {survey && (
-              <div>
-                <h2>{survey.name}</h2>
-                <h2>{survey.instructions}</h2>
-                <h2>{survey.other_info}</h2>
-              </div>
-            )}
-          </Col>
-        </Row>
-        {survey && survey.sections && (
-          <Form ref={formRef} onSubmit={handleSaveReview}>
-            {survey.sections.map((section, i) => (
-              <Section
-                key={i}
-                section={section}
-                sectionIdx={i}
-                survey={survey}
-                setSurvey={setSurvey}
-                studentView={true}
-              />
-            ))}
-            <div className="text-center">
-              <Button type="submit">Save Survey</Button>
-              {showError && <Alert variant="danger">Failed to save survey.</Alert>}
+    <Form form={form} className="m-5">
+      <Row justify="space-between">
+        <Col span={14}>
+          {survey && (
+            <div>
+              <Typography.Title level={2}>{survey.name}</Typography.Title>
+              <Typography.Title level={4}>{survey.instructions}</Typography.Title>
+              <Typography.Title level={4}>{survey.other_info}</Typography.Title>
             </div>
-          </Form>
-        )}
-      </Container>
-    </div>
+          )}
+        </Col>
+      </Row>
+      {survey && survey.sections && (
+        <>
+          {survey.sections.map((section, i) => (
+            <Section
+              key={i}
+              section={section}
+              sectionIdx={i}
+              survey={survey}
+              setSurvey={setSurvey}
+              studentView={true}
+            />
+          ))}
+          <div className="text-center">
+            <Button onClick={handleSaveReview}>Save Survey</Button>
+            {message && <Alert className="mt-5" {...message} />}
+          </div>
+        </>
+      )}
+    </Form>
   )
 }
 
