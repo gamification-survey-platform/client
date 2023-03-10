@@ -42,7 +42,12 @@ const AssignmentForm = () => {
     const datesValid = date_released.isBefore(date_due)
     setDatesValid(datesValid)
     if (form.validateFields() && datesValid) {
-      const formObj = { ...fields, course: selectedCourse.pk }
+      const formObj = {
+        ...fields,
+        course: selectedCourse.pk,
+        date_due: date_due.format('MM/DD/YYYY hh:mm'),
+        date_released: date_released.format('MM/DD/YYYY hh:mm')
+      }
       try {
         const res = editingAssignment
           ? await editAssignment({

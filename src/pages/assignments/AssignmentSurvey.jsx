@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
-import { Container, Row, Col, Button, Alert, Form } from 'react-bootstrap'
-import { useParams, useNavigate, useLocation } from 'react-router'
+import { Row, Col, Button, Alert, Form, Typography, Divider } from 'antd'
+import { useForm } from 'antd/es/form/Form'
+import { useParams, useNavigate } from 'react-router'
 import AddSectionModal from '../survey/AddSectionModal'
 import Section from '../survey/Section'
 import { getSurveyDetails, saveSurvey } from '../../api/survey'
@@ -22,7 +23,8 @@ const AssignmentSurvey = () => {
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState(false)
-  const [showError, setShowError] = useState(false)
+  const [message, setMessage] = useState()
+  const [form] = useForm()
 
   useEffect(() => {
     const fetchSurvey = async () => {
@@ -35,7 +37,7 @@ const AssignmentSurvey = () => {
           setSurvey(res.data)
         }
       } catch (e) {
-        setShowError(true)
+        setMessage({ type: 'error', message: 'Failed to save survey.' })
       }
     }
     fetchSurvey()
@@ -52,56 +54,56 @@ const AssignmentSurvey = () => {
       })
       if (res.status === 200) navigate(-1)
     } catch (e) {
-      setShowError(true)
+      setMessage({ type: 'error', message: 'Failed to save survey.' })
     }
   }
   return (
-    <div>
-      <Container className="my-5">
-        <Row>
-          <Col xs="6">
-            {survey && (
-              <div>
-                <h2>{survey.name}</h2>
-                <h2>{survey.instructions}</h2>
-                <h2>{survey.other_info}</h2>
-              </div>
-            )}
-          </Col>
-          <Col>
-            <Button variant="info" className="m-3" onClick={() => setStudentView(!studentView)}>
-              {studentView ? 'Instructor View' : 'Student View'}
-            </Button>
-            <Button variant="primary" className="m-3" onClick={() => setModalOpen(true)}>
-              Add Section
-            </Button>
-          </Col>
-          <AddSectionModal
-            show={modalOpen}
-            setShow={setModalOpen}
-            survey={survey}
-            setSurvey={setSurvey}
-          />
-        </Row>
-        <hr />
-        {survey && survey.sections && (
-          <Form onSubmit={handleSaveSurvey}>
-            {survey.sections.map((section, i) => (
-              <Section
-                key={i}
-                section={section}
-                sectionIdx={i}
-                survey={survey}
-                setSurvey={setSurvey}
-                studentView={studentView}
-              />
-            ))}
-            <Button type="submit">Save Survey</Button>
-            {showError && <Alert variant="danger">Failed to save survey.</Alert>}
-          </Form>
-        )}
-      </Container>
-    </div>
+    <Form form={form} className="m-5">
+      <Row justify="space-between">
+        <Col span={14}>
+          {survey && (
+            <div>
+              <Typography.Title level={2}>{survey.name}</Typography.Title>
+              <Typography.Title level={4}>{survey.instructions}</Typography.Title>
+              <Typography.Title level={4}>{survey.other_info}</Typography.Title>
+            </div>
+          )}
+        </Col>
+        <Col span={10}>
+          <Button className="m-3" onClick={() => setStudentView(!studentView)}>
+            {studentView ? 'Instructor View' : 'Student View'}
+          </Button>
+          <Button type="primary" className="m-3" onClick={() => setModalOpen(true)}>
+            Add Section
+          </Button>
+        </Col>
+        <AddSectionModal
+          open={modalOpen}
+          setOpen={setModalOpen}
+          survey={survey}
+          setSurvey={setSurvey}
+        />
+      </Row>
+      <Divider />
+      {survey && survey.sections && (
+        <div>
+          {survey.sections.map((section, i) => (
+            <Section
+              key={i}
+              section={section}
+              sectionIdx={i}
+              survey={survey}
+              setSurvey={setSurvey}
+              studentView={studentView}
+            />
+          ))}
+          <Button type="primary" onClick={handleSaveSurvey}>
+            Save Survey
+          </Button>
+          {message && <Alert className="mt-5" {...message} />}
+        </div>
+      )}
+    </Form>
   )
 }
 

@@ -135,7 +135,7 @@ const CourseAssignments = () => {
   const handleSurveyClick = async (e, assignment) => {
     e.preventDefault()
     try {
-      const res = await getSurvey({ courseId: selectedCourse.pk, assignmentId: assignment.id })
+      const res = await getSurvey({ course_id: selectedCourse.pk, assignment_id: assignment.id })
       if (res.status === 200)
         navigate(`${location.pathname}/${assignment.id}/survey`, {
           state: { userRole: assignment.user_role }
