@@ -12,7 +12,7 @@ const Home = () => {
   const user = useSelector(userSelector)
   const courses = useSelector(coursesSelector)
   const dispatch = useDispatch()
-
+  console.log('COURSES', courses)
   useEffect(() => {
     const fetchCourses = async () => {
       try {
