@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import DefaultImage from '../assets/default_course.jpg'
@@ -7,24 +7,30 @@ import { setCourses } from '../store/courses/coursesSlice'
 import coursesSelector from '../store/courses/selectors'
 import { getUserCourses } from '../api/courses'
 import { Space, Row, Col, Card, Image, Button } from 'antd'
+import Spinner from '../components/Spinner'
 
 const Home = () => {
   const user = useSelector(userSelector)
   const courses = useSelector(coursesSelector)
+  const [spin, setSpin] = useState(false)
   const dispatch = useDispatch()
-  console.log('COURSES', courses)
+
   useEffect(() => {
     const fetchCourses = async () => {
+      setSpin(true)
       try {
         const res = await getUserCourses(user.andrew_id)
         if (res.status === 200) dispatch(setCourses(res.data))
       } catch (e) {
         console.error(e.message)
       }
+      setSpin(false)
     }
     fetchCourses()
   }, [])
-  return (
+  return spin ? (
+    <Spinner show={spin} />
+  ) : (
     <Space direction="vertical" size="middle" align="center">
       <Row gutter={16} justify="space-around" style={{ margin: '1rem' }}>
         {courses.map((course, i) => {
@@ -54,34 +60,5 @@ const Home = () => {
     </Space>
   )
 }
-/*
-  return (
-    <Container fluid className="d-flex mt-5">
-      <Row>
-        {courses.map((course, i) => (
-          <div key={i} style={{ width: 300 }}>
-            <Card className="m-3 text-center">
-              <Card.Img variant="top" src={DefaultImage} />
-              <Card.Body>
-                <Card.Title>{course.course_name}</Card.Title>
-                <Card.Text>{course.semester}</Card.Text>
-                <Link to={`/courses/${course.course_number}/details`}>
-                  <Button variant="primary" className="m-1">
-                    Course Details
-                  </Button>
-                </Link>
-                <Link to={`/courses/${course.course_number}/assignments`}>
-                  <Button variant="primary" className="m-1">
-                    Assignments
-                  </Button>
-                </Link>
-              </Card.Body>
-            </Card>
-          </div>
-        ))}
-      </Row>
-    </Container>
-  )
-}
-*/
+
 export default Home

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Card, Row, Form, Space, Typography, Input, Button, Alert } from 'antd'
 import { useNavigate } from 'react-router-dom'
@@ -6,17 +6,20 @@ import { login as loginApi, register as registerApi } from '../api/login'
 import { setUser } from '../store/user/userSlice'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'antd/es/form/Form'
+import Spinner from '../components/Spinner'
 
 const Landing = () => {
   const [form] = useForm()
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const [message, setMessage] = useState()
+  const [spin, setSpin] = useState(false)
 
   const handleLogin = async (e) => {
     e.preventDefault()
     form.validateFields(['andrewId', 'password'])
     const { andrewId, password } = form.getFieldsValue()
+    setSpin(true)
     try {
       const res = await loginApi({ andrewId, password })
       if (res.status === 200) {
@@ -28,6 +31,7 @@ const Landing = () => {
       console.error(e)
       setMessage({ type: 'error', message: 'Failed to login.' })
     }
+    setSpin(false)
   }
 
   const handleRegister = async (e) => {
@@ -55,47 +59,51 @@ const Landing = () => {
       size="middle"
       align="center"
       style={{ width: '100%', marginTop: '5rem' }}>
-      <Card style={{ width: 800 }}>
-        <Row justify="center">
-          <Typography.Title level={1}>Welcome!</Typography.Title>
-        </Row>
-        <Row justify="center">
-          <Typography.Title level={2}>Let&lsquo;s get started.</Typography.Title>
-        </Row>
-        <Form form={form} onFinish={handleLogin} onKeyUp={handleEnter}>
+      {spin ? (
+        <Spinner show={spin} />
+      ) : (
+        <Card style={{ width: 800 }}>
           <Row justify="center">
-            <Form.Item
-              name="andrewId"
-              rules={[{ required: true, message: 'Please input a Andrew ID!' }]}>
-              <Input prefix={<UserOutlined />} placeholder="Andrew ID" />
-            </Form.Item>
+            <Typography.Title level={1}>Welcome!</Typography.Title>
           </Row>
           <Row justify="center">
-            <Form.Item
-              name="password"
-              rules={[{ required: true, message: 'Please input a Password!' }]}>
-              <Input.Password prefix={<LockOutlined />} placeholder="Password" />
-            </Form.Item>
+            <Typography.Title level={2}>Let&lsquo;s get started.</Typography.Title>
           </Row>
-          <Row justify="center">
-            <Form.Item>
-              <Button onClick={handleLogin} type="primary">
-                Log in
-              </Button>
-            </Form.Item>
-          </Row>
-          <Row justify="center">
-            <Form.Item>
-              <Button onClick={handleRegister}>Register Now!</Button>
-            </Form.Item>
-          </Row>
-          {message && (
+          <Form form={form} onFinish={handleLogin} onKeyUp={handleEnter}>
             <Row justify="center">
-              <Alert message={message.message} type={message.type} showIcon />
+              <Form.Item
+                name="andrewId"
+                rules={[{ required: true, message: 'Please input a Andrew ID!' }]}>
+                <Input prefix={<UserOutlined />} placeholder="Andrew ID" />
+              </Form.Item>
             </Row>
-          )}
-        </Form>
-      </Card>
+            <Row justify="center">
+              <Form.Item
+                name="password"
+                rules={[{ required: true, message: 'Please input a Password!' }]}>
+                <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+              </Form.Item>
+            </Row>
+            <Row justify="center">
+              <Form.Item>
+                <Button onClick={handleLogin} type="primary">
+                  Log in
+                </Button>
+              </Form.Item>
+            </Row>
+            <Row justify="center">
+              <Form.Item>
+                <Button onClick={handleRegister}>Register Now!</Button>
+              </Form.Item>
+            </Row>
+            {message && (
+              <Row justify="center">
+                <Alert message={message.message} type={message.type} showIcon />
+              </Row>
+            )}
+          </Form>
+        </Card>
+      )}
     </Space>
   )
 }

@@ -6,11 +6,13 @@ import { addMember, getMembers, remindMember, removeMember } from '../../api/mem
 import coursesSelector from '../../store/courses/selectors'
 import { isInstructorOrTA } from '../../utils/roles'
 import { useForm } from 'antd/es/form/Form'
+import Spinner from '../../components/Spinner'
 
 const CourseMembers = () => {
   const [members, setMembers] = useState([])
   const [message, setMessage] = useState('')
   const { course_id } = useParams()
+  const [spin, setSpin] = useState(false)
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const userRole = selectedCourse ? selectedCourse.user_role : ''
@@ -73,8 +75,10 @@ const CourseMembers = () => {
 
   useEffect(() => {
     const fetchCourseMembers = async () => {
+      setSpin(true)
       const res = await getMembers({ course_id: selectedCourse.pk })
       if (res.status === 200) setMembers(res.data.membership)
+      setSpin(false)
     }
     fetchCourseMembers()
   }, [])
@@ -126,122 +130,42 @@ const CourseMembers = () => {
       setMessage({ type: 'error', message: `Failed to remove ${andrewIdToRemove}` })
     }
   }
-  return (
+  return spin ? (
+    <Spinner show={spin} />
+  ) : (
     <div className="m-5">
       <Table columns={columns} dataSource={dataSource} />
-      <div className="d-flex justify-content-center">
-        <Form className="w-50 text-center" form={form} initialValues={initialValues}>
-          <Typography.Title level={4}>Add Member</Typography.Title>
-          <Form.Item
-            name="memberId"
-            label="Andrew ID"
-            rules={[{ required: true, message: 'Please input an Andrew ID' }]}>
-            <Input />
-          </Form.Item>
-          <Form.Item name="memberRole" label="Role">
-            <Select
-              className="text-left"
-              options={[
-                { value: 'Student', label: 'Student' },
-                { value: 'TA', label: 'TA' },
-                { value: 'Instructor', label: 'Instructor' }
-              ]}></Select>
-          </Form.Item>
-          <Form.Item name="teamId" label="Team ID (optional)">
-            <Input />
-          </Form.Item>
-          <Button type="primary" onClick={handleAddMember}>
-            Add
-          </Button>
-          {message && <Alert className="mt-3" {...message} />}
-        </Form>
-      </div>
+      {isInstructorOrTA(userRole) && (
+        <div className="d-flex justify-content-center">
+          <Form className="w-50 text-center" form={form} initialValues={initialValues}>
+            <Typography.Title level={4}>Add Member</Typography.Title>
+            <Form.Item
+              name="memberId"
+              label="Andrew ID"
+              rules={[{ required: true, message: 'Please input an Andrew ID' }]}>
+              <Input />
+            </Form.Item>
+            <Form.Item name="memberRole" label="Role">
+              <Select
+                className="text-left"
+                options={[
+                  { value: 'Student', label: 'Student' },
+                  { value: 'TA', label: 'TA' },
+                  { value: 'Instructor', label: 'Instructor' }
+                ]}></Select>
+            </Form.Item>
+            <Form.Item name="teamId" label="Team ID (optional)">
+              <Input />
+            </Form.Item>
+            <Button type="primary" onClick={handleAddMember}>
+              Add
+            </Button>
+            {message && <Alert className="mt-3" {...message} />}
+          </Form>
+        </div>
+      )}
     </div>
   )
 }
-/*
-  return (
-    <Container className="mt-5">
-      <Table striped bordered hover className="my-3 text-center">
-        <thead>
-          <tr>
-            <th>Andrew ID</th>
-            <th>Role</th>
-            <th>Team</th>
-            {isInstructorOrTA(userRole) && <th></th>}
-          </tr>
-        </thead>
-        <tbody>
-          {members.map((member, i) => {
-            return (
-              <tr key={i}>
-                <td>{member.andrew_id}</td>
-                <td>{member.userRole}</td>
-                <td>{member.team}</td>
-                {userRole !== 'Student' && (
-                  <>
-                    <td>
-                      <Button
-                        variant="info"
-                        onClick={(e) => handleRemindMember(e, member.andrew_id)}>
-                        Remind
-                      </Button>
-                    </td>
-                    <td>
-                      <Button
-                        variant="danger"
-                        onClick={(e) => handleRemoveMember(e, member.andrew_id)}>
-                        Remove
-                      </Button>
-                    </td>
-                  </>
-                )}
-              </tr>
-            )
-          })}
-        </tbody>
-      </Table>
-      {isInstructorOrTA(userRole) && (
-        <Container className="my-3">
-          <Col xs="5" className="text-left">
-            <Form>
-              <Form.Group className="my-3">
-                <Form.Label>Member andrew_id:</Form.Label>
-                <Form.Control
-                  className="w-50"
-                  value={addId}
-                  onChange={(e) => setAddId(e.target.value)}
-                />
-              </Form.Group>
-              <Form.Group className="my-3">
-                <Form.Label>Member role:</Form.Label>
-                <Form.Select
-                  className="w-50"
-                  value={memberRole}
-                  onChange={(e) => setMemberRole(e.target.value)}>
-                  <option value="Student">Student</option>
-                  <option value="TA">TA</option>
-                  <option value="Instructor">Instructor</option>
-                </Form.Select>
-              </Form.Group>
-              <Form.Group className="my-3">
-                <Form.Label>Team (optional):</Form.Label>
-                <Form.Control
-                  className="w-50"
-                  value={teamId}
-                  onChange={(e) => setTeamId(e.target.value)}
-                />
-              </Form.Group>
-              <Button onClick={handleAddMember} disabled={!addId}>
-                Add
-              </Button>
-            </Form>
-          </Col>
-        </Container>
-      )}
-      {message && <Alert variant={message.type}>{message.text}</Alert>}
-    </Container>
-  )
-}
-*/
+
 export default CourseMembers

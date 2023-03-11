@@ -7,6 +7,7 @@ import Section from '../survey/Section'
 import { getSurveyDetails, saveSurvey } from '../../api/survey'
 import { useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
+import Spinner from '../../components/Spinner'
 
 const AssignmentSurvey = () => {
   const [survey, setSurvey] = useState({
@@ -20,6 +21,7 @@ const AssignmentSurvey = () => {
   const [studentView, setStudentView] = useState(false)
   const { course_id, assignment_id } = useParams()
   const courses = useSelector(coursesSelector)
+  const [spin, setSpin] = useState(false)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState(false)
@@ -28,6 +30,7 @@ const AssignmentSurvey = () => {
 
   useEffect(() => {
     const fetchSurvey = async () => {
+      setSpin(true)
       try {
         const res = await getSurveyDetails({
           course_id: selectedCourse.pk,
@@ -39,6 +42,7 @@ const AssignmentSurvey = () => {
       } catch (e) {
         setMessage({ type: 'error', message: 'Failed to save survey.' })
       }
+      setSpin(false)
     }
     fetchSurvey()
   }, [])
@@ -58,7 +62,9 @@ const AssignmentSurvey = () => {
       setMessage({ type: 'error', message: 'Failed to save survey.' })
     }
   }
-  return (
+  return spin ? (
+    <Spinner show={spin} />
+  ) : (
     <Form form={form} className="m-5">
       <Row justify="space-between">
         <Col span={14}>

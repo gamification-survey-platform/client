@@ -6,13 +6,13 @@ import { getSurvey } from '../../api/survey'
 import { deleteAssignment, getCourseAssignments } from '../../api/assignments'
 import coursesSelector from '../../store/courses/selectors'
 import { isInstructorOrTA } from '../../utils/roles'
-import userSelector from '../../store/user/selectors'
 import { LinkContainer } from 'react-router-bootstrap'
+import Spinner from '../../components/Spinner'
 
 const CourseAssignments = () => {
   const location = useLocation()
   const { course_id } = useParams()
-  const user = useSelector(userSelector)
+  const [spin, setSpin] = useState(false)
   const [userRole, setUserRole] = useState('Student')
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
@@ -123,11 +123,13 @@ const CourseAssignments = () => {
   if (isInstructorOrTA(userRole)) columns = columns.concat(staffColumns)
   useEffect(() => {
     const fetchAssignments = async () => {
+      setSpin(true)
       const res = await getCourseAssignments(selectedCourse.pk)
       if (res.status === 200) {
         setAssignments(res.data)
         setUserRole(res.data[0].user_role)
       }
+      setSpin(false)
     }
     fetchAssignments()
   }, [])
@@ -173,7 +175,9 @@ const CourseAssignments = () => {
     }
   }
 
-  return (
+  return spin ? (
+    <Spinner show={spin} />
+  ) : (
     <div className="m-5">
       <Table columns={columns} dataSource={dataSource} />
       {isInstructorOrTA(userRole) && (

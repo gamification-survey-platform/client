@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Row, Col, Button, Alert, Form, Typography } from 'antd'
 import { useParams, useNavigate } from 'react-router'
+import Spinner from '../../components/Spinner'
 import Section from '../survey/Section'
 import { useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
@@ -16,6 +17,7 @@ const AssignmentReview = () => {
     sections: []
   })
   const { course_id, assignment_id, review_id } = useParams()
+  const [spin, setSpin] = useState(false)
   const [form] = useForm()
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
@@ -24,6 +26,7 @@ const AssignmentReview = () => {
 
   useEffect(() => {
     const fetchReview = async () => {
+      setSpin(true)
       try {
         const res = await getArtifactReview({
           course_id: selectedCourse.pk,
@@ -36,6 +39,7 @@ const AssignmentReview = () => {
       } catch (e) {
         setMessage({ type: 'error', message: 'Failed to save survey.' })
       }
+      setSpin(false)
     }
     fetchReview()
   }, [])
@@ -67,7 +71,9 @@ const AssignmentReview = () => {
     }
   }
 
-  return (
+  return spin ? (
+    <Spinner show={spin} />
+  ) : (
     <Form form={form} className="m-5">
       <Row justify="space-between">
         <Col span={14}>

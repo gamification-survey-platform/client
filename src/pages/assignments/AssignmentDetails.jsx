@@ -12,11 +12,13 @@ import { getArtifact, submitArtifact } from '../../api/artifacts'
 import PdfPreview from './PdfPreview'
 import { getArtifactReviews } from '../../api/artifactReview'
 import { isStudent } from '../../utils/roles'
+import Spinner from '../../components/Spinner'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
   const [userRole, setUserRole] = useState()
   const [artifact, setArtifact] = useState()
+  const [spin, setSpin] = useState(false)
   const [completedArtifactReviews, setCompletedArtifactReviews] = useState([])
   const [pendingArtifactReviews, setPendingArtifactReviews] = useState([])
   const [lateArtifactReviews, setLateArtifactReviews] = useState([])
@@ -58,6 +60,7 @@ const AssignmentDetails = () => {
 
   useEffect(() => {
     const fetchAssignment = async () => {
+      setSpin(true)
       const res = await getAssignment({ course_id: selectedCourse.pk, assignment_id })
       if (res.status === 200) {
         setAssignment(res.data.assignment)
@@ -66,6 +69,7 @@ const AssignmentDetails = () => {
     }
     fetchAssignment()
     fetchArtifactReviews()
+    setSpin(false)
   }, [])
 
   useEffect(() => {
@@ -92,7 +96,9 @@ const AssignmentDetails = () => {
     handleSubmit
   }
 
-  return (
+  return spin ? (
+    <Spinner show={spin} />
+  ) : (
     <div className="m-5">
       <Row>
         <Col span={17}>
