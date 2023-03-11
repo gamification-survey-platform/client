@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Form, Row, Col, Select, Input } from 'antd'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons'
 import AddQuestionModal from '../AddQuestionModal'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 
@@ -132,22 +131,20 @@ const Question = (question) => {
         </Col>
         {!studentView && (
           <Col span={4}>
-            <FontAwesomeIcon
-              icon={faEdit}
+            <EditTwoTone
+              twoToneColor="#ffd43b"
               style={{
                 fontSize: '1em',
-                color: '#ffd43b',
                 margin: 10,
                 pointerEvents: 'auto',
                 cursor: 'pointer'
               }}
               onClick={() => setQuestionModalOpen(true)}
             />
-            <FontAwesomeIcon
-              icon={faTrash}
+            <DeleteTwoTone
+              twoToneColor="#dc3545"
               style={{
                 fontSize: '1em',
-                color: '#dc3545',
                 margin: 10,
                 pointerEvents: 'auto',
                 cursor: 'pointer'

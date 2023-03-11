@@ -1,6 +1,5 @@
 import { Row, Col, Typography } from 'antd'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons'
+import { EditTwoTone, PlusCircleTwoTone, DeleteTwoTone } from '@ant-design/icons'
 import { useState } from 'react'
 import AddQuestionModal from './AddQuestionModal'
 import Question from './question/Question'
@@ -31,33 +30,30 @@ const Section = ({ sectionIdx, survey, setSurvey, studentView }) => {
         </Col>
         {!studentView && (
           <Col span={6}>
-            <FontAwesomeIcon
-              icon={faPlus}
+            <PlusCircleTwoTone
+              twoToneColor="#0a58ca"
               style={{
                 fontSize: '2em',
-                color: '#0a58ca',
                 margin: 10,
                 pointerEvents: 'auto',
                 cursor: 'pointer'
               }}
               onClick={() => setQuestionModalOpen(true)}
             />
-            <FontAwesomeIcon
-              icon={faEdit}
+            <EditTwoTone
+              twoToneColor="#ffd43b"
               style={{
                 fontSize: '2em',
-                color: '#ffd43b',
                 margin: 10,
                 pointerEvents: 'auto',
                 cursor: 'pointer'
               }}
               onClick={() => setSectionModalOpen(true)}
             />
-            <FontAwesomeIcon
-              icon={faTrash}
+            <DeleteTwoTone
+              twoToneColor="#dc3545"
               style={{
                 fontSize: '2em',
-                color: '#dc3545',
                 margin: 10,
                 pointerEvents: 'auto',
                 cursor: 'pointer'

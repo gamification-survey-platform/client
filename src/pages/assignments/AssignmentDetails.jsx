@@ -15,7 +15,6 @@ import { isStudent } from '../../utils/roles'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
-  const inputRef = useRef()
   const [userRole, setUserRole] = useState()
   const [artifact, setArtifact] = useState()
   const [completedArtifactReviews, setCompletedArtifactReviews] = useState([])
@@ -79,7 +78,6 @@ const AssignmentDetails = () => {
     try {
       const res = await submitArtifact({ course_id: selectedCourse.pk, assignment_id, submission })
       if (res.status === 201) {
-        inputRef.current.value = null
         setSubmission()
         await fetchArtifact()
       }
@@ -89,7 +87,6 @@ const AssignmentDetails = () => {
   }
 
   const submissionProps = {
-    inputRef,
     submission,
     setSubmission,
     handleSubmit

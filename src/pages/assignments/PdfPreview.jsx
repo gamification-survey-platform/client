@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Document, Page, pdfjs } from 'react-pdf'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faArrowCircleRight, faCircleArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons'
 
 const PdfPreview = ({ artifact }) => {
   const { data, artifact_pk } = artifact
@@ -10,8 +9,12 @@ const PdfPreview = ({ artifact }) => {
   const enableBackward = pageNumber > 1
   const enableForward = pageNumber < numPages
 
-  const backwardStyles = enableBackward ? { cursor: 'pointer' } : { opacity: 0.5, cursor: 'auto' }
-  const forwardStyles = enableForward ? { cursor: 'pointer' } : { opacity: 0.5, cursor: 'auto' }
+  const backwardStyles = enableBackward
+    ? { cursor: 'pointer', fontSize: 20 }
+    : { opacity: 0.5, cursor: 'auto', fontSize: 20 }
+  const forwardStyles = enableForward
+    ? { cursor: 'pointer', fontSize: 20 }
+    : { opacity: 0.5, cursor: 'auto', fontSize: 20 }
 
   const handlePackBackward = () => pageNumber > 1 && setPageNumber(pageNumber - 1)
   const handlePageForward = () => pageNumber < numPages && setPageNumber(pageNumber + 1)
@@ -30,21 +33,17 @@ const PdfPreview = ({ artifact }) => {
         <Page pageNumber={pageNumber} width={500} />
       </Document>
       <div className="mt-3">
-        <FontAwesomeIcon
+        <LeftCircleFilled
+          style={backwardStyles}
           role="button"
           className="mr-3"
-          icon={faCircleArrowLeft}
-          size="2xl"
-          style={backwardStyles}
           onClick={handlePackBackward}
         />
         <span>{` ${pageNumber} of ${numPages}`}</span>
-        <FontAwesomeIcon
+        <RightCircleFilled
+          style={forwardStyles}
           role="button"
           className="ml-3"
-          icon={faArrowCircleRight}
-          size="2xl"
-          style={forwardStyles}
           onClick={handlePageForward}
         />
       </div>
