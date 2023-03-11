@@ -9,7 +9,7 @@ const formatData = (data) => {
   return Object.entries(counts)
 }
 
-const renderBarChart = ({ data: rawData, ref, chartHeight = 500, chartWidth = 500 }) => {
+const renderBarChart = ({ data: rawData, ref, chartHeight, chartWidth }) => {
   const data = formatData(rawData)
   const chart = d3.select(ref.current)
   chart.select('svg').remove()
@@ -25,9 +25,8 @@ const renderBarChart = ({ data: rawData, ref, chartHeight = 500, chartWidth = 50
     .append('svg')
     .attr('height', chartHeight)
     .attr('width', chartWidth)
-    .attr('transform', `translate(${margin.left}, ${margin.bottom})`)
     .append('g')
-    .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')')
+    .attr('transform', `translate(${margin.left}, ${margin.top})`)
   let tooltip
   const x = d3
     .scaleBand()
@@ -50,16 +49,17 @@ const renderBarChart = ({ data: rawData, ref, chartHeight = 500, chartWidth = 50
     .append('text')
     .text('x axis')
     .attr(`transform`, `translate(${width / 2}, ${height + margin.bottom})`)
-
+    .attr('text-anchor', 'center')
   svg
     .append('text')
     .text('y axis')
     .attr(`transform`, `translate(${-margin.left / 2}, ${height / 2})rotate(-90)`)
-
+    .attr('text-anchor', 'center')
   svg
     .append('text')
     .text('Title')
     .attr(`transform`, `translate(${width / 2}, 0)`)
+    .attr('text-anchor', 'center')
 
   svg
     .selectAll('.bar')
