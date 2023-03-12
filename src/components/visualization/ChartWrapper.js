@@ -3,6 +3,7 @@ import { mockBarChartData, mockPieChartData, mockStackedBarChartData } from '../
 import barChart from './barChart'
 import pieChart from './pieChart'
 import stackedBarChart from './stackedBarChart'
+import progressBar from './progressBar'
 
 const ChartWrapper = ({ data, type }) => {
   const ref = useRef()
@@ -18,6 +19,8 @@ const ChartWrapper = ({ data, type }) => {
           pieChart({ data: mockPieChartData, ref, chartHeight, chartWidth })
         } else if (type === 'stackedBarChart') {
           stackedBarChart({ data, ref, chartHeight, chartWidth })
+        } else if (type === 'progressBar') {
+          progressBar({ data, ref, chartHeight, chartWidth })
         }
       }
     }

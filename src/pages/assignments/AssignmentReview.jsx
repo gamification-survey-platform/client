@@ -6,6 +6,7 @@ import Section from '../survey/Section'
 import { useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
 import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
+import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { useForm } from 'antd/es/form/Form'
 
 const AssignmentReview = () => {
@@ -17,6 +18,7 @@ const AssignmentReview = () => {
     sections: []
   })
   const { course_id, assignment_id, review_id } = useParams()
+  const [progressData, setProgressData] = useState({ startPct: 0, endPct: 0 })
   const [spin, setSpin] = useState(false)
   const [form] = useForm()
   const courses = useSelector(coursesSelector)
@@ -43,6 +45,16 @@ const AssignmentReview = () => {
     }
     fetchReview()
   }, [])
+
+  useEffect(() => {
+    const filledFields = Object.values(form.getFieldsValue()).filter(
+      (v) => v !== undefined && v.length
+    )
+    setProgressData({
+      startPct: 0,
+      endPct: filledFields.length / Object.values(form.getFieldsValue()).length
+    })
+  }, [survey])
 
   const handleSaveReview = async (e) => {
     e.preventDefault()
@@ -71,10 +83,23 @@ const AssignmentReview = () => {
     }
   }
 
+  const setProgress = (_, allFields) => {
+    const filledFields = Object.values(form.getFieldsValue()).filter(
+      (v) => v !== undefined && v.length
+    )
+    setProgressData({
+      startPct: progressData.endPct,
+      endPct: filledFields.length / allFields.length
+    })
+  }
+
   return spin ? (
     <Spinner show={spin} />
   ) : (
-    <Form form={form} className="m-5">
+    <Form form={form} className="m-5" onFieldsChange={setProgress}>
+      <div style={{ position: 'fixed', top: '10%', right: 0, zIndex: 1, width: 300, height: 300 }}>
+        <ChartWrapper type="progressBar" data={progressData} />
+      </div>
       <Row justify="space-between">
         <Col span={14}>
           {survey && (

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Form, Row, Col, Select, Input } from 'antd'
+import { Form, Row, Col, Select, Input, Slider } from 'antd'
 import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons'
 import AddQuestionModal from '../AddQuestionModal'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
@@ -11,9 +11,10 @@ const MultipleChoice = ({ pk, option_choices, answer }) => {
       form.setFieldValue(pk, answer[0])
     }
   }, [answer])
-
+  const ticks = option_choices.reduce((acc, el, i) => ({ ...acc, [i]: el.text }), {})
   return (
     <Form.Item name={pk}>
+      {/* <Slider marks={ticks} max={option_choices.length - 1} tooltip={{ open: false }} /> */}
       <Select
         options={[...Array.from(option_choices)].map((option) => ({
           label: option.text,
@@ -122,7 +123,7 @@ const Question = (question) => {
     <Form.Item label={text}>
       {/*rules={[{ required: is_required, message: 'Please complete the above question.' }]}>*/}
       <Row>
-        <Col span={10}>
+        <Col span={12}>
           {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
           {question_type === 'NUMBER' && <MultipleChoiceScale {...questionProps} />}
           {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
@@ -130,7 +131,7 @@ const Question = (question) => {
           {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
         </Col>
         {!studentView && (
-          <Col span={4}>
+          <Col span={2}>
             <EditTwoTone
               twoToneColor="#ffd43b"
               style={{
