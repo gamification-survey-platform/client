@@ -6,6 +6,7 @@ import Section from '../survey/Section'
 import { useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
 import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
+import { getArtifact } from '../../api/artifacts'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { useForm } from 'antd/es/form/Form'
 
@@ -36,7 +37,20 @@ const AssignmentReview = () => {
           review_id
         })
         if (res.status === 200) {
-          setSurvey(res.data)
+          const { artifact_pk } = res.data
+          if (artifact_pk) {
+            const artifactRes = await getArtifact({
+              course_id: selectedCourse.pk,
+              assignment_id: assignment_id
+            })
+            if (artifactRes.status === 200) {
+              res.data.artifact = artifactRes.data
+              console.log('here', res.data.artifact)
+              setSurvey(res.data)
+            }
+          } else {
+            setSurvey(res.data)
+          }
         }
       } catch (e) {
         setMessage({ type: 'error', message: 'Failed to save survey.' })
@@ -50,9 +64,11 @@ const AssignmentReview = () => {
     const filledFields = Object.values(form.getFieldsValue()).filter(
       (v) => v !== undefined && v.length
     )
+    const allFields = Object.values(form.getFieldsValue())
+    const allFieldsLength = allFields.length > 0 ? allFields.length : 1
     setProgressData({
       startPct: 0,
-      endPct: filledFields.length / Object.values(form.getFieldsValue()).length
+      endPct: filledFields.length / allFieldsLength
     })
   }, [survey])
 

@@ -3,12 +3,40 @@ import { Form, Row, Col, Select, Input, Slider } from 'antd'
 import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons'
 import AddQuestionModal from '../AddQuestionModal'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
+import { Document, Page, pdfjs } from 'react-pdf'
+
+const SlideReview = ({ pk, artifact, answer }) => {
+  const form = useFormInstance()
+  useEffect(() => {
+    pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
+    if (answer && answer.length) {
+      form.setFieldValue(pk, answer[0].text)
+    }
+  }, [answer])
+  return (
+    <Form.Item name={pk}>
+      <Row>
+        <Col span={8}>
+          <Input.TextArea rows={10} />
+        </Col>
+        <Col offset={1}>
+          {artifact && answer && answer.length && (
+            <Document file={artifact}>
+              {' '}
+              <Page pageNumber={answer[0].page} width={400} />
+            </Document>
+          )}
+        </Col>
+      </Row>
+    </Form.Item>
+  )
+}
 
 const MultipleChoice = ({ pk, option_choices, answer }) => {
   const form = useFormInstance()
   useEffect(() => {
     if (answer && answer.length) {
-      form.setFieldValue(pk, answer[0])
+      form.setFieldValue(pk, answer[0].text)
     }
   }, [answer])
   const ticks = option_choices.reduce((acc, el, i) => ({ ...acc, [i]: el.text }), {})
@@ -29,7 +57,7 @@ const MultipleChoiceScale = ({ pk, answer }) => {
   const form = useFormInstance()
   useEffect(() => {
     if (answer && answer.length) {
-      form.setFieldValue(pk, answer[0])
+      form.setFieldValue(pk, answer[0].text)
     }
   }, [answer])
 
@@ -49,7 +77,7 @@ const FixedText = ({ pk, answer }) => {
   const form = useFormInstance()
   useEffect(() => {
     if (answer && answer.length) {
-      form.setFieldValue(pk, answer[0])
+      form.setFieldValue(pk, answer[0].text)
     }
   }, [answer])
 
@@ -65,7 +93,7 @@ const MultiLineText = ({ pk, number_of_text, answer }) => {
   useEffect(() => {
     if (answer && answer.length) {
       answer.forEach((a, i) => {
-        form.setFieldValue(`${pk}-${i}`, a)
+        form.setFieldValue(`${pk}-${i}`, a.text)
       })
     }
   }, [answer])
@@ -86,7 +114,7 @@ const TextArea = ({ pk, answer }) => {
   const form = useFormInstance()
   useEffect(() => {
     if (answer && answer.length) {
-      form.setFieldValue(pk, answer[0])
+      form.setFieldValue(pk, answer[0].text)
     }
   }, [answer])
 
@@ -118,17 +146,20 @@ const Question = (question) => {
     )
     setSurvey({ ...survey, sections })
   }
-
+  console.log(survey)
   return (
     <Form.Item label={text}>
       {/*rules={[{ required: is_required, message: 'Please complete the above question.' }]}>*/}
       <Row>
-        <Col span={12}>
+        <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
           {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
           {question_type === 'NUMBER' && <MultipleChoiceScale {...questionProps} />}
           {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
           {question_type === 'MULTIPLETEXT' && <MultiLineText {...questionProps} />}
           {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
+          {question_type === 'SLIDEREVIEW' && (
+            <SlideReview {...questionProps} artifact={survey.artifact} />
+          )}
         </Col>
         {!studentView && (
           <Col span={2}>
