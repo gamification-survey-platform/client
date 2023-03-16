@@ -9,20 +9,16 @@ import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
 import { getArtifact } from '../../api/artifacts'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { useForm } from 'antd/es/form/Form'
+import { surveySelector, setSurvey } from '../../store/survey/surveySlice'
 
 const AssignmentReview = () => {
-  const [survey, setSurvey] = useState({
-    pk: -1,
-    name: '',
-    instructions: '',
-    other_info: '',
-    sections: []
-  })
   const { course_id, assignment_id, review_id } = useParams()
   const [progressData, setProgressData] = useState({ startPct: 0, endPct: 0 })
   const [spin, setSpin] = useState(false)
   const [form] = useForm()
   const courses = useSelector(coursesSelector)
+  const survey = useSelector(surveySelector)
+
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
   const [message, setMessage] = useState()
@@ -45,7 +41,6 @@ const AssignmentReview = () => {
             })
             if (artifactRes.status === 200) {
               res.data.artifact = artifactRes.data
-              console.log('here', res.data.artifact)
               setSurvey(res.data)
             }
           } else {
@@ -67,7 +62,7 @@ const AssignmentReview = () => {
     const allFields = Object.values(form.getFieldsValue())
     const allFieldsLength = allFields.length > 0 ? allFields.length : 1
     setProgressData({
-      startPct: 0,
+      startPct: progressData.endPct,
       endPct: filledFields.length / allFieldsLength
     })
   }, [survey])
@@ -130,14 +125,7 @@ const AssignmentReview = () => {
       {survey && survey.sections && (
         <>
           {survey.sections.map((section, i) => (
-            <Section
-              key={i}
-              section={section}
-              sectionIdx={i}
-              survey={survey}
-              setSurvey={setSurvey}
-              studentView={true}
-            />
+            <Section key={i} pk={section.pk} studentView={true} />
           ))}
           <div className="text-center">
             <Button onClick={handleSaveReview}>Save Survey</Button>

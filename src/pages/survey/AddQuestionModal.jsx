@@ -1,12 +1,19 @@
 import { useEffect } from 'react'
 import { Modal, Form, Input, Select, Checkbox } from 'antd'
 import { useForm } from 'antd/es/form/Form'
+import { useDispatch, useSelector } from 'react-redux'
+import { addQuestion, editQuestion, surveySelector } from '../../store/survey/surveySlice'
 
-const AddQuestionModal = ({ open, setOpen, sectionIdx, survey, setSurvey, editingQuestion }) => {
+const AddQuestionModal = ({ open, setOpen, sectionPk, questionPk }) => {
   const initialValues = { question_type: 'MULTIPLECHOICE', option_choices: 1, number_of_text: 1 }
   const [form] = useForm()
+  const dispatch = useDispatch()
   const question_type = Form.useWatch('question_type', form)
   const option_choices = Form.useWatch('option_choices', form)
+  const survey = useSelector(surveySelector)
+  const editingQuestion = questionPk
+    ? survey.sections.find((s) => s.pk === sectionPk).questions.find((q) => q.pk === questionPk)
+    : undefined
   const options =
     !isNaN(parseInt(option_choices)) && parseInt(option_choices) > 0
       ? [...Array(parseInt(option_choices))].map((_, i) => i)
@@ -41,7 +48,6 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, survey, setSurvey, editin
     } else {
       const formObj = await form.getFieldsValue()
       let payload = {}
-      console.log(formObj)
       if (formObj.question_type === 'MULTIPLECHOICE') {
         let option_choices = Object.keys(formObj)
           .filter((k) => k.startsWith('option-'))
@@ -62,20 +68,10 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, survey, setSurvey, editin
       }
       const { text, question_type, is_required, ...rest } = formObj
       const questionObj = { text, question_type, is_required, ...payload }
-      let questions
-      if (editingQuestion) {
-        questions = survey.sections[sectionIdx].questions.map((q) =>
-          q.pk === editingQuestion.pk ? { ...q, ...questionObj } : q
-        )
-      } else {
-        questions = survey.sections[sectionIdx].questions.concat([questionObj])
-      }
-      setSurvey({
-        ...survey,
-        sections: survey.sections.map((section, i) =>
-          i === sectionIdx ? { ...section, questions } : section
-        )
-      })
+
+      questionPk
+        ? dispatch(editQuestion({ question: questionObj, questionPk, sectionPk }))
+        : dispatch(addQuestion({ question: questionObj, sectionPk }))
       handleClose()
       await form.resetFields()
     }

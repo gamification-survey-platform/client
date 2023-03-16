@@ -2,7 +2,6 @@ import api from './apiUtils'
 
 const getSurvey = async ({ course_id, assignment_id }) => {
   try {
-    console.log('get survey', course_id, assignment_id)
     const res = await api.get(`/courses/${course_id}/assignments/${assignment_id}/feedback_surveys`)
     return res
   } catch (error) {

@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Modal, Button, Form, Checkbox, Input } from 'antd'
 import { useForm } from 'antd/es/form/Form'
+import { addSection, editSection, surveySelector } from '../../store/survey/surveySlice'
+import { useDispatch, useSelector } from 'react-redux'
 
-const AddSectionModal = ({ open, setOpen, survey, setSurvey, editingSection }) => {
+const AddSectionModal = ({ open, setOpen, sectionPk }) => {
   const [form] = useForm()
+  const dispatch = useDispatch()
+  const survey = useSelector(surveySelector)
 
   useEffect(() => {
-    if (editingSection) {
-      form.setFieldValue(editingSection)
+    if (sectionPk) {
+      const editingSection = survey.sections.find((s) => s.pk === sectionPk)
+      form.setFieldsValue(editingSection)
     } else {
       form.resetFields()
     }
@@ -22,22 +27,16 @@ const AddSectionModal = ({ open, setOpen, survey, setSurvey, editingSection }) =
     } else {
       const formObj = form.getFieldsValue()
       formObj.is_required = !!formObj.is_required
-      if (editingSection) {
-        survey.sections = survey.sections.map((section, i) =>
-          section.pk === editingSection.pk ? { ...section, ...formObj } : section
-        )
-      } else {
-        formObj.questions = []
-        survey.sections.push(formObj)
-      }
-      setSurvey(survey)
+      sectionPk
+        ? dispatch(editSection({ section: formObj, pk: sectionPk }))
+        : dispatch(addSection(formObj))
       handleClose()
     }
   }
 
   return (
     <Modal
-      title={editingSection ? 'Edit Section' : 'Add Section'}
+      title={sectionPk ? 'Edit Section' : 'Add Section'}
       open={open}
       onOk={handleSubmit}
       onCancel={handleClose}
@@ -46,7 +45,7 @@ const AddSectionModal = ({ open, setOpen, survey, setSurvey, editingSection }) =
           Cancel
         </Button>,
         <Button key="add" type="primary" onClick={handleSubmit}>
-          {editingSection ? 'Edit' : 'Add'}
+          {sectionPk ? 'Edit' : 'Add'}
         </Button>
       ]}>
       <Form form={form}>

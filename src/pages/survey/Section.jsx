@@ -4,21 +4,26 @@ import { useState } from 'react'
 import AddQuestionModal from './AddQuestionModal'
 import Question from './question/Question'
 import AddSectionModal from './AddSectionModal'
-import { useSelector } from 'react-redux'
-import userSelector from '../../store/user/selectors'
+import { useDispatch, useSelector } from 'react-redux'
+import { surveySelector } from '../../store/survey/surveySlice'
+import { deleteSection } from '../../store/survey/surveySlice'
 
-const Section = ({ sectionIdx, survey, setSurvey, studentView }) => {
+const Section = ({ pk, studentView }) => {
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
   const [sectionModalOpen, setSectionModalOpen] = useState(false)
-  const section = survey.sections[sectionIdx]
+  const survey = useSelector(surveySelector)
+  const dispatch = useDispatch()
+
+  const section = survey.sections.find((section) => section.pk === pk) || {
+    title: '',
+    is_required: false,
+    questions: []
+  }
   const { title, is_required, questions } = section
   let className = 'text-left mb-3'
   if (is_required) className += ' required-field'
 
-  const handleDeleteSection = () => {
-    const sections = survey.sections.filter((_, i) => i !== sectionIdx)
-    setSurvey({ ...survey, sections })
-  }
+  const handleDeleteSection = () => dispatch(deleteSection({ pk }))
 
   return (
     <div className="border border-light mb-3">
@@ -61,32 +66,18 @@ const Section = ({ sectionIdx, survey, setSurvey, studentView }) => {
               onClick={handleDeleteSection}
             />
             <AddQuestionModal
-              sectionIdx={sectionIdx}
+              sectionPk={pk}
               open={questionModalOpen}
               setOpen={setQuestionModalOpen}
-              survey={survey}
-              setSurvey={setSurvey}
             />
-            <AddSectionModal
-              open={sectionModalOpen}
-              setOpen={setSectionModalOpen}
-              survey={survey}
-              setSurvey={setSurvey}
-              editingSection={section}
-            />
+            <AddSectionModal open={sectionModalOpen} setOpen={setSectionModalOpen} sectionPk={pk} />
           </Col>
         )}
       </Row>
-      {questions.map((question, i) => (
-        <Question
-          key={i}
-          {...question}
-          survey={survey}
-          setSurvey={setSurvey}
-          sectionIdx={sectionIdx}
-          studentView={studentView}
-        />
-      ))}
+      {questions &&
+        questions.map((question, i) => (
+          <Question key={i} {...question} sectionPk={pk} studentView={studentView} />
+        ))}
     </div>
   )
 }

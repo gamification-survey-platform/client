@@ -13,6 +13,7 @@ import PdfPreview from './PdfPreview'
 import { getArtifactReviews } from '../../api/artifactReview'
 import { isStudent } from '../../utils/roles'
 import Spinner from '../../components/Spinner'
+import ChartWrapper from '../../components/visualization/ChartWrapper'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()

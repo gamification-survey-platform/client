@@ -5,19 +5,14 @@ import { useParams, useNavigate } from 'react-router'
 import AddSectionModal from '../survey/AddSectionModal'
 import Section from '../survey/Section'
 import { getSurveyDetails, saveSurvey } from '../../api/survey'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
 import Spinner from '../../components/Spinner'
+import { setSurvey, surveySelector } from '../../store/survey/surveySlice'
 
 const AssignmentSurvey = () => {
-  const [survey, setSurvey] = useState({
-    pk: -1,
-    name: '',
-    instructions: '',
-    other_info: '',
-    sections: []
-  })
-
+  const survey = useSelector(surveySelector)
+  const dispatch = useDispatch()
   const [studentView, setStudentView] = useState(false)
   const { course_id, assignment_id } = useParams()
   const courses = useSelector(coursesSelector)
@@ -37,7 +32,7 @@ const AssignmentSurvey = () => {
           assignment_id
         })
         if (res.status === 200) {
-          setSurvey(res.data)
+          dispatch(setSurvey(res.data))
         }
       } catch (e) {
         setMessage({ type: 'error', message: 'Failed to save survey.' })
@@ -56,12 +51,12 @@ const AssignmentSurvey = () => {
         assignment_id,
         survey
       })
-      console.log(survey)
       if (res.status === 200) navigate(-1)
     } catch (e) {
       setMessage({ type: 'error', message: 'Failed to save survey.' })
     }
   }
+
   return spin ? (
     <Spinner show={spin} />
   ) : (
@@ -84,25 +79,13 @@ const AssignmentSurvey = () => {
             Add Section
           </Button>
         </Col>
-        <AddSectionModal
-          open={modalOpen}
-          setOpen={setModalOpen}
-          survey={survey}
-          setSurvey={setSurvey}
-        />
+        <AddSectionModal open={modalOpen} setOpen={setModalOpen} />
       </Row>
       <Divider />
-      {survey && survey.sections && (
+      {survey.sections.length && (
         <div>
           {survey.sections.map((section, i) => (
-            <Section
-              key={i}
-              section={section}
-              sectionIdx={i}
-              survey={survey}
-              setSurvey={setSurvey}
-              studentView={studentView}
-            />
+            <Section key={i} pk={section.pk} />
           ))}
           <Button type="primary" onClick={handleSaveSurvey}>
             Save Survey

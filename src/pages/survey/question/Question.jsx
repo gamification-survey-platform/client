@@ -4,31 +4,29 @@ import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons'
 import AddQuestionModal from '../AddQuestionModal'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 import { Document, Page, pdfjs } from 'react-pdf'
+import SlideReviewModal from './SlideReviewModal'
+import { useDispatch } from 'react-redux'
+import { deleteQuestion } from '../../../store/survey/surveySlice'
 
-const SlideReview = ({ pk, artifact, answer }) => {
-  const form = useFormInstance()
+const SlideReview = (props) => {
+  const [open, setOpen] = useState(false)
+  const { artifact, answer } = props
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
-    if (answer && answer.length) {
-      form.setFieldValue(pk, answer[0].text)
-    }
-  }, [answer])
+  }, [])
+
   return (
-    <Form.Item name={pk}>
-      <Row>
-        <Col span={8}>
-          <Input.TextArea rows={10} />
-        </Col>
-        <Col offset={1}>
-          {artifact && answer && answer.length && (
-            <Document file={artifact}>
-              {' '}
-              <Page pageNumber={answer[0].page} width={400} />
-            </Document>
-          )}
-        </Col>
-      </Row>
-    </Form.Item>
+    <Col offset={1} style={{ cursor: 'pointer' }}>
+      {artifact && (
+        <>
+          <Document file={artifact} onClick={() => setOpen(!open)}>
+            {' '}
+            <Page pageNumber={answer && answer.length ? answer[0].page : 1} width={200} />
+          </Document>
+          <SlideReviewModal {...props} open={open} setOpen={setOpen} />
+        </>
+      )}
+    </Col>
   )
 }
 
@@ -126,29 +124,18 @@ const TextArea = ({ pk, answer }) => {
 }
 
 const Question = (question) => {
-  const {
-    text,
-    question_type,
-    is_required,
-    sectionIdx,
-    survey,
-    setSurvey,
-    studentView,
-    ...questionProps
-  } = question
-  const { pk } = questionProps
+  const { text, question_type, is_required, sectionPk, studentView, ...questionProps } = question
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
+  const dispatch = useDispatch()
 
-  const handleDeleteQuestion = () => {
-    const questions = survey.sections[sectionIdx].questions.filter((question) => question.pk !== pk)
-    const sections = survey.sections.map((section, i) =>
-      i === sectionIdx ? { ...section, questions } : section
-    )
-    setSurvey({ ...survey, sections })
-  }
-  console.log(survey)
+  const handleDeleteQuestion = () =>
+    dispatch(deleteQuestion({ sectionPk, questionPk: question.pk }))
+
   return (
-    <Form.Item label={text}>
+    <Form.Item
+      label={
+        question_type === 'SLIDEREVIEW' ? 'Click on the slide to open the questionnaire' : text
+      }>
       {/*rules={[{ required: is_required, message: 'Please complete the above question.' }]}>*/}
       <Row>
         <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
@@ -158,7 +145,7 @@ const Question = (question) => {
           {question_type === 'MULTIPLETEXT' && <MultiLineText {...questionProps} />}
           {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
           {question_type === 'SLIDEREVIEW' && (
-            <SlideReview {...questionProps} artifact={survey.artifact} />
+            <SlideReview {...questionProps} sectionPk={sectionPk} />
           )}
         </Col>
         {!studentView && (
@@ -186,12 +173,10 @@ const Question = (question) => {
           </Col>
         )}
         <AddQuestionModal
-          sectionIdx={sectionIdx}
           open={questionModalOpen}
           setOpen={setQuestionModalOpen}
-          survey={survey}
-          setSurvey={setSurvey}
-          editingQuestion={question}
+          sectionPk={sectionPk}
+          questionPk={question.pk}
         />
       </Row>
     </Form.Item>

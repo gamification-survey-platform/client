@@ -1,4 +1,4 @@
-import { current, createSlice } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import { PURGE } from 'redux-persist'
 
 const initialState = []

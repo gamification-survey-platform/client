@@ -3,6 +3,7 @@ import { connectRouter } from 'connected-react-router'
 import { createBrowserHistory } from '@remix-run/router'
 import user from './user/userSlice'
 import courses from './courses/coursesSlice'
+import survey from './survey/surveySlice'
 import storage from 'redux-persist/lib/storage'
 
 import {
@@ -25,6 +26,7 @@ const history = createBrowserHistory()
 const rootReducer = combineReducers({
   user,
   courses,
+  survey,
   router: connectRouter(history)
 })
 
