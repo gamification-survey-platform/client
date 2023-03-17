@@ -1,10 +1,24 @@
 import api from '../api/apiUtils'
 
-const getArtifact = async ({ course_id, assignment_id }) => {
+const getUserArtifact = async ({ course_id, assignment_id }) => {
   try {
     const res = await api.get(`courses/${course_id}/assignments/${assignment_id}/artifacts/`, {
       responseType: 'arraybuffer'
     })
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
+const getArtifact = async ({ course_id, assignment_id, artifact_pk }) => {
+  try {
+    const res = await api.get(
+      `courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact_pk}`,
+      {
+        responseType: 'arraybuffer'
+      }
+    )
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -31,4 +45,4 @@ const submitArtifact = async ({ course_id, assignment_id, submission }) => {
   }
 }
 
-export { getArtifact, submitArtifact }
+export { getUserArtifact, getArtifact, submitArtifact }

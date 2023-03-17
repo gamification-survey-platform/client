@@ -39,7 +39,8 @@ const AssignmentReview = () => {
           if (artifact_pk) {
             const artifactRes = await getArtifact({
               course_id: selectedCourse.pk,
-              assignment_id: assignment_id
+              assignment_id: assignment_id,
+              artifact_pk
             })
             if (artifactRes.status === 200) {
               setArtifact(artifactRes.data)
@@ -50,7 +51,7 @@ const AssignmentReview = () => {
           }
         }
       } catch (e) {
-        setMessage({ type: 'error', message: 'Failed to save survey.' })
+        setMessage({ type: 'error', message: 'Failed to fetch survey.' })
       }
       setSpin(false)
     }
@@ -128,7 +129,9 @@ const AssignmentReview = () => {
             <Section key={i} pk={section.pk} studentView={true} artifact={artifact} />
           ))}
           <div className="text-center">
-            <Button onClick={handleSaveReview}>Save Survey</Button>
+            <Button type="primary" onClick={handleSaveReview}>
+              Submit Review
+            </Button>
             {message && <Alert className="mt-5" {...message} />}
           </div>
         </>

@@ -4,6 +4,7 @@ import barChart from './barChart'
 import pieChart from './pieChart'
 import stackedBarChart from './stackedBarChart'
 import progressBar from './progressBar'
+import wordcloud from './wordcloud'
 
 const ChartWrapper = ({ data, type }) => {
   const ref = useRef()
@@ -21,6 +22,10 @@ const ChartWrapper = ({ data, type }) => {
           stackedBarChart({ data, ref, chartHeight, chartWidth })
         } else if (type === 'progressBar') {
           progressBar({ data, ref, chartHeight, chartWidth })
+        } else if (type === 'treemap') {
+          console.log('treemap')
+        } else if (type === 'wordcloud') {
+          wordcloud({ data, ref, chartHeight, chartWidth })
         }
       }
     }

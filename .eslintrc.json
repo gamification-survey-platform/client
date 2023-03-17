@@ -11,6 +11,7 @@
     "sourceType": "module"
   },
   "plugins": ["react"],
+  "ignorePatterns": ["d3.layout.cloud.js"],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "no-unused-vars": "off",

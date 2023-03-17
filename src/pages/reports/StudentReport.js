@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { getStudentReport } from '../../api/reports'
+import { getStudentReport, getKeywords } from '../../api/reports'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { Divider, Typography } from 'antd'
 
 const StudentReport = () => {
   const { course_id, assignment_id, artifact_id } = useParams()
   const [report, setReport] = useState()
+  const [keywords, setKeywords] = useState()
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -18,6 +19,17 @@ const StudentReport = () => {
     }
     fetchReport()
   }, [])
+
+  useEffect(() => {
+    const fetchKeywords = async () => {
+      const res = await getKeywords({ course_id, assignment_id, artifact_id })
+      if (res.status === 200) {
+        setKeywords(res.data)
+      }
+    }
+    fetchKeywords()
+  }, [])
+
   return (
     <div className="m-5">
       <Typography.Title level={2} className="text-center">
@@ -37,6 +49,14 @@ const StudentReport = () => {
             </div>
           )
         })}
+      {keywords && (
+        <>
+          <Typography.Title level={3}>Review Word Frequency</Typography.Title>
+          <div style={{ height: 400, width: 400 }}>
+            <ChartWrapper type="wordcloud" data={keywords} />
+          </div>
+        </>
+      )}
     </div>
   )
 }

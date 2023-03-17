@@ -8,7 +8,7 @@ import { FileSubmission } from './Submission'
 import { Link } from 'react-router-dom'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
-import { getArtifact, submitArtifact } from '../../api/artifacts'
+import { getUserArtifact, submitArtifact } from '../../api/artifacts'
 import PdfPreview from './PdfPreview'
 import { getArtifactReviews } from '../../api/artifactReview'
 import { isStudent } from '../../utils/roles'
@@ -50,7 +50,7 @@ const AssignmentDetails = () => {
   }
 
   const fetchArtifact = async () => {
-    const res = await getArtifact({ course_id: selectedCourse.pk, assignment_id })
+    const res = await getUserArtifact({ course_id: selectedCourse.pk, assignment_id })
     if (res.status === 200) {
       const contentDisposition = res.headers['content-disposition']
       const regex = /attachment; filename=artifact_(\d+)\.pdf/gm
