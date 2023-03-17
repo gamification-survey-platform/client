@@ -3,26 +3,19 @@ import { Modal, Form, Input, Row, Col, Divider, Button } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { Document, Page, pdfjs } from 'react-pdf'
 import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons'
+import { useDispatch } from 'react-redux'
+import { editAnswer } from '../../../store/survey/surveySlice'
 
-const SlideReviewModal = ({
-  pk,
-  artifact,
-  answer,
-  open,
-  setOpen,
-  sectionIdx,
-  survey,
-  setSurvey
-}) => {
+const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, sectionPk }) => {
   const [form] = useForm()
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
+  const dispatch = useDispatch()
   const enableBackward = pageNumber > 1
   const enableForward = pageNumber < numPages
 
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
-    form.resetFields()
   }, [open])
 
   const backwardStyles = enableBackward
@@ -33,38 +26,35 @@ const SlideReviewModal = ({
     : { opacity: 0.5, cursor: 'auto', fontSize: 20 }
 
   const saveAnswer = () => {
-    const newAnswer = (form.getFieldValue(`${pk}`) || '').trim()
-    const oldAnswer = answer.find((a) => a.page === pageNumber)
-    let newAnswers = [...answer]
-    if (oldAnswer) {
-      newAnswers = answer.map((a, i) => (i === pageNumber - 1 ? newAnswer : a))
-    } else if (newAnswer.length) {
-      newAnswers.push({ page: pageNumber, text: newAnswer })
-    }
-    const questions = survey.sections[sectionIdx].questions.map((question) =>
-      question.pk === pk ? { ...question, answer: newAnswers } : question
+    const answer = (form.getFieldValue(`${pk}`) || '').trim()
+    dispatch(
+      editAnswer({
+        questionPk: pk,
+        sectionPk,
+        answer,
+        page: pageNumber,
+        question_type: 'SLIDEREVIEW'
+      })
     )
-    const sections = survey.sections.map((section, i) =>
-      i === sectionIdx ? { ...section, questions } : section
-    )
-    setSurvey({ ...survey, sections })
   }
 
   const handlePageBackward = () => {
     if (pageNumber > 1) {
-      setPageNumber(pageNumber - 1)
       saveAnswer()
+      setPageNumber(pageNumber - 1)
       const newPageAnswer = answer.find((a) => a.page === pageNumber - 1)
-      form.setFieldValue(`${pk}`, newPageAnswer)
+      const answerText = newPageAnswer ? newPageAnswer.text : ''
+      form.setFieldValue(`${pk}`, answerText)
     }
   }
 
   const handlePageForward = () => {
     if (pageNumber < numPages) {
-      setPageNumber(pageNumber + 1)
       saveAnswer()
+      setPageNumber(pageNumber + 1)
       const newPageAnswer = answer.find((a) => a.page === pageNumber + 1)
-      form.setFieldValue(`${pk}`, newPageAnswer)
+      const answerText = newPageAnswer ? newPageAnswer.text : ''
+      form.setFieldValue(`${pk}`, answerText)
     }
   }
 
@@ -73,12 +63,13 @@ const SlideReviewModal = ({
       forceRender
       title={'Slide Reviews'}
       open={open}
+      onCancel={() => setOpen(false)}
       footer={
         <div>
           <Divider />
           <Row justify="center">
             <Button type="primary" onClick={() => setOpen(false)}>
-              Submit
+              Save
             </Button>
           </Row>
         </div>

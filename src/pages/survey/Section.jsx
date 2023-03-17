@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { surveySelector } from '../../store/survey/surveySlice'
 import { deleteSection } from '../../store/survey/surveySlice'
 
-const Section = ({ pk, studentView }) => {
+const Section = ({ pk, studentView, artifact }) => {
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
   const [sectionModalOpen, setSectionModalOpen] = useState(false)
   const survey = useSelector(surveySelector)
@@ -76,7 +76,13 @@ const Section = ({ pk, studentView }) => {
       </Row>
       {questions &&
         questions.map((question, i) => (
-          <Question key={i} {...question} sectionPk={pk} studentView={studentView} />
+          <Question
+            key={i}
+            {...question}
+            sectionPk={pk}
+            studentView={studentView}
+            artifact={artifact}
+          />
         ))}
     </div>
   )

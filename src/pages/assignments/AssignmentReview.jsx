@@ -3,7 +3,7 @@ import { Row, Col, Button, Alert, Form, Typography } from 'antd'
 import { useParams, useNavigate } from 'react-router'
 import Spinner from '../../components/Spinner'
 import Section from '../survey/Section'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
 import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
 import { getArtifact } from '../../api/artifacts'
@@ -16,6 +16,8 @@ const AssignmentReview = () => {
   const [progressData, setProgressData] = useState({ startPct: 0, endPct: 0 })
   const [spin, setSpin] = useState(false)
   const [form] = useForm()
+  const [artifact, setArtifact] = useState()
+  const dispatch = useDispatch()
   const courses = useSelector(coursesSelector)
   const survey = useSelector(surveySelector)
 
@@ -40,8 +42,8 @@ const AssignmentReview = () => {
               assignment_id: assignment_id
             })
             if (artifactRes.status === 200) {
-              res.data.artifact = artifactRes.data
-              setSurvey(res.data)
+              setArtifact(artifactRes.data)
+              dispatch(setSurvey(res.data))
             }
           } else {
             setSurvey(res.data)
@@ -65,27 +67,27 @@ const AssignmentReview = () => {
       startPct: progressData.endPct,
       endPct: filledFields.length / allFieldsLength
     })
-  }, [survey])
+  }, [])
 
   const handleSaveReview = async (e) => {
     e.preventDefault()
     e.stopPropagation()
     if (form.validateFields()) {
       try {
-        const fields = form.getFieldsValue()
-        const review = Object.keys(fields).map((q_pk, i) => {
-          let question_pk = q_pk
-          let answer_text = form.getFieldValue(`${question_pk}`) || ''
-          if (question_pk.indexOf('-') > 0) {
-            question_pk = question_pk.split('-')[0]
-          }
-          return { question_pk, answer_text }
+        const review = []
+        survey.sections.forEach((s) => {
+          s.questions.forEach((q) => {
+            const { question_type, answer } = q
+            if (question_type === 'SLIDEREVIEW' || question_type === 'MULTIPLETEXT')
+              answer.forEach((a) => review.push({ question_pk: q.pk, answer_text: a.text || '' }))
+            else review.push({ question_pk: q.pk, answer_text: answer[0].text || '' })
+          })
         })
         const res = await saveArtifactReview({
           course_id: selectedCourse.pk,
           assignment_id: assignment_id,
           review_id,
-          review: review
+          review
         })
         if (res.status === 200) navigate(-1)
       } catch (e) {
@@ -94,7 +96,7 @@ const AssignmentReview = () => {
     }
   }
 
-  const setProgress = (_, allFields) => {
+  const setProgress = (changedFields, allFields) => {
     const filledFields = Object.values(form.getFieldsValue()).filter(
       (v) => v !== undefined && v.length
     )
@@ -113,26 +115,24 @@ const AssignmentReview = () => {
       </div>
       <Row justify="space-between">
         <Col span={14}>
-          {survey && (
-            <div>
-              <Typography.Title level={2}>{survey.name}</Typography.Title>
-              <Typography.Title level={4}>{survey.instructions}</Typography.Title>
-              <Typography.Title level={4}>{survey.other_info}</Typography.Title>
-            </div>
-          )}
+          <div>
+            <Typography.Title level={2}>{survey.name}</Typography.Title>
+            <Typography.Title level={4}>{survey.instructions}</Typography.Title>
+            <Typography.Title level={4}>{survey.other_info}</Typography.Title>
+          </div>
         </Col>
       </Row>
-      {survey && survey.sections && (
+      {
         <>
           {survey.sections.map((section, i) => (
-            <Section key={i} pk={section.pk} studentView={true} />
+            <Section key={i} pk={section.pk} studentView={true} artifact={artifact} />
           ))}
           <div className="text-center">
             <Button onClick={handleSaveReview}>Save Survey</Button>
             {message && <Alert className="mt-5" {...message} />}
           </div>
         </>
-      )}
+      }
     </Form>
   )
 }

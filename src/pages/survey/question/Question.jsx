@@ -6,7 +6,7 @@ import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 import { Document, Page, pdfjs } from 'react-pdf'
 import SlideReviewModal from './SlideReviewModal'
 import { useDispatch } from 'react-redux'
-import { deleteQuestion } from '../../../store/survey/surveySlice'
+import { deleteQuestion, editAnswer } from '../../../store/survey/surveySlice'
 
 const SlideReview = (props) => {
   const [open, setOpen] = useState(false)
@@ -30,13 +30,21 @@ const SlideReview = (props) => {
   )
 }
 
-const MultipleChoice = ({ pk, option_choices, answer }) => {
+const MultipleChoice = ({ pk, option_choices, answer, sectionPk, question_type }) => {
   const form = useFormInstance()
+  const value = Form.useWatch(pk, form)
+  const dispatch = useDispatch()
+
   useEffect(() => {
     if (answer && answer.length) {
       form.setFieldValue(pk, answer[0].text)
     }
   }, [answer])
+
+  useEffect(() => {
+    dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+  }, [value])
+
   const ticks = option_choices.reduce((acc, el, i) => ({ ...acc, [i]: el.text }), {})
   return (
     <Form.Item name={pk}>
@@ -51,33 +59,46 @@ const MultipleChoice = ({ pk, option_choices, answer }) => {
   )
 }
 
-const MultipleChoiceScale = ({ pk, answer }) => {
+const MultipleChoiceScale = ({ pk, sectionPk, answer, question_type }) => {
   const form = useFormInstance()
+  const value = Form.useWatch(pk, form)
+  const dispatch = useDispatch()
+
   useEffect(() => {
     if (answer && answer.length) {
       form.setFieldValue(pk, answer[0].text)
     }
   }, [answer])
 
+  useEffect(() => {
+    dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+  }, [value])
+
   return (
     <Form.Item name={pk}>
       <Select
-        options={[...Array.from(10)].map((i) => ({
-          label: i,
-          value: i
+        options={[...Array(10)].map((_, i) => ({
+          label: i + 1,
+          value: i + 1
         }))}
       />
     </Form.Item>
   )
 }
 
-const FixedText = ({ pk, answer }) => {
+const FixedText = ({ pk, sectionPk, answer, question_type }) => {
   const form = useFormInstance()
+  const value = Form.useWatch(pk, form)
+  const dispatch = useDispatch()
   useEffect(() => {
     if (answer && answer.length) {
       form.setFieldValue(pk, answer[0].text)
     }
   }, [answer])
+
+  useEffect(() => {
+    dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+  }, [value])
 
   return (
     <Form.Item name={pk}>
@@ -86,35 +107,60 @@ const FixedText = ({ pk, answer }) => {
   )
 }
 
-const MultiLineText = ({ pk, number_of_text, answer }) => {
+const MultiLineField = ({ pk, sectionPk, question_type, idx, answer, number_of_text }) => {
   const form = useFormInstance()
+  const value = Form.useWatch(`${pk}-${idx}`, form)
+  const dispatch = useDispatch()
   useEffect(() => {
-    if (answer && answer.length) {
-      answer.forEach((a, i) => {
-        form.setFieldValue(`${pk}-${i}`, a.text)
-      })
+    if (answer && idx < answer.length) {
+      form.setFieldValue(`${pk}-${idx}`, answer[idx].text)
     }
   }, [answer])
+  useEffect(() => {
+    dispatch(
+      editAnswer({
+        questionPk: pk,
+        sectionPk,
+        answer: value,
+        question_type,
+        idx,
+        number_of_text
+      })
+    )
+  }, [value])
+
+  return (
+    <Form.Item name={`${pk}-${idx}`}>
+      <Input />
+    </Form.Item>
+  )
+}
+
+const MultiLineText = (props) => {
+  const { number_of_text } = props
+
   return (
     <>
-      {[...Array(number_of_text).keys()].map((i) => {
-        return (
-          <Form.Item key={i} name={`${pk}-${i}`}>
-            <Input key={i} />
-          </Form.Item>
-        )
-      })}
+      {[...Array(number_of_text).keys()].map((i) => (
+        <MultiLineField key={i} idx={i} {...props} />
+      ))}
     </>
   )
 }
 
-const TextArea = ({ pk, answer }) => {
+const TextArea = ({ pk, sectionPk, answer, question_type }) => {
   const form = useFormInstance()
+  const value = Form.useWatch(pk, form)
+  const dispatch = useDispatch()
   useEffect(() => {
     if (answer && answer.length) {
       form.setFieldValue(pk, answer[0].text)
     }
   }, [answer])
+
+  useEffect(() => {
+    dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+  }, [value])
 
   return (
     <Form.Item name={pk}>
@@ -124,12 +170,13 @@ const TextArea = ({ pk, answer }) => {
 }
 
 const Question = (question) => {
-  const { text, question_type, is_required, sectionPk, studentView, ...questionProps } = question
+  const { text, is_required, studentView, ...questionProps } = question
+  const { question_type } = question
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
   const dispatch = useDispatch()
 
   const handleDeleteQuestion = () =>
-    dispatch(deleteQuestion({ sectionPk, questionPk: question.pk }))
+    dispatch(deleteQuestion({ sectionPk: question.sectionPk, questionPk: question.pk }))
 
   return (
     <Form.Item
@@ -144,9 +191,7 @@ const Question = (question) => {
           {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
           {question_type === 'MULTIPLETEXT' && <MultiLineText {...questionProps} />}
           {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
-          {question_type === 'SLIDEREVIEW' && (
-            <SlideReview {...questionProps} sectionPk={sectionPk} />
-          )}
+          {question_type === 'SLIDEREVIEW' && <SlideReview {...questionProps} />}
         </Col>
         {!studentView && (
           <Col span={2}>
@@ -175,7 +220,7 @@ const Question = (question) => {
         <AddQuestionModal
           open={questionModalOpen}
           setOpen={setQuestionModalOpen}
-          sectionPk={sectionPk}
+          sectionPk={question.sectionPk}
           questionPk={question.pk}
         />
       </Row>
