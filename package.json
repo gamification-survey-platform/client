@@ -12,7 +12,6 @@
     "bootstrap": "^5.2.3",
     "connected-react-router": "^6.9.3",
     "d3": "^7.8.2",
-    "d3-wordcloud": "^0.2.2",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
     "react-datepicker": "^4.10.0",
