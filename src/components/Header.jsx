@@ -7,8 +7,9 @@ import { logout } from '../store/user/userSlice'
 import { Layout, Menu, Image, Typography } from 'antd'
 import { UserOutlined, BookOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
+import { GiShoppingCart } from 'react-icons/gi'
 
-const items = [
+let items = [
   {
     key: '1',
     icon: <UserOutlined />,
@@ -18,13 +19,22 @@ const items = [
     key: '2',
     icon: <BookOutlined />,
     label: 'Courses'
+  },
+  {
+    key: '3',
+    icon: <GiShoppingCart />,
+    label: 'Store'
   }
 ]
 
 const AppHeader = ({ children }) => {
-  const { user } = useSelector(userSelector)
+  const user = useSelector(userSelector)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  if (user && user.is_staff) {
+    items = items.filter((item) => item.key !== '3')
+  }
 
   const handleLogout = async (e) => {
     e.preventDefault()
@@ -43,6 +53,9 @@ const AppHeader = ({ children }) => {
         break
       case '2':
         navigate('/courses')
+        break
+      case '3':
+        navigate('/store')
         break
     }
   }

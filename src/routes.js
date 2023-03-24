@@ -16,6 +16,8 @@ import NotFoundPage from './pages/NotFoundPage'
 import AssignmentReview from './pages/assignments/AssignmentReview'
 import AssignmentForm from './pages/assignments/AssignmentForm'
 import CourseForm from './pages/courses/CourseForm'
+import CourseRewards from './pages/courses/RewardsModal'
+import Store from './pages/store/Store'
 
 const routes = [
   {
@@ -147,6 +149,14 @@ const routes = [
     element: (
       <ProtectedRoute>
         <AddSurvey />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/store/',
+    element: (
+      <ProtectedRoute>
+        <Store />
       </ProtectedRoute>
     )
   },

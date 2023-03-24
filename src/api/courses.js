@@ -1,4 +1,3 @@
-import { validateAdmin, validateUser } from '../utils/validators'
 import api from './apiUtils'
 
 const createCourse = async (courseData) => {
