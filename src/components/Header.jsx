@@ -5,7 +5,7 @@ import userSelector from '../store/user/selectors'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
 import { Layout, Menu, Image, Typography } from 'antd'
-import { UserOutlined, BookOutlined, LogoutOutlined } from '@ant-design/icons'
+import { UserOutlined, BookOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 
 const items = [

@@ -5,6 +5,7 @@ import DefaultImage from '../assets/default.jpg'
 import { Space, Row, Col, Form, Image, Button, Typography } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import Input from 'antd/es/input/Input'
+import { editProfile } from '../api/profile'
 
 const Profile = () => {
   const user = useSelector(userSelector)
@@ -20,9 +21,13 @@ const Profile = () => {
   })
   const initialValues = { first_name, last_name, email, date_joined }
 
-  const handleClick = (e) => {
-    if (!editing) setEditing(true)
-    else {
+  const handleClick = async (e) => {
+    if (!editing) {
+      setEditing(true)
+    } else {
+      await form.validateFields()
+      const { name, first_name, last_name } = form.getFieldsValue()
+      await editProfile({ name, first_name, last_name })
       setEditing(false)
     }
   }
@@ -44,13 +49,22 @@ const Profile = () => {
       </Col>
       <Col span={10} offset={2}>
         <Form initialValues={initialValues} form={form}>
-          <Form.Item name="first_name" label="First name">
+          <Form.Item
+            name="first_name"
+            label="First name"
+            rules={[{ required: true, message: 'Please add a first name' }]}>
             <Input readOnly={!editing} />
           </Form.Item>
-          <Form.Item name="last_name" label="Last name">
+          <Form.Item
+            name="last_name"
+            label="Last name"
+            rules={[{ required: true, message: 'Please add a last name' }]}>
             <Input readOnly={!editing} />
           </Form.Item>
-          <Form.Item name="email" label="Email">
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ required: true, message: 'Please add a last name' }]}>
             <Input readOnly={!editing} />
           </Form.Item>
           <Form.Item name="date_joined" label="Date Joined">
