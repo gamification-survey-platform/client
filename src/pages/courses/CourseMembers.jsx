@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Table, Form, Button, Row, Col, Alert, Tag, Select, Input, Typography } from 'antd'
+import { Table, Form, Button, Row, Col, Alert, Tag, Select, Input, Typography, Divider } from 'antd'
 import { useParams } from 'react-router'
 import { addMember, getMembers, remindMember, removeMember } from '../../api/members'
+import { UploadOutlined } from '@ant-design/icons'
 import coursesSelector from '../../store/courses/selectors'
 import { isInstructorOrTA } from '../../utils/roles'
 import { useForm } from 'antd/es/form/Form'
 import Spinner from '../../components/Spinner'
+import Upload from 'antd/es/upload/Upload'
+import Papa from 'papaparse'
 
 const CourseMembers = () => {
   const [members, setMembers] = useState([])
@@ -86,9 +89,9 @@ const CourseMembers = () => {
   const handleAddMember = async (event) => {
     event.preventDefault()
     event.stopPropagation()
-    form.validateFields(['memberId', 'memberRole', 'teamId'])
-    const { memberId, memberRole, teamId } = form.getFieldsValue()
     try {
+      await form.validateFields(['memberId', 'memberRole', 'teamId'])
+      const { memberId, memberRole, teamId } = form.getFieldsValue()
       const res = await addMember({
         course_id: selectedCourse.pk,
         memberId,
@@ -100,7 +103,31 @@ const CourseMembers = () => {
         setMessage({ type: 'success', message: `Successfully added ${memberId}` })
       }
     } catch (e) {
-      setMessage({ type: 'danger', message: `Failed to add ${memberId}` })
+      setMessage({ type: 'danger', message: `Failed to add member` })
+    }
+  }
+
+  const handleAddFromCSV = async (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    try {
+      const { csv } = form.getFieldsValue()
+      Papa.parse(csv.file, {
+        header: true,
+        complete: async ({ data, errors }) => {
+          if (data && !errors.length)
+            data.map(async (member) => {
+              await addMember({
+                course_id: selectedCourse.pk,
+                memberId: member.andrewID,
+                memberRole: 'Student'
+              })
+            })
+        }
+      })
+      form.resetFields()
+    } catch (e) {
+      console.error(e)
     }
   }
 
@@ -157,8 +184,19 @@ const CourseMembers = () => {
             <Form.Item name="teamId" label="Team ID (optional)">
               <Input />
             </Form.Item>
+
             <Button type="primary" onClick={handleAddMember}>
               Add
+            </Button>
+            <Divider />
+            <Typography.Title level={4}>Or Add from CSV File</Typography.Title>
+            <Form.Item name="csv">
+              <Upload beforeUpload={() => false}>
+                <Button icon={<UploadOutlined />}>Upload CSV File</Button>
+              </Upload>
+            </Form.Item>
+            <Button type="primary" onClick={handleAddFromCSV}>
+              Add from CSV File
             </Button>
             {message && <Alert className="mt-3" {...message} />}
           </Form>
