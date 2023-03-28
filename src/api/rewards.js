@@ -12,10 +12,10 @@ const getCourseRewards = async ({ course_id }) => {
 const addCourseReward = async ({ course_id, reward, picture }) => {
   try {
     const formData = new FormData()
-    if (reward.type === 'Badge' || reward.type === 'other') {
+    if (reward.type === 'Badge' || reward.type === 'Other') {
       formData.set('picture', picture)
     }
-    Object.keys(reward).forEach((k) => formData.set(k, reward[k]))
+    Object.keys(reward).forEach((k) => k !== 'picture' && formData.set(k, reward[k]))
     const config = {
       headers: {
         'Content-Type': 'multipart/form-data'

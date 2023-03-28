@@ -9,7 +9,6 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
   const [showFile, setShowFile] = useState(false)
   const [picture, setPicture] = useState()
   const typeWatch = Form.useWatch('type', form)
-  console.log(showFile)
   useEffect(() => {
     form.resetFields()
     setShowQuantity(false)
@@ -20,7 +19,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
     if (typeWatch === 'Bonus' || typeWatch === 'Late Submission') {
       setShowQuantity(true)
       setShowFile(false)
-    } else if (typeWatch === 'other' || typeWatch === 'Badge') {
+    } else if (typeWatch === 'Other' || typeWatch === 'Badge') {
       setShowFile(true)
       setShowQuantity(false)
     } else {
@@ -33,8 +32,8 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
     try {
       await form.validateFields()
       const reward = form.getFieldsValue()
-      await addCourseReward({ course_id, reward, picture })
-      setRewards([...rewards, reward])
+      const resp = await addCourseReward({ course_id, reward, picture })
+      if (resp.status === 200) setRewards([...rewards, resp.data])
     } catch (e) {
       console.error(e)
     }
@@ -71,7 +70,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
               { value: 'Bonus', label: 'Bonus' },
               { value: 'Late Submission', label: 'Late Submission' },
               { value: 'Theme', label: 'Theme (System level)' },
-              { value: 'other', label: 'other' }
+              { value: 'Other', label: 'Other' }
             ]}></Select>
         </Form.Item>
         <Form.Item

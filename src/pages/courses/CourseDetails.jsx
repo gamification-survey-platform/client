@@ -19,20 +19,13 @@ const CourseDetails = () => {
   useEffect(() => {
     const fetchRewards = async () => {
       if (isInstructorOrTA(course.user_role)) {
-        const res = await getCourseRewards({ course_id })
+        const res = await getCourseRewards({ course_id: course.pk })
         if (res.status === 200) setRewards(res.data)
       }
     }
     fetchRewards()
-    setRewards([
-      {
-        title: 'Extra Day for Assignment 1',
-        description: 'You get one more day for assignment 1',
-        xp_points: 10
-      }
-    ])
   }, [])
-  console.log(rewards)
+
   return (
     <div className="m-5 text-center">
       <Typography.Title level={2}>{course.course_name}</Typography.Title>
@@ -60,6 +53,7 @@ const CourseDetails = () => {
             open={rewardsModalOpen}
             setOpen={setRewardsModalOpen}
             course_id={course.pk}
+            rewards={rewards}
             setRewards={setRewards}
           />
         </div>
