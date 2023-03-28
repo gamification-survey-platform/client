@@ -28,4 +28,32 @@ const addCourseReward = async ({ course_id, reward, picture }) => {
   }
 }
 
-export { getCourseRewards, addCourseReward }
+const editCourseReward = async ({ course_id, reward_pk, reward, picture }) => {
+  try {
+    const formData = new FormData()
+    if (reward.type === 'Badge' || reward.type === 'Other') {
+      formData.set('picture', picture)
+    }
+    Object.keys(reward).forEach((k) => k !== 'picture' && formData.set(k, reward[k]))
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+    const res = await api.patch(`courses/${course_id}/rewards/${reward_pk}`, formData, config)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
+const deleteCourseReward = async ({ course_id, reward_pk }) => {
+  try {
+    const res = await api.delete(`courses/${course_id}/rewards/${reward_pk}`)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
+export { getCourseRewards, addCourseReward, editCourseReward }

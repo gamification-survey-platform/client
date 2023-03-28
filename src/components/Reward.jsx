@@ -1,8 +1,12 @@
-import { Card, Divider, Image } from 'antd'
+import { Card, Divider, Image, Button, Row } from 'antd'
+import { useState } from 'react'
 import config from '../utils/constants'
 import Calendar from '../assets/calendar.jpg'
 import Computer from '../assets/computer.png'
 import TreasureChest from '../assets/treasure_chest.png'
+import { useSelector } from 'react-redux'
+import userSelector from '../store/user/selectors'
+import RewardsModal from '../pages/courses/RewardsModal'
 
 const Cover = ({ type, icon }) => {
   if ((type === 'Badge' || type === 'Other') && icon) {
@@ -19,6 +23,7 @@ const Cover = ({ type, icon }) => {
 
 const Reward = (reward) => {
   const {
+    pk,
     name,
     belong_to,
     description,
@@ -28,7 +33,18 @@ const Reward = (reward) => {
     exp_point,
     icon = null
   } = reward
-  console.log(reward)
+
+  const user = useSelector(userSelector)
+  const [open, setOpen] = useState(false)
+
+  const deleteReward = async () => {
+    try {
+      await deleteReward({ reward_pk: pk })
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
   return (
     <Card className="m-1 w-25" cover={<Cover type={type} icon={icon} />}>
       <Card.Meta title={name} />
@@ -42,6 +58,20 @@ const Reward = (reward) => {
         <Divider />
         <strong className="text-success">{inventory} remaining</strong>
       </div>
+      {user.is_staff ? (
+        <div className="text-center">
+          <Divider />
+          <Row justify="center">
+            <Button type="primary" onClick={() => setOpen(true)} className="m-1">
+              Edit
+            </Button>
+            <Button danger onClick={() => setOpen(true)} className="m-1">
+              Delete
+            </Button>
+          </Row>
+          <RewardsModal open={open} setOpen={setOpen} editingReward={reward} />
+        </div>
+      ) : null}
     </Card>
   )
 }

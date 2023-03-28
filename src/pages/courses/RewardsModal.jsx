@@ -1,9 +1,9 @@
 import { Form, Select, Modal, Input, Switch, Upload, Button } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useEffect, useState } from 'react'
-import { addCourseReward } from '../../api/rewards'
+import { addCourseReward, editCourseReward } from '../../api/rewards'
 
-const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
+const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id, editingReward }) => {
   const [form] = useForm()
   const [showQuantity, setShowQuantity] = useState(false)
   const [showFile, setShowFile] = useState(false)
@@ -13,6 +13,12 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
     form.resetFields()
     setShowQuantity(false)
     setShowFile(false)
+    if (editingReward) {
+      if (editingReward.picture) {
+        setPicture(editingReward.picture)
+      }
+      form.setFieldsValue(editingReward)
+    }
   }, [open])
 
   useEffect(() => {
@@ -31,8 +37,14 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
   const handleSubmit = async () => {
     try {
       await form.validateFields()
-      const reward = form.getFieldsValue()
-      const resp = await addCourseReward({ course_id, reward, picture })
+      let reward, resp
+      if (editingReward) {
+        reward = { ...editingReward, ...form.getFieldsValue }
+        resp = await editCourseReward({ course_id, reward_pk: editingReward.pk, reward, picture })
+      } else {
+        reward = form.getFieldsValue()
+        resp = await addCourseReward({ course_id, reward, picture })
+      }
       if (resp.status === 200) setRewards([...rewards, resp.data])
     } catch (e) {
       console.error(e)
@@ -42,7 +54,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
 
   return (
     <Modal
-      title="Create new reward"
+      title={editingReward ? 'Edit reward' : 'Create new reward'}
       open={open}
       onOk={handleSubmit}
       onCancel={() => setOpen(false)}>
@@ -111,11 +123,6 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
                 pattern: new RegExp(/^[0-9]+$/)
               }
             ]}>
-            <Input type="number" />
-          </Form.Item>
-        ) : null}
-        {showQuantity ? (
-          <Form.Item name="quantity" label="Quantity">
             <Input type="number" />
           </Form.Item>
         ) : null}

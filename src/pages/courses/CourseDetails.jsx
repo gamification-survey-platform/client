@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Typography, Divider, Button } from 'antd'
+import { Typography, Divider, Button, Row } from 'antd'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import coursesSelector from '../../store/courses/selectors'
@@ -41,11 +41,11 @@ const CourseDetails = () => {
       {course && isInstructorOrTA(course.user_role) ? (
         <div>
           <Typography.Title level={2}>Current Rewards</Typography.Title>
-          <>
+          <Row gutter={16} style={{ margin: '1rem' }}>
             {rewards.map((r, i) => (
               <Reward {...r} key={i} />
             ))}
-          </>
+          </Row>
           <Button type="primary" onClick={() => setRewardsModalOpen(true)}>
             Add Reward
           </Button>
