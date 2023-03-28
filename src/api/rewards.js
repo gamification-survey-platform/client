@@ -9,10 +9,19 @@ const getCourseRewards = async ({ course_id }) => {
   }
 }
 
-const addCourseReward = async ({ course_id, reward }) => {
+const addCourseReward = async ({ course_id, reward, picture }) => {
   try {
-    console.log(reward)
-    const res = await api.post(`courses/${course_id}/rewards/`, reward)
+    const formData = new FormData()
+    if (reward.type === 'Badge' || reward.type === 'other') {
+      formData.set('picture', picture)
+    }
+    Object.keys(reward).forEach((k) => formData.set(k, reward[k]))
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+    const res = await api.post(`courses/${course_id}/rewards/`, formData, config)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)

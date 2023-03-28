@@ -7,6 +7,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
   const [form] = useForm()
   const [showQuantity, setShowQuantity] = useState(false)
   const [showFile, setShowFile] = useState(false)
+  const [picture, setPicture] = useState()
   const typeWatch = Form.useWatch('type', form)
   console.log(showFile)
   useEffect(() => {
@@ -18,8 +19,13 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
   useEffect(() => {
     if (typeWatch === 'Bonus' || typeWatch === 'Late Submission') {
       setShowQuantity(true)
+      setShowFile(false)
     } else if (typeWatch === 'other' || typeWatch === 'Badge') {
       setShowFile(true)
+      setShowQuantity(false)
+    } else {
+      setShowFile(false)
+      setShowQuantity(false)
     }
   }, [typeWatch])
 
@@ -27,7 +33,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
     try {
       await form.validateFields()
       const reward = form.getFieldsValue()
-      await addCourseReward({ course_id, reward })
+      await addCourseReward({ course_id, reward, picture })
       setRewards([...rewards, reward])
     } catch (e) {
       console.error(e)
@@ -42,13 +48,22 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
       onOk={handleSubmit}
       onCancel={() => setOpen(false)}>
       <Form form={form}>
-        <Form.Item label="Reward Name" name="name">
+        <Form.Item
+          label="Reward Name"
+          name="name"
+          rules={[{ required: true, message: 'Please input reward name' }]}>
           <Input />
         </Form.Item>
-        <Form.Item label="Reward description" name="description">
+        <Form.Item
+          label="Reward description"
+          name="description"
+          rules={[{ required: true, message: 'Please add a description for the reward' }]}>
           <Input.TextArea rows={4} cols={10} />
         </Form.Item>
-        <Form.Item label="Reward type" name="type">
+        <Form.Item
+          label="Reward type"
+          name="type"
+          rules={[{ required: true, message: 'Please choose one of the options' }]}>
           <Select
             className="text-left"
             options={[
@@ -59,10 +74,28 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
               { value: 'other', label: 'other' }
             ]}></Select>
         </Form.Item>
-        <Form.Item label="Inventory" name="inventory">
+        <Form.Item
+          label="Inventory"
+          name="inventory"
+          rules={[
+            {
+              required: true,
+              message: 'A positive number must be entered.',
+              pattern: new RegExp(/^[0-9]+$/)
+            }
+          ]}>
           <Input type="number" />
         </Form.Item>
-        <Form.Item label="Cost" name="xp_points">
+        <Form.Item
+          label="Cost"
+          name="xp_points"
+          rules={[
+            {
+              required: true,
+              message: 'A positive number must be entered.',
+              pattern: new RegExp(/^[0-9]+$/)
+            }
+          ]}>
           <Input type="number" />
         </Form.Item>
         <Form.Item name="is_active" label="Active" valuePropName="checked">
@@ -88,11 +121,18 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
           </Form.Item>
         ) : null}
         {showFile ? (
-          <Form.Item name="picture" label="Image Showcase">
+          <Form.Item
+            name="picture"
+            label="Image Showcase"
+            rules={[
+              {
+                required: true,
+                message: 'Image must be provided'
+              }
+            ]}>
             <Upload
               beforeUpload={(file) => {
-                const url = URL.createObjectURL(file)
-                console.log(url)
+                setPicture(file)
                 return false
               }}>
               <Button>Please upload an image showcasing the reward.</Button>
@@ -105,35 +145,3 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id }) => {
 }
 
 export default RewardsModal
-/*
-rules={[{ required: true, message: 'Please input reward name' }]}>
-rules={[
-  {
-    required: true,
-    message: 'Image must be provided'
-  }
-]}>
-rules={[
-  {
-    required: true,
-    message: 'A positive number must be entered.',
-    pattern: new RegExp(/^[0-9]+$/)
-  }
-]}>
-rules={[
-  {
-    required: true,
-    message: 'A positive number must be entered.',
-    pattern: new RegExp(/^[0-9]+$/)
-  }
-]}>
-rules={[
-  {
-    required: true,
-    message: 'A positive number must be entered.',
-    pattern: new RegExp(/^[0-9]+$/)
-  }
-]}>
-rules={[{ required: true, message: 'Please choose one of the options' }]}>
-rules={[{ required: true, message: 'Please add a description for the reward' }]}>
-*/
