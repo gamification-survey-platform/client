@@ -20,8 +20,7 @@ const CourseDetails = () => {
     const fetchRewards = async () => {
       if (isInstructorOrTA(course.user_role)) {
         const res = await getCourseRewards({ course_id })
-        console.log('here')
-        if (res.status === 200) setRewards(res)
+        if (res.status === 200) setRewards(res.data)
       }
     }
     fetchRewards()
@@ -60,7 +59,7 @@ const CourseDetails = () => {
           <RewardsModal
             open={rewardsModalOpen}
             setOpen={setRewardsModalOpen}
-            course_id={course_id}
+            course_id={course.pk}
             setRewards={setRewards}
           />
         </div>

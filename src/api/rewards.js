@@ -11,7 +11,8 @@ const getCourseRewards = async ({ course_id }) => {
 
 const addCourseReward = async ({ course_id, reward }) => {
   try {
-    const res = await api.post(`courses/${course_id}/rewards`, reward)
+    console.log(reward)
+    const res = await api.post(`courses/${course_id}/rewards/`, reward)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
