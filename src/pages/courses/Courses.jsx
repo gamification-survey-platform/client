@@ -96,7 +96,7 @@ const Courses = () => {
       dataIndex: 'delete',
       key: 'delete',
       render: (_, course) =>
-        isInstructorOrTA(course.user_role) ? (
+        user.is_staff ? (
           <Tag role="button" color="red" onClick={() => handleDeleteCourse(course.pk)}>
             Delete
           </Tag>

@@ -36,7 +36,11 @@ const Home = () => {
         {courses.map((course, i) => {
           return (
             <Col key={i} span={8} className="gutter-row">
-              <Card cover={<Image src={DefaultImage} />} style={{ width: 300 }} key={i}>
+              <Card
+                className="text-center"
+                cover={<Image src={DefaultImage} />}
+                style={{ width: 300 }}
+                key={i}>
                 <Space direction="vertical" size="middle" align="center">
                   <Row justify="center" className="text-center">
                     <p>{course.course_name}</p>

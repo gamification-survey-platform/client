@@ -14,14 +14,7 @@ const coursesSlice = createSlice({
       const newCourses = state.map((course) => (course.pk === pk ? newCourse : course))
       return newCourses
     },
-    deleteCourse: (state, action) => {
-      const coursePk = action.payload
-      const newCourses = state.courses.filter((course) => course.pk !== coursePk)
-      return {
-        ...state,
-        courses: newCourses
-      }
-    }
+    deleteCourse: (state, action) => state.filter((course) => course.pk !== action.payload)
   },
   extraReducers: (builder) => {
     builder.addCase(PURGE, () => initialState)
