@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Table, Form, Button, Row, Col, Alert, Tag, Select, Input, Typography, Divider } from 'antd'
+import { Table, Form, Button, Alert, Tag, Select, Input, Typography, Divider, message } from 'antd'
 import { useParams } from 'react-router'
 import { addMember, getMembers, remindMember, removeMember } from '../../api/members'
 import { UploadOutlined } from '@ant-design/icons'
@@ -10,12 +10,14 @@ import { useForm } from 'antd/es/form/Form'
 import Spinner from '../../components/Spinner'
 import Upload from 'antd/es/upload/Upload'
 import Papa from 'papaparse'
+import userSelector from '../../store/user/selectors'
 
 const CourseMembers = () => {
   const [members, setMembers] = useState([])
-  const [message, setMessage] = useState('')
+  const [messageApi, contextHolder] = message.useMessage()
   const { course_id } = useParams()
   const [spin, setSpin] = useState(false)
+  const user = useSelector(userSelector)
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const userRole = selectedCourse ? selectedCourse.user_role : ''
@@ -74,7 +76,7 @@ const CourseMembers = () => {
     }
   ]
 
-  if (isInstructorOrTA(userRole)) columns = columns.concat(staffColumns)
+  if (isInstructorOrTA(userRole) || user.is_staff) columns = columns.concat(staffColumns)
 
   useEffect(() => {
     const fetchCourseMembers = async () => {
@@ -100,10 +102,10 @@ const CourseMembers = () => {
       })
       if (res.status === 200) {
         setMembers(res.data.membership)
-        setMessage({ type: 'success', message: `Successfully added ${memberId}` })
+        messageApi.open({ type: 'success', content: `Successfully added ${memberId}` })
       }
     } catch (e) {
-      setMessage({ type: 'danger', message: `Failed to add member` })
+      messageApi.open({ type: 'error', content: `Failed to add member.` })
     }
   }
 
@@ -137,9 +139,9 @@ const CourseMembers = () => {
     try {
       const res = await remindMember({ course_id: selectedCourse.pk, memberId })
       if (res.status === 200)
-        setMessage({ type: 'success', message: `Successfully reminded ${memberId}` })
+        messageApi.open({ type: 'success', content: `Successfully reminded ${memberId}` })
     } catch (e) {
-      setMessage({ type: 'error', message: `Failed to remind ${memberId}` })
+      messageApi.open({ type: 'error', content: `Failed to remind ${memberId}` })
     }
   }
 
@@ -151,18 +153,19 @@ const CourseMembers = () => {
       if (res.status === 204) {
         const newMembers = members.filter((member) => member.andrew_id !== andrewIdToRemove)
         setMembers(newMembers)
-        setMessage({ type: 'success', message: `Successfully removed ${andrewIdToRemove}` })
+        messageApi.open({ type: 'success', content: `Successfully removed ${andrewIdToRemove}` })
       }
     } catch (e) {
-      setMessage({ type: 'error', message: `Failed to remove ${andrewIdToRemove}` })
+      messageApi.open({ type: 'error', content: `Failed to remove ${andrewIdToRemove}` })
     }
   }
   return spin ? (
     <Spinner show={spin} />
   ) : (
     <div className="m-5">
+      {contextHolder}
       <Table columns={columns} dataSource={dataSource} />
-      {isInstructorOrTA(userRole) && (
+      {(isInstructorOrTA(userRole) || user.is_staff) && (
         <div className="d-flex justify-content-center">
           <Form className="w-50 text-center" form={form} initialValues={initialValues}>
             <Typography.Title level={4}>Add Member</Typography.Title>
@@ -198,7 +201,6 @@ const CourseMembers = () => {
             <Button type="primary" onClick={handleAddFromCSV}>
               Add from CSV File
             </Button>
-            {message && <Alert className="mt-3" {...message} />}
           </Form>
         </div>
       )}
