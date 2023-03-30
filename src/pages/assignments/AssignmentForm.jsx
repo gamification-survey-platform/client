@@ -11,7 +11,7 @@ import { useForm } from 'antd/es/form/Form'
 
 const AssignmentForm = () => {
   const [message, setMessage] = useState()
-  const [datesValid, setDatesValid] = useState(true)
+  const [dateError, setDateError] = useState()
   const params = useParams()
   const { state: editingAssignment } = useLocation()
   const courses = useSelector(coursesSelector)
@@ -32,30 +32,38 @@ const AssignmentForm = () => {
   const handleSubmit = async (event) => {
     event.preventDefault()
     event.stopPropagation()
-    const fields = form.getFieldsValue()
-    const { date_due, date_released } = fields
-    const datesValid = date_released.isBefore(date_due)
-    setDatesValid(datesValid)
-    if (form.validateFields() && datesValid) {
+    try {
+      form.validateFields()
+      const fields = form.getFieldsValue()
+      const { date_due, date_released } = fields
+      const now = dayjs()
+      if (!date_due || !date_released) {
+        setDateError({ type: 'warning', message: 'Please input date due and/or date release.' })
+        throw new Error()
+      } else if (!date_released.isAfter(now)) {
+        setDateError({ type: 'warning', message: 'Date release must be in the future.' })
+        throw new Error()
+      } else if (!date_released.isBefore(date_due)) {
+        setDateError({ type: 'warning', message: 'Date due must be after date release.' })
+        throw new Error()
+      }
       const formObj = {
         ...fields,
         course: selectedCourse.pk,
         date_due: date_due.format('MM/DD/YYYY hh:mm'),
         date_released: date_released.format('MM/DD/YYYY hh:mm')
       }
-      try {
-        const res = editingAssignment
-          ? await editAssignment({
-              course_id: selectedCourse.pk,
-              assignment: formObj,
-              assignment_id: editingAssignment.id
-            })
-          : await createAssignment({ course_id: selectedCourse.pk, assignment: formObj })
-        if (editingAssignment && res.status === 200) navigate(-1)
-        else if (res.status === 201) navigate(-1)
-      } catch (e) {
-        setMessage({ type: 'error', message: 'Failed to create/edit assignment.' })
-      }
+      const res = editingAssignment
+        ? await editAssignment({
+            course_id: selectedCourse.pk,
+            assignment: formObj,
+            assignment_id: editingAssignment.pk
+          })
+        : await createAssignment({ course_id: selectedCourse.pk, assignment: formObj })
+      if (editingAssignment && res.status === 200) navigate(-1)
+      else if (res.status === 201) navigate(-1)
+    } catch (e) {
+      setMessage({ type: 'error', message: 'Failed to create/edit assignment.' })
     }
   }
   return (
@@ -109,18 +117,34 @@ const AssignmentForm = () => {
             ]}></Select>
         </Form.Item>
         <Form.Item label="Date due" name="date_due">
-          <DatePicker showTime={{ format: 'HH:mm' }} />
+          <DatePicker showTime={{ format: 'h:mm A' }} format="YYYY-MM-DD h:mm A" />
         </Form.Item>
         <Form.Item label="Date released" name="date_released">
-          <DatePicker showTime={{ format: 'HH:mm' }} />
+          <DatePicker showTime={{ format: 'h:mm A' }} format="YYYY-MM-DD h:mm A" />
         </Form.Item>
-        {!datesValid && (
-          <Alert className="my-3" type="warning" message="Due date must be after release date." />
-        )}
-        <Form.Item label="Total Score" name="total_score">
+        {dateError && <Alert className="my-3" {...dateError} />}
+        <Form.Item
+          label="Total Score"
+          name="total_score"
+          rules={[
+            {
+              required: true,
+              message: 'A positive number must be entered.',
+              pattern: new RegExp(/^[0-9]+$/)
+            }
+          ]}>
           <Input />
         </Form.Item>
-        <Form.Item label="Weight" name="weight">
+        <Form.Item
+          label="Weight"
+          name="weight"
+          rules={[
+            {
+              required: true,
+              message: 'A positive number must be entered.',
+              pattern: new RegExp(/^[0-9]+$/)
+            }
+          ]}>
           <Input />
         </Form.Item>
         <Form.Item className="text-center">
