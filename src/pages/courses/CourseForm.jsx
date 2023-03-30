@@ -83,16 +83,6 @@ const CourseForm = () => {
           rules={[{ required: true, message: 'Please input an syllabus' }]}>
           <Input.TextArea rows={6} />
         </Form.Item>
-        <Form.Item label="Course Image" name="picture" className="text-left">
-          <Upload name="picture">
-            <Button icon={<UploadOutlined />}>Click to upload</Button>
-          </Upload>
-        </Form.Item>
-        <Form.Item label="CATME File" name="catme" className="text-left">
-          <Upload name="catme">
-            <Button icon={<UploadOutlined />}>Upload JSON</Button>
-          </Upload>
-        </Form.Item>
         <Button type="primary" onClick={handleSubmit}>
           {editingCourse ? 'Edit' : 'Create'}
         </Button>
