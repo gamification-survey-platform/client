@@ -37,18 +37,6 @@ const CourseMembers = () => {
   const staffColumns = [
     {
       title: '',
-      dataIndex: 'add',
-      key: 'add',
-      render: (_, member) => {
-        return (
-          <Tag color="green" role="button" onClick={(e) => handleAddMember(e, member.andrew_id)}>
-            Add
-          </Tag>
-        )
-      }
-    },
-    {
-      title: '',
       dataIndex: 'remind',
       key: 'remind',
       render: (_, member) => {
@@ -103,6 +91,7 @@ const CourseMembers = () => {
       if (res.status === 200) {
         setMembers(res.data.membership)
         messageApi.open({ type: 'success', content: `Successfully added ${memberId}` })
+        form.resetFields()
       }
     } catch (e) {
       messageApi.open({ type: 'error', content: `Failed to add member.` })

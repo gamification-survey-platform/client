@@ -42,7 +42,8 @@ const MultipleChoice = ({ pk, option_choices, answer, sectionPk, question_type }
   }, [answer])
 
   useEffect(() => {
-    dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+    if (answer && answer.length)
+      dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
   }, [value])
 
   const ticks = option_choices.reduce((acc, el, i) => ({ ...acc, [i]: el.text }), {})
@@ -71,7 +72,8 @@ const MultipleChoiceScale = ({ pk, sectionPk, answer, question_type }) => {
   }, [answer])
 
   useEffect(() => {
-    dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+    if (answer && answer.length)
+      dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
   }, [value])
 
   return (
@@ -97,7 +99,8 @@ const FixedText = ({ pk, sectionPk, answer, question_type }) => {
   }, [answer])
 
   useEffect(() => {
-    dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+    if (answer && answer.length)
+      dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
   }, [value])
 
   return (
@@ -117,16 +120,17 @@ const MultiLineField = ({ pk, sectionPk, question_type, idx, answer, number_of_t
     }
   }, [answer])
   useEffect(() => {
-    dispatch(
-      editAnswer({
-        questionPk: pk,
-        sectionPk,
-        answer: value,
-        question_type,
-        idx,
-        number_of_text
-      })
-    )
+    if (answer && answer.length)
+      dispatch(
+        editAnswer({
+          questionPk: pk,
+          sectionPk,
+          answer: value,
+          question_type,
+          idx,
+          number_of_text
+        })
+      )
   }, [value])
 
   return (
@@ -159,7 +163,8 @@ const TextArea = ({ pk, sectionPk, answer, question_type }) => {
   }, [answer])
 
   useEffect(() => {
-    dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+    if (answer && answer.length)
+      dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
   }, [value])
 
   return (
