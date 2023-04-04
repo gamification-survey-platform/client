@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Modal, Button, Form, Checkbox, Input } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { addSection, editSection, surveySelector } from '../../store/survey/surveySlice'

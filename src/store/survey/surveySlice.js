@@ -21,7 +21,7 @@ const surveySlice = createSlice({
     },
     editSection: (state, action) => {
       const { section, pk } = action.payload
-      const sections = state.sections.map((s) => (s.pk === pk ? section : s))
+      const sections = state.sections.map((s) => (s.pk === pk ? { ...s, ...section } : s))
       return { ...state, sections }
     },
     deleteSection: (state, action) => {
