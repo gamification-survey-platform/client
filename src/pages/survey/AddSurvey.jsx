@@ -5,11 +5,11 @@ import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import { createSurvey } from '../../api/survey'
 import coursesSelector from '../../store/courses/selectors'
-import { isBefore, isInFuture } from '../../utils/dateUtils'
+import dayjs from 'dayjs'
 
 const AddSurvey = () => {
   const [message, setMessage] = useState()
-  const [datesValid, setDatesValid] = useState(true)
+  const [dateError, setDateError] = useState()
   const courses = useSelector(coursesSelector)
   const { course_id, assignment_id } = useParams()
   const navigate = useNavigate()
@@ -19,11 +19,20 @@ const AddSurvey = () => {
   const handleSubmit = async (event) => {
     event.preventDefault()
     event.stopPropagation()
-    const fields = form.getFieldsValue()
-    const { date_due, date_released } = fields
-    const datesValid = date_released.isBefore(date_due)
-    setDatesValid(datesValid)
-    if (form.validateFields() && datesValid) {
+    try {
+      const fields = form.getFieldsValue()
+      const { date_due, date_released } = fields
+      const now = dayjs()
+      if (!date_due || !date_released) {
+        setDateError({ type: 'warning', message: 'Please input date due and/or date release.' })
+        throw new Error()
+      } else if (!date_released.isAfter(now)) {
+        setDateError({ type: 'warning', message: 'Date release must be in the future.' })
+        throw new Error()
+      } else if (!date_released.isBefore(date_due)) {
+        setDateError({ type: 'warning', message: 'Date due must be after date release.' })
+        throw new Error()
+      }
       const surveyData = {
         course_id: selectedCourse.pk,
         assignment_id,
@@ -36,6 +45,8 @@ const AddSurvey = () => {
       const res = await createSurvey(surveyData)
       if (res.status === 201 || res.status === 200) navigate(-1)
       else setMessage({ type: 'error', message: 'Failed to create survey.' })
+    } catch (e) {
+      setMessage({ type: 'error', message: 'Failed to create survey.' })
     }
   }
 
@@ -58,14 +69,12 @@ const AddSurvey = () => {
           <Input.TextArea rows={4} cols={10} />
         </Form.Item>
         <Form.Item label="Date due" name="date_due">
-          <DatePicker showTime={{ format: 'HH:mm' }} />
+          <DatePicker showTime={{ format: 'h:mm A' }} format="YYYY-MM-DD h:mm A" />
         </Form.Item>
         <Form.Item label="Date released" name="date_released">
-          <DatePicker showTime={{ format: 'HH:mm' }} />
+          <DatePicker showTime={{ format: 'h:mm A' }} format="YYYY-MM-DD h:mm A" />
         </Form.Item>
-        {!datesValid && (
-          <Alert className="mt-3" type="warning" message="Due date must be after release date." />
-        )}
+        {dateError && <Alert className="my-3" {...dateError} />}
         <Form.Item className="text-center">
           <Button className="mt-3" type="primary" onClick={handleSubmit}>
             Create
@@ -76,65 +85,5 @@ const AddSurvey = () => {
     </div>
   )
 }
-/*
-  return (
-    <Container className="mt-5 text-left">
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label className="ml-3">Template Name:</Form.Label>
-          <Col>
-            <Form.Control
-              as="textarea"
-              defaultValue="Default Template"
-              name="template_name"
-              rows={3}
-            />
-          </Col>
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="ml-3">Instruction (optional):</Form.Label>
-          <Col>
-            <Form.Control as="textarea" name="instructions" rows={3} />
-          </Col>
-        </Form.Group>
-        <Form.Group className="mb-3">
-          <Form.Label className="ml-3">Additional Information (optional):</Form.Label>
-          <Col xs="5">
-            <Form.Control as="textarea" name="other_info" rows={3} />
-          </Col>
-        </Form.Group>
-        <Form.Group className="mb-3 ml-3">
-          <Form.Label>Release date:</Form.Label>
-          <DatePicker
-            selected={releaseDate}
-            invalid={!areDatesValid}
-            showTimeSelect
-            dateFormat="Pp"
-            name="date_released"
-            onChange={setReleaseDate}
-          />
-        </Form.Group>
-        <Form.Group className="mb-3 ml-3">
-          <Form.Label>Due date:</Form.Label>
-          <DatePicker
-            invalid={!areDatesValid}
-            name="date_due"
-            selected={dueDate}
-            showTimeSelect
-            dateFormat="Pp"
-            onChange={setDueDate}
-          />
-        </Form.Group>
-        {!areDatesValid && (
-          <Alert variant="warning">Please select valid release and due dates</Alert>
-        )}
-        <Button className="ml-3" type="submit">
-          Create
-        </Button>
-        {showError && <Alert variant="danger">Failed to create survey.</Alert>}
-      </Form>
-    </Container>
-  )
-}
-*/
+
 export default AddSurvey
