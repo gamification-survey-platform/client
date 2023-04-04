@@ -5,7 +5,7 @@ const getArtifactReviews = async ({ course_id, assignment_id }) => {
     const res = await api.get(`courses/${course_id}/assignments/${assignment_id}/artifact_reviews/`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 
@@ -16,7 +16,7 @@ const getArtifactReview = async ({ course_id, assignment_id, review_id }) => {
     )
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 
@@ -30,7 +30,7 @@ const saveArtifactReview = async ({ course_id, assignment_id, review_id, review 
     )
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 

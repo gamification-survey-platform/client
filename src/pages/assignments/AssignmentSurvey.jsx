@@ -45,14 +45,17 @@ const AssignmentSurvey = () => {
   const handleSaveSurvey = async (e) => {
     e.preventDefault()
     e.stopPropagation()
+    console.log('handle save survey')
     try {
       const res = await saveSurvey({
         course_id: selectedCourse.pk,
         assignment_id,
         survey
       })
+      console.log(res)
       if (res.status === 200) navigate(-1)
     } catch (e) {
+      console.error(e)
       messageApi.open({ type: 'error', content: 'Failed to save survey.' })
     }
   }
@@ -61,6 +64,7 @@ const AssignmentSurvey = () => {
     <Spinner show={spin} />
   ) : (
     <Form form={form} className="m-5">
+      {contextHolder}
       <Row justify="space-between">
         <Col span={14}>
           {survey && (
@@ -87,10 +91,11 @@ const AssignmentSurvey = () => {
           {survey.sections.map((section, i) => (
             <Section key={i} pk={section.pk} />
           ))}
-          <Button type="primary" onClick={handleSaveSurvey}>
-            Save Survey
-          </Button>
-          {message && <Alert className="mt-5" {...message} />}
+          <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
+            <Button type="primary" onClick={handleSaveSurvey} style={{ position: 'absolute' }}>
+              Save Survey
+            </Button>
+          </div>
         </div>
       )}
     </Form>

@@ -5,7 +5,7 @@ const getCourseRewards = async ({ course_id }) => {
     const res = await api.get(`courses/${course_id}/rewards`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 
@@ -24,7 +24,7 @@ const addCourseReward = async ({ course_id, reward, picture }) => {
     const res = await api.post(`courses/${course_id}/rewards/`, formData, config)
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 
@@ -43,7 +43,7 @@ const editCourseReward = async ({ course_id, reward_pk, reward, picture }) => {
     const res = await api.patch(`courses/${course_id}/rewards/${reward_pk}`, formData, config)
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 
@@ -52,7 +52,7 @@ const deleteCourseReward = async ({ course_id, reward_pk }) => {
     const res = await api.delete(`courses/${course_id}/rewards/${reward_pk}`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 

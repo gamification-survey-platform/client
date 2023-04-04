@@ -16,7 +16,7 @@ const getAssignment = async ({ course_id, assignment_id }) => {
     res.data = { user_role, assignment: formatAssignment(rest) }
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 
@@ -31,7 +31,7 @@ const getCourseAssignments = async (course_id) => {
     }))
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 
@@ -44,7 +44,7 @@ const createAssignment = async ({ course_id, assignment }) => {
     })
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 
@@ -54,7 +54,7 @@ const editAssignment = async ({ course_id, assignment_id, assignment }) => {
     const res = await api.patch(`courses/${course_id}/assignments//`, formattedAssignment)
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 
@@ -63,7 +63,7 @@ const deleteAssignment = async ({ coursePk, assignment_id }) => {
     const res = await api.delete(`courses/${coursePk}/assignments/${assignment_id}`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 

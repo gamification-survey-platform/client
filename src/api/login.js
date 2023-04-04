@@ -5,7 +5,7 @@ const register = async ({ andrewId, password }) => {
     const res = await api.post(`register/`, { andrew_id: andrewId, password })
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 
@@ -15,7 +15,7 @@ const login = async ({ andrewId, password }) => {
     localStorage.setItem('token', res.data.token)
     return res
   } catch (error) {
-    throw new Error(error.response.data.message)
+    throw new Error(error.response.data.error)
   }
 }
 const logout = () => {

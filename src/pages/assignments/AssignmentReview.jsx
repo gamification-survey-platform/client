@@ -79,9 +79,15 @@ const AssignmentReview = () => {
         survey.sections.forEach((s) => {
           s.questions.forEach((q) => {
             const { question_type, answer } = q
+            console.log(question_type, answer)
             if (question_type === 'SLIDEREVIEW' || question_type === 'MULTIPLETEXT')
               answer.forEach((a) => review.push({ question_pk: q.pk, answer_text: a.text || '' }))
-            else review.push({ question_pk: q.pk, answer_text: answer[0].text || '' })
+            else {
+              review.push({
+                question_pk: q.pk,
+                answer_text: answer.length ? answer[0].text : ''
+              })
+            }
           })
         })
         const res = await saveArtifactReview({
@@ -92,6 +98,7 @@ const AssignmentReview = () => {
         })
         if (res.status === 200) navigate(-1)
       } catch (e) {
+        console.error(e)
         messageApi.open({ type: 'error', content: `Failed to save survey.` })
       }
     }
@@ -129,7 +136,7 @@ const AssignmentReview = () => {
           {survey.sections.map((section, i) => (
             <Section key={i} pk={section.pk} studentView={true} artifact={artifact} />
           ))}
-          <div className="text-center">
+          <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
             <Button type="primary" onClick={handleSaveReview}>
               Submit Review
             </Button>
