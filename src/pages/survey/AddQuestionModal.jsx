@@ -67,8 +67,7 @@ const AddQuestionModal = ({ open, setOpen, sectionPk, questionPk }) => {
         payload = { number_of_text: parseInt(formObj.number_of_text) }
       }
       const { text, question_type, is_required, ...rest } = formObj
-      const questionObj = { text, question_type, is_required, ...payload }
-
+      const questionObj = { text, question_type, is_required: !!is_required, ...payload }
       questionPk
         ? dispatch(editQuestion({ question: questionObj, questionPk, sectionPk }))
         : dispatch(addQuestion({ question: questionObj, sectionPk }))

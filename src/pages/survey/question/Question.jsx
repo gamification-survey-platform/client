@@ -42,7 +42,7 @@ const MultipleChoice = ({ pk, option_choices, answer, sectionPk, question_type }
   }, [answer])
 
   useEffect(() => {
-    if (answer && answer.length)
+    if (answer && value)
       dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
   }, [value])
 
@@ -72,7 +72,7 @@ const MultipleChoiceScale = ({ pk, sectionPk, answer, question_type }) => {
   }, [answer])
 
   useEffect(() => {
-    if (answer && answer.length)
+    if (answer && value)
       dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
   }, [value])
 
@@ -99,7 +99,7 @@ const FixedText = ({ pk, sectionPk, answer, question_type }) => {
   }, [answer])
 
   useEffect(() => {
-    if (answer && answer.length)
+    if (answer && value)
       dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
   }, [value])
 
@@ -120,7 +120,7 @@ const MultiLineField = ({ pk, sectionPk, question_type, idx, answer, number_of_t
     }
   }, [answer])
   useEffect(() => {
-    if (answer && answer.length)
+    if (answer && value)
       dispatch(
         editAnswer({
           questionPk: pk,
@@ -163,7 +163,7 @@ const TextArea = ({ pk, sectionPk, answer, question_type }) => {
   }, [answer])
 
   useEffect(() => {
-    if (answer && answer.length)
+    if (answer && value)
       dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
   }, [value])
 

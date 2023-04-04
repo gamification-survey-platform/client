@@ -88,7 +88,6 @@ const surveySlice = createSlice({
         if (oldAnswer.length) oldAnswer[0] = answerObj
         else oldAnswer.push(answerObj)
       }
-
       return newState
     }
   },
