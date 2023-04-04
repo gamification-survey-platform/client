@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { Button, Form, Col, Alert, Space, Input, Select, RangePicker, DatePicker } from 'antd'
+import { Button, Form, Col, Alert, message, Input, Select, DatePicker } from 'antd'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import coursesSelector from '../../store/courses/selectors'
 import dayjs from 'dayjs'
 import { useParams } from 'react-router'
 import { createAssignment, editAssignment } from '../../api/assignments'
-import { isBefore, isInFuture } from '../../utils/dateUtils'
 import { useForm } from 'antd/es/form/Form'
 
 const AssignmentForm = () => {
-  const [message, setMessage] = useState()
+  const [messageApi, contextHolder] = message.useMessage()
   const [dateError, setDateError] = useState()
   const params = useParams()
   const { state: editingAssignment } = useLocation()
@@ -63,11 +62,12 @@ const AssignmentForm = () => {
       if (editingAssignment && res.status === 200) navigate(-1)
       else if (res.status === 201) navigate(-1)
     } catch (e) {
-      setMessage({ type: 'error', message: 'Failed to create/edit assignment.' })
+      messageApi.open({ type: 'error', content: 'Failed to create/edit assignment.' })
     }
   }
   return (
     <div className="m-3 text-left w-50">
+      {contextHolder}
       <Form form={form}>
         <Form.Item
           label="Assignment name"
@@ -152,7 +152,6 @@ const AssignmentForm = () => {
             {editingAssignment ? 'Edit' : 'Create'}
           </Button>
         </Form.Item>
-        {message && <Alert className="mt-3" {...message} />}
       </Form>
     </div>
   )

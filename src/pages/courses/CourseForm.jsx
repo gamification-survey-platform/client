@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Form, Col, Alert, Input, Upload, Button, Typography } from 'antd'
+import { Form, Col, Alert, Input, Upload, Button, Typography, message } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
@@ -10,10 +10,10 @@ import userSelector from '../../store/user/selectors'
 import { useForm } from 'antd/es/form/Form'
 
 const CourseForm = () => {
-  const [message, setMessage] = useState(false)
   const dispatch = useDispatch()
   const user = useSelector(userSelector)
   const courses = useSelector(coursesSelector)
+  const [messageApi, contextHolder] = message.useMessage()
   const navigate = useNavigate()
   const [form] = useForm()
   const params = useParams()
@@ -44,19 +44,17 @@ const CourseForm = () => {
           }
           navigate(-1)
         }
-        setTimeout(() => setMessage(), 2000)
       } catch (e) {
-        setMessage({
+        messageApi.open({
           type: 'error',
-          message: editingCourse ? 'Failed to edit course.' : 'Failed to create course.'
+          content: editingCourse ? 'Failed to edit course.' : 'Failed to create course.'
         })
-
-        setTimeout(() => setMessage(), 2000)
       }
     }
   }
   return (
     <div className="m-5 text-center">
+      {contextHolder}
       <Typography.Title level={2}>Create Course</Typography.Title>
       <Form form={form}>
         <Form.Item

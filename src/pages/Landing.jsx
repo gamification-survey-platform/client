@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
-import { Card, Row, Form, Space, Typography, Input, Button, Alert } from 'antd'
+import { Card, Row, Form, Space, Typography, Input, Button, Alert, message } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { login as loginApi, register as registerApi } from '../api/login'
 import { setUser } from '../store/user/userSlice'
@@ -12,7 +12,7 @@ const Landing = () => {
   const [form] = useForm()
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const [message, setMessage] = useState()
+  const [messageApi, contextHolder] = message.useMessage()
   const [spin, setSpin] = useState(false)
 
   const handleLogin = async (e) => {
@@ -29,7 +29,7 @@ const Landing = () => {
       }
     } catch (e) {
       console.error(e)
-      setMessage({ type: 'error', message: 'Failed to login.' })
+      messageApi.open({ type: 'error', content: `Failed to login.` })
     }
     setSpin(false)
   }
@@ -41,13 +41,13 @@ const Landing = () => {
     try {
       const res = await registerApi({ andrewId, password })
       if (res.status === 200)
-        setMessage({
+        messageApi.open({
           type: 'success',
-          message: 'Successfully registered! Please login to continue.'
+          content: `Successfully registered! Please login to continue.`
         })
     } catch (e) {
       console.error(e)
-      setMessage({ type: 'error', message: 'Failed to register.' })
+      messageApi.open({ type: 'error', content: `Failed to register.` })
     }
   }
 
@@ -59,6 +59,7 @@ const Landing = () => {
       size="middle"
       align="center"
       style={{ width: '100%', marginTop: '5rem' }}>
+      {contextHolder}
       {spin ? (
         <Spinner show={spin} />
       ) : (
@@ -96,11 +97,6 @@ const Landing = () => {
                 <Button onClick={handleRegister}>Register Now!</Button>
               </Form.Item>
             </Row>
-            {message && (
-              <Row justify="center">
-                <Alert message={message.message} type={message.type} showIcon />
-              </Row>
-            )}
           </Form>
         </Card>
       )}

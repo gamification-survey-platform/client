@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Form, Col, Alert, Input, DatePicker } from 'antd'
+import { Button, Form, message, Alert, Input, DatePicker } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
@@ -8,7 +8,7 @@ import coursesSelector from '../../store/courses/selectors'
 import dayjs from 'dayjs'
 
 const AddSurvey = () => {
-  const [message, setMessage] = useState()
+  const [messageApi, contextHolder] = message.useMessage()
   const [dateError, setDateError] = useState()
   const courses = useSelector(coursesSelector)
   const { course_id, assignment_id } = useParams()
@@ -44,14 +44,15 @@ const AddSurvey = () => {
       }
       const res = await createSurvey(surveyData)
       if (res.status === 201 || res.status === 200) navigate(-1)
-      else setMessage({ type: 'error', message: 'Failed to create survey.' })
+      else messageApi.open({ type: 'error', content: `Failed to create survey.` })
     } catch (e) {
-      setMessage({ type: 'error', message: 'Failed to create survey.' })
+      messageApi.open({ type: 'error', content: `Failed to create survey.` })
     }
   }
 
   return (
     <div className="m-3">
+      {contextHolder}
       <Form form={form} initialValues={{ template_name: 'Default Template', other_info: '' }}>
         <Form.Item
           label="Template Name"

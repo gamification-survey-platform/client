@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Row, Col, Button, Alert, Form, Typography, Divider } from 'antd'
+import { Row, Col, Button, Alert, Form, Typography, Divider, message } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useParams, useNavigate } from 'react-router'
 import AddSectionModal from '../survey/AddSectionModal'
@@ -20,7 +20,7 @@ const AssignmentSurvey = () => {
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
   const [modalOpen, setModalOpen] = useState(false)
-  const [message, setMessage] = useState()
+  const [messageApi, contextHolder] = message.useMessage()
   const [form] = useForm()
 
   useEffect(() => {
@@ -35,7 +35,7 @@ const AssignmentSurvey = () => {
           dispatch(setSurvey(res.data))
         }
       } catch (e) {
-        setMessage({ type: 'error', message: 'Failed to save survey.' })
+        messageApi.open({ type: 'error', content: 'Failed to save survey' })
       }
       setSpin(false)
     }
@@ -53,7 +53,7 @@ const AssignmentSurvey = () => {
       })
       if (res.status === 200) navigate(-1)
     } catch (e) {
-      setMessage({ type: 'error', message: 'Failed to save survey.' })
+      messageApi.open({ type: 'error', content: 'Failed to save survey.' })
     }
   }
 

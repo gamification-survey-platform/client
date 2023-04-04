@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Row, Col, Button, Alert, Form, Typography } from 'antd'
+import { Row, Col, Button, Alert, Form, Typography, message } from 'antd'
 import { useParams, useNavigate } from 'react-router'
 import Spinner from '../../components/Spinner'
 import Section from '../survey/Section'
@@ -14,6 +14,7 @@ import { surveySelector, setSurvey } from '../../store/survey/surveySlice'
 const AssignmentReview = () => {
   const { course_id, assignment_id, review_id } = useParams()
   const [progressData, setProgressData] = useState({ startPct: 0, endPct: 0 })
+  const [messageApi, contextHolder] = message.useMessage()
   const [spin, setSpin] = useState(false)
   const [form] = useForm()
   const [artifact, setArtifact] = useState()
@@ -23,7 +24,6 @@ const AssignmentReview = () => {
 
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
-  const [message, setMessage] = useState()
 
   useEffect(() => {
     const fetchReview = async () => {
@@ -51,7 +51,7 @@ const AssignmentReview = () => {
           }
         }
       } catch (e) {
-        setMessage({ type: 'error', message: 'Failed to fetch survey.' })
+        messageApi.open({ type: 'error', content: `Failed to fetch survey.` })
       }
       setSpin(false)
     }
@@ -92,7 +92,7 @@ const AssignmentReview = () => {
         })
         if (res.status === 200) navigate(-1)
       } catch (e) {
-        setMessage({ type: 'error', message: 'Failed to save survey.' })
+        messageApi.open({ type: 'error', content: `Failed to save survey.` })
       }
     }
   }
@@ -111,6 +111,7 @@ const AssignmentReview = () => {
     <Spinner show={spin} />
   ) : (
     <Form form={form} className="m-5" onFieldsChange={setProgress}>
+      {contextHolder}
       <div style={{ position: 'fixed', top: '10%', right: 0, zIndex: 1, width: 300, height: 300 }}>
         <ChartWrapper type="progressBar" data={progressData} />
       </div>
@@ -132,7 +133,6 @@ const AssignmentReview = () => {
             <Button type="primary" onClick={handleSaveReview}>
               Submit Review
             </Button>
-            {message && <Alert className="mt-5" {...message} />}
           </div>
         </>
       }
