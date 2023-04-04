@@ -19,6 +19,7 @@ const CourseMembers = () => {
   const [spin, setSpin] = useState(false)
   const user = useSelector(userSelector)
   const courses = useSelector(coursesSelector)
+  const [csvFile, setCSVFile] = useState()
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const userRole = selectedCourse ? selectedCourse.user_role : ''
   const [form] = useForm()
@@ -102,18 +103,39 @@ const CourseMembers = () => {
     event.preventDefault()
     event.stopPropagation()
     try {
-      const { csv } = form.getFieldsValue()
-      Papa.parse(csv.file, {
+      console.log(csvFile)
+      Papa.parse(csvFile, {
         header: true,
+        delimiter: ',',
+        skipEmptyLines: true,
         complete: async ({ data, errors }) => {
-          if (data && !errors.length)
+          let error = false
+          let finalMembership = members
+          if (data && !errors.length) {
             data.map(async (member) => {
-              await addMember({
+              const res = await addMember({
                 course_id: selectedCourse.pk,
                 memberId: member.andrewID,
                 memberRole: 'Student'
               })
+              if (res.status === 200) {
+                finalMembership = res.data.membership
+              } else {
+                error = true
+              }
             })
+          } else {
+            error = true
+          }
+
+          if (error)
+            messageApi.open({ type: 'error', content: `Failed to add members from CSV file.` })
+          else
+            messageApi.open({
+              type: 'success',
+              content: `Successfully added members from CSV file.`
+            })
+          setMembers(finalMembership)
         }
       })
       form.resetFields()
@@ -183,7 +205,11 @@ const CourseMembers = () => {
             <Divider />
             <Typography.Title level={4}>Or Add from CSV File</Typography.Title>
             <Form.Item name="csv">
-              <Upload beforeUpload={() => false}>
+              <Upload
+                beforeUpload={(file) => {
+                  setCSVFile(file)
+                  return false
+                }}>
                 <Button icon={<UploadOutlined />}>Upload CSV File</Button>
               </Upload>
             </Form.Item>
