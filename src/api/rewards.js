@@ -56,4 +56,4 @@ const deleteCourseReward = async ({ course_id, reward_pk }) => {
   }
 }
 
-export { getCourseRewards, addCourseReward, editCourseReward }
+export { getCourseRewards, addCourseReward, editCourseReward, deleteCourseReward }

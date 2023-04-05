@@ -7,6 +7,9 @@ import TreasureChest from '../assets/treasure_chest.png'
 import { useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
 import RewardsModal from '../pages/courses/RewardsModal'
+import { deleteCourseReward } from '../api/rewards'
+import coursesSelector from '../store/courses/selectors'
+import { useParams } from 'react-router'
 
 const Cover = ({ type, icon }) => {
   if ((type === 'Badge' || type === 'Other') && icon) {
@@ -34,12 +37,19 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
     icon = null
   } = reward
 
+  const { course_id } = useParams()
+  const courses = useSelector(coursesSelector)
+  const course = courses.find(({ course_number }) => course_number === course_id)
   const user = useSelector(userSelector)
   const [open, setOpen] = useState(false)
 
   const deleteReward = async () => {
     try {
-      await deleteReward({ reward_pk: pk })
+      const res = await deleteCourseReward({ course_id: course.pk, reward_pk: pk })
+      if (res.status === 204) {
+        const newRewards = rewards.filter((r) => r.pk !== pk)
+        setRewards(newRewards)
+      }
     } catch (e) {
       console.error(e)
     }
@@ -65,7 +75,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
             <Button type="primary" onClick={() => setOpen(true)} className="m-1">
               Edit
             </Button>
-            <Button danger onClick={() => setOpen(true)} className="m-1">
+            <Button danger onClick={deleteReward} className="m-1">
               Delete
             </Button>
           </Row>
