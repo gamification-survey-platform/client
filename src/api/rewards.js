@@ -40,7 +40,7 @@ const editCourseReward = async ({ course_id, reward_pk, reward, picture }) => {
         'Content-Type': 'multipart/form-data'
       }
     }
-    const res = await api.patch(`courses/${course_id}/rewards/${reward_pk}`, formData, config)
+    const res = await api.patch(`courses/${course_id}/rewards/${reward_pk}/`, formData, config)
     return res
   } catch (error) {
     throw new Error(error.response.data.error)

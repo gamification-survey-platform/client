@@ -26,8 +26,8 @@ const Profile = () => {
       setEditing(true)
     } else {
       await form.validateFields()
-      const { name, first_name, last_name } = form.getFieldsValue()
-      await editProfile({ name, first_name, last_name })
+      const { first_name, last_name, email } = form.getFieldsValue()
+      await editProfile({ first_name, last_name, email })
       setEditing(false)
     }
   }
@@ -44,7 +44,7 @@ const Profile = () => {
           </Typography.Title>
         </Row>
         <Row justify="center">
-          <Typography.Title level={3}>AndrewID: {user.andrewId}</Typography.Title>
+          <Typography.Title level={3}>AndrewID: {user.andrew_id}</Typography.Title>
         </Row>
       </Col>
       <Col span={10} offset={2}>

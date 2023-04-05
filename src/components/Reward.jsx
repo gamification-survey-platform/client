@@ -10,18 +10,18 @@ import RewardsModal from '../pages/courses/RewardsModal'
 
 const Cover = ({ type, icon }) => {
   if ((type === 'Badge' || type === 'Other') && icon) {
-    return <Image preview={false} src={`${config.FILE_URL}${icon}`} />
+    return <Image preview={false} src={`${config.FILE_URL}${icon}`} className="p-5" />
   } else if (type === 'Late Submission') {
-    return <Image preview={false} src={Calendar} />
+    return <Image preview={false} src={Calendar} className="p-5" />
   } else if (type === 'Bonus') {
-    return <Image preview={false} src={TreasureChest} />
+    return <Image preview={false} src={TreasureChest} className="p-5" />
   } else if (type === 'Theme') {
-    return <Image preview={false} src={Computer} />
+    return <Image preview={false} src={Computer} className="p-5" />
   }
   return null
 }
 
-const Reward = (reward) => {
+const Reward = ({ rewards, setRewards, ...reward }) => {
   const {
     pk,
     name,
@@ -30,7 +30,7 @@ const Reward = (reward) => {
     inventory,
     is_active,
     type,
-    exp_point,
+    exp_points,
     icon = null
   } = reward
 
@@ -54,7 +54,7 @@ const Reward = (reward) => {
         <p>{belong_to}</p>
         <strong>Description:</strong>
         <p>{description}</p>
-        <strong>Cost: {exp_point}</strong>
+        <strong>Cost: {exp_points}</strong>
         <Divider />
         <strong className="text-success">{inventory} remaining</strong>
       </div>
@@ -69,7 +69,13 @@ const Reward = (reward) => {
               Delete
             </Button>
           </Row>
-          <RewardsModal open={open} setOpen={setOpen} editingReward={reward} />
+          <RewardsModal
+            open={open}
+            setOpen={setOpen}
+            editingReward={reward}
+            rewards={rewards}
+            setRewards={setRewards}
+          />
         </div>
       ) : null}
     </Card>

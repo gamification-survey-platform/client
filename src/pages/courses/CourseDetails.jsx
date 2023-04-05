@@ -25,7 +25,6 @@ const CourseDetails = () => {
     }
     fetchRewards()
   }, [])
-
   return (
     <div className="m-5 text-center">
       <Typography.Title level={2}>{course.course_name}</Typography.Title>
@@ -43,7 +42,7 @@ const CourseDetails = () => {
           <Typography.Title level={2}>Current Rewards</Typography.Title>
           <Row gutter={16} style={{ margin: '1rem' }}>
             {rewards.map((r, i) => (
-              <Reward {...r} key={i} />
+              <Reward {...r} key={i} rewards={rewards} setRewards={setRewards} />
             ))}
           </Row>
           <Button type="primary" onClick={() => setRewardsModalOpen(true)}>
@@ -52,7 +51,6 @@ const CourseDetails = () => {
           <RewardsModal
             open={rewardsModalOpen}
             setOpen={setRewardsModalOpen}
-            course_id={course.pk}
             rewards={rewards}
             setRewards={setRewards}
           />

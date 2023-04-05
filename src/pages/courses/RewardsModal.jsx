@@ -2,12 +2,19 @@ import { Form, Select, Modal, Input, Switch, Upload, Button } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useEffect, useState } from 'react'
 import { addCourseReward, editCourseReward } from '../../api/rewards'
+import coursesSelector from '../../store/courses/selectors'
+import { useParams } from 'react-router'
+import { useSelector } from 'react-redux'
 
-const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id, editingReward }) => {
+const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => {
   const [form] = useForm()
   const [showQuantity, setShowQuantity] = useState(false)
   const [showFile, setShowFile] = useState(false)
   const [picture, setPicture] = useState()
+  const { course_id } = useParams()
+  const courses = useSelector(coursesSelector)
+  const course = courses.find(({ course_number }) => course_number === course_id)
+
   const typeWatch = Form.useWatch('type', form)
   useEffect(() => {
     form.resetFields()
@@ -37,15 +44,24 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id, editingRe
   const handleSubmit = async () => {
     try {
       await form.validateFields()
-      let reward, resp
       if (editingReward) {
-        reward = { ...editingReward, ...form.getFieldsValue }
-        resp = await editCourseReward({ course_id, reward_pk: editingReward.pk, reward, picture })
+        const reward = { ...editingReward, ...form.getFieldsValue() }
+        const resp = await editCourseReward({
+          course_id: course.pk,
+          reward_pk: editingReward.pk,
+          reward,
+          picture
+        })
+        if (resp.status === 200) {
+          const newRewards = rewards.map((r) => (r.pk === editingReward.pk ? { ...resp.data } : r))
+          setRewards(newRewards)
+        }
       } else {
-        reward = form.getFieldsValue()
-        resp = await addCourseReward({ course_id, reward, picture })
+        const reward = form.getFieldsValue()
+        console.log(reward)
+        const resp = await addCourseReward({ course_id: course.pk, reward, picture })
+        if (resp.status === 200) setRewards([...rewards, resp.data])
       }
-      if (resp.status === 200) setRewards([...rewards, resp.data])
     } catch (e) {
       console.error(e)
     }
@@ -57,6 +73,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id, editingRe
       title={editingReward ? 'Edit reward' : 'Create new reward'}
       open={open}
       onOk={handleSubmit}
+      forceRender
       onCancel={() => setOpen(false)}>
       <Form form={form}>
         <Form.Item
@@ -86,7 +103,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id, editingRe
             ]}></Select>
         </Form.Item>
         <Form.Item
-          label="Inventory"
+          label="Inventory (number of rewards remaining)"
           name="inventory"
           rules={[
             {
@@ -99,7 +116,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, course_id, editingRe
         </Form.Item>
         <Form.Item
           label="Cost"
-          name="xp_points"
+          name="exp_points"
           rules={[
             {
               required: true,
