@@ -67,4 +67,22 @@ const deleteAssignment = async ({ coursePk, assignment_id }) => {
   }
 }
 
-export { getCourseAssignments, getAssignment, createAssignment, editAssignment, deleteAssignment }
+const getAssignmentReport = async ({ coursePk, assignment_id }) => {
+  try {
+    const res = await api.get(
+      `courses/${coursePk}/assignments/${assignment_id}/artifact_reviews/ipsatization/'`
+    )
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
+export {
+  getCourseAssignments,
+  getAssignment,
+  createAssignment,
+  editAssignment,
+  deleteAssignment,
+  getAssignmentReport
+}
