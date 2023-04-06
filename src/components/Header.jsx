@@ -8,6 +8,7 @@ import { Layout, Menu, Image, Typography } from 'antd'
 import { UserOutlined, BookOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
+import ChartWrapper from './visualization/ChartWrapper'
 
 let items = [
   {
@@ -64,6 +65,17 @@ const AppHeader = ({ children }) => {
     <Layout style={{ minHeight: '100vh' }}>
       <Layout.Sider collapsible>
         <Menu theme="dark" mode="inline" items={items} onClick={handleClick} />
+        <div
+          style={{
+            position: 'absolute',
+            top: '30%',
+            left: 10,
+            zIndex: 1,
+            height: '60vh',
+            width: 180
+          }}>
+          <ChartWrapper type="progressTriangle" data={{ pct: 0 }} />
+        </div>
       </Layout.Sider>
       <Layout className="site-layout">
         <Layout.Header

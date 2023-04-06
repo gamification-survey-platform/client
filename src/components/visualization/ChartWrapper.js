@@ -5,6 +5,7 @@ import pieChart from './pieChart'
 import stackedBarChart from './stackedBarChart'
 import progressBar from './progressBar'
 import wordcloud from './wordcloud'
+import progressTriangle from './progressTriangle'
 
 const ChartWrapper = ({ data, type }) => {
   const ref = useRef()
@@ -26,6 +27,8 @@ const ChartWrapper = ({ data, type }) => {
           console.log('treemap')
         } else if (type === 'wordcloud') {
           wordcloud({ data, ref, chartHeight, chartWidth })
+        } else if (type === 'progressTriangle') {
+          progressTriangle({ data, ref, chartHeight, chartWidth })
         }
       }
     }
