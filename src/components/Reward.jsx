@@ -4,12 +4,12 @@ import config from '../utils/constants'
 import Calendar from '../assets/calendar.jpg'
 import Computer from '../assets/computer.png'
 import TreasureChest from '../assets/treasure_chest.png'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
 import RewardsModal from '../pages/courses/RewardsModal'
 import { deleteCourseReward, purchaseCourseReward } from '../api/rewards'
 import coursesSelector from '../store/courses/selectors'
-import { useParams } from 'react-router'
+import { setUser } from '../store/user/userSlice'
 
 const Cover = ({ type, icon }) => {
   if ((type === 'Badge' || type === 'Other') && icon) {
@@ -36,13 +36,12 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
     exp_points,
     icon = null
   } = reward
-  const { course_id } = useParams()
+  const dispatch = useDispatch()
   const courses = useSelector(coursesSelector)
   const course = courses.find(({ course_name }) => course_name === belong_to)
   const user = useSelector(userSelector)
   const { exp_points: userExpPoints } = user
   const [open, setOpen] = useState(false)
-
   const deleteReward = async () => {
     try {
       const res = await deleteCourseReward({
@@ -60,13 +59,16 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
 
   const purchaseReward = async () => {
     try {
-      const newReward = { ...reward, inventory: inventory - 1 }
       const res = await purchaseCourseReward({
-        course_id: course.pk,
-        reward_pk: pk,
-        reward: newReward
+        reward_pk: pk
       })
-      if (res.status === 200) console.log(res)
+      if (res.status === 200) {
+        // Update rewards and user exp points if purchase successful
+        const newRewards = rewards.filter((r) => r.pk !== pk)
+        const newInventory = inventory === 'Unlimited' ? 'Unlimited' : inventory - 1
+        setRewards([...newRewards, { ...reward, inventory: newInventory }])
+        dispatch(setUser({ ...user, exp_points: userExpPoints - exp_points }))
+      }
     } catch (e) {
       console.error(e)
     }

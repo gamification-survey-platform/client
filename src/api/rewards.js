@@ -9,9 +9,9 @@ const getCourseRewards = async ({ course_id }) => {
   }
 }
 
-const purchaseCourseReward = async ({ course_id, reward_pk, reward }) => {
+const purchaseCourseReward = async ({ reward_pk }) => {
   try {
-    const res = await api.patch(`courses/${course_id}/rewards/${reward_pk}/`, reward)
+    const res = await api.patch(`rewards/${reward_pk}/`)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
