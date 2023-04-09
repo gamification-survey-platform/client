@@ -1,7 +1,7 @@
 import * as d3 from 'd3'
 
 const renderProgressTriangle = ({ data: { pctTemp }, ref, chartHeight, chartWidth }) => {
-  let pct = 0.9
+  let pct = 1
   const chart = d3.select(ref.current)
   chart.select('svg').remove()
   const svg = chart.append('svg').attr('height', chartHeight).attr('width', chartWidth).append('g')
@@ -12,7 +12,7 @@ const renderProgressTriangle = ({ data: { pctTemp }, ref, chartHeight, chartWidt
     .domain([0, chartHeight])
     .range([chartWidth / 2, 0])
 
-  const colorScale = d3.scaleLinear().domain([0, chartHeight]).range([0, 1])
+  const colorScale = d3.scaleLinear().domain([0, chartHeight]).range(['red', 'gray'])
   const fillScale = d3.scaleLinear().domain([chartHeight, 0]).range([0, 1])
 
   for (let i = 0; i < chartHeight; i++) {
@@ -36,7 +36,7 @@ const renderProgressTriangle = ({ data: { pctTemp }, ref, chartHeight, chartWidt
     .attr('x', (d) => d.x)
     .attr('fill', (d) => {
       const shouldBeFilled = fillScale(d.y) < pct
-      return shouldBeFilled ? d3.interpolateTurbo(colorScale(d.y)) : 'black'
+      return shouldBeFilled ? colorScale(d.y) : 'black'
     })
 }
 

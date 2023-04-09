@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { LinkContainer } from 'react-router-bootstrap'
 import Logo from '../assets/cmu-logo.svg'
 import { useDispatch, useSelector } from 'react-redux'
@@ -5,7 +6,7 @@ import userSelector from '../store/user/selectors'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
 import { Layout, Menu, Image, Typography } from 'antd'
-import { UserOutlined, BookOutlined } from '@ant-design/icons'
+import { UserOutlined, BookOutlined, DingdingOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
 import ChartWrapper from './visualization/ChartWrapper'
@@ -30,6 +31,7 @@ let items = [
 
 const AppHeader = ({ children }) => {
   const user = useSelector(userSelector)
+  const [collapsed, setCollapsed] = useState()
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -63,19 +65,26 @@ const AppHeader = ({ children }) => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Layout.Sider collapsible>
+      <Layout.Sider collapsible onCollapse={(collapsed) => setCollapsed(collapsed)}>
         <Menu theme="dark" mode="inline" items={items} onClick={handleClick} />
-        <div
-          style={{
-            position: 'absolute',
-            top: '30%',
-            left: 10,
-            zIndex: 1,
-            height: '60vh',
-            width: 180
-          }}>
-          <ChartWrapper type="progressTriangle" data={{ pct: 0 }} />
-        </div>
+        {collapsed || user.is_staff ? null : (
+          <div
+            style={{
+              position: 'absolute',
+              top: '30%',
+              left: 10,
+              zIndex: 1,
+              height: '50vh',
+              width: 180
+            }}>
+            <div className="text-center text-white">
+              <DingdingOutlined style={{ fontColor: 'white', fontSize: 40 }} />
+              <p>Level: {user.level}</p>
+              <p>{user.exp} / 100</p>
+            </div>
+            <ChartWrapper type="progressTriangle" data={{ pct: 0 }} />
+          </div>
+        )}
       </Layout.Sider>
       <Layout className="site-layout">
         <Layout.Header

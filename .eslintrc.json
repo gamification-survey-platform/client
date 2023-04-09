@@ -17,7 +17,7 @@
     "no-unused-vars": "off",
     "react/prop-types": "off",
     "prettier/prettier": [
-      "error",
+      "warn",
       {},
       {
         "usePrettierrc": true

@@ -1,5 +1,4 @@
 import api from '../api/apiUtils'
-import { validateUser, validateAdmin } from '../utils/validators'
 
 const formatAssignment = (assignment) => {
   assignment.total_score = parseFloat(assignment.total_score)
@@ -70,7 +69,7 @@ const deleteAssignment = async ({ coursePk, assignment_id }) => {
 const getAssignmentReport = async ({ coursePk, assignment_id }) => {
   try {
     const res = await api.get(
-      `courses/${coursePk}/assignments/${assignment_id}/artifact_reviews/ipsatization/'`
+      `courses/${coursePk}/assignments/${assignment_id}/artifact_reviews/ipsatization/`
     )
     return res
   } catch (error) {

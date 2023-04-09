@@ -6,6 +6,7 @@ import stackedBarChart from './stackedBarChart'
 import progressBar from './progressBar'
 import wordcloud from './wordcloud'
 import progressTriangle from './progressTriangle'
+import histogram from './histogram'
 
 const ChartWrapper = ({ data, type }) => {
   const ref = useRef()
@@ -23,12 +24,12 @@ const ChartWrapper = ({ data, type }) => {
           stackedBarChart({ data, ref, chartHeight, chartWidth })
         } else if (type === 'progressBar') {
           progressBar({ data, ref, chartHeight, chartWidth })
-        } else if (type === 'treemap') {
-          console.log('treemap')
         } else if (type === 'wordcloud') {
           wordcloud({ data, ref, chartHeight, chartWidth })
         } else if (type === 'progressTriangle') {
           progressTriangle({ data, ref, chartHeight, chartWidth })
+        } else if (type === 'histogram') {
+          histogram({ data, ref, chartHeight, chartWidth })
         }
       }
     }
