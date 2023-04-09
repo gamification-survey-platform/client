@@ -7,7 +7,7 @@ import TreasureChest from '../assets/treasure_chest.png'
 import { useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
 import RewardsModal from '../pages/courses/RewardsModal'
-import { deleteCourseReward } from '../api/rewards'
+import { deleteCourseReward, purchaseCourseReward } from '../api/rewards'
 import coursesSelector from '../store/courses/selectors'
 import { useParams } from 'react-router'
 
@@ -36,20 +36,37 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
     exp_points,
     icon = null
   } = reward
-
   const { course_id } = useParams()
   const courses = useSelector(coursesSelector)
-  const course = courses.find(({ course_number }) => course_number === course_id)
+  const course = courses.find(({ course_name }) => course_name === belong_to)
   const user = useSelector(userSelector)
+  const { exp_points: userExpPoints } = user
   const [open, setOpen] = useState(false)
 
   const deleteReward = async () => {
     try {
-      const res = await deleteCourseReward({ course_id: course.pk, reward_pk: pk })
+      const res = await deleteCourseReward({
+        course_id: course.pk,
+        reward_pk: pk
+      })
       if (res.status === 204) {
         const newRewards = rewards.filter((r) => r.pk !== pk)
         setRewards(newRewards)
       }
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  const purchaseReward = async () => {
+    try {
+      const newReward = { ...reward, inventory: inventory - 1 }
+      const res = await purchaseCourseReward({
+        course_id: course.pk,
+        reward_pk: pk,
+        reward: newReward
+      })
+      if (res.status === 200) console.log(res)
     } catch (e) {
       console.error(e)
     }
@@ -87,9 +104,19 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
             setRewards={setRewards}
           />
         </div>
-      ) : null}
+      ) : (
+        <div className="text-center">
+          <Divider />
+          <Row justify="center">
+            <Button type="primary" onClick={purchaseReward} className="m-1">
+              Purchase
+            </Button>
+          </Row>
+        </div>
+      )}
     </Card>
   )
 }
+//              disabled={userExpPoints < exp_points || !is_active || inventory === 0}
 
 export default Reward

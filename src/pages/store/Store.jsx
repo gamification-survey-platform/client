@@ -20,7 +20,7 @@ const Store = () => {
         if (res.status === 200)
           setRewards({
             ...rewards,
-            [course.course_name]: [...res.data, ...res.data, ...res.data, ...res.data, ...res.data]
+            [course.course_name]: res.data
           })
       })
     }

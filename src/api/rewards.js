@@ -9,6 +9,15 @@ const getCourseRewards = async ({ course_id }) => {
   }
 }
 
+const purchaseCourseReward = async ({ course_id, reward_pk, reward }) => {
+  try {
+    const res = await api.patch(`courses/${course_id}/rewards/${reward_pk}/`, reward)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
 const addCourseReward = async ({ course_id, reward, picture }) => {
   try {
     const formData = new FormData()
@@ -56,4 +65,10 @@ const deleteCourseReward = async ({ course_id, reward_pk }) => {
   }
 }
 
-export { getCourseRewards, addCourseReward, editCourseReward, deleteCourseReward }
+export {
+  getCourseRewards,
+  addCourseReward,
+  editCourseReward,
+  deleteCourseReward,
+  purchaseCourseReward
+}
