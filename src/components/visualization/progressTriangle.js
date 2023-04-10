@@ -1,7 +1,6 @@
 import * as d3 from 'd3'
 
-const renderProgressTriangle = ({ data: { pctTemp }, ref, chartHeight, chartWidth }) => {
-  let pct = 1
+const renderProgressTriangle = ({ data: { pct }, ref, chartHeight, chartWidth }) => {
   const chart = d3.select(ref.current)
   chart.select('svg').remove()
   const svg = chart.append('svg').attr('height', chartHeight).attr('width', chartWidth).append('g')

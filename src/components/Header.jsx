@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { LinkContainer } from 'react-router-bootstrap'
 import Logo from '../assets/cmu-logo.svg'
 import { useDispatch, useSelector } from 'react-redux'
@@ -10,6 +10,7 @@ import { UserOutlined, BookOutlined, DingdingOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
 import ChartWrapper from './visualization/ChartWrapper'
+import { getLevelExp } from '../api/levels'
 
 let items = [
   {
@@ -32,8 +33,19 @@ let items = [
 const AppHeader = ({ children }) => {
   const user = useSelector(userSelector)
   const [collapsed, setCollapsed] = useState()
+  const [nextLevelExp, setNextLevelExp] = useState()
   const dispatch = useDispatch()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const getNextLevelExp = async () => {
+      if (user.level >= 0) {
+        const res = await getLevelExp(user.level + 1)
+        if (res.status === 200) setNextLevelExp(res.data.exp)
+      }
+    }
+    getNextLevelExp()
+  }, [user])
 
   if (user && user.is_staff) {
     items = items.filter((item) => item.key !== '3')
@@ -80,9 +92,11 @@ const AppHeader = ({ children }) => {
             <div className="text-center text-white">
               <DingdingOutlined style={{ fontColor: 'white', fontSize: 40 }} />
               <p>Level: {user.level}</p>
-              <p>{user.exp} / 100</p>
+              <p>
+                {user.exp} / {nextLevelExp}
+              </p>
             </div>
-            <ChartWrapper type="progressTriangle" data={{ pct: 0 }} />
+            <ChartWrapper type="progressTriangle" data={{ pct: user.exp / nextLevelExp }} />
           </div>
         )}
       </Layout.Sider>
