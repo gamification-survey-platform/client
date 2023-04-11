@@ -11,6 +11,22 @@ import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
 import ChartWrapper from './visualization/ChartWrapper'
 import { getLevelExp } from '../api/levels'
+import Bronze from '../assets/bronze.png'
+import Silver from '../assets/silver.png'
+import Gold from '../assets/gold.png'
+import Diamond from '../assets/diamond.png'
+import Master from '../assets/master.png'
+import Grandmaster from '../assets/grandmaster.png'
+
+
+const rankings = [
+  { title: 'Bronze', image: Bronze },
+  { title: 'Silver', image: Silver },
+  { title: 'Gold', image: Gold },
+  { title: 'Diamond', image: Diamond },
+  { title: 'Master', image: Master },
+  { title: 'Grandmaster', image: Grandmaster },
+]
 
 let items = [
   {
@@ -90,8 +106,8 @@ const AppHeader = ({ children }) => {
               width: 180
             }}>
             <div className="text-center text-white">
-              <DingdingOutlined style={{ fontColor: 'white', fontSize: 40 }} />
-              <p>Level: {user.level}</p>
+              <Image width={100} src={rankings[user.level].image} />
+              <p>Ranking: {rankings[user.level].title}</p>
               <p>
                 {user.exp} / {nextLevelExp}
               </p>
