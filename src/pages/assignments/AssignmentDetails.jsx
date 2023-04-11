@@ -1,22 +1,24 @@
-import { useEffect, useState, useRef } from 'react'
-import { Row, Col, Button, Tag, Alert, Typography, Divider, Space } from 'antd'
-import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
+import { Row, Col, Button, Tag, Typography, Divider, Space, message } from 'antd'
+import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import { getAssignment } from '../../api/assignments'
+import userSelector from '../../store/user/selectors'
 import coursesSelector from '../../store/courses/selectors'
 import { FileSubmission } from './Submission'
 import { Link } from 'react-router-dom'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
-import { getUserArtifact, submitArtifact } from '../../api/artifacts'
+import { getUserArtifact, submitArtifact, submitArtifactExp } from '../../api/artifacts'
 import PdfPreview from './PdfPreview'
 import { getArtifactReviews } from '../../api/artifactReview'
-import { isStudent } from '../../utils/roles'
 import Spinner from '../../components/Spinner'
-import ChartWrapper from '../../components/visualization/ChartWrapper'
+import { setUser } from '../../store/user/userSlice'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
+  const user = useSelector(userSelector)
+  const dispatch = useDispatch()
   const [userRole, setUserRole] = useState()
   const [artifact, setArtifact] = useState()
   const [spin, setSpin] = useState(false)
@@ -36,7 +38,7 @@ const AssignmentDetails = () => {
     review_assign_policy: '',
     submission_type: ''
   })
-  const [message, setShowMessage] = useState()
+  const [messageApi, contextHolder] = message.useMessage()
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
 
@@ -46,7 +48,7 @@ const AssignmentDetails = () => {
       setPendingArtifactReviews(res.data.filter((r) => r.status === 'INCOMPLETE'))
       setCompletedArtifactReviews(res.data.filter((r) => r.status === 'COMPLETE'))
       setLateArtifactReviews(res.data.filter((r) => r.status === 'LATE'))
-    } else setShowMessage({ type: 'error', message: 'Failed to fetch artifact reviews.' })
+    } else messageApi.open({ type: 'error', content: 'Failed to fetch artifact reviews.' })
   }
 
   const fetchArtifact = async () => {
@@ -54,9 +56,10 @@ const AssignmentDetails = () => {
     if (res.status === 200) {
       const contentDisposition = res.headers['content-disposition']
       const regex = /attachment; filename=artifact_(\d+)\.pdf/gm
+
       const artifact_pk = regex.exec(contentDisposition)[1]
       setArtifact({ data: res.data, artifact_pk })
-    } else setShowMessage({ type: 'error', message: 'Failed to fetch artifact.' })
+    } else messageApi.open({ type: 'error', content: 'Failed to fetch artifact reviews.' })
   }
 
   useEffect(() => {
@@ -66,7 +69,7 @@ const AssignmentDetails = () => {
       if (res.status === 200) {
         setAssignment(res.data.assignment)
         setUserRole(res.data.user_role)
-      } else setShowMessage({ type: 'error', message: 'Failed to fetch assignment.' })
+      } else messageApi.open({ type: 'error', content: 'Failed to fetch assignment.' })
     }
     fetchAssignment()
     fetchArtifactReviews()
@@ -74,20 +77,27 @@ const AssignmentDetails = () => {
   }, [])
 
   useEffect(() => {
-    if (isStudent(userRole)) fetchArtifact()
+    if (!user.is_staff) fetchArtifact()
   }, [userRole])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     e.stopPropagation()
     try {
-      const res = await submitArtifact({ course_id: selectedCourse.pk, assignment_id, submission })
-      if (res.status === 201) {
-        setSubmission()
+      const submitArtifactRes = await submitArtifact({
+        course_id: selectedCourse.pk,
+        assignment_id,
+        submission
+      })
+      const submitArtifactExpRes = await submitArtifactExp()
+      console.log(submitArtifactRes.status === 201 && submitArtifactExpRes.status === 200)
+      if (submitArtifactRes.status === 201 && submitArtifactExpRes.status === 200) {
+        const { exp, exp_points, level } = submitArtifactExpRes.data
+        dispatch(setUser({ ...user, exp, exp_points, level }))
         await fetchArtifact()
       }
     } catch (e) {
-      setShowMessage({ type: 'error', message: 'Failed to submit assignment.' })
+      messageApi.open({ type: 'error', content: 'Failed to submit assignment.' })
     }
   }
 
@@ -101,6 +111,7 @@ const AssignmentDetails = () => {
     <Spinner show={spin} />
   ) : (
     <div className="m-5">
+      {contextHolder}
       <Row>
         <Col span={17}>
           <div className="text-center">
@@ -118,13 +129,13 @@ const AssignmentDetails = () => {
           <Typography.Text>{assignment.description}</Typography.Text>
         </Col>
         <Col span={6} offset={1}>
-          {isStudent(userRole) && (
+          {!user.is_staff && (
             <Space direction="vertical" size="middle" className="text-center">
               <Typography.Title level={5}>Completed Surveys</Typography.Title>
-              {completedArtifactReviews.map((review, i) => {
+              {completedArtifactReviews.map((review) => {
                 return (
                   <Link
-                    key={i}
+                    key={review.id}
                     to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
                     <Tag role="button" color="green">
                       {review.reviewing}
@@ -133,10 +144,10 @@ const AssignmentDetails = () => {
                 )
               })}
               <Typography.Title level={5}>Pending Surveys</Typography.Title>
-              {pendingArtifactReviews.map((review, i) => {
+              {pendingArtifactReviews.map((review) => {
                 return (
                   <Link
-                    key={i}
+                    key={review.id}
                     to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
                     <Tag role="button" color="gold">
                       {review.reviewing}
@@ -148,7 +159,7 @@ const AssignmentDetails = () => {
               {lateArtifactReviews.map((review, i) => {
                 return (
                   <Link
-                    key={i}
+                    key={review.id}
                     to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
                     <Tag role="button" color="volcano">
                       {review.reviewing}
@@ -163,7 +174,7 @@ const AssignmentDetails = () => {
       <Divider />
       <Row>
         <Col xs="3">
-          {isStudent(userRole) && (
+          {!user.is_staff && (
             <Space direction="vertical" className="mt-3">
               <Row>
                 {assignment.submission_type === 'URL' && <FileSubmission {...submissionProps} />}
@@ -189,7 +200,6 @@ const AssignmentDetails = () => {
           </>
         )}
       </Row>
-      {message && <Alert className="mt-3" {...message} />}
     </div>
   )
 }

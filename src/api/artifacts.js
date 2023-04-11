@@ -45,4 +45,13 @@ const submitArtifact = async ({ course_id, assignment_id, submission }) => {
   }
 }
 
-export { getUserArtifact, getArtifact, submitArtifact }
+const submitArtifactExp = async () => {
+  try {
+    const res = await api.patch('/exp/', { action: 'assignment' })
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
+export { getUserArtifact, getArtifact, submitArtifact, submitArtifactExp }

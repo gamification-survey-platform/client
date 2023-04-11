@@ -5,15 +5,22 @@ import Spinner from '../../components/Spinner'
 import Section from '../survey/Section'
 import { useDispatch, useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
-import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
+import {
+  getArtifactReview,
+  saveArtifactReview,
+  submitArtifactReviewExp
+} from '../../api/artifactReview'
 import { getArtifact } from '../../api/artifacts'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { useForm } from 'antd/es/form/Form'
 import { surveySelector, setSurvey } from '../../store/survey/surveySlice'
+import userSelector from '../../store/user/selectors'
+import { setUser } from '../../store/user/userSlice'
 
 const AssignmentReview = () => {
   const { course_id, assignment_id, review_id } = useParams()
   const [progressData, setProgressData] = useState({ startPct: 0, endPct: 0 })
+  const user = useSelector(userSelector)
   const [messageApi, contextHolder] = message.useMessage()
   const [spin, setSpin] = useState(false)
   const [form] = useForm()
@@ -79,7 +86,6 @@ const AssignmentReview = () => {
         survey.sections.forEach((s) => {
           s.questions.forEach((q) => {
             const { question_type, answer } = q
-            console.log(question_type, answer)
             if (question_type === 'SLIDEREVIEW' || question_type === 'MULTIPLETEXT')
               answer.forEach((a) => review.push({ question_pk: q.pk, answer_text: a.text || '' }))
             else {
@@ -90,13 +96,19 @@ const AssignmentReview = () => {
             }
           })
         })
-        const res = await saveArtifactReview({
+        const saveReviewRes = await saveArtifactReview({
           course_id: selectedCourse.pk,
           assignment_id: assignment_id,
           review_id,
           review
         })
-        if (res.status === 200) navigate(-1)
+        const saveExpRes = await submitArtifactReviewExp()
+
+        if (saveReviewRes.status === 200 && saveExpRes.status === 200) {
+          const { exp, exp_points, level } = saveExpRes.data
+          dispatch(setUser({ ...user, exp, exp_points, level }))
+          navigate(-1)
+        }
       } catch (e) {
         console.error(e)
         messageApi.open({ type: 'error', content: `Failed to save survey.` })

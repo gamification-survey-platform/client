@@ -34,4 +34,13 @@ const saveArtifactReview = async ({ course_id, assignment_id, review_id, review 
   }
 }
 
-export { getArtifactReviews, getArtifactReview, saveArtifactReview }
+const submitArtifactReviewExp = async () => {
+  try {
+    const res = await api.patch('/exp/', { action: 'survey' })
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
+export { getArtifactReviews, getArtifactReview, saveArtifactReview, submitArtifactReviewExp }
