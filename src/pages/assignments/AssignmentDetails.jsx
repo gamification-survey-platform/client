@@ -90,9 +90,8 @@ const AssignmentDetails = () => {
         submission
       })
       const submitArtifactExpRes = await submitArtifactExp()
-      console.log(submitArtifactRes.status === 201 && submitArtifactExpRes.status === 200)
       if (submitArtifactRes.status === 201 && submitArtifactExpRes.status === 200) {
-        const { exp, exp_points, level } = submitArtifactExpRes.data
+        const { exp, points: exp_points, level } = submitArtifactExpRes.data
         dispatch(setUser({ ...user, exp, exp_points, level }))
         await fetchArtifact()
       }

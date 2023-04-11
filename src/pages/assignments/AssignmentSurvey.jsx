@@ -45,14 +45,12 @@ const AssignmentSurvey = () => {
   const handleSaveSurvey = async (e) => {
     e.preventDefault()
     e.stopPropagation()
-    console.log('handle save survey')
     try {
       const res = await saveSurvey({
         course_id: selectedCourse.pk,
         assignment_id,
         survey
       })
-      console.log(res)
       if (res.status === 200) navigate(-1)
     } catch (e) {
       console.error(e)

@@ -105,7 +105,7 @@ const AssignmentReview = () => {
         const saveExpRes = await submitArtifactReviewExp()
 
         if (saveReviewRes.status === 200 && saveExpRes.status === 200) {
-          const { exp, exp_points, level } = saveExpRes.data
+          const { exp, points: exp_points, level } = saveExpRes.data
           dispatch(setUser({ ...user, exp, exp_points, level }))
           navigate(-1)
         }
