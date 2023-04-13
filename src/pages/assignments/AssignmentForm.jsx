@@ -55,7 +55,7 @@ const AssignmentForm = () => {
         ? await editAssignment({
             course_id: selectedCourse.pk,
             assignment: formObj,
-            assignment_id: editingAssignment.pk
+            assignment_id: editingAssignment.id
           })
         : await createAssignment({ course_id: selectedCourse.pk, assignment: formObj })
       if (editingAssignment && res.status === 200) navigate(-1)
