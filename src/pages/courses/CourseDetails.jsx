@@ -3,13 +3,14 @@ import { Typography, Divider, Button, Row } from 'antd'
 import { useSelector } from 'react-redux'
 import { useParams } from 'react-router'
 import coursesSelector from '../../store/courses/selectors'
-import { isInstructorOrTA } from '../../utils/roles'
 import { getCourseRewards } from '../../api/rewards'
 import Reward from '../../components/Reward'
 import RewardsModal from './RewardsModal'
+import userSelector from '../../store/user/selectors'
 
 const CourseDetails = () => {
   const { course_id } = useParams()
+  const user = useSelector(userSelector)
 
   const courses = useSelector(coursesSelector)
   const course = courses.find(({ course_number }) => course_number === course_id)
@@ -18,7 +19,7 @@ const CourseDetails = () => {
 
   useEffect(() => {
     const fetchRewards = async () => {
-      if (isInstructorOrTA(course.user_role)) {
+      if (user.is_staff) {
         const res = await getCourseRewards({ course_id: course.pk })
         if (res.status === 200) setRewards(res.data)
       }
@@ -37,7 +38,7 @@ const CourseDetails = () => {
         <Typography.Text>{course.syllabus}</Typography.Text>
       </div>
       <Divider />
-      {course && isInstructorOrTA(course.user_role) ? (
+      {course && user.is_staff ? (
         <div>
           <Typography.Title level={2}>Current Rewards</Typography.Title>
           <Row gutter={16} style={{ margin: '1rem' }}>

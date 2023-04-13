@@ -5,7 +5,6 @@ import { useParams } from 'react-router'
 import { addMember, getMembers, remindMember, removeMember } from '../../api/members'
 import { UploadOutlined } from '@ant-design/icons'
 import coursesSelector from '../../store/courses/selectors'
-import { isInstructorOrTA } from '../../utils/roles'
 import { useForm } from 'antd/es/form/Form'
 import Spinner from '../../components/Spinner'
 import Upload from 'antd/es/upload/Upload'
@@ -65,7 +64,7 @@ const CourseMembers = () => {
     }
   ]
 
-  if (isInstructorOrTA(userRole) || user.is_staff) columns = columns.concat(staffColumns)
+  if (user.is_staff) columns = columns.concat(staffColumns)
 
   useEffect(() => {
     const fetchCourseMembers = async () => {
@@ -176,7 +175,7 @@ const CourseMembers = () => {
     <div className="m-5">
       {contextHolder}
       <Table columns={columns} dataSource={dataSource} />
-      {(isInstructorOrTA(userRole) || user.is_staff) && (
+      {user.is_staff && (
         <div className="d-flex justify-content-center">
           <Form className="w-50 text-center" form={form} initialValues={initialValues}>
             <Typography.Title level={4}>Add Member</Typography.Title>

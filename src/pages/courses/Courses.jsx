@@ -7,7 +7,6 @@ import { deleteCourse } from '../../store/courses/coursesSlice'
 import coursesSelector from '../../store/courses/selectors'
 import userSelector from '../../store/user/selectors'
 import { LinkContainer } from 'react-router-bootstrap'
-import { isInstructorOrTA } from '../../utils/roles'
 import useMessage from 'antd/es/message/useMessage'
 
 const Courses = () => {
