@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
-import { Form, Col, Alert, Input, Upload, Button, Typography, message } from 'antd'
-import { UploadOutlined } from '@ant-design/icons'
+import { useEffect } from 'react'
+import { Form, Select, Row, Col, Input, Button, Typography, message, InputNumber } from 'antd'
+import dayjs from 'dayjs'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
 import { createCourse as createCourseApi, editCourse as editCourseApi } from '../../api/courses'
@@ -31,6 +31,8 @@ const CourseForm = () => {
     if (form.validateFields()) {
       try {
         const courseData = { ...form.getFieldsValue(), andrew_id: user.andrewId }
+        courseData.semester = `${courseData.semester} ${courseData.semesterYear}`
+        delete courseData.semesterYear
         const res = editingCourse
           ? await editCourseApi({ course_id: editingCourse.pk, course: courseData })
           : await createCourseApi(courseData)
@@ -53,7 +55,7 @@ const CourseForm = () => {
     }
   }
   return (
-    <div className="m-5 text-center">
+    <div className="m-5">
       {contextHolder}
       <Typography.Title level={2}>Create Course</Typography.Title>
       <Form form={form}>
@@ -61,7 +63,7 @@ const CourseForm = () => {
           label="Course Number"
           name="course_number"
           rules={[{ required: true, message: 'Please input a course number' }]}>
-          <Input />
+          <InputNumber />
         </Form.Item>
         <Form.Item
           label="Course Name"
@@ -69,21 +71,42 @@ const CourseForm = () => {
           rules={[{ required: true, message: 'Please input a course name' }]}>
           <Input />
         </Form.Item>
-        <Form.Item
-          label="Semester"
-          name="semester"
-          rules={[{ required: true, message: 'Please input a semester' }]}>
-          <Input />
-        </Form.Item>
+        <Row>
+          <Col span={4}>
+            <Form.Item
+              label="Semester"
+              name="semester"
+              rules={[{ required: true, message: 'Please input a semester' }]}>
+              <Select
+                className="text-left"
+                options={[
+                  { value: 'Fall', label: 'Fall' },
+                  { value: 'Spring', label: 'Spring' },
+                  { value: 'Summer', label: 'Summer' },
+                  { value: 'Winter', label: 'Winter' }
+                ]}></Select>
+            </Form.Item>
+          </Col>
+          <Col offset={1} span={5}>
+            <Form.Item
+              label="Semester Year"
+              name="semesterYear"
+              rules={[{ required: true, message: 'Please input a semester' }]}>
+              <InputNumber min={dayjs().year()} max={dayjs().year() + 2} />
+            </Form.Item>
+          </Col>
+        </Row>
         <Form.Item
           label="Syllabus"
           name="syllabus"
           rules={[{ required: true, message: 'Please input an syllabus' }]}>
           <Input.TextArea rows={6} />
         </Form.Item>
-        <Button type="primary" onClick={handleSubmit}>
-          {editingCourse ? 'Edit' : 'Create'}
-        </Button>
+        <div className="text-center">
+          <Button type="primary" onClick={handleSubmit}>
+            {editingCourse ? 'Edit' : 'Create'}
+          </Button>
+        </div>
       </Form>
     </div>
   )

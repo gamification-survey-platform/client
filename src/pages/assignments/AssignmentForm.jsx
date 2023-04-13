@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react'
-import { Button, Form, Col, Alert, message, Input, Select, DatePicker } from 'antd'
+import { useEffect } from 'react'
+import { Button, Form, message, Input, Select, DatePicker, InputNumber } from 'antd'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import coursesSelector from '../../store/courses/selectors'
@@ -131,7 +131,7 @@ const AssignmentForm = () => {
               pattern: new RegExp(/^[0-9]+$/)
             }
           ]}>
-          <Input />
+          <Input type="number" />
         </Form.Item>
         <Form.Item
           label="Weight"
@@ -140,10 +140,12 @@ const AssignmentForm = () => {
             {
               required: true,
               message: 'A positive number must be entered.',
-              pattern: new RegExp(/^[0-9]+$/)
+              pattern: new RegExp(/^[0-9]+$/),
+              min: 0,
+              max: 1
             }
           ]}>
-          <Input />
+          <InputNumber precision={2} min={0} max={1} />
         </Form.Item>
         <Form.Item className="text-center">
           <Button className="ml-3" type="primary" onClick={handleSubmit}>

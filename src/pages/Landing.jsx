@@ -29,7 +29,7 @@ const Landing = () => {
       }
     } catch (e) {
       console.error(e)
-      messageApi.open({ type: 'error', content: `Failed to login.` })
+      messageApi.open({ type: 'error', content: e.message })
     }
     setSpin(false)
   }
@@ -47,7 +47,7 @@ const Landing = () => {
         })
     } catch (e) {
       console.error(e)
-      messageApi.open({ type: 'error', content: `Failed to register.` })
+      messageApi.open({ type: 'error', content: e.message })
     }
   }
 

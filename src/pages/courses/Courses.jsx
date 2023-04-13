@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { Table, Button, Alert, Tag } from 'antd'
+import { Table, Button, Tag } from 'antd'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { deleteCourse as deleteCourseApi } from '../../api/courses'
