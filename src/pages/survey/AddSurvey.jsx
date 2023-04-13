@@ -9,7 +9,6 @@ import dayjs from 'dayjs'
 
 const AddSurvey = () => {
   const [messageApi, contextHolder] = message.useMessage()
-  const [dateError, setDateError] = useState()
   const courses = useSelector(coursesSelector)
   const { course_id, assignment_id } = useParams()
   const navigate = useNavigate()
@@ -24,13 +23,13 @@ const AddSurvey = () => {
       const { date_due, date_released } = fields
       const now = dayjs()
       if (!date_due || !date_released) {
-        setDateError({ type: 'warning', message: 'Please input date due and/or date release.' })
+        messageApi.open({ type: 'error', content: 'Please input date due and/or date release.' })
         throw new Error()
       } else if (!date_released.isAfter(now)) {
-        setDateError({ type: 'warning', message: 'Date release must be in the future.' })
+        messageApi.open({ type: 'error', content: 'Date release must be in the future.' })
         throw new Error()
       } else if (!date_released.isBefore(date_due)) {
-        setDateError({ type: 'warning', message: 'Date due must be after date release.' })
+        messageApi.open({ type: 'error', content: 'Date due must be after date release.' })
         throw new Error()
       }
       const surveyData = {
@@ -75,13 +74,11 @@ const AddSurvey = () => {
         <Form.Item label="Date released" name="date_released">
           <DatePicker showTime={{ format: 'h:mm A' }} format="YYYY-MM-DD h:mm A" />
         </Form.Item>
-        {dateError && <Alert className="my-3" {...dateError} />}
         <Form.Item className="text-center">
           <Button className="mt-3" type="primary" onClick={handleSubmit}>
             Create
           </Button>
         </Form.Item>
-        {message && <Alert className="mt-3" {...message} />}
       </Form>
     </div>
   )

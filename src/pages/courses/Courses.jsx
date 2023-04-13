@@ -8,12 +8,13 @@ import coursesSelector from '../../store/courses/selectors'
 import userSelector from '../../store/user/selectors'
 import { LinkContainer } from 'react-router-bootstrap'
 import { isInstructorOrTA } from '../../utils/roles'
+import useMessage from 'antd/es/message/useMessage'
 
 const Courses = () => {
   const navigate = useNavigate()
   const user = useSelector(userSelector)
+  const [messageApi, contextHolder] = useMessage()
   const courses = useSelector(coursesSelector)
-  const [showError, setShowError] = useState(false)
   const dispatch = useDispatch()
   const dataSource = courses.map((c, i) => ({ ...c, key: i }))
 
@@ -21,11 +22,10 @@ const Courses = () => {
     try {
       const res = await deleteCourseApi(coursePk)
       if (res.status === 200) {
-        setShowError(false)
         dispatch(deleteCourse(coursePk))
       }
     } catch (e) {
-      setShowError(true)
+      messageApi.open({ type: 'error', content: 'Failed to delete course' })
     }
   }
 
@@ -82,7 +82,7 @@ const Courses = () => {
       dataIndex: 'edit',
       key: 'edit',
       render: (_, course) => {
-        return isInstructorOrTA(course.user_role) ? (
+        return user.is_staff ? (
           <LinkContainer to={`/courses/${course.course_number}/edit`}>
             <Tag role="button" color="gold">
               Edit
@@ -106,13 +106,13 @@ const Courses = () => {
 
   return (
     <div className="m-5">
+      {contextHolder}
       <Table className="text-center" columns={columns} dataSource={dataSource} />
       {user && user.is_staff && (
         <Button className="my-5" onClick={() => navigate('/courses/add')}>
           Add Course
         </Button>
       )}
-      {showError && <Alert type="error" message="Failed to delete course" showIcon />}
     </div>
   )
 }

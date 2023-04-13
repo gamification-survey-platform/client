@@ -84,7 +84,6 @@ const CourseForm = () => {
         <Button type="primary" onClick={handleSubmit}>
           {editingCourse ? 'Edit' : 'Create'}
         </Button>
-        {message && <Alert className="mt-3" {...message} />}
       </Form>
     </div>
   )
