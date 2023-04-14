@@ -79,8 +79,8 @@ const CourseMembers = () => {
   const handleAddMember = async (event) => {
     event.preventDefault()
     event.stopPropagation()
+    await form.validateFields(['memberId', 'memberRole', 'teamId'])
     try {
-      await form.validateFields(['memberId', 'memberRole', 'teamId'])
       const { memberId, memberRole, teamId } = form.getFieldsValue()
       const res = await addMember({
         course_id: selectedCourse.pk,
@@ -94,7 +94,8 @@ const CourseMembers = () => {
         form.resetFields()
       }
     } catch (e) {
-      messageApi.open({ type: 'error', content: `Failed to add member.` })
+      console.error(e)
+      messageApi.open({ type: 'error', content: e.message })
     }
   }
 
@@ -108,14 +109,16 @@ const CourseMembers = () => {
         delimiter: ',',
         skipEmptyLines: true,
         complete: async ({ data, errors }) => {
+          console.log(data)
           let error = false
           let finalMembership = members
           if (data && !errors.length) {
             data.map(async (member) => {
               const res = await addMember({
                 course_id: selectedCourse.pk,
-                memberId: member.andrewID,
-                memberRole: 'Student'
+                memberId: member.memberID,
+                memberRole: 'Student',
+                teamId: member.teamID
               })
               if (res.status === 200) {
                 finalMembership = res.data.membership
@@ -212,6 +215,23 @@ const CourseMembers = () => {
                 <Button icon={<UploadOutlined />}>Upload CSV File</Button>
               </Upload>
             </Form.Item>
+            <div>
+              Please format the .csv file in such a format:
+              <table className="w-100 mt-3 mb-3">
+                <tr>
+                  <th className="border border-dark text-center">memberID</th>
+                  <th className="border border-dark text-center">teamID</th>
+                </tr>
+                <tr>
+                  <td className="border border-dark text-center">id1</td>
+                  <td className="border border-dark text-center">team1</td>
+                </tr>
+                <tr>
+                  <td className="border border-dark text-center">id2</td>
+                  <td className="border border-dark text-center">team2</td>
+                </tr>
+              </table>
+            </div>
             <Button type="primary" onClick={handleAddFromCSV}>
               Add from CSV File
             </Button>
