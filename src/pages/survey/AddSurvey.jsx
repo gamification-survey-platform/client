@@ -68,11 +68,19 @@ const AddSurvey = () => {
         <Form.Item label="Other information" name="other_info">
           <Input.TextArea rows={4} cols={10} />
         </Form.Item>
-        <Form.Item label="Date due" name="date_due">
-          <DatePicker showTime={{ format: 'h:mm A' }} format="YYYY-MM-DD h:mm A" />
-        </Form.Item>
         <Form.Item label="Date released" name="date_released">
-          <DatePicker showTime={{ format: 'h:mm A' }} format="YYYY-MM-DD h:mm A" />
+          <DatePicker
+            showTime={{ format: 'h:mm A' }}
+            format="YYYY-MM-DD h:mm A"
+            disabledDate={(current) => current && current < dayjs()}
+          />
+        </Form.Item>
+        <Form.Item label="Date due" name="date_due">
+          <DatePicker
+            showTime={{ format: 'h:mm A' }}
+            format="YYYY-MM-DD h:mm A"
+            disabledDate={(current) => current && current < dayjs()}
+          />
         </Form.Item>
         <Form.Item className="text-center">
           <Button className="mt-3" type="primary" onClick={handleSubmit}>

@@ -15,12 +15,6 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-.react-datepicker__triangle {
-  position: absolute;
-  left: 0px;
-  transform: translate3d(30px, 0px, 0px) !important;
-}
-
 .required-field::before {
   content: "*";
   color: red;
