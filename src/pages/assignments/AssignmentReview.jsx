@@ -51,10 +51,8 @@ const AssignmentReview = () => {
             })
             if (artifactRes.status === 200) {
               setArtifact(artifactRes.data)
-              dispatch(setSurvey(res.data))
+              dispatch(setSurvey({ ...res.data, instructorView: false }))
             }
-          } else {
-            setSurvey(res.data)
           }
         }
       } catch (e) {
@@ -146,7 +144,7 @@ const AssignmentReview = () => {
       {
         <>
           {survey.sections.map((section, i) => (
-            <Section key={i} pk={section.pk} studentView={true} artifact={artifact} />
+            <Section key={i} pk={section.pk} artifact={artifact} />
           ))}
           <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
             <Button type="primary" onClick={handleSaveReview}>

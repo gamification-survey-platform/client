@@ -7,7 +7,8 @@ const initialState = {
   name: '',
   instructions: '',
   other_info: '',
-  sections: []
+  sections: [],
+  instructorView: true
 }
 
 const surveySlice = createSlice({
@@ -15,6 +16,7 @@ const surveySlice = createSlice({
   initialState,
   reducers: {
     setSurvey: (_, action) => action.payload,
+    changeView: (state) => ({ ...state, instructorView: !state.instructorView }),
     addSection: (state, action) => {
       const sections = [...state.sections, { ...action.payload, questions: [] }]
       return { ...state, sections }
@@ -107,7 +109,8 @@ export const {
   editQuestion,
   deleteQuestion,
   addAnswer,
-  editAnswer
+  editAnswer,
+  changeView
 } = surveySlice.actions
 
 export default surveySlice.reducer

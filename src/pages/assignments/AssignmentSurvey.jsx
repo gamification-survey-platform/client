@@ -8,12 +8,11 @@ import { getSurveyDetails, saveSurvey } from '../../api/survey'
 import { useDispatch, useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
 import Spinner from '../../components/Spinner'
-import { setSurvey, surveySelector } from '../../store/survey/surveySlice'
+import { changeView, setSurvey, surveySelector } from '../../store/survey/surveySlice'
 
 const AssignmentSurvey = () => {
   const survey = useSelector(surveySelector)
   const dispatch = useDispatch()
-  const [studentView, setStudentView] = useState(false)
   const { course_id, assignment_id } = useParams()
   const courses = useSelector(coursesSelector)
   const [spin, setSpin] = useState(false)
@@ -32,7 +31,7 @@ const AssignmentSurvey = () => {
           assignment_id
         })
         if (res.status === 200) {
-          dispatch(setSurvey(res.data))
+          dispatch(setSurvey({ ...res.data, instructorView: true }))
         }
       } catch (e) {
         messageApi.open({ type: 'error', content: 'Failed to save survey' })
@@ -74,8 +73,8 @@ const AssignmentSurvey = () => {
           )}
         </Col>
         <Col span={10}>
-          <Button className="m-3" onClick={() => setStudentView(!studentView)}>
-            {studentView ? 'Instructor View' : 'Student View'}
+          <Button className="m-3" onClick={() => dispatch(changeView())}>
+            {survey.instructorView ? 'Student View' : 'Instructor View'}
           </Button>
           <Button type="primary" className="m-3" onClick={() => setModalOpen(true)}>
             Add Section

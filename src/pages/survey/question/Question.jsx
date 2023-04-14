@@ -5,8 +5,8 @@ import AddQuestionModal from '../AddQuestionModal'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 import { Document, Page, pdfjs } from 'react-pdf'
 import SlideReviewModal from './SlideReviewModal'
-import { useDispatch } from 'react-redux'
-import { deleteQuestion, editAnswer } from '../../../store/survey/surveySlice'
+import { useDispatch, useSelector } from 'react-redux'
+import { deleteQuestion, editAnswer, surveySelector } from '../../../store/survey/surveySlice'
 
 const SlideReview = (props) => {
   const [open, setOpen] = useState(false)
@@ -175,7 +175,8 @@ const TextArea = ({ pk, sectionPk, answer, question_type }) => {
 }
 
 const Question = (question) => {
-  const { text, is_required, studentView, ...questionProps } = question
+  const { text, is_required, ...questionProps } = question
+  const survey = useSelector(surveySelector)
   const { question_type } = question
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
   const dispatch = useDispatch()
@@ -198,7 +199,7 @@ const Question = (question) => {
           {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
           {question_type === 'SLIDEREVIEW' && <SlideReview {...questionProps} />}
         </Col>
-        {!studentView && (
+        {survey.instructorView && (
           <Col span={2}>
             <EditTwoTone
               twoToneColor="#ffd43b"

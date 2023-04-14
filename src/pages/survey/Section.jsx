@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { surveySelector } from '../../store/survey/surveySlice'
 import { deleteSection } from '../../store/survey/surveySlice'
 
-const Section = ({ pk, studentView, artifact }) => {
+const Section = ({ pk, artifact }) => {
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
   const [sectionModalOpen, setSectionModalOpen] = useState(false)
   const survey = useSelector(surveySelector)
@@ -33,7 +33,7 @@ const Section = ({ pk, studentView, artifact }) => {
             {title}
           </Typography.Title>
         </Col>
-        {!studentView && (
+        {survey.instructorView && (
           <Col span={6}>
             <PlusCircleTwoTone
               twoToneColor="#0a58ca"
@@ -76,13 +76,7 @@ const Section = ({ pk, studentView, artifact }) => {
       </Row>
       {questions &&
         questions.map((question, i) => (
-          <Question
-            key={i}
-            {...question}
-            sectionPk={pk}
-            studentView={studentView}
-            artifact={artifact}
-          />
+          <Question key={i} {...question} sectionPk={pk} artifact={artifact} />
         ))}
     </div>
   )

@@ -1,9 +1,21 @@
 import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { Table, Form, Button, Alert, Tag, Select, Input, Typography, Divider, message } from 'antd'
+import {
+  Table,
+  Form,
+  Button,
+  Tag,
+  Select,
+  Input,
+  Typography,
+  Divider,
+  message,
+  Popover,
+  Space
+} from 'antd'
 import { useParams } from 'react-router'
 import { addMember, getMembers, remindMember, removeMember } from '../../api/members'
-import { UploadOutlined } from '@ant-design/icons'
+import { UploadOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import coursesSelector from '../../store/courses/selectors'
 import { useForm } from 'antd/es/form/Form'
 import Spinner from '../../components/Spinner'
@@ -172,6 +184,27 @@ const CourseMembers = () => {
       messageApi.open({ type: 'error', content: `Failed to remove ${andrewIdToRemove}` })
     }
   }
+
+  const CSVInfo = () => (
+    <div>
+      Please format the .csv file in such a format:
+      <table className="w-100 mt-3 mb-3">
+        <tr>
+          <th className="border border-dark text-center">memberID</th>
+          <th className="border border-dark text-center">teamID</th>
+        </tr>
+        <tr>
+          <td className="border border-dark text-center">id1</td>
+          <td className="border border-dark text-center">team1</td>
+        </tr>
+        <tr>
+          <td className="border border-dark text-center">id2</td>
+          <td className="border border-dark text-center">team2</td>
+        </tr>
+      </table>
+    </div>
+  )
+
   return spin ? (
     <Spinner show={spin} />
   ) : (
@@ -207,31 +240,19 @@ const CourseMembers = () => {
             <Divider />
             <Typography.Title level={4}>Or Add from CSV File</Typography.Title>
             <Form.Item name="csv">
-              <Upload
-                beforeUpload={(file) => {
-                  setCSVFile(file)
-                  return false
-                }}>
-                <Button icon={<UploadOutlined />}>Upload CSV File</Button>
-              </Upload>
+              <Space direction="horizontal">
+                <Upload
+                  beforeUpload={(file) => {
+                    setCSVFile(file)
+                    return false
+                  }}>
+                  <Button icon={<UploadOutlined />}>Upload CSV File</Button>
+                </Upload>
+                <Popover content={<CSVInfo />}>
+                  <InfoCircleOutlined style={{ fontSize: 20 }} />
+                </Popover>
+              </Space>
             </Form.Item>
-            <div>
-              Please format the .csv file in such a format:
-              <table className="w-100 mt-3 mb-3">
-                <tr>
-                  <th className="border border-dark text-center">memberID</th>
-                  <th className="border border-dark text-center">teamID</th>
-                </tr>
-                <tr>
-                  <td className="border border-dark text-center">id1</td>
-                  <td className="border border-dark text-center">team1</td>
-                </tr>
-                <tr>
-                  <td className="border border-dark text-center">id2</td>
-                  <td className="border border-dark text-center">team2</td>
-                </tr>
-              </table>
-            </div>
             <Button type="primary" onClick={handleAddFromCSV}>
               Add from CSV File
             </Button>

@@ -49,7 +49,8 @@ const AssignmentForm = () => {
         ...fields,
         course: selectedCourse.pk,
         date_due: date_due.format('MM/DD/YYYY hh:mm'),
-        date_released: date_released.format('MM/DD/YYYY hh:mm')
+        date_released: date_released.format('MM/DD/YYYY hh:mm'),
+        review_assign_policy: 'A'
       }
       const res = editingAssignment
         ? await editAssignment({
@@ -103,6 +104,7 @@ const AssignmentForm = () => {
               { value: 'Text', label: 'Text' }
             ]}></Select>
         </Form.Item>
+        {/*
         <Form.Item
           label="Review assignment policy"
           name="review_assign_policy"
@@ -115,6 +117,7 @@ const AssignmentForm = () => {
               { value: 'C', label: 'C' }
             ]}></Select>
         </Form.Item>
+          */}
         <Form.Item label="Date due" name="date_due">
           <DatePicker showTime={{ format: 'h:mm A' }} format="YYYY-MM-DD h:mm A" />
         </Form.Item>
