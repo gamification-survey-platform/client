@@ -1,5 +1,24 @@
 import api from '../api/apiUtils'
 
+const getInstructorIpsatization = async ({
+  course_id,
+  assignment_id,
+  ipsatization_MIN,
+  ipsatization_MAX
+}) => {
+  try {
+    const params =
+      ipsatization_MIN && ipsatization_MAX ? { ipsatization_MIN, ipsatization_MAX } : {}
+    const res = await api.get(
+      `courses/${course_id}/assignments/${assignment_id}/artifact_reviews/ipsatization/`,
+      { params }
+    )
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
 const getStudentReport = async ({ course_id, assignment_id, artifact_id }) => {
   try {
     const res = await api.get(
@@ -22,4 +41,4 @@ const getKeywords = async ({ course_id, assignment_id, artifact_id }) => {
   }
 }
 
-export { getStudentReport, getKeywords }
+export { getStudentReport, getKeywords, getInstructorIpsatization }
