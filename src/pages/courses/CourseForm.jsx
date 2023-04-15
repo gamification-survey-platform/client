@@ -1,5 +1,16 @@
 import { useEffect } from 'react'
-import { Form, Select, Row, Col, Input, Button, Typography, message, InputNumber } from 'antd'
+import {
+  Form,
+  Select,
+  Row,
+  Col,
+  Input,
+  Button,
+  Typography,
+  message,
+  InputNumber,
+  Checkbox
+} from 'antd'
 import dayjs from 'dayjs'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
@@ -20,7 +31,9 @@ const CourseForm = () => {
   const editingCourse = courses.find((course) => course.course_number === params.course_id)
   useEffect(() => {
     if (editingCourse && form) {
-      form.setFieldsValue({ ...editingCourse })
+      const semester = editingCourse.semester.split(' ')[0]
+      const semesterYear = editingCourse.semester.split(' ')[1]
+      form.setFieldsValue({ ...editingCourse, semester, semesterYear })
     }
   }, [editingCourse, form])
 
@@ -57,7 +70,7 @@ const CourseForm = () => {
   return (
     <div className="m-5">
       {contextHolder}
-      <Typography.Title level={2}>Create Course</Typography.Title>
+      <Typography.Title level={2}>{editingCourse ? 'Edit ' : 'Create '} Course</Typography.Title>
       <Form form={form}>
         <Form.Item
           label="Course Number"
@@ -101,6 +114,9 @@ const CourseForm = () => {
           name="syllabus"
           rules={[{ required: true, message: 'Please input an syllabus' }]}>
           <Input.TextArea rows={6} />
+        </Form.Item>
+        <Form.Item label="Visible" name="visible" valuePropName="checked">
+          <Checkbox />
         </Form.Item>
         <div className="text-center">
           <Button type="primary" onClick={handleSubmit}>

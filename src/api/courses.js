@@ -13,9 +13,8 @@ const createCourse = async (courseData) => {
 
 const editCourse = async ({ course_id, course }) => {
   try {
-    const res = await api.put(`courses/`, course, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      params: { course_id }
+    const res = await api.put(`courses/${course_id}/`, course, {
+      headers: { 'Content-Type': 'multipart/form-data' }
     })
     return res
   } catch (error) {
@@ -25,7 +24,7 @@ const editCourse = async ({ course_id, course }) => {
 
 const deleteCourse = async (course_id) => {
   try {
-    const res = await api.delete('courses/', { params: { course_id } })
+    const res = await api.delete(`courses/${course_id}`, { params: { course_id } })
     return res
   } catch (error) {
     throw new Error(error.response.data.error)
@@ -43,7 +42,7 @@ const getUserCourses = async (andrewId) => {
 
 const getCourse = async (course_id) => {
   try {
-    const res = await api.get('courses/', { params: { course_id } })
+    const res = await api.get(`courses/${course_id}`)
     return res
   } catch (error) {
     throw new Error(error.response.data.error)

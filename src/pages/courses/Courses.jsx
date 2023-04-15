@@ -77,6 +77,20 @@ const Courses = () => {
     },
     {
       title: '',
+      dataIndex: 'rewards',
+      key: 'rewards',
+      render: (_, course) => {
+        return user.is_staff ? (
+          <LinkContainer to={`/courses/${course.course_number}/details`}>
+            <Tag role="button" color="geekblue">
+              Rewards
+            </Tag>
+          </LinkContainer>
+        ) : null
+      }
+    },
+    {
+      title: '',
       dataIndex: 'edit',
       key: 'edit',
       render: (_, course) => {
