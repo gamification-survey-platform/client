@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { Row, Col, Button, Alert, Form, Typography, Divider, message } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useParams, useNavigate } from 'react-router'
@@ -8,7 +8,14 @@ import { getSurveyDetails, saveSurvey } from '../../api/survey'
 import { useDispatch, useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
 import Spinner from '../../components/Spinner'
-import { changeView, setSurvey, surveySelector } from '../../store/survey/surveySlice'
+import {
+  changeView,
+  reorderSections,
+  setSurvey,
+  surveySelector
+} from '../../store/survey/surveySlice'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 const AssignmentSurvey = () => {
   const survey = useSelector(surveySelector)
@@ -57,45 +64,60 @@ const AssignmentSurvey = () => {
     }
   }
 
+  const handleReorderSections = useCallback(
+    (dragIndex, hoverIndex) => {
+      console.log('reorder sections', dragIndex, hoverIndex)
+      dispatch(reorderSections({ i: dragIndex, j: hoverIndex }))
+    },
+    [survey.sections]
+  )
+
   return spin ? (
     <Spinner show={spin} />
   ) : (
-    <Form form={form} className="m-5">
-      {contextHolder}
-      <Row justify="space-between">
-        <Col span={14}>
-          {survey && (
-            <div>
-              <Typography.Title level={2}>{survey.name}</Typography.Title>
-              <Typography.Title level={4}>{survey.instructions}</Typography.Title>
-              <Typography.Title level={4}>{survey.other_info}</Typography.Title>
-            </div>
-          )}
-        </Col>
-        <Col span={10}>
-          <Button className="m-3" onClick={() => dispatch(changeView())}>
-            {survey.instructorView ? 'Student View' : 'Instructor View'}
-          </Button>
-          <Button type="primary" className="m-3" onClick={() => setModalOpen(true)}>
-            Add Section
-          </Button>
-        </Col>
-        <AddSectionModal open={modalOpen} setOpen={setModalOpen} />
-      </Row>
-      <Divider />
-      {survey.sections.length && (
-        <div>
-          {survey.sections.map((section, i) => (
-            <Section key={i} pk={section.pk} />
-          ))}
-          <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
-            <Button type="primary" onClick={handleSaveSurvey} style={{ position: 'absolute' }}>
-              Save Survey
+    <DndProvider backend={HTML5Backend}>
+      <Form form={form} className="m-5">
+        {contextHolder}
+        <Row justify="space-between">
+          <Col span={14}>
+            {survey && (
+              <div>
+                <Typography.Title level={2}>{survey.name}</Typography.Title>
+                <Typography.Title level={4}>{survey.instructions}</Typography.Title>
+                <Typography.Title level={4}>{survey.other_info}</Typography.Title>
+              </div>
+            )}
+          </Col>
+          <Col span={10}>
+            <Button className="m-3" onClick={() => dispatch(changeView())}>
+              {survey.instructorView ? 'Student View' : 'Instructor View'}
             </Button>
+            <Button type="primary" className="m-3" onClick={() => setModalOpen(true)}>
+              Add Section
+            </Button>
+          </Col>
+          <AddSectionModal open={modalOpen} setOpen={setModalOpen} />
+        </Row>
+        <Divider />
+        {survey.sections.length && (
+          <div>
+            {survey.sections.map((section, i) => (
+              <Section
+                key={i}
+                pk={section.pk}
+                index={i}
+                handleReorderSections={handleReorderSections}
+              />
+            ))}
+            <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
+              <Button type="primary" onClick={handleSaveSurvey} style={{ position: 'absolute' }}>
+                Save Survey
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
-    </Form>
+        )}
+      </Form>
+    </DndProvider>
   )
 }
 

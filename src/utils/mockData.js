@@ -5,7 +5,9 @@ export const mockBarChartData = [...Array(4)]
   .concat([...Array(20)].map((_) => '4'))
   .concat([...Array(7)].map((_) => '5'))
 
-export const mockHistogramData = [...Array(100)].map(() => Math.random() * 100)
+export const mockHistogramData = [...Array(100)].map(() =>
+  Math.floor(Math.abs(Math.random() * 100))
+)
 
 export const mockPieChartData = {
   a: 10,

@@ -91,6 +91,14 @@ const surveySlice = createSlice({
         else oldAnswer.push(answerObj)
       }
       return newState
+    },
+    reorderSections: (state, action) => {
+      const { i, j } = action.payload
+      const newSections = [...state.sections]
+      const sectionI = newSections[i]
+      newSections[i] = newSections[j]
+      newSections[j] = sectionI
+      return { ...state, sections: newSections }
     }
   },
   extraReducers: (builder) => {
@@ -110,7 +118,8 @@ export const {
   deleteQuestion,
   addAnswer,
   editAnswer,
-  changeView
+  changeView,
+  reorderSections
 } = surveySlice.actions
 
 export default surveySlice.reducer

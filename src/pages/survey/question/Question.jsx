@@ -30,7 +30,7 @@ const SlideReview = (props) => {
   )
 }
 
-const MultipleChoice = ({ pk, option_choices, answer, sectionPk, question_type }) => {
+const MultipleChoice = ({ pk, option_choices, answer, sectionPk, question_type, is_required }) => {
   const form = useFormInstance()
   const value = Form.useWatch(pk, form)
   const dispatch = useDispatch()
@@ -45,10 +45,11 @@ const MultipleChoice = ({ pk, option_choices, answer, sectionPk, question_type }
     if (answer && value)
       dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
   }, [value])
-
   const ticks = option_choices.reduce((acc, el, i) => ({ ...acc, [i]: el.text }), {})
   return (
-    <Form.Item name={pk}>
+    <Form.Item
+      name={pk}
+      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       {/* <Slider marks={ticks} max={option_choices.length - 1} tooltip={{ open: false }} /> */}
       <Select
         options={[...Array.from(option_choices)].map((option) => ({
@@ -60,7 +61,7 @@ const MultipleChoice = ({ pk, option_choices, answer, sectionPk, question_type }
   )
 }
 
-const MultipleChoiceScale = ({ pk, sectionPk, answer, question_type }) => {
+const MultipleChoiceScale = ({ pk, sectionPk, answer, question_type, is_required }) => {
   const form = useFormInstance()
   const value = Form.useWatch(pk, form)
   const dispatch = useDispatch()
@@ -77,7 +78,9 @@ const MultipleChoiceScale = ({ pk, sectionPk, answer, question_type }) => {
   }, [value])
 
   return (
-    <Form.Item name={pk}>
+    <Form.Item
+      name={pk}
+      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       <Select
         options={[...Array(10)].map((_, i) => ({
           label: i + 1,
@@ -88,7 +91,7 @@ const MultipleChoiceScale = ({ pk, sectionPk, answer, question_type }) => {
   )
 }
 
-const FixedText = ({ pk, sectionPk, answer, question_type }) => {
+const FixedText = ({ pk, sectionPk, answer, question_type, is_required }) => {
   const form = useFormInstance()
   const value = Form.useWatch(pk, form)
   const dispatch = useDispatch()
@@ -104,13 +107,23 @@ const FixedText = ({ pk, sectionPk, answer, question_type }) => {
   }, [value])
 
   return (
-    <Form.Item name={pk}>
+    <Form.Item
+      name={pk}
+      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       <Input />
     </Form.Item>
   )
 }
 
-const MultiLineField = ({ pk, sectionPk, question_type, idx, answer, number_of_text }) => {
+const MultiLineField = ({
+  pk,
+  sectionPk,
+  question_type,
+  idx,
+  answer,
+  number_of_text,
+  is_required
+}) => {
   const form = useFormInstance()
   const value = Form.useWatch(`${pk}-${idx}`, form)
   const dispatch = useDispatch()
@@ -134,7 +147,9 @@ const MultiLineField = ({ pk, sectionPk, question_type, idx, answer, number_of_t
   }, [value])
 
   return (
-    <Form.Item name={`${pk}-${idx}`}>
+    <Form.Item
+      name={`${pk}-${idx}`}
+      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       <Input />
     </Form.Item>
   )
@@ -152,7 +167,7 @@ const MultiLineText = (props) => {
   )
 }
 
-const TextArea = ({ pk, sectionPk, answer, question_type }) => {
+const TextArea = ({ pk, sectionPk, answer, question_type, is_required }) => {
   const form = useFormInstance()
   const value = Form.useWatch(pk, form)
   const dispatch = useDispatch()
@@ -168,14 +183,16 @@ const TextArea = ({ pk, sectionPk, answer, question_type }) => {
   }, [value])
 
   return (
-    <Form.Item name={pk}>
+    <Form.Item
+      name={pk}
+      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       <Input.TextArea rows={4} />
     </Form.Item>
   )
 }
 
 const Question = (question) => {
-  const { text, is_required, ...questionProps } = question
+  const { text, ...questionProps } = question
   const survey = useSelector(surveySelector)
   const { question_type } = question
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
@@ -183,13 +200,14 @@ const Question = (question) => {
 
   const handleDeleteQuestion = () =>
     dispatch(deleteQuestion({ sectionPk: question.sectionPk, questionPk: question.pk }))
-
   return (
     <Form.Item
+      rules={[
+        { required: questionProps.is_required, message: 'Please complete the above question.' }
+      ]}
       label={
         question_type === 'SLIDEREVIEW' ? 'Click on the slide to open the questionnaire' : text
       }>
-      {/*rules={[{ required: is_required, message: 'Please complete the above question.' }]}>*/}
       <Row>
         <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
           {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
