@@ -99,6 +99,18 @@ const surveySlice = createSlice({
       newSections[i] = newSections[j]
       newSections[j] = sectionI
       return { ...state, sections: newSections }
+    },
+    reorderQuestions: (state, action) => {
+      const { sectionPk, i, j } = action.payload
+      const section = { ...state.sections.find((section) => section.pk === sectionPk) }
+      const questions = [...section.questions]
+      const questionI = questions[i]
+      questions[i] = questions[j]
+      questions[j] = questionI
+      const sections = state.sections.map((oldSection) =>
+        oldSection.pk === sectionPk ? { ...section, questions } : { ...oldSection }
+      )
+      return { ...state, sections }
     }
   },
   extraReducers: (builder) => {
@@ -119,7 +131,8 @@ export const {
   addAnswer,
   editAnswer,
   changeView,
-  reorderSections
+  reorderSections,
+  reorderQuestions
 } = surveySlice.actions
 
 export default surveySlice.reducer

@@ -1,12 +1,12 @@
 import { Row, Col, Typography, Collapse } from 'antd'
 import { EditTwoTone, PlusCircleTwoTone, DeleteTwoTone } from '@ant-design/icons'
-import { useState, useRef } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import AddQuestionModal from './AddQuestionModal'
 import Question from './question/Question'
 import AddSectionModal from './AddSectionModal'
 import { useDispatch, useSelector } from 'react-redux'
 import { surveySelector } from '../../store/survey/surveySlice'
-import { deleteSection } from '../../store/survey/surveySlice'
+import { deleteSection, reorderQuestions } from '../../store/survey/surveySlice'
 import { useDrag, useDrop } from 'react-dnd'
 
 const Section = ({ pk, artifact, index, handleReorderSections }) => {
@@ -35,6 +35,7 @@ const Section = ({ pk, artifact, index, handleReorderSections }) => {
   const [, dropRef] = useDrop(() => ({
     accept: 'SECTION',
     hover: (item, monitor) => {
+      if (!survey.instructorView) return
       const dragIndex = item.index
       const hoverIndex = index
       const hoverBoundingRect = ref.current?.getBoundingClientRect()
@@ -59,6 +60,13 @@ const Section = ({ pk, artifact, index, handleReorderSections }) => {
   const dragDropRef = dragRef(dropRef(ref))
 
   const handleDeleteSection = () => dispatch(deleteSection({ pk }))
+
+  const handleReorderQuestions = useCallback(
+    (dragIndex, hoverIndex) => {
+      dispatch(reorderQuestions({ sectionPk: pk, i: dragIndex, j: hoverIndex }))
+    },
+    [survey.sections]
+  )
 
   return (
     <>
@@ -118,7 +126,14 @@ const Section = ({ pk, artifact, index, handleReorderSections }) => {
             </Row>
             {questions &&
               questions.map((question, i) => (
-                <Question key={i} {...question} sectionPk={pk} artifact={artifact} />
+                <Question
+                  key={i}
+                  {...question}
+                  sectionPk={pk}
+                  artifact={artifact}
+                  index={i}
+                  handleReorderQuestions={handleReorderQuestions}
+                />
               ))}
           </div>
         </Collapse.Panel>

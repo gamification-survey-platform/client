@@ -66,7 +66,6 @@ const AssignmentSurvey = () => {
 
   const handleReorderSections = useCallback(
     (dragIndex, hoverIndex) => {
-      console.log('reorder sections', dragIndex, hoverIndex)
       dispatch(reorderSections({ i: dragIndex, j: hoverIndex }))
     },
     [survey.sections]
@@ -85,6 +84,11 @@ const AssignmentSurvey = () => {
                 <Typography.Title level={2}>{survey.name}</Typography.Title>
                 <Typography.Title level={4}>{survey.instructions}</Typography.Title>
                 <Typography.Title level={4}>{survey.other_info}</Typography.Title>
+                {survey.instructorView ? (
+                  <Typography.Text>
+                    Drag and Drop sections or questions to reorder elements
+                  </Typography.Text>
+                ) : null}
               </div>
             )}
           </Col>
