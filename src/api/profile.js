@@ -5,7 +5,7 @@ const editProfile = async (data) => {
     const res = await api.patch(`/profile/`, data)
     return res
   } catch (error) {
-    return error.response
+    throw new Error(error.response.data.error)
   }
 }
 

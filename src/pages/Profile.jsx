@@ -6,12 +6,16 @@ import { Space, Row, Col, Form, Image, Button, Typography } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import Input from 'antd/es/input/Input'
 import { editProfile } from '../api/profile'
+import useMessage from 'antd/es/message/useMessage'
+import { setUser } from '../store/user/userSlice'
 
 const Profile = () => {
   const user = useSelector(userSelector)
   const [currentUser, setCurrentUser] = useState(user)
   const [editing, setEditing] = useState(false)
+  const [messageApi, contextHolder] = useMessage()
   const { first_name, last_name, email, date_joined: unformattedDate } = currentUser
+  const dispatch = useDispatch()
   const [form] = useForm()
   const date_joined = new Date(unformattedDate).toLocaleDateString('en-us', {
     weekday: 'long',
@@ -25,15 +29,22 @@ const Profile = () => {
     if (!editing) {
       setEditing(true)
     } else {
-      await form.validateFields()
-      const { first_name, last_name, email } = form.getFieldsValue()
-      await editProfile({ first_name, last_name, email })
-      setEditing(false)
+      try {
+        await form.validateFields()
+        const { first_name, last_name, email } = form.getFieldsValue()
+        const res = await editProfile({ first_name, last_name, email })
+        dispatch(setUser(res.data))
+        setEditing(false)
+      } catch (e) {
+        console.error(e)
+        messageApi.open({ type: 'error', content: e.message })
+      }
     }
   }
 
   return (
     <Row className="mt-5">
+      {contextHolder}
       <Col span={8} offset={2}>
         <Row justify="center">
           <Image src={DefaultImage} width={100} style={{ borderRadius: '50%' }} />
