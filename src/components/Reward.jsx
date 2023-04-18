@@ -11,9 +11,9 @@ import { deleteCourseReward, purchaseCourseReward } from '../api/rewards'
 import coursesSelector from '../store/courses/selectors'
 import { setUser } from '../store/user/userSlice'
 
-const Cover = ({ type, icon }) => {
-  if ((type === 'Badge' || type === 'Other') && icon) {
-    return <Image preview={false} src={`${config.FILE_URL}${icon}`} className="p-5" />
+const Cover = ({ type, picture }) => {
+  if (type === 'Other' && picture) {
+    return <Image preview={false} src={`${picture}`} className="p-5" />
   } else if (type === 'Late Submission') {
     return <Image preview={false} src={Calendar} className="p-5" />
   } else if (type === 'Bonus') {
@@ -34,7 +34,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
     is_active,
     type,
     exp_points,
-    icon = null
+    picture = null
   } = reward
   const dispatch = useDispatch()
   const courses = useSelector(coursesSelector)
@@ -75,7 +75,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
   }
 
   return (
-    <Card className="m-1 w-25" cover={<Cover type={type} icon={icon} />}>
+    <Card className="m-1 w-25" cover={<Cover type={type} picture={picture} />}>
       <Card.Meta title={name} />
       <div className="m-1 text-left">
         <Divider />
@@ -110,7 +110,11 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
         <div className="text-center">
           <Divider />
           <Row justify="center">
-            <Button type="primary" onClick={purchaseReward} className="m-1">
+            <Button
+              type="primary"
+              onClick={purchaseReward}
+              disabled={userExpPoints < exp_points || !is_active || inventory === 0}
+              className="m-1">
               Purchase
             </Button>
           </Row>
@@ -119,6 +123,5 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
     </Card>
   )
 }
-//              disabled={userExpPoints < exp_points || !is_active || inventory === 0}
 
 export default Reward

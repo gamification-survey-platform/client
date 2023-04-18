@@ -32,7 +32,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
     if (typeWatch === 'Bonus' || typeWatch === 'Late Submission') {
       setShowQuantity(true)
       setShowFile(false)
-    } else if (typeWatch === 'Other' || typeWatch === 'Badge') {
+    } else if (typeWatch === 'Other') {
       setShowFile(true)
       setShowQuantity(false)
     } else {
@@ -95,7 +95,6 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
           <Select
             className="text-left"
             options={[
-              { value: 'Badge', label: 'Badge' },
               { value: 'Bonus', label: 'Bonus' },
               { value: 'Late Submission', label: 'Late Submission' },
               { value: 'Theme', label: 'Theme (System level)' },
