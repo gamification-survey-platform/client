@@ -54,11 +54,7 @@ const AssignmentDetails = () => {
   const fetchArtifact = async () => {
     const res = await getUserArtifact({ course_id: selectedCourse.pk, assignment_id })
     if (res.status === 200) {
-      const contentDisposition = res.headers['content-disposition']
-      const regex = /attachment; filename=artifact_(\d+)\.pdf/gm
-
-      const artifact_pk = regex.exec(contentDisposition)[1]
-      setArtifact({ data: res.data, artifact_pk })
+      setArtifact(res.data)
     } else messageApi.open({ type: 'error', content: 'Failed to fetch artifact reviews.' })
   }
 
@@ -95,8 +91,10 @@ const AssignmentDetails = () => {
         dispatch(setUser({ ...user, exp, exp_points, level }))
         await fetchArtifact()
       }
+      setSubmission()
     } catch (e) {
       messageApi.open({ type: 'error', content: 'Failed to submit assignment.' })
+      setSubmission()
     }
   }
 
@@ -104,6 +102,11 @@ const AssignmentDetails = () => {
     submission,
     setSubmission,
     handleSubmit
+  }
+
+  const tagStyles = {
+    borderWidth: 'medium',
+    fontWeight: 'bold'
   }
 
   return spin ? (
@@ -136,7 +139,7 @@ const AssignmentDetails = () => {
                   <Link
                     key={review.id}
                     to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
-                    <Tag role="button" color="green">
+                    <Tag role="button" color="green" style={tagStyles}>
                       {review.reviewing}
                     </Tag>
                   </Link>
@@ -148,7 +151,7 @@ const AssignmentDetails = () => {
                   <Link
                     key={review.id}
                     to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
-                    <Tag role="button" color="gold">
+                    <Tag role="button" color="gold" style={tagStyles}>
                       {review.reviewing}
                     </Tag>
                   </Link>
@@ -160,7 +163,7 @@ const AssignmentDetails = () => {
                   <Link
                     key={review.id}
                     to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
-                    <Tag role="button" color="volcano">
+                    <Tag role="button" color="volcano" style={tagStyles}>
                       {review.reviewing}
                     </Tag>
                   </Link>

@@ -6,6 +6,7 @@ const FileSubmission = ({ submission, setSubmission, handleSubmit, inputRef }) =
     <Form>
       <Form.Item label="Submit assignment">
         <Upload
+          showUploadList={false}
           beforeUpload={(file) => {
             setSubmission(file)
             return false

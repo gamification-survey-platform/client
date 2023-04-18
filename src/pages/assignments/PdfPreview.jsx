@@ -3,7 +3,7 @@ import { Document, Page, pdfjs } from 'react-pdf'
 import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons'
 
 const PdfPreview = ({ artifact }) => {
-  const { data, artifact_pk } = artifact
+  const { file_path, artifact_pk } = artifact
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
   const enableBackward = pageNumber > 1
@@ -28,7 +28,7 @@ const PdfPreview = ({ artifact }) => {
       className="text-center p-5 ml-5"
       style={{ width: 600, border: 'solid 1px grey', borderRadius: '10%' }}>
       <h4>Previous Submission:</h4>
-      <Document file={data} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
+      <Document file={file_path} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
         {' '}
         <Page pageNumber={pageNumber} width={500} />
       </Document>

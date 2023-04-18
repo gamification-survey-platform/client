@@ -2,9 +2,7 @@ import api from '../api/apiUtils'
 
 const getUserArtifact = async ({ course_id, assignment_id }) => {
   try {
-    const res = await api.get(`courses/${course_id}/assignments/${assignment_id}/artifacts/`, {
-      responseType: 'arraybuffer'
-    })
+    const res = await api.get(`courses/${course_id}/assignments/${assignment_id}/artifacts/`)
     return res
   } catch (error) {
     throw new Error(error.response.data.error)
