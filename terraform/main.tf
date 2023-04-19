@@ -26,13 +26,10 @@ locals {
   }
 }
 
+#  Create S3 bucket for frontend
 resource "aws_s3_bucket" "gamification_frontend_bucket" {
   bucket = "gamification-frontend-bucket2023"
-  acl = "public-read"
-  website {
-    index_document = "index.html"
-    error_document = "error.html"
-  }
+
   tags = merge(
     local.common_tags,
     {
@@ -41,13 +38,33 @@ resource "aws_s3_bucket" "gamification_frontend_bucket" {
     },
   )
 }
+
+# Create S3 bucket configuration for frontend
+resource "aws_s3_bucket_website_configuration" "gamification_frontend_bucket_config" {
+  bucket = aws_s3_bucket.gamification_frontend_bucket.id
+
+  index_document {
+    suffix = "index.html"
+  }
+
+  error_document {
+    key = "error.html"
+  }
+}
+
+# Create S3 bucket ACL for frontend
+resource "aws_s3_bucket_acl" "gamification_frontend_bucket_acl" {
+  bucket = aws_s3_bucket.gamification_frontend_bucket.id
+  acl = "public-read"
+}
   
+# Create S3 bucket objects of the build folder for frontend and deploy to S3 bucket
 resource "aws_s3_bucket_object" "frontend_files" {
-  for_each = { for f in local.frontend_files : f => f }
+  for_each = local.frontend_files
 
   bucket = aws_s3_bucket.gamification_frontend_bucket.id
-  key = each.key
-  source = "${path.module}/../build/${each.key}"
-  content_type = lookup(local.content_types, regex("\\.(.+)$", each.value), "binary/octet-stream")
-  acl = "public-read"
+  key    = each.key
+  source = each.value
+  acl    = "public-read"
+  content_type = lookup(local.content_types, each.key, "application/octet-stream")
 }

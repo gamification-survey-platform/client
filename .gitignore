@@ -25,3 +25,7 @@ yarn-error.log*
 
 # terraform
 terraform/.terraform/*
+
+# Ignore Terraform .tfstate files
+*.tfstate
+*.tfstate.*
