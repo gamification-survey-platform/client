@@ -70,7 +70,7 @@ const Section = ({ pk, artifact, index, handleReorderSections }) => {
 
   return (
     <>
-      <Collapse size="large" className="mb-5">
+      <Collapse size="large" className="mb-3">
         <Collapse.Panel header={title} ref={dragDropRef} style={{ opacity: isDragging ? 0.2 : 1 }}>
           <div className="border border-light mb-3">
             <Row>

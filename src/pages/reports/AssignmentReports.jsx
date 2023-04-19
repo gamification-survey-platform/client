@@ -7,11 +7,6 @@ import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { getInstructorIpsatization } from '../../api/reports'
 import useMessage from 'antd/es/message/useMessage'
 
-const columns = [
-  { title: 'Entity', dataIndex: 'entity', key: 'entity' },
-  { title: 'Score', dataIndex: 'score', key: 'score' }
-]
-
 const AssignmentReport = () => {
   const { course_id, assignment_id } = useParams()
   const [messageApi, contextHolder] = useMessage()
@@ -21,6 +16,10 @@ const AssignmentReport = () => {
   const [ipMin, setIpMin] = useState(0)
   const [ipMax, setIpMax] = useState(0)
   const [dataSource, setDataSource] = useState([])
+  const [columns, setColumns] = useState([
+    { title: 'Individual', dataIndex: 'entity', key: 'entity' },
+    { title: 'Score', dataIndex: 'score', key: 'score' }
+  ])
 
   const fetchReport = async ({ ipsatization_MIN, ipsatization_MAX }) => {
     const resp = await getInstructorIpsatization({
@@ -30,8 +29,15 @@ const AssignmentReport = () => {
       ipsatization_MAX
     })
     if (resp.status === 200) {
-      const { artifacts_id_and_scores_dict, entities, ipsatization_MIN, ipsatization_MAX } =
-        resp.data
+      const {
+        artifacts_id_and_scores_dict,
+        entities,
+        ipsatization_MIN,
+        ipsatization_MAX,
+        assignment_type
+      } = resp.data
+      columns[0].title = assignment_type
+      setColumns(columns)
       const scores = Object.values(artifacts_id_and_scores_dict)
       setHistogramData(scores)
       setIpMin(ipsatization_MIN)
@@ -52,7 +58,7 @@ const AssignmentReport = () => {
     if (ipMin >= ipMax)
       messageApi.open({
         type: 'error',
-        content: 'Minimum Ipsatization value must tbe less than Maximum Ipsatization value'
+        content: 'Minimum Ipsatization value must be less than Maximum Ipsatization value'
       })
     else fetchReport({ ipsatization_MIN: ipMin, ipsatization_MAX: ipMax })
   }

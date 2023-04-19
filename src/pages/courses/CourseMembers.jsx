@@ -49,18 +49,6 @@ const CourseMembers = () => {
   const staffColumns = [
     {
       title: '',
-      dataIndex: 'remind',
-      key: 'remind',
-      render: (_, member) => {
-        return (
-          <Tag color="gold" role="button" onClick={(e) => handleRemindMember(e, member.andrew_id)}>
-            Remind
-          </Tag>
-        )
-      }
-    },
-    {
-      title: '',
       dataIndex: 'remove',
       key: 'remove',
       render: (_, member) => {
@@ -115,7 +103,6 @@ const CourseMembers = () => {
     event.preventDefault()
     event.stopPropagation()
     try {
-      console.log(csvFile)
       Papa.parse(csvFile, {
         header: true,
         delimiter: ',',
@@ -155,18 +142,6 @@ const CourseMembers = () => {
       form.resetFields()
     } catch (e) {
       console.error(e)
-    }
-  }
-
-  const handleRemindMember = async (e, memberId) => {
-    e.preventDefault()
-    e.stopPropagation()
-    try {
-      const res = await remindMember({ course_id: selectedCourse.pk, memberId })
-      if (res.status === 200)
-        messageApi.open({ type: 'success', content: `Successfully reminded ${memberId}` })
-    } catch (e) {
-      messageApi.open({ type: 'error', content: `Failed to remind ${memberId}` })
     }
   }
 
