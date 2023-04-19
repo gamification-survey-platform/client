@@ -43,9 +43,13 @@ const submitArtifact = async ({ course_id, assignment_id, submission }) => {
   }
 }
 
-const submitArtifactExp = async () => {
+const submitArtifactExp = async ({ course_id, assignment_id }) => {
   try {
-    const res = await api.patch('/exp/', { action: 'assignment' })
+    const res = await api.patch('/exp/', {
+      operation: 'assignment',
+      method: 'POST',
+      api: `courses/${course_id}/assignments/${assignment_id}/artifacts/`
+    })
     return res
   } catch (error) {
     throw new Error(error.response.data.error)

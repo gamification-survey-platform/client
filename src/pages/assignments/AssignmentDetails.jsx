@@ -85,15 +85,21 @@ const AssignmentDetails = () => {
         assignment_id,
         submission
       })
-      const submitArtifactExpRes = await submitArtifactExp()
-      if (submitArtifactRes.status === 201 && submitArtifactExpRes.status === 200) {
-        const { exp, points: exp_points, level } = submitArtifactExpRes.data
-        dispatch(setUser({ ...user, exp, exp_points, level }))
-        await fetchArtifact()
+      if (submitArtifactRes.status === 201) {
+        const submitArtifactExpRes = await submitArtifactExp({
+          course_id: selectedCourse.pk,
+          assignment_id
+        })
+        if (submitArtifactExpRes.status === 200) {
+          const { exp, points: exp_points, level } = submitArtifactExpRes.data
+          dispatch(setUser({ ...user, exp, exp_points, level }))
+          await fetchArtifact()
+        }
       }
       setSubmission()
     } catch (e) {
-      messageApi.open({ type: 'error', content: 'Failed to submit assignment.' })
+      console.error(e)
+      messageApi.open({ type: 'error', content: e.message })
       setSubmission()
     }
   }

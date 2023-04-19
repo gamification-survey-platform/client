@@ -100,16 +100,21 @@ const AssignmentReview = () => {
           review_id,
           review
         })
-        const saveExpRes = await submitArtifactReviewExp()
-
-        if (saveReviewRes.status === 200 && saveExpRes.status === 200) {
-          const { exp, points: exp_points, level } = saveExpRes.data
-          dispatch(setUser({ ...user, exp, exp_points, level }))
-          navigate(-1)
+        if (saveReviewRes.status === 200) {
+          const saveExpRes = await submitArtifactReviewExp({
+            course_id: selectedCourse.pk,
+            assignment_id: assignment_id,
+            review_id
+          })
+          if (saveExpRes.status === 200) {
+            const { exp, points: exp_points, level } = saveExpRes.data
+            dispatch(setUser({ ...user, exp, exp_points, level }))
+            navigate(-1)
+          }
         }
       } catch (e) {
         console.error(e)
-        messageApi.open({ type: 'error', content: `Failed to save survey.` })
+        messageApi.open({ type: 'error', content: e.message })
       }
     }
   }
