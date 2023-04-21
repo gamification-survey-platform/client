@@ -16,6 +16,8 @@ import { useForm } from 'antd/es/form/Form'
 import { surveySelector, setSurvey } from '../../store/survey/surveySlice'
 import userSelector from '../../store/user/selectors'
 import { setUser } from '../../store/user/userSlice'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 const AssignmentReview = () => {
   const { course_id, assignment_id, review_id } = useParams()
@@ -132,33 +134,35 @@ const AssignmentReview = () => {
   return spin ? (
     <Spinner show={spin} />
   ) : (
-    <Form form={form} className="m-5" onFieldsChange={setProgress}>
-      {contextHolder}
-      <div style={{ position: 'fixed', top: '10%', right: 0, zIndex: 1, width: 300, height: 300 }}>
-        <ChartWrapper type="progressBar" data={progressData} />
-      </div>
-      <Row justify="space-between">
-        <Col span={14}>
-          <div>
-            <Typography.Title level={2}>{survey.name}</Typography.Title>
-            <Typography.Title level={4}>{survey.instructions}</Typography.Title>
-            <Typography.Title level={4}>{survey.other_info}</Typography.Title>
-          </div>
-        </Col>
-      </Row>
-      {
-        <>
-          {survey.sections.map((section, i) => (
-            <Section key={i} pk={section.pk} artifact={artifact} />
-          ))}
-          <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
-            <Button type="primary" onClick={handleSaveReview}>
-              Submit Review
-            </Button>
-          </div>
-        </>
-      }
-    </Form>
+    <DndProvider backend={HTML5Backend}>
+      <Form form={form} className="m-5" onFieldsChange={setProgress}>
+        {contextHolder}
+        <div style={{ position: 'fixed', top: '10%', right: 0, zIndex: 1, width: 300, height: 300 }}>
+          <ChartWrapper type="progressBar" data={progressData} />
+        </div>
+        <Row justify="space-between">
+          <Col span={14}>
+            <div>
+              <Typography.Title level={2}>{survey.name}</Typography.Title>
+              <Typography.Title level={4}>{survey.instructions}</Typography.Title>
+              <Typography.Title level={4}>{survey.other_info}</Typography.Title>
+            </div>
+          </Col>
+        </Row>
+        {
+          <>
+            {survey.sections.map((section, i) => (
+              <Section key={i} pk={section.pk} artifact={artifact} />
+            ))}
+            <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
+              <Button type="primary" onClick={handleSaveReview}>
+                Submit Review
+              </Button>
+            </div>
+          </>
+        }
+      </Form>
+    </DndProvider>
   )
 }
 
