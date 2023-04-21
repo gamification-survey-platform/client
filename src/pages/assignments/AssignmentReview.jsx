@@ -44,6 +44,7 @@ const AssignmentReview = () => {
           review_id
         })
         if (res.status === 200) {
+          dispatch(setSurvey({ ...res.data, instructorView: false }))
           const { artifact_pk } = res.data
           if (artifact_pk) {
             const artifactRes = await getArtifact({
@@ -53,7 +54,6 @@ const AssignmentReview = () => {
             })
             if (artifactRes.status === 200) {
               setArtifact(artifactRes.data)
-              dispatch(setSurvey({ ...res.data, instructorView: false }))
             }
           }
         }
@@ -137,7 +137,8 @@ const AssignmentReview = () => {
     <DndProvider backend={HTML5Backend}>
       <Form form={form} className="m-5" onFieldsChange={setProgress}>
         {contextHolder}
-        <div style={{ position: 'fixed', top: '10%', right: 0, zIndex: 1, width: 300, height: 300 }}>
+        <div
+          style={{ position: 'fixed', top: '10%', right: 0, zIndex: 1, width: 300, height: 300 }}>
           <ChartWrapper type="progressBar" data={progressData} />
         </div>
         <Row justify="space-between">
