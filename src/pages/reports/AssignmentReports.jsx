@@ -6,6 +6,7 @@ import { Button, Slider, Table, Typography, Row, Col } from 'antd'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { getInstructorIpsatization } from '../../api/reports'
 import useMessage from 'antd/es/message/useMessage'
+import { CSVLink } from 'react-csv'
 
 const AssignmentReport = () => {
   const { course_id, assignment_id } = useParams()
@@ -16,6 +17,7 @@ const AssignmentReport = () => {
   const [ipMin, setIpMin] = useState(0)
   const [ipMax, setIpMax] = useState(0)
   const [dataSource, setDataSource] = useState([])
+  const [downloadData, setDownloadData] = useState({})
   const [columns, setColumns] = useState([
     { title: 'Individual', dataIndex: 'entity', key: 'entity' },
     { title: 'Score', dataIndex: 'score', key: 'score' }
@@ -43,10 +45,13 @@ const AssignmentReport = () => {
       setIpMin(ipsatization_MIN)
       setIpMax(ipsatization_MAX)
       const dataSource = []
+      const downloadData = []
       entities.forEach((entity, i) => {
         dataSource.push({ entity, score: scores[i].toFixed(2), key: entity })
+        downloadData.push({ [assignment_type]: entity, score: scores[i].toFixed(2) })
       })
       setDataSource(dataSource)
+      setDownloadData(downloadData)
     }
   }
 
@@ -89,6 +94,18 @@ const AssignmentReport = () => {
         </Col>
         <Col span={12}>
           <Table columns={columns} dataSource={dataSource} />
+          <Row className="mt-3" justify="center">
+            {Object.keys(downloadData).length && (
+              <Button type="primary">
+                <CSVLink
+                  data={downloadData}
+                  filename={'scores.csv'}
+                  style={{ textDecoration: 'none', color: 'white' }}>
+                  Download Scores
+                </CSVLink>
+              </Button>
+            )}
+          </Row>
         </Col>
       </Row>
     </div>
