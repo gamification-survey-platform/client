@@ -122,12 +122,21 @@ const AssignmentReview = () => {
   }
 
   const setProgress = (changedFields, allFields) => {
-    const filledFields = Object.values(form.getFieldsValue()).filter(
-      (v) => v !== undefined && v.length
+    console.log('setting progress')
+    const numberOfQuestions = survey.sections.reduce(
+      (prev, section) => prev + section.questions.length,
+      0
     )
+    const filledFields = survey.sections.reduce((prev, section) => {
+      const questionsAnswered = section.questions.reduce(
+        (prev, question) => (question.answer.length ? prev + 1 : prev),
+        0
+      )
+      return prev + questionsAnswered
+    }, 0)
     setProgressData({
       startPct: progressData.endPct,
-      endPct: filledFields.length / allFields.length
+      endPct: filledFields / numberOfQuestions
     })
   }
 
