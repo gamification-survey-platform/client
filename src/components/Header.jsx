@@ -18,14 +18,13 @@ import Diamond from '../assets/diamond.png'
 import Master from '../assets/master.png'
 import Grandmaster from '../assets/grandmaster.png'
 
-
 const rankings = [
   { title: 'Bronze', image: Bronze },
   { title: 'Silver', image: Silver },
   { title: 'Gold', image: Gold },
   { title: 'Diamond', image: Diamond },
   { title: 'Master', image: Master },
-  { title: 'Grandmaster', image: Grandmaster },
+  { title: 'Grandmaster', image: Grandmaster }
 ]
 
 let items = [

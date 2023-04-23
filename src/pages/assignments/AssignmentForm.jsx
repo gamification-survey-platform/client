@@ -31,19 +31,19 @@ const AssignmentForm = () => {
     event.preventDefault()
     event.stopPropagation()
     try {
-      form.validateFields()
+      await form.validateFields()
       const fields = form.getFieldsValue()
       const { date_due, date_released } = fields
       const now = dayjs()
       if (!date_due || !date_released) {
         messageApi.open({ type: 'error', content: 'Please input date due and/or date release.' })
-        throw new Error()
+        return
       } else if (!date_released.isAfter(now)) {
         messageApi.open({ type: 'error', content: 'Date release must be in the future.' })
-        throw new Error()
+        return
       } else if (!date_released.isBefore(date_due)) {
         messageApi.open({ type: 'error', content: 'Date due must be after date release.' })
-        throw new Error()
+        return
       }
       const formObj = {
         ...fields,
@@ -104,28 +104,20 @@ const AssignmentForm = () => {
               { value: 'Text', label: 'Text' }
             ]}></Select>
         </Form.Item>
-        {/*
         <Form.Item
-          label="Review assignment policy"
-          name="review_assign_policy"
-          rules={[{ required: true, message: 'Please input a review type' }]}>
-          <Select
-            className="text-left"
-            options={[
-              { value: 'A', label: 'A' },
-              { value: 'B', label: 'B' },
-              { value: 'C', label: 'C' }
-            ]}></Select>
-        </Form.Item>
-          */}
-        <Form.Item label="Date released" name="date_released">
+          label="Date released"
+          name="date_released"
+          rules={[{ required: true, message: 'Please input a release date.' }]}>
           <DatePicker
             showTime={{ format: 'h:mm A' }}
             format="YYYY-MM-DD h:mm A"
             disabledDate={(current) => current && current < dayjs()}
           />
         </Form.Item>
-        <Form.Item label="Date due" name="date_due">
+        <Form.Item
+          label="Date due"
+          name="date_due"
+          rules={[{ required: true, message: 'Please input a due date.' }]}>
           <DatePicker
             showTime={{ format: 'h:mm A' }}
             format="YYYY-MM-DD h:mm A"
@@ -145,18 +137,18 @@ const AssignmentForm = () => {
           <Input type="number" />
         </Form.Item>
         <Form.Item
-          label="Weight"
+          label="Weight (how much of the grade should this contribute towards)"
           name="weight"
           rules={[
             {
               required: true,
-              message: 'A positive number must be entered.',
-              pattern: new RegExp(/^[0-9]+$/),
+              message: 'Enter an decimal value between 0 and 1.',
+              pattern: new RegExp(/^0(\.\d+)?$/),
               min: 0,
               max: 1
             }
           ]}>
-          <InputNumber precision={2} min={0} max={1} />
+          <InputNumber precision={2} />
         </Form.Item>
         <Form.Item className="text-center">
           <Button className="ml-3" type="primary" onClick={handleSubmit}>
