@@ -9,7 +9,8 @@ locals {
     project = var.project_tag_name
   }
 
-  frontend_files = fileset("${path.module}/../build", "**/*")
+  frontend_files = fileset("${abspath(path.module)}/../build", "**/*")
+
   content_types = {
     "html" = "text/html"
     "css"  = "text/css"
@@ -28,7 +29,27 @@ locals {
 
 #  Create S3 bucket for frontend
 resource "aws_s3_bucket" "gamification_frontend_bucket" {
-  bucket = "gamification-frontend-bucket2023"
+  bucket = var.bucket_name
+  acl    = "public-read"
+
+  policy = <<EOF
+  {
+    "Id": "gamification-frontend-bucket-policy",
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Sid": "gamification-frontend-bucket-statement",
+        "Action": [
+          "s3:GetObject"
+        ],
+        "Effect": "Allow",
+        "Resource": "arn:aws:s3:::${var.bucket_name}/*",
+        "Principal": "*"
+      }
+    ]
+
+  }
+  EOF
 
   tags = merge(
     local.common_tags,
@@ -52,19 +73,11 @@ resource "aws_s3_bucket_website_configuration" "gamification_frontend_bucket_con
   }
 }
 
-# Create S3 bucket ACL for frontend
-resource "aws_s3_bucket_acl" "gamification_frontend_bucket_acl" {
-  bucket = aws_s3_bucket.gamification_frontend_bucket.id
-  acl = "public-read"
+output "website_domain" {
+  value = aws_s3_bucket.gamification_frontend_bucket.website_domain
 }
-  
-# Create S3 bucket objects of the build folder for frontend and deploy to S3 bucket
-resource "aws_s3_bucket_object" "frontend_files" {
-  for_each = local.frontend_files
 
-  bucket = aws_s3_bucket.gamification_frontend_bucket.id
-  key    = each.key
-  source = each.value
-  acl    = "public-read"
-  content_type = lookup(local.content_types, each.key, "application/octet-stream")
+output "website_endpoint" {
+  value = aws_s3_bucket.gamification_frontend_bucket.website_endpoint
 }
+

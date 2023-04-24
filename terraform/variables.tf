@@ -17,3 +17,8 @@ variable "aws_access_key" {
 variable "aws_secret_key" {
   description = "The AWS secret key to use for the provider."
 }
+
+variable "bucket_name" {
+  description = "The name of the bucket to create."
+  default = "gamification-frontend-bucket2023"
+}
