@@ -85,6 +85,9 @@ const AssignmentDetails = () => {
         assignment_id,
         submission
       })
+      messageApi.open({ type: 'success', content: 'Successfully submitted assignment.' })
+      await fetchArtifact()
+      setSubmission()
       if (submitArtifactRes.status === 201) {
         const submitArtifactExpRes = await submitArtifactExp({
           course_id: selectedCourse.pk,
@@ -93,10 +96,8 @@ const AssignmentDetails = () => {
         if (submitArtifactExpRes.status === 200) {
           const { exp, points: exp_points, level } = submitArtifactExpRes.data
           dispatch(setUser({ ...user, exp, exp_points, level }))
-          await fetchArtifact()
         }
       }
-      setSubmission()
     } catch (e) {
       console.error(e)
       messageApi.open({ type: 'error', content: e.message })

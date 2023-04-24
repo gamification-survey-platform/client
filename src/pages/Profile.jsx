@@ -2,7 +2,9 @@ import { useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import userSelector from '../store/user/selectors'
 import DefaultImage from '../assets/default.jpg'
-import { Space, Row, Col, Form, Image, Button, Typography } from 'antd'
+import { Upload, Row, Col, Form, Image, Button, Typography } from 'antd'
+import { PlusOutlined } from '@ant-design/icons'
+
 import { useForm } from 'antd/es/form/Form'
 import Input from 'antd/es/input/Input'
 import { editProfile } from '../api/profile'
@@ -12,6 +14,7 @@ import { setUser } from '../store/user/userSlice'
 const Profile = () => {
   const user = useSelector(userSelector)
   const [currentUser, setCurrentUser] = useState(user)
+  const [image, setImage] = useState()
   const [editing, setEditing] = useState(false)
   const [messageApi, contextHolder] = useMessage()
   const { first_name, last_name, email, date_joined: unformattedDate } = currentUser
@@ -46,8 +49,18 @@ const Profile = () => {
     <Row className="mt-5">
       {contextHolder}
       <Col span={8} offset={2}>
-        <Row justify="center">
+        <Row justify="center" className="mb-3">
           <Image src={DefaultImage} width={100} style={{ borderRadius: '50%' }} />
+        </Row>
+        <Row className="mb-3">
+          <Upload
+            showUploadList={false}
+            maxCount={1}
+            className="d-flex justify-content-center"
+            accept="image/png, image/jpeg"
+            beforeUpload={() => false}>
+            <Button>Update profile picture</Button>
+          </Upload>
         </Row>
         <Row justify="center">
           <Typography.Title level={2}>
