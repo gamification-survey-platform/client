@@ -216,6 +216,7 @@ const CourseMembers = () => {
             <Form.Item name="csv">
               <Space direction="horizontal">
                 <Upload
+                  maxCount={1}
                   beforeUpload={(file) => {
                     setCSVFile(file)
                     return false

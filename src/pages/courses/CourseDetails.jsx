@@ -25,7 +25,7 @@ const CourseDetails = () => {
       }
     }
     fetchRewards()
-  }, [])
+  }, [rewardsModalOpen])
   return (
     <div className="m-5 text-center">
       <Typography.Title level={2}>{course.course_name}</Typography.Title>

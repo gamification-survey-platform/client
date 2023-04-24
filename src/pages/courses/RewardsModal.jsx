@@ -1,19 +1,22 @@
-import { Form, Select, Modal, Input, Switch, Upload, Button } from 'antd'
+import { Form, Select, Modal, Input, Switch, Upload, Button, Image } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useEffect, useState } from 'react'
 import { addCourseReward, editCourseReward } from '../../api/rewards'
 import coursesSelector from '../../store/courses/selectors'
 import { useParams } from 'react-router'
 import { useSelector } from 'react-redux'
+import useMessage from 'antd/es/message/useMessage'
 
 const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => {
   const [form] = useForm()
   const [showQuantity, setShowQuantity] = useState(false)
+  const [messageApi, contextHolder] = useMessage()
   const [showFile, setShowFile] = useState(false)
   const [picture, setPicture] = useState()
   const { course_id } = useParams()
   const courses = useSelector(coursesSelector)
   const course = courses.find(({ course_number }) => course_number === course_id)
+  const [showOldImage, setShowOldImage] = useState(!!editingReward)
 
   const typeWatch = Form.useWatch('type', form)
   useEffect(() => {
@@ -23,6 +26,8 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
     if (editingReward) {
       if (editingReward.picture) {
         setPicture(editingReward.picture)
+        setShowOldImage(true)
+        setShowFile(true)
       }
       form.setFieldsValue(editingReward)
     }
@@ -59,12 +64,15 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
       } else {
         const reward = form.getFieldsValue()
         const resp = await addCourseReward({ course_id: course.pk, reward, picture })
-        if (resp.status === 200) setRewards([...rewards, resp.data])
+        if (resp.status === 200) {
+          messageApi.open({ type: 'success', content: 'Successfully added course reward.' })
+        }
       }
+      setOpen(false)
     } catch (e) {
       console.error(e)
+      messageApi.open({ type: 'error', content: e.message })
     }
-    setOpen(false)
   }
 
   return (
@@ -74,6 +82,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
       onOk={handleSubmit}
       forceRender
       onCancel={() => setOpen(false)}>
+      {contextHolder}
       <Form form={form}>
         <Form.Item
           label="Reward Name"
@@ -141,6 +150,9 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
             <Input type="number" />
           </Form.Item>
         ) : null}
+        <Form.Item>
+          {showOldImage ? <Image width={200} src={editingReward.picture} /> : null}
+        </Form.Item>
         {showFile ? (
           <Form.Item
             name="picture"
@@ -152,11 +164,19 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
               }
             ]}>
             <Upload
+              accept="image/png, image/jpeg"
+              maxCount={1}
               beforeUpload={(file) => {
                 setPicture(file)
+                setShowOldImage(false)
+                messageApi.open({ type: 'success', content: 'Updated image.' })
                 return false
               }}>
-              <Button>Please upload an image showcasing the reward.</Button>
+              <Button>
+                {editingReward
+                  ? 'Change above reward showcase'
+                  : 'Please upload an image showcasing the reward.'}
+              </Button>
             </Upload>
           </Form.Item>
         ) : null}
