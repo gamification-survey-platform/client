@@ -108,7 +108,6 @@ const CourseMembers = () => {
         delimiter: ',',
         skipEmptyLines: true,
         complete: async ({ data, errors }) => {
-          console.log(data)
           let error = false
           let finalMembership = members
           if (data && !errors.length) {

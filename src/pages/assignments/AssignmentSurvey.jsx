@@ -105,13 +105,8 @@ const AssignmentSurvey = () => {
         <Divider />
         {survey.sections.length && (
           <div>
-            {survey.sections.map((section, i) => (
-              <Section
-                key={i}
-                pk={section.pk}
-                index={i}
-                handleReorderSections={handleReorderSections}
-              />
+            {survey.sections.map((_, i) => (
+              <Section key={i} sectionIdx={i} handleReorderSections={handleReorderSections} />
             ))}
             <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
               <Button type="primary" onClick={handleSaveSurvey} style={{ position: 'absolute' }}>

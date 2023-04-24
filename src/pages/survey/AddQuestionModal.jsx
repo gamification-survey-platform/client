@@ -4,16 +4,17 @@ import { useForm } from 'antd/es/form/Form'
 import { useDispatch, useSelector } from 'react-redux'
 import { addQuestion, editQuestion, surveySelector } from '../../store/survey/surveySlice'
 
-const AddQuestionModal = ({ open, setOpen, sectionPk, questionPk }) => {
+const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
   const initialValues = { question_type: 'MULTIPLECHOICE', option_choices: 1, number_of_text: 1 }
   const [form] = useForm()
   const dispatch = useDispatch()
   const question_type = Form.useWatch('question_type', form)
   const option_choices = Form.useWatch('option_choices', form)
   const survey = useSelector(surveySelector)
-  const editingQuestion = questionPk
-    ? survey.sections.find((s) => s.pk === sectionPk).questions.find((q) => q.pk === questionPk)
-    : undefined
+  const editingQuestion =
+    questionIdx >= 0
+      ? survey.sections.find((s, i) => sectionIdx === i).questions.find((q, j) => j === questionIdx)
+      : undefined
   const options =
     !isNaN(parseInt(option_choices)) && parseInt(option_choices) > 0
       ? [...Array(parseInt(option_choices))].map((_, i) => i)
@@ -68,9 +69,9 @@ const AddQuestionModal = ({ open, setOpen, sectionPk, questionPk }) => {
       }
       const { text, question_type, is_required, ...rest } = formObj
       const questionObj = { text, question_type, is_required: !!is_required, ...payload }
-      questionPk
-        ? dispatch(editQuestion({ question: questionObj, questionPk, sectionPk }))
-        : dispatch(addQuestion({ question: questionObj, sectionPk }))
+      questionIdx >= 0
+        ? dispatch(editQuestion({ question: questionObj, questionIdx, sectionIdx }))
+        : dispatch(addQuestion({ question: questionObj, sectionIdx }))
       handleClose()
       await form.resetFields()
     }

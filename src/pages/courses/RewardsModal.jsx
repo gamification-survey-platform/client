@@ -58,7 +58,6 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
         }
       } else {
         const reward = form.getFieldsValue()
-        console.log(reward)
         const resp = await addCourseReward({ course_id: course.pk, reward, picture })
         if (resp.status === 200) setRewards([...rewards, resp.data])
       }

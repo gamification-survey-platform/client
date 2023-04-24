@@ -4,14 +4,14 @@ import { useForm } from 'antd/es/form/Form'
 import { addSection, editSection, surveySelector } from '../../store/survey/surveySlice'
 import { useDispatch, useSelector } from 'react-redux'
 
-const AddSectionModal = ({ open, setOpen, sectionPk }) => {
+const AddSectionModal = ({ open, setOpen, sectionIdx }) => {
   const [form] = useForm()
   const dispatch = useDispatch()
   const survey = useSelector(surveySelector)
 
   useEffect(() => {
-    if (sectionPk) {
-      const editingSection = survey.sections.find((s) => s.pk === sectionPk)
+    if (sectionIdx >= 0) {
+      const editingSection = survey.sections.find((_, i) => i === sectionIdx)
       form.setFieldsValue(editingSection)
     } else {
       form.resetFields()
@@ -27,8 +27,8 @@ const AddSectionModal = ({ open, setOpen, sectionPk }) => {
     } else {
       const formObj = form.getFieldsValue()
       formObj.is_required = !!formObj.is_required
-      sectionPk
-        ? dispatch(editSection({ section: formObj, pk: sectionPk }))
+      sectionIdx >= 0
+        ? dispatch(editSection({ section: formObj, sectionIdx }))
         : dispatch(addSection(formObj))
       handleClose()
     }
@@ -36,7 +36,7 @@ const AddSectionModal = ({ open, setOpen, sectionPk }) => {
 
   return (
     <Modal
-      title={sectionPk ? 'Edit Section' : 'Add Section'}
+      title={sectionIdx >= 0 ? 'Edit Section' : 'Add Section'}
       open={open}
       onOk={handleSubmit}
       onCancel={handleClose}
@@ -45,7 +45,7 @@ const AddSectionModal = ({ open, setOpen, sectionPk }) => {
           Cancel
         </Button>,
         <Button key="add" type="primary" onClick={handleSubmit}>
-          {sectionPk ? 'Edit' : 'Add'}
+          {sectionIdx >= 0 ? 'Edit' : 'Add'}
         </Button>
       ]}>
       <Form form={form}>

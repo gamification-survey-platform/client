@@ -121,8 +121,7 @@ const AssignmentReview = () => {
     }
   }
 
-  const setProgress = (changedFields, allFields) => {
-    console.log('setting progress')
+  const setProgress = () => {
     const numberOfQuestions = survey.sections.reduce(
       (prev, section) => prev + section.questions.length,
       0
@@ -161,8 +160,8 @@ const AssignmentReview = () => {
         </Row>
         {
           <>
-            {survey.sections.map((section, i) => (
-              <Section key={i} pk={section.pk} artifact={artifact} />
+            {survey.sections.map((_, i) => (
+              <Section key={i} sectionIdx={i} artifact={artifact} />
             ))}
             <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
               <Button type="primary" onClick={handleSaveReview}>

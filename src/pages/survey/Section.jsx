@@ -9,13 +9,13 @@ import { surveySelector } from '../../store/survey/surveySlice'
 import { deleteSection, reorderQuestions } from '../../store/survey/surveySlice'
 import { useDrag, useDrop } from 'react-dnd'
 
-const Section = ({ pk, artifact, index, handleReorderSections }) => {
+const Section = ({ sectionIdx, artifact, handleReorderSections }) => {
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
   const [sectionModalOpen, setSectionModalOpen] = useState(false)
   const survey = useSelector(surveySelector)
   const dispatch = useDispatch()
 
-  const section = survey.sections.find((section) => section.pk === pk) || {
+  const section = survey.sections.find((_, i) => sectionIdx === i) || {
     title: '',
     is_required: false,
     questions: []
@@ -26,7 +26,7 @@ const Section = ({ pk, artifact, index, handleReorderSections }) => {
 
   const [{ isDragging }, dragRef] = useDrag(() => ({
     type: 'SECTION',
-    item: { index },
+    item: { index: sectionIdx },
     collect: (monitor) => ({
       isDragging: !!monitor.isDragging()
     })
@@ -37,11 +37,10 @@ const Section = ({ pk, artifact, index, handleReorderSections }) => {
     hover: (item, monitor) => {
       if (!survey.instructorView) return
       const dragIndex = item.index
-      const hoverIndex = index
+      const hoverIndex = sectionIdx
       const hoverBoundingRect = ref.current?.getBoundingClientRect()
       const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2
       const hoverActualY = monitor.getClientOffset().y - hoverBoundingRect.top
-
       // if dragging down, continue only when hover is smaller than middle Y
       if (dragIndex < hoverIndex && hoverActualY < hoverMiddleY) return
       // if dragging up, continue only when hover is bigger than middle Y
@@ -59,11 +58,11 @@ const Section = ({ pk, artifact, index, handleReorderSections }) => {
   const ref = useRef()
   const dragDropRef = dragRef(dropRef(ref))
 
-  const handleDeleteSection = () => dispatch(deleteSection({ pk }))
+  const handleDeleteSection = () => dispatch(deleteSection({ sectionIdx }))
 
   const handleReorderQuestions = useCallback(
     (dragIndex, hoverIndex) => {
-      dispatch(reorderQuestions({ sectionPk: pk, i: dragIndex, j: hoverIndex }))
+      dispatch(reorderQuestions({ sectionIdx, i: dragIndex, j: hoverIndex }))
     },
     [survey.sections]
   )
@@ -112,14 +111,14 @@ const Section = ({ pk, artifact, index, handleReorderSections }) => {
                     onClick={handleDeleteSection}
                   />
                   <AddQuestionModal
-                    sectionPk={pk}
+                    sectionIdx={sectionIdx}
                     open={questionModalOpen}
                     setOpen={setQuestionModalOpen}
                   />
                   <AddSectionModal
                     open={sectionModalOpen}
                     setOpen={setSectionModalOpen}
-                    sectionPk={pk}
+                    sectionIdx={sectionIdx}
                   />
                 </Col>
               )}
@@ -129,9 +128,10 @@ const Section = ({ pk, artifact, index, handleReorderSections }) => {
                 <Question
                   key={i}
                   {...question}
-                  sectionPk={pk}
+                  sectionIdx={sectionIdx}
                   artifact={artifact}
                   index={i}
+                  questionIdx={i}
                   handleReorderQuestions={handleReorderQuestions}
                 />
               ))}

@@ -233,8 +233,7 @@ const Question = (question) => {
   const ref = useRef()
   const dragDropRef = dragRef(dropRef(ref))
 
-  const handleDeleteQuestion = () =>
-    dispatch(deleteQuestion({ sectionPk: question.sectionPk, questionPk: question.pk }))
+  const handleDeleteQuestion = () => dispatch(deleteQuestion({ ...question }))
   return (
     <Form.Item
       rules={[
@@ -284,8 +283,8 @@ const Question = (question) => {
         <AddQuestionModal
           open={questionModalOpen}
           setOpen={setQuestionModalOpen}
-          sectionPk={question.sectionPk}
-          questionPk={question.pk}
+          sectionIdx={question.sectionIdx}
+          questionIdx={question.questionIdx}
         />
       </Row>
     </Form.Item>

@@ -18,45 +18,45 @@ const surveySlice = createSlice({
     setSurvey: (_, action) => action.payload,
     changeView: (state) => ({ ...state, instructorView: !state.instructorView }),
     addSection: (state, action) => {
-      const sections = [...state.sections, { ...action.payload, questions: [] }]
+      const sections = [{ ...action.payload, questions: [] }, ...state.sections]
       return { ...state, sections }
     },
     editSection: (state, action) => {
-      const { section, pk } = action.payload
-      const sections = state.sections.map((s) => (s.pk === pk ? { ...s, ...section } : s))
+      const { section, sectionIdx } = action.payload
+      const sections = state.sections.map((s, i) => (i === sectionIdx ? { ...s, ...section } : s))
       return { ...state, sections }
     },
     deleteSection: (state, action) => {
-      const { pk } = action.payload
-      const sections = state.sections.filter((s) => s.pk !== pk)
+      const { sectionIdx } = action.payload
+      const sections = state.sections.filter((s, i) => i !== sectionIdx)
       return { ...state, sections }
     },
     addQuestion: (state, action) => {
-      const { question, sectionPk } = action.payload
-      const sections = state.sections.map((s) =>
-        s.pk === sectionPk ? { ...s, questions: [...s.questions, question] } : s
+      const { question, sectionIdx } = action.payload
+      const sections = state.sections.map((s, i) =>
+        i === sectionIdx ? { ...s, questions: [...s.questions, question] } : s
       )
       return { ...state, sections }
     },
     editQuestion: (state, action) => {
-      const { question, questionPk, sectionPk } = action.payload
+      const { question, questionIdx, sectionIdx } = action.payload
       const questions = state.sections
-        .find((s) => s.pk === sectionPk)
-        .questions.map((q) => (q.pk === questionPk ? { ...q, ...question } : q))
-      const sections = state.sections.map((s) => (s.pk === sectionPk ? { ...s, questions } : s))
+        .find((s, i) => i === sectionIdx)
+        .questions.map((q, i) => (i === questionIdx ? { ...q, ...question } : q))
+      const sections = state.sections.map((s, i) => (i === sectionIdx ? { ...s, questions } : s))
       return { ...state, sections }
     },
     deleteQuestion: (state, action) => {
-      const { sectionPk, questionPk } = action.payload
-      const section = state.sections.find((s) => s.pk === sectionPk)
-      const questions = section.questions.filter((q) => q.pk !== questionPk)
-      const sections = state.sections.map((s) => (s.pk === sectionPk ? { ...s, questions } : s))
+      const { sectionIdx, questionIdx } = action.payload
+      const section = state.sections.find((s, i) => i === sectionIdx)
+      const questions = section.questions.filter((q, i) => i !== questionIdx)
+      const sections = state.sections.map((s, i) => (i === sectionIdx ? { ...s, questions } : s))
       return { ...state, sections }
     },
     editAnswer: (state, action) => {
       const {
-        sectionPk,
-        questionPk,
+        sectionIdx,
+        questionIdx,
         answer,
         question_type,
         page = undefined,
@@ -66,8 +66,8 @@ const surveySlice = createSlice({
       const answerObj = { text: answer, page }
       const newState = cloneDeep(state)
       const oldAnswer = newState.sections
-        .find((s) => s.pk === sectionPk)
-        .questions.find((q) => q.pk === questionPk).answer
+        .find((s, i) => i === sectionIdx)
+        .questions.find((q, i) => i === questionIdx).answer
       if (question_type === 'MULTIPLETEXT' && idx >= 0 && number_of_text) {
         if (oldAnswer.length) oldAnswer[idx] = answerObj
         else {
@@ -101,14 +101,14 @@ const surveySlice = createSlice({
       return { ...state, sections: newSections }
     },
     reorderQuestions: (state, action) => {
-      const { sectionPk, i, j } = action.payload
-      const section = { ...state.sections.find((section) => section.pk === sectionPk) }
+      const { sectionIdx, i, j } = action.payload
+      const section = { ...state.sections.find((_, i) => i === sectionIdx) }
       const questions = [...section.questions]
       const questionI = questions[i]
       questions[i] = questions[j]
       questions[j] = questionI
-      const sections = state.sections.map((oldSection) =>
-        oldSection.pk === sectionPk ? { ...section, questions } : { ...oldSection }
+      const sections = state.sections.map((oldSection, i) =>
+        i === sectionIdx ? { ...section, questions } : { ...oldSection }
       )
       return { ...state, sections }
     }
