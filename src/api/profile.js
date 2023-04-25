@@ -9,4 +9,20 @@ const editProfile = async (data) => {
   }
 }
 
-export { editProfile }
+const updateProfilePic = async (file) => {
+  try {
+    const formData = new FormData()
+    formData.set('image', file)
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+    const res = await api.patch(`/profile/`, formData, config)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
+export { editProfile, updateProfilePic }

@@ -7,7 +7,7 @@ import { PlusOutlined } from '@ant-design/icons'
 
 import { useForm } from 'antd/es/form/Form'
 import Input from 'antd/es/input/Input'
-import { editProfile } from '../api/profile'
+import { editProfile, updateProfilePic } from '../api/profile'
 import useMessage from 'antd/es/message/useMessage'
 import { setUser } from '../store/user/userSlice'
 
@@ -45,12 +45,21 @@ const Profile = () => {
     }
   }
 
+  const handleUpload = async (file) => {
+    try {
+      await updateProfilePic(file)
+    } catch (e) {
+      console.error(e)
+      messageApi.open({ type: 'error', content: e.message })
+    }
+  }
+
   return (
     <Row className="mt-5">
       {contextHolder}
       <Col span={8} offset={2}>
         <Row justify="center" className="mb-3">
-          <Image src={DefaultImage} width={100} style={{ borderRadius: '50%' }} />
+          <Image src={image || DefaultImage} width={100} style={{ borderRadius: '50%' }} />
         </Row>
         <Row className="mb-3">
           <Upload
@@ -58,7 +67,7 @@ const Profile = () => {
             maxCount={1}
             className="d-flex justify-content-center"
             accept="image/png, image/jpeg"
-            beforeUpload={() => false}>
+            beforeUpload={handleUpload}>
             <Button>Update profile picture</Button>
           </Upload>
         </Row>
