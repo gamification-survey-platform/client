@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import userSelector from '../store/user/selectors'
 import DefaultImage from '../assets/default.jpg'
 import { Upload, Row, Col, Form, Image, Button, Typography } from 'antd'
-import { PlusOutlined } from '@ant-design/icons'
 
 import { useForm } from 'antd/es/form/Form'
 import Input from 'antd/es/input/Input'
@@ -13,11 +12,9 @@ import { setUser } from '../store/user/userSlice'
 
 const Profile = () => {
   const user = useSelector(userSelector)
-  const [currentUser, setCurrentUser] = useState(user)
-  const [image, setImage] = useState()
   const [editing, setEditing] = useState(false)
   const [messageApi, contextHolder] = useMessage()
-  const { first_name, last_name, email, date_joined: unformattedDate } = currentUser
+  const { first_name, last_name, email, date_joined: unformattedDate } = user
   const dispatch = useDispatch()
   const [form] = useForm()
   const date_joined = new Date(unformattedDate).toLocaleDateString('en-us', {
@@ -47,21 +44,27 @@ const Profile = () => {
 
   const handleUpload = async (file) => {
     try {
-      await updateProfilePic(file)
+      const res = await updateProfilePic(file)
+      dispatch(setUser(res.data))
+      console.log(res.data)
     } catch (e) {
       console.error(e)
       messageApi.open({ type: 'error', content: e.message })
     }
+    return false
   }
-
   return (
     <Row className="mt-5">
       {contextHolder}
       <Col span={8} offset={2}>
         <Row justify="center" className="mb-3">
-          <Image src={image || DefaultImage} width={100} style={{ borderRadius: '50%' }} />
+          <Image
+            src={user && user.image ? user.image : DefaultImage}
+            width={100}
+            style={{ borderRadius: '50%' }}
+          />
         </Row>
-        <Row className="mb-3">
+        <Row className="mb-3" justify="center">
           <Upload
             showUploadList={false}
             maxCount={1}

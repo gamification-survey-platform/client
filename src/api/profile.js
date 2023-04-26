@@ -9,6 +9,15 @@ const editProfile = async (data) => {
   }
 }
 
+const getProfilePic = async (data) => {
+  try {
+    const res = await api.get('/profile/picture')
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
 const updateProfilePic = async (file) => {
   try {
     const formData = new FormData()
@@ -25,4 +34,4 @@ const updateProfilePic = async (file) => {
   }
 }
 
-export { editProfile, updateProfilePic }
+export { editProfile, getProfilePic, updateProfilePic }
