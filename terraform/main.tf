@@ -60,6 +60,17 @@ resource "aws_s3_bucket" "gamification_frontend_bucket" {
   )
 }
 
+resource "aws_s3_bucket_cors_configuration" "frontend_cors" {
+  bucket = aws_s3_bucket.gamification_frontend_bucket.id
+  cors_rule {
+    allowed_headers = ["*"]
+    allowed_methods = ["GET", "DELETE", "PUT", "POST"]
+    allowed_origins = ["http://gamification-frontend-bucket2023.s3-website-us-west-2.amazonaws.com"]
+    expose_headers  = ["ETag"]
+    max_age_seconds = 3000
+  }
+}
+
 # Create S3 bucket configuration for frontend
 resource "aws_s3_bucket_website_configuration" "gamification_frontend_bucket_config" {
   bucket = aws_s3_bucket.gamification_frontend_bucket.id
