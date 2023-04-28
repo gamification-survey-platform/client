@@ -2,10 +2,7 @@ import api from './apiUtils'
 
 const createCourse = async (courseData) => {
   try {
-    const res = await api.post(`courses/`, courseData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
-    return res
+    const res = await api.post(`courses/`, courseData)
   } catch (error) {
     throw new Error(error.response.data.error)
   }
@@ -13,9 +10,7 @@ const createCourse = async (courseData) => {
 
 const editCourse = async ({ course_id, course }) => {
   try {
-    const res = await api.put(`courses/${course_id}/`, course, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
+    const res = await api.put(`courses/${course_id}/`, course)
     return res
   } catch (error) {
     throw new Error(error.response.data.error)

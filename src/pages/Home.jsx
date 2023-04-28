@@ -31,37 +31,65 @@ const Home = () => {
   return spin ? (
     <Spinner show={spin} />
   ) : (
-    <Space direction="vertical" size="middle" align="center">
-      <Row gutter={16} justify="space-around" style={{ margin: '1rem' }}>
-        {courses.map((course, i) => {
-          return (
-            <Col key={i} span={8} className="gutter-row">
-              <Card
-                className="text-center"
-                cover={<Image src={DefaultImage} />}
-                style={{ width: 300 }}
-                key={i}>
-                <Space direction="vertical" size="middle" align="center">
-                  <Row justify="center" className="text-center">
-                    <p>{course.course_name}</p>
-                  </Row>
-                  <Row justify="center">
-                    <Link to={`/courses/${course.course_number}/details`}>
-                      <Button type="primary">Course Details</Button>
-                    </Link>
-                  </Row>
-                  <Row justify="center">
-                    <Link to={`/courses/${course.course_number}/assignments`}>
-                      <Button>Assignments</Button>
-                    </Link>
-                  </Row>
-                </Space>
-              </Card>
-            </Col>
-          )
-        })}
-      </Row>
-    </Space>
+    <Row>
+      <Col span={20}>
+            <Row gutter={10} justify="space-around" style={{ margin: '1rem' }}>
+              {courses.map((course, i) => {
+                return (
+                  <Col key={i} span={8} className="mx-3">
+                    <Card
+                      className="text-center"
+                      cover={<Image src={DefaultImage} />}
+                      style={{ width: 300 }}
+                      key={i}>
+                      <Space direction="vertical" size="middle" align="center">
+                        <Row justify="center" className="text-center">
+                          <p>{course.course_name}</p>
+                        </Row>
+                        <Row justify="center">
+                          <Link to={`/courses/${course.course_number}/details`}>
+                            <Button type="primary">Course Details</Button>
+                          </Link>
+                        </Row>
+                        <Row justify="center">
+                          <Link to={`/courses/${course.course_number}/assignments`}>
+                            <Button>Assignments</Button>
+                          </Link>
+                        </Row>
+                      </Space>
+                    </Card>
+                  </Col>
+                )
+              })}
+            </Row>
+      </Col>
+      <Col span={4}>
+        <Row>
+          Stuff
+        </Row>
+        <Row>
+          Stuff
+        </Row>
+        <Row>
+          Stuff
+        </Row>
+        <Row>
+          Stuff
+        </Row>
+        <Row>
+          Stuff
+        </Row>
+        <Row>
+          Stuff
+        </Row>
+        <Row>
+          Stuff
+        </Row>
+        <Row>
+          Stuff
+        </Row>
+      </Col>
+    </Row>
   )
 }
 

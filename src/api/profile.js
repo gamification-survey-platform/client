@@ -1,4 +1,5 @@
 import api from './apiUtils'
+import { uploadToS3 } from '../utils/s3helpers'
 
 const editProfile = async (data) => {
   try {
@@ -28,7 +29,13 @@ const updateProfilePic = async (file) => {
       }
     }
     const res = await api.patch(`/profile/`, formData, config)
-    return res
+    if (res.data && res.data.upload_url && res.data.upload_url.url && res.data.upload_url.fields) {
+      const { url, fields } = res.data.upload_url
+      const s3Res = await uploadToS3(url, 'POST', file, fields)
+      return s3Res
+    } else {
+      return res
+    }
   } catch (error) {
     throw new Error(error.response.data.error)
   }

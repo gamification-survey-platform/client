@@ -1,4 +1,5 @@
 import api from './apiUtils'
+import { uploadToS3 } from '../utils/s3helpers'
 
 const getCourseRewards = async ({ course_id }) => {
   try {
@@ -31,6 +32,10 @@ const addCourseReward = async ({ course_id, reward, picture }) => {
       }
     }
     const res = await api.post(`courses/${course_id}/rewards/`, formData, config)
+    if (res.data && res.data.upload_url && res.data.upload_url.url && res.data.upload_url.fields) {
+      const { url, fields } = res.data.upload_url
+      await uploadToS3(url, picture, fields)
+    }
     return res
   } catch (error) {
     throw new Error(error.response.data.error)

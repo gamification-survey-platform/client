@@ -46,7 +46,6 @@ const Profile = () => {
     try {
       const res = await updateProfilePic(file)
       dispatch(setUser(res.data))
-      console.log(res.data)
     } catch (e) {
       console.error(e)
       messageApi.open({ type: 'error', content: e.message })
