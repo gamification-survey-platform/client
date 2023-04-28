@@ -1,15 +1,18 @@
 import axios from 'axios'
 
-const uploadToS3 = async (url, file, fields) => {
-  const formData = new FormData()
-  for (const key in fields) {
-    formData.append(key, fields[key])
+const writeToS3 = async ({ url, fields = {}, method = 'POST', file = null }) => {
+  const axiosOptions = { method, url }
+  if (fields) {
+    const formData = new FormData()
+    for (const key in fields) {
+      formData.append(key, fields[key])
+    }
+    if (file) formData.append('file', file)
+    axiosOptions.data = formData
+    axiosOptions.headers = { 'Content-Type': 'multipart/form-data' }
   }
-  formData.append('file', file)
-  const res = await axios.post(url, formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  })
+  const res = await axios(axiosOptions)
   return res
 }
 
-export { uploadToS3 }
+export { writeToS3 }

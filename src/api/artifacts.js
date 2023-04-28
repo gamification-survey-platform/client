@@ -1,5 +1,5 @@
 import api from '../api/apiUtils'
-import { uploadToS3 } from '../utils/s3helpers'
+import { writeToS3 } from '../utils/s3helpers'
 
 const getUserArtifact = async ({ course_id, assignment_id }) => {
   try {
@@ -40,7 +40,7 @@ const submitArtifact = async ({ course_id, assignment_id, submission }) => {
     )
     if (res.data && res.data.upload_url && res.data.upload_url.url && res.data.upload_url.fields) {
       const { url, fields } = res.data.upload_url
-      const s3Res = await uploadToS3(url, submission, fields)
+      const s3Res = await writeToS3({ url, fields, method: 'POST', file: submission })
       return s3Res
     } else {
       return res

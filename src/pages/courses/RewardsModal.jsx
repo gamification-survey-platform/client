@@ -58,7 +58,10 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
           picture
         })
         if (resp.status === 200) {
-          const newRewards = rewards.map((r) => (r.pk === editingReward.pk ? { ...resp.data } : r))
+          const { upload_url, download_url, ...rest } = resp.data
+          const newRewards = rewards.map((r) =>
+            r.pk === editingReward.pk ? { ...rest, picture: download_url } : r
+          )
           setRewards(newRewards)
         }
       } else {
