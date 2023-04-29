@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const writeToS3 = async ({ url, fields = {}, method = 'POST', file = null }) => {
+const writeToS3 = async ({ url, fields = null, method = 'POST', file = null }) => {
   const axiosOptions = { method, url }
   if (fields) {
     const formData = new FormData()

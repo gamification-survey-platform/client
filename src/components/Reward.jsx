@@ -48,7 +48,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
         course_id: course.pk,
         reward_pk: pk
       })
-      if (res.status === 204) {
+      if (res.status === 200) {
         const newRewards = rewards.filter((r) => r.pk !== pk)
         setRewards(newRewards)
       }

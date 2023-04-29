@@ -55,8 +55,9 @@ const editCourseReward = async ({ course_id, reward_pk, reward, picture }) => {
       }
     }
     const res = await api.patch(`courses/${course_id}/rewards/${reward_pk}/`, formData, config)
-    if (res.data && res.data.upload_url) {
+    if (res.data && res.data.upload_url && res.data.delete_url) {
       const { fields, url } = res.data.upload_url
+      await writeToS3({ url: res.data.delete_url, method: 'DELETE' })
       await writeToS3({ url, fields, file: picture, method: 'POST' })
     }
     return res
@@ -68,9 +69,7 @@ const editCourseReward = async ({ course_id, reward_pk, reward, picture }) => {
 const deleteCourseReward = async ({ course_id, reward_pk }) => {
   try {
     const res = await api.delete(`courses/${course_id}/rewards/${reward_pk}`)
-    console.log(res)
     if (res.data && res.data.delete_url) {
-      console.log('deleting')
       await writeToS3({ url: res.data.delete_url, method: 'DELETE' })
     }
     return res
