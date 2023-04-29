@@ -29,13 +29,12 @@ const updateProfilePic = async (file) => {
       }
     }
     const res = await api.patch(`/profile/`, formData, config)
-    if (res.data && res.data.upload_url && res.data.upload_url.url && res.data.upload_url.fields) {
+    if (res.data && res.data.upload_url && res.data.delete_url) {
       const { url, fields } = res.data.upload_url
-      const s3Res = await writeToS3({ url, method: 'POST', file, fields })
-      return s3Res
-    } else {
-      return res
+      await writeToS3({ url: res.data.delete_url, method: 'DELETE' })
+      await writeToS3({ url, method: 'POST', file, fields })
     }
+    return res
   } catch (error) {
     throw new Error(error.response.data.error)
   }

@@ -45,7 +45,15 @@ const Profile = () => {
   const handleUpload = async (file) => {
     try {
       const res = await updateProfilePic(file)
-      dispatch(setUser(res.data))
+      console.log('here', res.data)
+      const { upload_url = null, download_url = null, delete_url = null, ...rest } = res.data
+      console.log(res.data)
+      if (download_url) {
+        const image = `${download_url}&timestamp=${Date.now()}`
+        dispatch(setUser({ ...rest, image }))
+      } else {
+        dispatch(setUser(res.data))
+      }
     } catch (e) {
       console.error(e)
       messageApi.open({ type: 'error', content: e.message })

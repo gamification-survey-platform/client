@@ -58,11 +58,18 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
           picture
         })
         if (resp.status === 200) {
-          const { upload_url, download_url, ...rest } = resp.data
-          const newRewards = rewards.map((r) =>
-            r.pk === editingReward.pk ? { ...rest, picture: download_url } : r
-          )
-          setRewards(newRewards)
+          const { upload_url = null, download_url = null, ...rest } = resp.data
+          if (download_url) {
+            const newRewards = rewards.map((r) =>
+              r.pk === editingReward.pk ? { ...rest, picture: download_url } : r
+            )
+            setRewards(newRewards)
+          } else {
+            const newRewards = rewards.map((r) =>
+              r.pk === editingReward.pk ? { ...resp.data } : r
+            )
+            setRewards(newRewards)
+          }
         }
       } else {
         const reward = form.getFieldsValue()
