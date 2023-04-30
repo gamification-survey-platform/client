@@ -9,6 +9,15 @@ const getArtifactReviews = async ({ course_id, assignment_id }) => {
   }
 }
 
+const getUserArtifactReviews = async () => {
+  try {
+    const res = await api.get(`artifact_reviews/`)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
 const getArtifactReview = async ({ course_id, assignment_id, review_id }) => {
   try {
     const res = await api.get(
@@ -47,4 +56,10 @@ const submitArtifactReviewExp = async ({ course_id, assignment_id, review_id }) 
   }
 }
 
-export { getArtifactReviews, getArtifactReview, saveArtifactReview, submitArtifactReviewExp }
+export {
+  getArtifactReviews,
+  getUserArtifactReviews,
+  getArtifactReview,
+  saveArtifactReview,
+  submitArtifactReviewExp
+}
