@@ -15,6 +15,7 @@ import { getArtifactReviews } from '../../api/artifactReview'
 import Spinner from '../../components/Spinner'
 import { setUser } from '../../store/user/userSlice'
 import StudentReviewsList from '../../components/StudentReviewsList'
+import StaffArtifactReviewList from '../../components/StaffArtifactReviewList'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
@@ -138,30 +139,40 @@ const AssignmentDetails = () => {
       </Row>
       <Divider />
       <Row>
-        <Col xs="3">
-          {!user.is_staff && (
-            <Space direction="vertical" className="mt-3">
-              <Row>
-                {assignment.submission_type === 'URL' && <FileSubmission {...submissionProps} />}
-                {assignment.submission_type === 'File' && <FileSubmission {...submissionProps} />}
-                {assignment.submission_type === 'Text' && <FileSubmission {...submissionProps} />}
-              </Row>
-              {artifact && (
-                <Row className="text-center">
-                  <Link
-                    to={`/courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact.artifact_pk}/reports`}>
-                    <Button type="primary">View Reports</Button>
-                  </Link>
-                </Row>
-              )}
-            </Space>
-          )}
-        </Col>
-        {artifact && (
+        {user.is_staff ? (
+          <StaffArtifactReviewList />
+        ) : (
           <>
-            <Col xs="2">
-              <PdfPreview artifact={artifact} />
+            <Col span={3}>
+              {!user.is_staff && (
+                <Space direction="vertical" className="mt-3">
+                  <Row>
+                    {assignment.submission_type === 'URL' && (
+                      <FileSubmission {...submissionProps} />
+                    )}
+                    {assignment.submission_type === 'File' && (
+                      <FileSubmission {...submissionProps} />
+                    )}
+                    {assignment.submission_type === 'Text' && (
+                      <FileSubmission {...submissionProps} />
+                    )}
+                  </Row>
+                  {artifact && (
+                    <Row className="text-center">
+                      <Link
+                        to={`/courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact.artifact_pk}/reports`}>
+                        <Button type="primary">View Reports</Button>
+                      </Link>
+                    </Row>
+                  )}
+                </Space>
+              )}
             </Col>
+            {artifact && (
+              <Col span={2} offset={4}>
+                <PdfPreview artifact={artifact} />
+              </Col>
+            )}
           </>
         )}
       </Row>
