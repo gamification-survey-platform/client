@@ -14,6 +14,7 @@ import PdfPreview from './PdfPreview'
 import { getArtifactReviews } from '../../api/artifactReview'
 import Spinner from '../../components/Spinner'
 import { setUser } from '../../store/user/userSlice'
+import StudentReviewsList from '../../components/StudentReviewsList'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
@@ -22,9 +23,7 @@ const AssignmentDetails = () => {
   const [userRole, setUserRole] = useState()
   const [artifact, setArtifact] = useState()
   const [spin, setSpin] = useState(false)
-  const [completedArtifactReviews, setCompletedArtifactReviews] = useState([])
-  const [pendingArtifactReviews, setPendingArtifactReviews] = useState([])
-  const [lateArtifactReviews, setLateArtifactReviews] = useState([])
+  const [artifactReviews, setArtifactReviews] = useState([])
   const [submission, setSubmission] = useState()
   const [assignment, setAssignment] = useState({
     assignment_name: '',
@@ -45,9 +44,7 @@ const AssignmentDetails = () => {
   const fetchArtifactReviews = async () => {
     const res = await getArtifactReviews({ course_id: selectedCourse.pk, assignment_id })
     if (res.status === 200) {
-      setPendingArtifactReviews(res.data.filter((r) => r.status === 'INCOMPLETE'))
-      setCompletedArtifactReviews(res.data.filter((r) => r.status === 'COMPLETE'))
-      setLateArtifactReviews(res.data.filter((r) => r.status === 'LATE'))
+      setArtifactReviews(res.data)
     } else messageApi.open({ type: 'error', content: 'Failed to fetch artifact reviews.' })
   }
 
@@ -137,48 +134,7 @@ const AssignmentDetails = () => {
           <Divider />
           <Typography.Text>{assignment.description}</Typography.Text>
         </Col>
-        <Col span={6} offset={1}>
-          {!user.is_staff && (
-            <Space direction="vertical" size="middle" className="text-center">
-              <Typography.Title level={5}>Completed Surveys</Typography.Title>
-              {completedArtifactReviews.map((review) => {
-                return (
-                  <Link
-                    key={review.id}
-                    to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
-                    <Tag role="button" color="green" style={tagStyles}>
-                      {review.reviewing}
-                    </Tag>
-                  </Link>
-                )
-              })}
-              <Typography.Title level={5}>Pending Surveys</Typography.Title>
-              {pendingArtifactReviews.map((review) => {
-                return (
-                  <Link
-                    key={review.id}
-                    to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
-                    <Tag role="button" color="gold" style={tagStyles}>
-                      {review.reviewing}
-                    </Tag>
-                  </Link>
-                )
-              })}
-              <Typography.Title level={5}>Late Surveys</Typography.Title>
-              {lateArtifactReviews.map((review, i) => {
-                return (
-                  <Link
-                    key={review.id}
-                    to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
-                    <Tag role="button" color="volcano" style={tagStyles}>
-                      {review.reviewing}
-                    </Tag>
-                  </Link>
-                )
-              })}
-            </Space>
-          )}
-        </Col>
+        {user.is_staff ? null : <StudentReviewsList artifactReviews={artifactReviews} />}
       </Row>
       <Divider />
       <Row>

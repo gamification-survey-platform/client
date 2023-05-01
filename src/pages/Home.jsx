@@ -7,8 +7,9 @@ import { setCourses } from '../store/courses/coursesSlice'
 import coursesSelector from '../store/courses/selectors'
 import { getUserCourses } from '../api/courses'
 import { getUserArtifactReviews } from '../api/artifactReview'
-import { Space, Row, Col, Card, Image, Button, Typography, Tag } from 'antd'
+import { Space, Row, Col, Card, Image, Button } from 'antd'
 import Spinner from '../components/Spinner'
+import StudentReviewsList from '../components/StudentReviewsList'
 
 const Home = () => {
   const user = useSelector(userSelector)
@@ -38,18 +39,11 @@ const Home = () => {
     loadData()
   }, [])
 
-  const pendingReviews = artifactReviews.filter((r) => r.status === 'INCOMPLETE')
-  const lateReviews = artifactReviews.filter((r) => r.status === 'LATE')
-  const tagStyles = {
-    borderWidth: 'medium',
-    fontWeight: 'bold'
-  }
-
   return spin ? (
     <Spinner show={spin} />
   ) : (
     <Row>
-      <Col span={18}>
+      <Col span={user.is_staff ? 24 : 17}>
         <Row gutter={10} justify="space-around" style={{ margin: '1rem' }}>
           {courses.map((course, i) => {
             return (
@@ -80,37 +74,9 @@ const Home = () => {
           })}
         </Row>
       </Col>
-      <Col span={6} className="border-left p-5 my-3">
-        <Space direction="vertical" size="middle" className="text-center">
-          <Typography.Title level={5}>Pending Surveys</Typography.Title>
-          {pendingReviews.map((review) => {
-            const { course_id, assignment_id } = review
-            console.log(review)
-            return (
-              <Link
-                key={review.id}
-                to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
-                <Tag role="button" color="gold" style={tagStyles}>
-                  {review.reviewing}
-                </Tag>
-              </Link>
-            )
-          })}
-          <Typography.Title level={5}>Late Surveys</Typography.Title>
-          {lateReviews.map((review, i) => {
-            const { course_id, assignment_id } = review
-            return (
-              <Link
-                key={review.id}
-                to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
-                <Tag role="button" color="volcano" style={tagStyles}>
-                  {review.reviewing}
-                </Tag>
-              </Link>
-            )
-          })}
-        </Space>
-      </Col>
+      {user.is_staff ? null : (
+        <StudentReviewsList artifactReviews={artifactReviews} showCompleted={false} />
+      )}
     </Row>
   )
 }
