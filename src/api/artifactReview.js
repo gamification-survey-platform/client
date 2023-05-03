@@ -1,5 +1,30 @@
 import api from '../api/apiUtils'
 
+const assignArtifactReview = async ({ course_id, assignment_id, reviewee, reviewer }) => {
+  try {
+    const res = await api.post(
+      `courses/${course_id}/assignments/${assignment_id}/artifact_reviews/`,
+      { reviewee, reviewer }
+    )
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
+const unassignArtifactReview = async ({ course_id, assignment_id, artifact_review_id }) => {
+  console.log(course_id, assignment_id, artifact_review_id)
+  try {
+    const res = await api.delete(
+      `courses/${course_id}/assignments/${assignment_id}/artifact_reviews/`,
+      { data: { artifact_review_id } }
+    )
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
 const getArtifactReviews = async ({ course_id, assignment_id }) => {
   try {
     const res = await api.get(`courses/${course_id}/assignments/${assignment_id}/artifact_reviews/`)
@@ -61,5 +86,7 @@ export {
   getUserArtifactReviews,
   getArtifactReview,
   saveArtifactReview,
-  submitArtifactReviewExp
+  submitArtifactReviewExp,
+  assignArtifactReview,
+  unassignArtifactReview
 }

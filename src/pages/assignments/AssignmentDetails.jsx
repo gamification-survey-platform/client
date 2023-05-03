@@ -16,6 +16,7 @@ import Spinner from '../../components/Spinner'
 import { setUser } from '../../store/user/userSlice'
 import StudentReviewsList from '../../components/StudentReviewsList'
 import StaffArtifactReviewList from '../../components/StaffArtifactReviewList'
+import StaffSubmissionList from '../../components/StaffSubmissionList'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
@@ -135,7 +136,11 @@ const AssignmentDetails = () => {
           <Divider />
           <Typography.Text>{assignment.description}</Typography.Text>
         </Col>
-        {user.is_staff ? null : <StudentReviewsList artifactReviews={artifactReviews} />}
+        {user.is_staff ? (
+          <StaffSubmissionList />
+        ) : (
+          <StudentReviewsList artifactReviews={artifactReviews} />
+        )}
       </Row>
       <Divider />
       <Row>

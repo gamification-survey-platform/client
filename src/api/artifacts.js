@@ -13,10 +13,7 @@ const getUserArtifact = async ({ course_id, assignment_id }) => {
 const getArtifact = async ({ course_id, assignment_id, artifact_pk }) => {
   try {
     const res = await api.get(
-      `courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact_pk}`,
-      {
-        responseType: 'arraybuffer'
-      }
+      `courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact_pk}`
     )
     return res
   } catch (error) {

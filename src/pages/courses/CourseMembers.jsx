@@ -14,7 +14,7 @@ import {
   Space
 } from 'antd'
 import { useParams } from 'react-router'
-import { addMember, getMembers, remindMember, removeMember } from '../../api/members'
+import { addMember, getMembers, removeMember } from '../../api/members'
 import { UploadOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import coursesSelector from '../../store/courses/selectors'
 import { useForm } from 'antd/es/form/Form'

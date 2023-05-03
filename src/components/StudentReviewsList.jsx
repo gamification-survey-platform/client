@@ -1,6 +1,6 @@
 import { Space, Col, Typography, Tag } from 'antd'
 import { Link } from 'react-router-dom'
-import styles from '../styles/StudentReviewsList.module.css'
+import styles from '../styles/ReviewsList.module.css'
 
 const ReviewList = ({ title, color, reviews }) => (
   <>
