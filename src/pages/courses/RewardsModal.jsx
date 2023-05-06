@@ -115,7 +115,6 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
             options={[
               { value: 'Bonus', label: 'Bonus' },
               { value: 'Late Submission', label: 'Late Submission' },
-              { value: 'Theme', label: 'Theme (System level)' },
               { value: 'Other', label: 'Other' }
             ]}></Select>
         </Form.Item>
@@ -133,7 +132,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
         </Form.Item>
         <Form.Item
           label="Cost"
-          name="exp_points"
+          name="points"
           rules={[
             {
               required: true,
@@ -176,6 +175,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
             <Upload
               accept="image/png, image/jpeg"
               maxCount={1}
+              valuePropName="fileList"
               beforeUpload={(file) => {
                 setPicture(file)
                 setShowOldImage(false)

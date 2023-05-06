@@ -9,7 +9,7 @@ import userSelector from '../store/user/selectors'
 import RewardsModal from '../pages/courses/RewardsModal'
 import { deleteCourseReward, purchaseCourseReward } from '../api/rewards'
 import coursesSelector from '../store/courses/selectors'
-import { setUser } from '../store/user/userSlice'
+import { addCoursePoints } from '../store/courses/coursesSlice'
 
 const Cover = ({ type, picture }) => {
   if (type === 'Other' && picture) {
@@ -18,8 +18,6 @@ const Cover = ({ type, picture }) => {
     return <Image preview={false} src={Calendar} className="p-5" />
   } else if (type === 'Bonus') {
     return <Image preview={false} src={TreasureChest} className="p-5" />
-  } else if (type === 'Theme') {
-    return <Image preview={false} src={Computer} className="p-5" />
   }
   return null
 }
@@ -33,14 +31,14 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
     inventory,
     is_active,
     type,
-    exp_points,
+    points,
     picture = null
   } = reward
   const dispatch = useDispatch()
   const courses = useSelector(coursesSelector)
   const course = courses.find(({ course_name }) => course_name === belong_to)
   const user = useSelector(userSelector)
-  const { exp_points: userExpPoints } = user
+  const { points: userPoints } = course
   const [open, setOpen] = useState(false)
   const deleteReward = async () => {
     try {
@@ -67,7 +65,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
         const newRewards = rewards.filter((r) => r.pk !== pk)
         const newInventory = inventory === 'Unlimited' ? 'Unlimited' : inventory - 1
         setRewards([...newRewards, { ...reward, inventory: newInventory }])
-        dispatch(setUser({ ...user, exp_points: userExpPoints - exp_points }))
+        dispatch(addCoursePoints({ course_id: course.pk, points: userPoints - points }))
       }
     } catch (e) {
       console.error(e)
@@ -83,7 +81,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
         <p>{belong_to}</p>
         <strong>Description:</strong>
         <p>{description}</p>
-        <strong>Cost: {exp_points}</strong>
+        <strong>Cost: {points}</strong>
         <Divider />
         <strong className="text-success">{inventory} remaining</strong>
       </div>
@@ -113,7 +111,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
             <Button
               type="primary"
               onClick={purchaseReward}
-              disabled={userExpPoints < exp_points || !is_active || inventory === 0}
+              disabled={userPoints < points || !is_active || inventory === 0}
               className="m-1">
               Purchase
             </Button>

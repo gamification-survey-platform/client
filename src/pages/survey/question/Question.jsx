@@ -31,25 +31,33 @@ const SlideReview = (props) => {
   )
 }
 
-const MultipleChoice = ({ pk, option_choices, answer, sectionPk, question_type, is_required }) => {
+const MultipleChoice = ({
+  sectionIdx,
+  questionIdx,
+  option_choices,
+  answer,
+  question_type,
+  is_required
+}) => {
+  const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
-  const value = Form.useWatch(pk, form)
+  const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
 
   useEffect(() => {
     if (answer && answer.length) {
-      form.setFieldValue(pk, answer[0].text)
+      form.setFieldValue(name, answer[0].text)
     }
   }, [answer])
 
   useEffect(() => {
     if (answer && value)
-      dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+      dispatch(editAnswer({ questionIdx, sectionIdx, answer: value, question_type }))
   }, [value])
   const ticks = option_choices.reduce((acc, el, i) => ({ ...acc, [i]: el.text }), {})
   return (
     <Form.Item
-      name={pk}
+      name={name}
       rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       {/* <Slider marks={ticks} max={option_choices.length - 1} tooltip={{ open: false }} /> */}
       <Select
@@ -62,25 +70,26 @@ const MultipleChoice = ({ pk, option_choices, answer, sectionPk, question_type, 
   )
 }
 
-const MultipleChoiceScale = ({ pk, sectionPk, answer, question_type, is_required }) => {
+const MultipleChoiceScale = ({ sectionIdx, questionIdx, answer, question_type, is_required }) => {
+  const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
-  const value = Form.useWatch(pk, form)
+  const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
 
   useEffect(() => {
     if (answer && answer.length) {
-      form.setFieldValue(pk, answer[0].text)
+      form.setFieldValue(name, answer[0].text)
     }
   }, [answer])
 
   useEffect(() => {
     if (answer && value)
-      dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+      dispatch(editAnswer({ questionIdx, sectionIdx, answer: value, question_type }))
   }, [value])
 
   return (
     <Form.Item
-      name={pk}
+      name={name}
       rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       <Select
         options={[...Array(10)].map((_, i) => ({
@@ -92,24 +101,25 @@ const MultipleChoiceScale = ({ pk, sectionPk, answer, question_type, is_required
   )
 }
 
-const FixedText = ({ pk, sectionPk, answer, question_type, is_required }) => {
+const FixedText = ({ sectionIdx, questionIdx, answer, question_type, is_required }) => {
+  const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
-  const value = Form.useWatch(pk, form)
+  const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
   useEffect(() => {
     if (answer && answer.length) {
-      form.setFieldValue(pk, answer[0].text)
+      form.setFieldValue(name, answer[0].text)
     }
   }, [answer])
 
   useEffect(() => {
     if (answer && value)
-      dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+      dispatch(editAnswer({ sectionIdx, questionIdx, answer: value, question_type }))
   }, [value])
 
   return (
     <Form.Item
-      name={pk}
+      name={name}
       rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       <Input />
     </Form.Item>
@@ -117,28 +127,29 @@ const FixedText = ({ pk, sectionPk, answer, question_type, is_required }) => {
 }
 
 const MultiLineField = ({
-  pk,
-  sectionPk,
+  sectionIdx,
+  questionIdx,
   question_type,
   idx,
   answer,
   number_of_text,
   is_required
 }) => {
+  const name = `${sectionIdx}-${questionIdx}-${idx}`
   const form = useFormInstance()
-  const value = Form.useWatch(`${pk}-${idx}`, form)
+  const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
   useEffect(() => {
     if (answer && idx < answer.length) {
-      form.setFieldValue(`${pk}-${idx}`, answer[idx].text)
+      form.setFieldValue(name, answer[idx].text)
     }
   }, [answer])
   useEffect(() => {
     if (answer && value)
       dispatch(
         editAnswer({
-          questionPk: pk,
-          sectionPk,
+          questionIdx,
+          sectionIdx,
           answer: value,
           question_type,
           idx,
@@ -149,7 +160,7 @@ const MultiLineField = ({
 
   return (
     <Form.Item
-      name={`${pk}-${idx}`}
+      name={name}
       rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       <Input />
     </Form.Item>
@@ -168,24 +179,25 @@ const MultiLineText = (props) => {
   )
 }
 
-const TextArea = ({ pk, sectionPk, answer, question_type, is_required }) => {
+const TextArea = ({ sectionIdx, questionIdx, answer, question_type, is_required }) => {
+  const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
-  const value = Form.useWatch(pk, form)
+  const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
   useEffect(() => {
     if (answer && answer.length) {
-      form.setFieldValue(pk, answer[0].text)
+      form.setFieldValue(name, answer[0].text)
     }
   }, [answer])
 
   useEffect(() => {
     if (answer && value)
-      dispatch(editAnswer({ questionPk: pk, sectionPk, answer: value, question_type }))
+      dispatch(editAnswer({ sectionIdx, questionIdx, answer: value, question_type }))
   }, [value])
 
   return (
     <Form.Item
-      name={pk}
+      name={name}
       rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       <Input.TextArea rows={4} />
     </Form.Item>

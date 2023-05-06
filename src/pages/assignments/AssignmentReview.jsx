@@ -18,6 +18,7 @@ import userSelector from '../../store/user/selectors'
 import { setUser } from '../../store/user/userSlice'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import { addCoursePoints } from '../../store/courses/coursesSlice'
 
 const AssignmentReview = () => {
   const { course_id, assignment_id, review_id } = useParams()
@@ -31,15 +32,15 @@ const AssignmentReview = () => {
   const courses = useSelector(coursesSelector)
   const survey = useSelector(surveySelector)
 
-  const selectedCourse = courses.find((course) => course.course_number === course_id)
   const navigate = useNavigate()
 
   useEffect(() => {
+    console.log('fetch review')
     const fetchReview = async () => {
       setSpin(true)
       try {
         const res = await getArtifactReview({
-          course_id: selectedCourse.pk,
+          course_id,
           assignment_id: assignment_id,
           review_id
         })
@@ -48,7 +49,7 @@ const AssignmentReview = () => {
           const { artifact_pk } = res.data
           if (artifact_pk) {
             const artifactRes = await getArtifact({
-              course_id: selectedCourse.pk,
+              course_id,
               assignment_id: assignment_id,
               artifact_pk
             })
@@ -58,7 +59,8 @@ const AssignmentReview = () => {
           }
         }
       } catch (e) {
-        messageApi.open({ type: 'error', content: `Failed to fetch survey.` })
+        console.log(e)
+        messageApi.open({ type: 'error', content: `Failed to fetch review. ${e.message}` })
       }
       setSpin(false)
     }
@@ -96,23 +98,17 @@ const AssignmentReview = () => {
             }
           })
         })
-        const saveReviewRes = await saveArtifactReview({
-          course_id: selectedCourse.pk,
+        const res = await saveArtifactReview({
+          course_id,
           assignment_id: assignment_id,
           review_id,
           review
         })
-        if (saveReviewRes.status === 200) {
-          const saveExpRes = await submitArtifactReviewExp({
-            course_id: selectedCourse.pk,
-            assignment_id: assignment_id,
-            review_id
-          })
-          if (saveExpRes.status === 200) {
-            const { exp, points: exp_points, level } = saveExpRes.data
-            dispatch(setUser({ ...user, exp, exp_points, level }))
-            navigate(-1)
-          }
+        if (res.status === 200) {
+          const { exp, level, next_exp_level, points } = res.data
+          dispatch(setUser({ ...user, exp, level, next_exp_level }))
+          dispatch(addCoursePoints({ course_id, points }))
+          navigate(-1)
         }
       } catch (e) {
         console.error(e)
@@ -139,39 +135,50 @@ const AssignmentReview = () => {
     })
   }
 
-  return spin ? (
-    <Spinner show={spin} />
-  ) : (
-    <DndProvider backend={HTML5Backend}>
-      <Form form={form} className="m-5" onFieldsChange={setProgress}>
-        {contextHolder}
-        <div
-          style={{ position: 'fixed', top: '10%', right: 0, zIndex: 1, width: 300, height: 300 }}>
-          <ChartWrapper type="progressBar" data={progressData} />
-        </div>
-        <Row justify="space-between">
-          <Col span={14}>
-            <div>
-              <Typography.Title level={2}>{survey.name}</Typography.Title>
-              <Typography.Title level={4}>{survey.instructions}</Typography.Title>
-              <Typography.Title level={4}>{survey.other_info}</Typography.Title>
+  return (
+    <>
+      {contextHolder}
+      {spin ? (
+        <Spinner show={spin} />
+      ) : (
+        <DndProvider backend={HTML5Backend}>
+          <Form form={form} className="m-5 w-75" onFieldsChange={setProgress}>
+            <div
+              style={{
+                position: 'fixed',
+                top: '10%',
+                right: 0,
+                zIndex: 1,
+                width: 300,
+                height: 300
+              }}>
+              <ChartWrapper type="progressBar" data={progressData} />
             </div>
-          </Col>
-        </Row>
-        {
-          <>
-            {survey.sections.map((_, i) => (
-              <Section key={i} sectionIdx={i} artifact={artifact} />
-            ))}
-            <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
-              <Button type="primary" onClick={handleSaveReview}>
-                Submit Review
-              </Button>
-            </div>
-          </>
-        }
-      </Form>
-    </DndProvider>
+            <Row justify="space-between">
+              <Col span={14}>
+                <div>
+                  <Typography.Title level={2}>{survey.name}</Typography.Title>
+                  <Typography.Title level={4}>{survey.instructions}</Typography.Title>
+                  <Typography.Title level={4}>{survey.other_info}</Typography.Title>
+                </div>
+              </Col>
+            </Row>
+            {
+              <>
+                {survey.sections.map((_, i) => (
+                  <Section key={i} sectionIdx={i} artifact={artifact} />
+                ))}
+                <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
+                  <Button type="primary" onClick={handleSaveReview}>
+                    Submit Review
+                  </Button>
+                </div>
+              </>
+            }
+          </Form>
+        </DndProvider>
+      )}
+    </>
   )
 }
 

@@ -9,7 +9,7 @@ import { FileSubmission } from './Submission'
 import { Link } from 'react-router-dom'
 import 'react-pdf/dist/esm/Page/TextLayer.css'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
-import { getUserArtifact, submitArtifact, submitArtifactExp } from '../../api/artifacts'
+import { getUserArtifact, submitArtifact } from '../../api/artifacts'
 import PdfPreview from './PdfPreview'
 import { getArtifactReviews } from '../../api/artifactReview'
 import Spinner from '../../components/Spinner'
@@ -17,6 +17,7 @@ import { setUser } from '../../store/user/userSlice'
 import StudentReviewsList from '../../components/StudentReviewsList'
 import StaffArtifactReviewList from '../../components/StaffArtifactReviewList'
 import StaffSubmissionList from '../../components/StaffSubmissionList'
+import { addCoursePoints } from '../../store/courses/coursesSlice'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
@@ -79,24 +80,22 @@ const AssignmentDetails = () => {
     e.preventDefault()
     e.stopPropagation()
     try {
-      const submitArtifactRes = await submitArtifact({
+      const res = await submitArtifact({
         course_id: selectedCourse.pk,
         assignment_id,
         submission
       })
+      console.log('submitted assignment', res.data)
+      console.log(res, res.status)
       messageApi.open({ type: 'success', content: 'Successfully submitted assignment.' })
+      if (res.status === 201) {
+        console.log('res', res.data)
+        const { exp, points } = res.data
+        dispatch(setUser({ ...user, exp }))
+        dispatch(addCoursePoints({ course_id: selectedCourse.pk, points }))
+      }
       await fetchArtifact()
       setSubmission()
-      if (submitArtifactRes.status === 201) {
-        const submitArtifactExpRes = await submitArtifactExp({
-          course_id: selectedCourse.pk,
-          assignment_id
-        })
-        if (submitArtifactExpRes.status === 200) {
-          const { exp, points: exp_points, level } = submitArtifactExpRes.data
-          dispatch(setUser({ ...user, exp, exp_points, level }))
-        }
-      }
     } catch (e) {
       console.error(e)
       messageApi.open({ type: 'error', content: e.message })

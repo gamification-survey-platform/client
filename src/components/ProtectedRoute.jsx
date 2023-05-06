@@ -5,7 +5,7 @@ import userSelector from '../store/user/selectors'
 
 const ProtectedRoute = ({ redirectPath = '/', children }) => {
   const loggedInUser = useSelector(userSelector)
-
+  console.log('logged in user', loggedInUser)
   if (!loggedInUser) {
     return <Navigate to={redirectPath} />
   }

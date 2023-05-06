@@ -29,7 +29,9 @@ const Home = () => {
       }
       try {
         const res = await getUserArtifactReviews(user.andrew_id)
-        if (res.status === 200) setArtifactReviews(res.data)
+        if (res.status === 200) {
+          setArtifactReviews(res.data)
+        }
       } catch (e) {
         console.error(e.message)
       }

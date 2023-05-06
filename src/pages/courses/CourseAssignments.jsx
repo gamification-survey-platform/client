@@ -8,6 +8,7 @@ import coursesSelector from '../../store/courses/selectors'
 import userSelector from '../../store/user/selectors'
 import { LinkContainer } from 'react-router-bootstrap'
 import Spinner from '../../components/Spinner'
+import dayjs from 'dayjs'
 
 const CourseAssignments = () => {
   const location = useLocation()
@@ -20,19 +21,28 @@ const CourseAssignments = () => {
   const [assignments, setAssignments] = useState([])
 
   const dataSource = assignments.map((assignment, i) => {
-    const date_due = new Date(assignment.date_due).toLocaleDateString('en-us', {
+    const dateOptions = {
       weekday: 'long',
       year: 'numeric',
       month: 'short',
       day: 'numeric'
-    })
-    const date_released = new Date(assignment.date_released).toLocaleDateString('en-us', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    })
-    return { ...assignment, key: i, date_due, date_released }
+    }
+    const timeOptions = {
+      hour: '2-digit',
+      minute: '2-digit'
+    }
+
+    const date_released_formatted = `${new Date(assignment.date_released).toLocaleDateString(
+      'en-us',
+      dateOptions
+    )} ${new Date(assignment.date_released).toLocaleTimeString('en-US', timeOptions)}`
+
+    const date_due_formatted = `${new Date(assignment.date_due).toLocaleDateString(
+      'en-us',
+      dateOptions
+    )} ${new Date(assignment.date_due).toLocaleTimeString('en-US', timeOptions)}`
+
+    return { ...assignment, key: i, date_due_formatted, date_released_formatted }
   })
 
   let columns = [
@@ -49,19 +59,30 @@ const CourseAssignments = () => {
       key: 'assignment_type'
     },
     { title: 'Total Score', dataIndex: 'total_score', align: 'center', key: 'total_score' },
-    { title: 'Release Date', dataIndex: 'date_released', align: 'center', key: 'date_released' },
-    { title: 'Due Date', dataIndex: 'date_due', align: 'center', key: 'date_due' },
+    {
+      title: 'Release Date',
+      dataIndex: 'date_released_formatted',
+      align: 'center',
+      key: 'date_released'
+    },
+    { title: 'Due Date', dataIndex: 'date_due_formatted', align: 'center', key: 'date_due' },
     {
       title: '',
       dataIndex: 'view',
       key: 'view',
       render: (_, assignment) => {
-        return (
+        const now = dayjs()
+        const dayjsRelease = dayjs(assignment.date_released)
+        // const isReleased = dayjsRelease.isBefore(now) || selectedCourse.user_role === 'Instructor'
+        const isReleased = true
+        return isReleased ? (
           <LinkContainer to={`${location.pathname}/${assignment.id}/view`}>
             <Tag color="blue" role="button">
               View
             </Tag>
           </LinkContainer>
+        ) : (
+          <Tag color="grey">View</Tag>
         )
       }
     }

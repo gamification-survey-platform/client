@@ -37,8 +37,8 @@ const submitArtifact = async ({ course_id, assignment_id, submission }) => {
     )
     if (res.data && res.data.upload_url && res.data.upload_url.url && res.data.upload_url.fields) {
       const { url, fields } = res.data.upload_url
-      const s3Res = await writeToS3({ url, fields, method: 'POST', file: submission })
-      return s3Res
+      await writeToS3({ url, fields, method: 'POST', file: submission })
+      return res
     } else {
       return res
     }
@@ -47,17 +47,4 @@ const submitArtifact = async ({ course_id, assignment_id, submission }) => {
   }
 }
 
-const submitArtifactExp = async ({ course_id, assignment_id }) => {
-  try {
-    const res = await api.patch('/exp/', {
-      operation: 'assignment',
-      method: 'POST',
-      api: `courses/${course_id}/assignments/${assignment_id}/artifacts/`
-    })
-    return res
-  } catch (error) {
-    throw new Error(error.response.data.error)
-  }
-}
-
-export { getUserArtifact, getArtifact, submitArtifact, submitArtifactExp }
+export { getUserArtifact, getArtifact, submitArtifact }

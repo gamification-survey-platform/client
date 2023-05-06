@@ -37,8 +37,8 @@ const AddSurvey = () => {
         assignment_id,
         survey: {
           ...fields,
-          date_due: date_due.format('MM/DD/YYYY hh:mm'),
-          date_released: date_released.format('MM/DD/YYYY hh:mm')
+          date_due: new Date(date_due.format('MM/DD/YYYY hh:mm')),
+          date_released: new Date(date_released.format('MM/DD/YYYY hh:mm'))
         }
       }
       const res = await createSurvey(surveyData)

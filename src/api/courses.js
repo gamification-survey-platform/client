@@ -3,6 +3,7 @@ import api from './apiUtils'
 const createCourse = async (courseData) => {
   try {
     const res = await api.post(`courses/`, courseData)
+    return res
   } catch (error) {
     throw new Error(error.response.data.error)
   }

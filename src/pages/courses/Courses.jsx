@@ -81,7 +81,7 @@ const Courses = () => {
       key: 'rewards',
       render: (_, course) => {
         return user.is_staff ? (
-          <LinkContainer to={`/courses/${course.course_number}/details`}>
+          <LinkContainer to={`/courses/${course.course_number}/rewards`}>
             <Tag role="button" color="geekblue">
               Rewards
             </Tag>

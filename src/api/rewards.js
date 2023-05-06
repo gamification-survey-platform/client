@@ -1,6 +1,35 @@
 import api from './apiUtils'
 import { writeToS3 } from '../utils/s3helpers'
 
+const getPurchases = async () => {
+  try {
+    const res = await api.get(`/purchases`)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
+const getCoursePurchases = async ({ course_id }) => {
+  try {
+    const res = await api.get(`/courses/${course_id}/purchases`)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
+const patchCoursePurchases = async ({ course_id, purchase }) => {
+  try {
+    console.log(purchase)
+    const purchase_id = purchase.pk
+    const res = await api.patch(`/courses/${course_id}/purchases/${purchase_id}/`, purchase)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.error)
+  }
+}
+
 const getCourseRewards = async ({ course_id }) => {
   try {
     const res = await api.get(`courses/${course_id}/rewards`)
@@ -79,6 +108,9 @@ const deleteCourseReward = async ({ course_id, reward_pk }) => {
 }
 
 export {
+  getPurchases,
+  getCoursePurchases,
+  patchCoursePurchases,
   getCourseRewards,
   addCourseReward,
   editCourseReward,

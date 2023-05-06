@@ -128,9 +128,12 @@ const CourseMembers = () => {
             error = true
           }
 
-          if (error)
-            messageApi.open({ type: 'error', content: `Failed to add members from CSV file.` })
-          else
+          if (error) {
+            messageApi.open({
+              type: 'error',
+              content: `Failed to add members from CSV file: ${error.message}`
+            })
+          } else
             messageApi.open({
               type: 'success',
               content: `Successfully added members from CSV file.`
@@ -154,8 +157,11 @@ const CourseMembers = () => {
         setMembers(newMembers)
         messageApi.open({ type: 'success', content: `Successfully removed ${andrewIdToRemove}` })
       }
-    } catch (e) {
-      messageApi.open({ type: 'error', content: `Failed to remove ${andrewIdToRemove}` })
+    } catch (error) {
+      messageApi.open({
+        type: 'error',
+        content: `Failed to remove ${andrewIdToRemove}: ${error.message}`
+      })
     }
   }
 

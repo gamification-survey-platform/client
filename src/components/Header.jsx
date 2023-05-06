@@ -6,11 +6,10 @@ import userSelector from '../store/user/selectors'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
 import { Layout, Menu, Image, Typography } from 'antd'
-import { UserOutlined, BookOutlined, DingdingOutlined } from '@ant-design/icons'
+import { UserOutlined, BookOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
 import ChartWrapper from './visualization/ChartWrapper'
-import { getLevelExp } from '../api/levels'
 import Bronze from '../assets/bronze.png'
 import Silver from '../assets/silver.png'
 import Gold from '../assets/gold.png'
@@ -48,19 +47,8 @@ let items = [
 const AppHeader = ({ children }) => {
   const user = useSelector(userSelector)
   const [collapsed, setCollapsed] = useState()
-  const [nextLevelExp, setNextLevelExp] = useState()
   const dispatch = useDispatch()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const getNextLevelExp = async () => {
-      if (user.level >= 0) {
-        const res = await getLevelExp(user.level + 1)
-        if (res.status === 200) setNextLevelExp(res.data.exp)
-      }
-    }
-    getNextLevelExp()
-  }, [user])
 
   if (user && user.is_staff) {
     items = items.filter((item) => item.key !== '3')
@@ -73,6 +61,7 @@ const AppHeader = ({ children }) => {
     await persistor.flush()
     await persistor.purge()
     dispatch(logout())
+    navigate('/')
   }
 
   const handleClick = (e) => {
@@ -101,17 +90,17 @@ const AppHeader = ({ children }) => {
               top: '30%',
               left: 10,
               zIndex: 1,
-              height: '50vh',
+              height: '30vh',
               width: 180
             }}>
             <div className="text-center text-white">
-              <Image width={100} src={rankings[user.level].image} />
-              <p>Ranking: {rankings[user.level].title}</p>
+              <Image width={100} src={rankings[0].image} />
+              <p>Ranking: {rankings[0].title}</p>
               <p>
-                {user.exp} / {nextLevelExp}
+                {user.exp} / {user.next_level_exp}
               </p>
             </div>
-            <ChartWrapper type="progressTriangle" data={{ pct: user.exp / nextLevelExp }} />
+            <ChartWrapper type="progressTriangle" data={{ pct: user.exp / user.next_level_exp }} />
           </div>
         )}
       </Layout.Sider>

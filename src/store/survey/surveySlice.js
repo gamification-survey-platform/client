@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, current } from '@reduxjs/toolkit'
 import { PURGE } from 'redux-persist'
 import { cloneDeep } from 'lodash'
 
@@ -64,7 +64,9 @@ const surveySlice = createSlice({
         number_of_text = undefined
       } = action.payload
       const answerObj = { text: answer, page }
+      console.log(state)
       const newState = cloneDeep(state)
+      console.log(sectionIdx, questionIdx, answer, question_type)
       const oldAnswer = newState.sections
         .find((s, i) => i === sectionIdx)
         .questions.find((q, i) => i === questionIdx).answer

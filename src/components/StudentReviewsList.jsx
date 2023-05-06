@@ -28,7 +28,7 @@ const StudentReviewsList = ({
 }) => {
   const pendingReviews = artifactReviews.filter((r) => r.status === 'INCOMPLETE')
   const lateReviews = artifactReviews.filter((r) => r.status === 'LATE')
-  const completedReviews = artifactReviews.filter((r) => r.status === 'COMPLETE')
+  const completedReviews = artifactReviews.filter((r) => r.status === 'COMPLETED')
   return (
     <Col span={6} className="border-left p-5 my-3">
       <Space direction="vertical" size="middle" className="text-center">

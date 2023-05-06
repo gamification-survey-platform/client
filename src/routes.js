@@ -17,6 +17,8 @@ import AssignmentReview from './pages/assignments/AssignmentReview'
 import AssignmentForm from './pages/assignments/AssignmentForm'
 import CourseForm from './pages/courses/CourseForm'
 import Store from './pages/store/Store'
+import Purchases from './pages/store/Purchases'
+import CourseRewards from './pages/courses/CourseRewards'
 
 const routes = [
   {
@@ -68,6 +70,14 @@ const routes = [
     element: (
       <ProtectedRoute>
         <CourseMembers />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/courses/:course_id/rewards',
+    element: (
+      <ProtectedRoute>
+        <CourseRewards />
       </ProtectedRoute>
     )
   },
@@ -156,6 +166,14 @@ const routes = [
     element: (
       <ProtectedRoute>
         <Store />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/purchases/',
+    element: (
+      <ProtectedRoute>
+        <Purchases />
       </ProtectedRoute>
     )
   },
