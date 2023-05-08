@@ -31,8 +31,9 @@ const Profile = () => {
     } else {
       try {
         await form.validateFields()
-        const { first_name, last_name, email } = form.getFieldsValue()
-        const res = await editProfile({ first_name, last_name, email })
+        const data = form.getFieldsValue()
+        const user_id = user.pk
+        const res = await editProfile({ user_id, data })
         dispatch(setUser(res.data))
         setEditing(false)
       } catch (e) {
@@ -44,10 +45,8 @@ const Profile = () => {
 
   const handleUpload = async (file) => {
     try {
-      const res = await updateProfilePic(file)
-      console.log('here', res.data)
+      const res = await updateProfilePic({ user_id: user.pk, file })
       const { upload_url = null, download_url = null, delete_url = null, ...rest } = res.data
-      console.log(res.data)
       if (download_url) {
         const image = `${download_url}&timestamp=${Date.now()}`
         dispatch(setUser({ ...rest, image }))

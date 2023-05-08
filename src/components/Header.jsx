@@ -26,7 +26,7 @@ const rankings = [
   { title: 'Grandmaster', image: Grandmaster }
 ]
 
-let items = [
+const initialItems = [
   {
     key: '1',
     icon: <UserOutlined />,
@@ -49,10 +49,13 @@ const AppHeader = ({ children }) => {
   const [collapsed, setCollapsed] = useState()
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [items, setItems] = useState(initialItems)
 
-  if (user && user.is_staff) {
-    items = items.filter((item) => item.key !== '3')
-  }
+  useEffect(() => {
+    if (user && user.is_staff) {
+      setItems(items.filter((item) => item.key !== '3'))
+    }
+  }, [user])
 
   const handleLogout = async (e) => {
     e.preventDefault()
@@ -94,8 +97,8 @@ const AppHeader = ({ children }) => {
               width: 180
             }}>
             <div className="text-center text-white">
-              <Image width={100} src={rankings[0].image} />
-              <p>Ranking: {rankings[0].title}</p>
+              <Image width={100} src={rankings[user.level].image} />
+              <p>Ranking: {rankings[user.level].title}</p>
               <p>
                 {user.exp} / {user.next_level_exp}
               </p>

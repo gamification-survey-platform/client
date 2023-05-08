@@ -87,8 +87,7 @@ const StaffArtifactReviewList = () => {
   useEffect(() => {
     const fetchCourseMembers = async () => {
       const res = await getMembers({ course_id: course.pk })
-      if (res.status === 200)
-        setMembers(res.data.membership.map((member) => ({ ...member, hovering: false })))
+      if (res.status === 200) setMembers(res.data.map((member) => ({ ...member, hovering: false })))
     }
     const fetchArtifactReviews = async () => {
       const res = await getArtifactReviews({ course_id: course.pk, assignment_id })

@@ -70,7 +70,7 @@ const CourseMembers = () => {
     const fetchCourseMembers = async () => {
       setSpin(true)
       const res = await getMembers({ course_id: selectedCourse.pk })
-      if (res.status === 200) setMembers(res.data.membership)
+      if (res.status === 200) setMembers(res.data)
       setSpin(false)
     }
     fetchCourseMembers()
@@ -88,8 +88,8 @@ const CourseMembers = () => {
         memberRole,
         teamId
       })
-      if (res.status === 200) {
-        setMembers(res.data.membership)
+      if (res.status === 201) {
+        setMembers([...members, res.data])
         messageApi.open({ type: 'success', content: `Successfully added ${memberId}` })
         form.resetFields()
       }
@@ -119,7 +119,7 @@ const CourseMembers = () => {
                 teamId: member.teamID
               })
               if (res.status === 200) {
-                finalMembership = res.data.membership
+                finalMembership = res.data
               } else {
                 error = true
               }

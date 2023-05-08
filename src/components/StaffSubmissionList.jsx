@@ -45,7 +45,7 @@ const StaffSubmissionList = () => {
     const fetchCourseMembers = async () => {
       const res = await getMembers({ course_id: course.pk })
       if (res.status === 200) {
-        const allMembers = res.data.membership
+        const allMembers = res.data
           .filter(({ userRole }) => userRole === 'Student')
           .map(({ andrew_id }) => andrew_id)
         const completedMembers = Object.keys(artifacts)

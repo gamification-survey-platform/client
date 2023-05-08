@@ -27,9 +27,9 @@ const deleteCourse = async (course_id) => {
   }
 }
 
-const getUserCourses = async (andrewId) => {
+const getUserCourses = async () => {
   try {
-    const res = await api.get('courses/', { params: { andrewId } })
+    const res = await api.get('courses/')
     return res
   } catch (error) {
     throw new Error(error.response.data.error)
