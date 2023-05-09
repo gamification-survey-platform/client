@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router'
-import { getStudentReport, getKeywords } from '../../api/reports'
+import { getKeywords, getStudentStatistics } from '../../api/reports'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { Divider, Typography } from 'antd'
 
 const StudentReport = () => {
   const { course_id, assignment_id, artifact_id } = useParams()
-  const [report, setReport] = useState()
+  const [statistics, setStatistics] = useState()
   const [keywords, setKeywords] = useState()
 
   useEffect(() => {
-    const fetchReport = async () => {
-      const res = await getStudentReport({ course_id, assignment_id, artifact_id })
+    const fetchStatistics = async () => {
+      const res = await getStudentStatistics({ course_id, assignment_id, artifact_id })
       if (res.status === 200) {
         res.data.label = ['strongly disagree', 'disagree', 'neutral', 'agree', 'strongly agree']
-        setReport(res.data)
+        setStatistics(res.data)
       }
     }
-    fetchReport()
+    fetchStatistics()
   }, [])
 
   useEffect(() => {
@@ -35,10 +35,10 @@ const StudentReport = () => {
       <Typography.Title level={2} className="text-center">
         Student Report
       </Typography.Title>
-      {report &&
-        Object.keys(report.sections).map((k, i) => {
-          const questions = report.sections[k]
-          const data = { labels: report.label, data: questions }
+      {statistics &&
+        Object.keys(statistics.sections).map((k, i) => {
+          const questions = statistics.sections[k]
+          const data = { labels: statistics.label, data: questions }
           return (
             <div key={i}>
               <Typography.Title level={4}>{k}</Typography.Title>

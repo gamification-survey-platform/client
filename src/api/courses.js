@@ -5,7 +5,7 @@ const createCourse = async (courseData) => {
     const res = await api.post(`courses/`, courseData)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -14,7 +14,7 @@ const editCourse = async ({ course_id, course }) => {
     const res = await api.put(`courses/${course_id}/`, course)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -23,7 +23,7 @@ const deleteCourse = async (course_id) => {
     const res = await api.delete(`courses/${course_id}`, { params: { course_id } })
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -32,7 +32,7 @@ const getUserCourses = async () => {
     const res = await api.get('courses/')
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -41,7 +41,7 @@ const getCourse = async (course_id) => {
     const res = await api.get(`courses/${course_id}`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 

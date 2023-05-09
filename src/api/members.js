@@ -9,7 +9,7 @@ const addMember = async ({ course_id, memberId, memberRole, teamId = null }) => 
     })
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -19,7 +19,7 @@ const getMembers = async ({ course_id, andrew_id = null }) => {
     const res = await api.get(`courses/${course_id}/members/`, config)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -28,7 +28,7 @@ const remindMember = async ({ course_id, memberId }) => {
     const res = await api.post(`courses/${course_id}/members/`)
     return res.data
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -39,7 +39,7 @@ const removeMember = async ({ course_id, andrew_id }) => {
     })
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 

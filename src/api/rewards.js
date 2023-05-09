@@ -6,7 +6,7 @@ const getPurchases = async () => {
     const res = await api.get(`/purchases`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -15,7 +15,7 @@ const getCoursePurchases = async ({ course_id }) => {
     const res = await api.get(`/courses/${course_id}/purchases`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -26,7 +26,7 @@ const patchCoursePurchases = async ({ course_id, purchase }) => {
     const res = await api.patch(`/courses/${course_id}/purchases/${purchase_id}/`, purchase)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -35,7 +35,7 @@ const getCourseRewards = async ({ course_id }) => {
     const res = await api.get(`courses/${course_id}/rewards`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -67,7 +67,7 @@ const addCourseReward = async ({ course_id, reward, picture }) => {
     }
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -91,7 +91,7 @@ const editCourseReward = async ({ course_id, reward_pk, reward, picture }) => {
     }
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -103,7 +103,7 @@ const deleteCourseReward = async ({ course_id, reward_pk }) => {
     }
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 

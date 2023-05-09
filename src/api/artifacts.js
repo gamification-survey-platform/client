@@ -6,7 +6,7 @@ const getUserArtifact = async ({ course_id, assignment_id }) => {
     const res = await api.get(`courses/${course_id}/assignments/${assignment_id}/artifacts/`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -17,7 +17,7 @@ const getArtifact = async ({ course_id, assignment_id, artifact_pk }) => {
     )
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -43,7 +43,7 @@ const submitArtifact = async ({ course_id, assignment_id, submission }) => {
       return res
     }
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 

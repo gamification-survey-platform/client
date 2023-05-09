@@ -28,7 +28,7 @@ const createSurvey = async ({ course_id, assignment_id, survey }) => {
     )
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -39,7 +39,7 @@ const saveSurvey = async ({ course_id, assignment_id, survey: survey }) => {
     })
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -48,7 +48,7 @@ const deleteSurvey = async ({ course_id, assignment_id }) => {
     const res = await api.delete(`/courses/${course_id}/assignments/${assignment_id}/surveys/`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 

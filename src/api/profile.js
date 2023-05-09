@@ -6,7 +6,7 @@ const editProfile = async ({ user_id, data }) => {
     const res = await api.patch(`/users/${user_id}/`, data)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -27,7 +27,7 @@ const updateProfilePic = async ({ user_id, file }) => {
     }
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 

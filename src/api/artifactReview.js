@@ -8,7 +8,7 @@ const assignArtifactReview = async ({ course_id, assignment_id, reviewee, review
     )
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -20,7 +20,7 @@ const unassignArtifactReview = async ({ course_id, assignment_id, artifact_revie
     )
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -29,7 +29,7 @@ const getArtifactReviews = async ({ course_id, assignment_id }) => {
     const res = await api.get(`courses/${course_id}/assignments/${assignment_id}/artifact_reviews/`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -38,7 +38,7 @@ const getUserArtifactReviews = async () => {
     const res = await api.get(`artifact_reviews/`)
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -49,7 +49,7 @@ const getArtifactReview = async ({ course_id, assignment_id, review_id }) => {
     )
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -63,7 +63,7 @@ const saveArtifactReview = async ({ course_id, assignment_id, review_id, review 
     )
     return res
   } catch (error) {
-    throw new Error(error.response.data.error)
+    throw new Error(error.response.data.message)
   }
 }
 
