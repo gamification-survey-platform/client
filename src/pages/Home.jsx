@@ -46,15 +46,11 @@ const Home = () => {
   ) : (
     <Row>
       <Col span={user.is_staff ? 24 : 17}>
-        <Row gutter={10} justify="space-around" style={{ margin: '1rem' }}>
+        <Row gutter={10} className="m-3" justify="space-between">
           {courses.map((course, i) => {
             return (
-              <Col key={i} span={8} className="mx-3">
-                <Card
-                  className="text-center"
-                  cover={<Image src={DefaultImage} />}
-                  style={{ width: 300 }}
-                  key={i}>
+              <Col key={i} span={6} className="mx-3 my-3">
+                <Card className="text-center w-100" cover={<Image src={DefaultImage} />} key={i}>
                   <Space direction="vertical" size="middle" align="center">
                     <Row justify="center" className="text-center">
                       <p>{course.course_name}</p>

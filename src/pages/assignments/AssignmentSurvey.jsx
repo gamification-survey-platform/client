@@ -71,6 +71,10 @@ const AssignmentSurvey = () => {
     [survey.sections]
   )
 
+  const handleEditSurvey = () => {
+    navigate(`add`, { state: { editingSurvey: survey } })
+  }
+
   return spin ? (
     <Spinner show={spin} />
   ) : (
@@ -93,12 +97,19 @@ const AssignmentSurvey = () => {
             )}
           </Col>
           <Col span={10}>
-            <Button className="m-3" onClick={() => dispatch(changeView())}>
-              {survey.instructorView ? 'Student View' : 'Instructor View'}
-            </Button>
-            <Button type="primary" className="m-3" onClick={() => setModalOpen(true)}>
-              Add Section
-            </Button>
+            <Row>
+              <Button danger onClick={handleEditSurvey}>
+                Edit or Modify Survey Template
+              </Button>
+            </Row>
+            <Row>
+              <Button className="my-3" onClick={() => dispatch(changeView())}>
+                {survey.instructorView ? 'Student View' : 'Instructor View'}
+              </Button>
+              <Button type="primary" className="ml-3 my-3" onClick={() => setModalOpen(true)}>
+                Add Section
+              </Button>
+            </Row>
           </Col>
           <AddSectionModal open={modalOpen} setOpen={setModalOpen} />
         </Row>
