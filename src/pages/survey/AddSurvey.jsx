@@ -47,7 +47,8 @@ const AddSurvey = () => {
         survey: {
           ...fields,
           date_due: new Date(date_due.format('MM/DD/YYYY hh:mm')),
-          date_released: new Date(date_released.format('MM/DD/YYYY hh:mm'))
+          date_released: new Date(date_released.format('MM/DD/YYYY hh:mm')),
+          other_info: fields.other_info || ''
         }
       }
       const res = await createSurvey(surveyData)
@@ -62,7 +63,10 @@ const AddSurvey = () => {
     event.stopPropagation()
     try {
       const survey = form.getFieldsValue()
-      const res = await editSurveyTemplate({ feedback_survey_id: editingSurvey.pk, survey })
+      const res = await editSurveyTemplate({
+        feedback_survey_id: editingSurvey.pk,
+        survey: { other_info: '', ...survey }
+      })
       if (res.status === 200) {
         navigate(-1)
       }
@@ -111,14 +115,20 @@ const AddSurvey = () => {
         </Form.Item>
         {editingSurvey ? null : (
           <>
-            <Form.Item label="Date released" name="date_released">
+            <Form.Item
+              label="Date released"
+              name="date_released"
+              rules={[{ required: true, message: 'Please input a release date.' }]}>
               <DatePicker
                 showTime={{ format: 'h:mm A' }}
                 format="YYYY-MM-DD h:mm A"
                 disabledDate={(current) => current && current < dayjs()}
               />
             </Form.Item>
-            <Form.Item label="Date due" name="date_due">
+            <Form.Item
+              label="Date due"
+              name="date_due"
+              rules={[{ required: true, message: 'Please input a release date.' }]}>
               <DatePicker
                 showTime={{ format: 'h:mm A' }}
                 format="YYYY-MM-DD h:mm A"

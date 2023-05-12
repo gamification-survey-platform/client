@@ -70,7 +70,30 @@ const MultipleChoice = ({
   )
 }
 
-const MultipleChoiceScale = ({ sectionIdx, questionIdx, answer, question_type, is_required }) => {
+const multipleChoiceOptions = {
+  3: ['disagree', 'neutral', 'agree'],
+  5: ['strongly disagree', 'disagree', 'neutral', 'agree', 'strongly agree'],
+  7: [
+    'strongly disagree',
+    'disagree',
+    'weakly disagree',
+    'neutral',
+    'weakly agree',
+    'agree',
+    'strongly agree'
+  ]
+}
+
+const MultipleChoiceScale = ({
+  sectionIdx,
+  questionIdx,
+  answer,
+  question_type,
+  is_required,
+  number_of_scale
+}) => {
+  console.log(number_of_scale)
+  const options = multipleChoiceOptions[number_of_scale]
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
@@ -86,15 +109,14 @@ const MultipleChoiceScale = ({ sectionIdx, questionIdx, answer, question_type, i
     if (answer && value)
       dispatch(editAnswer({ questionIdx, sectionIdx, answer: value, question_type }))
   }, [value])
-
   return (
     <Form.Item
       name={name}
       rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       <Select
-        options={[...Array(10)].map((_, i) => ({
-          label: i + 1,
-          value: i + 1
+        options={options.map((option) => ({
+          label: option,
+          value: option
         }))}
       />
     </Form.Item>
@@ -179,6 +201,31 @@ const MultiLineText = (props) => {
   )
 }
 
+const Number = ({ sectionIdx, questionIdx, answer, question_type, is_required }) => {
+  const name = `${sectionIdx}-${questionIdx}`
+  const form = useFormInstance()
+  const value = Form.useWatch(name, form)
+  const dispatch = useDispatch()
+  useEffect(() => {
+    if (answer && answer.length) {
+      form.setFieldValue(name, answer[0].text)
+    }
+  }, [answer])
+
+  useEffect(() => {
+    if (answer && value)
+      dispatch(editAnswer({ sectionIdx, questionIdx, answer: value, question_type }))
+  }, [value])
+
+  return (
+    <Form.Item
+      name={name}
+      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
+      <Input type="number" />
+    </Form.Item>
+  )
+}
+
 const TextArea = ({ sectionIdx, questionIdx, answer, question_type, is_required }) => {
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
@@ -217,7 +264,6 @@ const Question = (question) => {
       isDragging: !!monitor.isDragging()
     })
   }))
-
   const [, dropRef] = useDrop(() => ({
     accept: 'QUESTION',
     hover: (item, monitor) => {
@@ -262,7 +308,8 @@ const Question = (question) => {
       <Row>
         <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
           {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
-          {question_type === 'NUMBER' && <MultipleChoiceScale {...questionProps} />}
+          {question_type === 'SCALEMULTIPLECHOICE' && <MultipleChoiceScale {...questionProps} />}
+          {question_type === 'NUMBER' && <Number {...questionProps} />}
           {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
           {question_type === 'MULTIPLETEXT' && <MultiLineText {...questionProps} />}
           {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}

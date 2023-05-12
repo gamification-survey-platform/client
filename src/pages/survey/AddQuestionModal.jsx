@@ -5,7 +5,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addQuestion, editQuestion, surveySelector } from '../../store/survey/surveySlice'
 
 const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
-  const initialValues = { question_type: 'MULTIPLECHOICE', option_choices: 1, number_of_text: 1 }
+  const initialValues = {
+    question_type: 'MULTIPLECHOICE',
+    option_choices: 1,
+    number_of_text: 1,
+    number_of_scale: 3
+  }
   const [form] = useForm()
   const dispatch = useDispatch()
   const question_type = Form.useWatch('question_type', form)
@@ -31,7 +36,12 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
   }, [open])
 
   useEffect(() => {
-    if (editingQuestion && question_type === 'MULTIPLECHOICE' && options.length) {
+    if (
+      editingQuestion &&
+      question_type === 'MULTIPLECHOICE' &&
+      options.length &&
+      editingQuestion.option_choices
+    ) {
       options.forEach(
         async (_, i) =>
           await form.setFieldValue(`option-${i}`, editingQuestion.option_choices[i].text)
@@ -53,7 +63,7 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
         let option_choices = Object.keys(formObj)
           .filter((k) => k.startsWith('option-'))
           .map((k) => formObj[k])
-        if (editingQuestion) {
+        if (editingQuestion && editingQuestion.option_choices) {
           option_choices = option_choices.map((t, i) => ({
             pk: editingQuestion.option_choices[i].pk,
             text: t
@@ -62,8 +72,8 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
           option_choices = option_choices.map((t) => ({ text: t }))
         }
         payload = { option_choices }
-      } else if (formObj.question_type === 'NUMBER') {
-        payload = { option_choices: parseInt(formObj.option_choices) }
+      } else if (formObj.question_type === 'SCALEMULTIPLECHOICE') {
+        payload = { number_of_scale: parseInt(formObj.number_of_scale) }
       } else if (formObj.question_type === 'MULTIPLETEXT') {
         payload = { number_of_text: parseInt(formObj.number_of_text) }
       }
@@ -97,7 +107,8 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
           <Select
             options={[
               { value: 'MULTIPLECHOICE', label: 'Multiple Choice' },
-              { value: 'NUMBER', label: 'Multiple Choice With Scale' },
+              { value: 'NUMBER', label: 'Number' },
+              { value: 'SCALEMULTIPLECHOICE', label: 'Multiple Choice With Scale' },
               { value: 'FIXEDTEXT', label: 'Fixed Text' },
               { value: 'MULTIPLETEXT', label: 'Multi-line Text' },
               { value: 'TEXTAREA', label: 'Textarea' }
@@ -135,16 +146,23 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
             )}
           </div>
         )}
-        {question_type === 'NUMBER' && (
+        {question_type === 'SCALEMULTIPLECHOICE' && (
           <Form.Item
-            name="option_choices"
+            name="number_of_scale"
             label="Number of options"
             rules={[{ required: true, message: 'Please enter the number of options' }]}>
             <Select
               options={[
-                { value: '3', label: '3' },
-                { value: '5', label: '5' },
-                { value: '7', label: '7' }
+                { value: '3', label: '3 (agree, neutral, disagree)' },
+                {
+                  value: '5',
+                  label: '5 (strongly agree, agree, neutral, disagree, strongly disagree)'
+                },
+                {
+                  value: '7',
+                  label:
+                    '7 (strongly agree, agree, weakly agree, neutral, weakly disagree, disagree, strongly disagree)'
+                }
               ]}
             />
           </Form.Item>
