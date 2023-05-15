@@ -88,7 +88,11 @@ const AssignmentReview = () => {
         survey.sections.forEach((s) => {
           s.questions.forEach((q) => {
             const { question_type, answer } = q
-            if (question_type === 'SLIDEREVIEW' || question_type === 'MULTIPLETEXT')
+            if (
+              question_type === 'SLIDEREVIEW' ||
+              question_type === 'MULTIPLETEXT' ||
+              question_type === 'MULTIPLESELECT'
+            )
               answer.forEach((a) => review.push({ question_pk: q.pk, answer_text: a.text || '' }))
             else {
               review.push({

@@ -59,7 +59,10 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
     } else {
       const formObj = await form.getFieldsValue()
       let payload = {}
-      if (formObj.question_type === 'MULTIPLECHOICE') {
+      if (
+        formObj.question_type === 'MULTIPLECHOICE' ||
+        formObj.question_type === 'MULTIPLESELECT'
+      ) {
         let option_choices = Object.keys(formObj)
           .filter((k) => k.startsWith('option-'))
           .map((k) => formObj[k])
@@ -107,6 +110,7 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
           <Select
             options={[
               { value: 'MULTIPLECHOICE', label: 'Multiple Choice' },
+              { value: 'MULTIPLESELECT', label: 'Multiple Select' },
               { value: 'NUMBER', label: 'Number' },
               { value: 'SCALEMULTIPLECHOICE', label: 'Multiple Choice With Scale' },
               { value: 'FIXEDTEXT', label: 'Fixed Text' },
@@ -115,7 +119,7 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
             ]}
           />
         </Form.Item>
-        {question_type === 'MULTIPLECHOICE' && (
+        {(question_type === 'MULTIPLECHOICE' || question_type === 'MULTIPLESELECT') && (
           <div>
             <Form.Item
               label="Choose number of options"

@@ -76,6 +76,16 @@ const surveySlice = createSlice({
             else oldAnswer.push({ page, text: '' })
           }
         }
+      } else if (question_type === 'MULTIPLESELECT') {
+        // Overwrite entire answer
+        const newAnswer = []
+        for (let i = 0; i < answer.length; i++) {
+          const answerObj = { text: answer[i], page }
+          newAnswer.push(answerObj)
+        }
+        newState.sections
+          .find((s, i) => i === sectionIdx)
+          .questions.find((q, i) => i === questionIdx).answer = newAnswer
       } else if (question_type === 'SLIDEREVIEW') {
         let modified = false
         oldAnswer.forEach((a) => {

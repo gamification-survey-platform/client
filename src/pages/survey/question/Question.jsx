@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Form, Row, Col, Select, Input, Slider } from 'antd'
+import { Form, Row, Col, Select, Input, Checkbox } from 'antd'
 import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons'
 import AddQuestionModal from '../AddQuestionModal'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
@@ -70,7 +70,48 @@ const MultipleChoice = ({
   )
 }
 
-const multipleChoiceOptions = {
+const MultipleSelect = ({
+  sectionIdx,
+  questionIdx,
+  option_choices,
+  answer,
+  question_type,
+  is_required
+}) => {
+  const name = `${sectionIdx}-${questionIdx}`
+  const form = useFormInstance()
+  const value = Form.useWatch(name, form)
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (answer && answer.length) {
+      const answers = answer.map((a) => a.text)
+      form.setFieldValue(name, answers)
+    }
+  }, [answer])
+
+  useEffect(() => {
+    if (answer && value) {
+      dispatch(editAnswer({ questionIdx, sectionIdx, answer: value, question_type }))
+    }
+  }, [value])
+  const ticks = option_choices.reduce((acc, el, i) => ({ ...acc, [i]: el.text }), {})
+  return (
+    <Form.Item
+      name={name}
+      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
+      {/* <Slider marks={ticks} max={option_choices.length - 1} tooltip={{ open: false }} /> */}
+      <Checkbox.Group
+        options={[...Array.from(option_choices)].map((option) => ({
+          label: option.text,
+          value: option.text
+        }))}
+      />
+    </Form.Item>
+  )
+}
+
+const scaleOptions = {
   3: ['disagree', 'neutral', 'agree'],
   5: ['strongly disagree', 'disagree', 'neutral', 'agree', 'strongly agree'],
   7: [
@@ -92,8 +133,7 @@ const MultipleChoiceScale = ({
   is_required,
   number_of_scale
 }) => {
-  console.log(number_of_scale)
-  const options = multipleChoiceOptions[number_of_scale]
+  const options = scaleOptions[number_of_scale]
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
@@ -308,6 +348,7 @@ const Question = (question) => {
       <Row>
         <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
           {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
+          {question_type === 'MULTIPLESELECT' && <MultipleSelect {...questionProps} />}
           {question_type === 'SCALEMULTIPLECHOICE' && <MultipleChoiceScale {...questionProps} />}
           {question_type === 'NUMBER' && <Number {...questionProps} />}
           {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
