@@ -6,7 +6,7 @@ import userSelector from '../store/user/selectors'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
 import { Layout, Menu, Image, Typography } from 'antd'
-import { UserOutlined, BookOutlined } from '@ant-design/icons'
+import { UserOutlined, BookOutlined, AntDesignOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
 import ChartWrapper from './visualization/ChartWrapper'
@@ -41,6 +41,11 @@ const initialItems = [
     key: '3',
     icon: <GiShoppingCart />,
     label: 'Store'
+  },
+  {
+    key: '4',
+    icon: <AntDesignOutlined />,
+    label: 'Design'
   }
 ]
 
@@ -52,8 +57,11 @@ const AppHeader = ({ children }) => {
   const [items, setItems] = useState(initialItems)
 
   useEffect(() => {
+    console.log(user)
     if (user && user.is_staff) {
-      setItems(items.filter((item) => item.key !== '3'))
+      setItems(items.filter((item) => item.key !== '3' && item.key !== '4'))
+    } else if (user && user.level < 0) {
+      setItems(items.filter((item) => item.key !== '4'))
     }
   }, [user])
 
@@ -78,6 +86,9 @@ const AppHeader = ({ children }) => {
         break
       case '3':
         navigate('/store')
+        break
+      case '4':
+        navigate('/theme')
         break
     }
   }
