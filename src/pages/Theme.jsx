@@ -1,11 +1,11 @@
-import { Typography, Form, ColorPicker, Row } from 'antd'
+import { Typography, Form, ColorPicker, Row, Button } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useSelector } from 'react-redux'
 import themeSelector from '../store/theme/selectors'
 import { useToken } from 'antd/es/theme/internal'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { setTheme } from '../store/theme/themeSlice'
+import { setTheme, resetTheme } from '../store/theme/themeSlice'
 
 const Theme = () => {
   const [form] = useForm()
@@ -52,6 +52,11 @@ const Theme = () => {
         </Form.Item>
         <Form.Item name="colorError" label="Error Color">
           <ColorPicker onChange={(_, value) => handleThemeChange('colorError', value)} />
+        </Form.Item>
+      </Row>
+      <Row justify="center">
+        <Form.Item>
+          <Button onClick={() => dispatch(resetTheme())}>Reset Theme</Button>
         </Form.Item>
       </Row>
     </Form>

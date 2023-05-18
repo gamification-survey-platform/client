@@ -45,7 +45,7 @@ const initialItems = [
   {
     key: '4',
     icon: <AntDesignOutlined />,
-    label: 'Design'
+    label: 'Theme'
   }
 ]
 

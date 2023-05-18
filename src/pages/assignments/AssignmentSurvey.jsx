@@ -89,9 +89,15 @@ const AssignmentSurvey = () => {
                 <Typography.Title level={4}>{survey.instructions}</Typography.Title>
                 <Typography.Title level={4}>{survey.other_info}</Typography.Title>
                 {survey.instructorView ? (
-                  <Typography.Text>
-                    Drag and Drop sections or questions to reorder elements
-                  </Typography.Text>
+                  <>
+                    <Typography.Text>
+                      Drag and Drop sections or questions to reorder elements
+                    </Typography.Text>
+                    <Typography.Text>
+                      Please organize your questions into designated questions to ensure
+                      intrasection answer consistency.
+                    </Typography.Text>
+                  </>
                 ) : null}
               </div>
             )}

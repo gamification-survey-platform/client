@@ -15,7 +15,7 @@ const ProtectedRoute = ({ redirectPath = '/', children }) => {
   return (
     <ConfigProvider
       theme={{
-        token: { ...theme }
+        token: theme
       }}>
       <Header>{children}</Header>
     </ConfigProvider>

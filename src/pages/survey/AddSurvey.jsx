@@ -84,7 +84,7 @@ const AddSurvey = () => {
     try {
       const res = await deleteSurveyTemplate({ feedback_survey_id: editingSurvey.pk })
       if (res.status === 204) {
-        navigate(`courses/${course_id}/assignments`)
+        navigate(`/courses/${course_id}/assignments`)
       }
     } catch (e) {
       messageApi.open({
