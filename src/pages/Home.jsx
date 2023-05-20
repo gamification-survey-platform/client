@@ -10,6 +10,8 @@ import { getUserArtifactReviews } from '../api/artifactReview'
 import { Space, Row, Col, Card, Image, Button } from 'antd'
 import Spinner from '../components/Spinner'
 import StudentReviewsList from '../components/StudentReviewsList'
+import { getTheme } from '../api/theme'
+import { setTheme } from '../store/theme/themeSlice'
 
 const Home = () => {
   const user = useSelector(userSelector)
@@ -31,6 +33,14 @@ const Home = () => {
         const res = await getUserArtifactReviews(user.andrew_id)
         if (res.status === 200) {
           setArtifactReviews(res.data)
+        }
+      } catch (e) {
+        console.error(e.message)
+      }
+      try {
+        const res = await getTheme()
+        if (res.status === 200) {
+          dispatch(setTheme(res.data))
         }
       } catch (e) {
         console.error(e.message)

@@ -19,7 +19,7 @@ import CourseForm from './pages/courses/CourseForm'
 import Store from './pages/store/Store'
 import Purchases from './pages/store/Purchases'
 import CourseRewards from './pages/courses/CourseRewards'
-import Theme from './pages/Theme'
+import Theme from './pages/theme/Theme'
 
 const routes = [
   {

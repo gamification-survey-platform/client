@@ -57,7 +57,6 @@ const AppHeader = ({ children }) => {
   const [items, setItems] = useState(initialItems)
 
   useEffect(() => {
-    console.log(user)
     if (user && user.is_staff) {
       setItems(items.filter((item) => item.key !== '3' && item.key !== '4'))
     } else if (user && user.level < 0) {

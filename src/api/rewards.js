@@ -21,7 +21,6 @@ const getCoursePurchases = async ({ course_id }) => {
 
 const patchCoursePurchases = async ({ course_id, purchase }) => {
   try {
-    console.log(purchase)
     const purchase_id = purchase.pk
     const res = await api.patch(`/courses/${course_id}/purchases/${purchase_id}/`, purchase)
     return res

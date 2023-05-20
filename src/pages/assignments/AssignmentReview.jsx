@@ -35,7 +35,6 @@ const AssignmentReview = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    console.log('fetch review')
     const fetchReview = async () => {
       setSpin(true)
       try {
@@ -59,7 +58,6 @@ const AssignmentReview = () => {
           }
         }
       } catch (e) {
-        console.log(e)
         messageApi.open({ type: 'error', content: `Failed to fetch review. ${e.message}` })
       }
       setSpin(false)

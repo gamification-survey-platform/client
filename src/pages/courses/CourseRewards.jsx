@@ -56,7 +56,6 @@ const CourseRewards = () => {
       messageApi.open({ type: 'error', message: `Failed to update purchase. ${error.message}.` })
     }
   }
-  console.log(purchases)
   const columns = [
     { title: 'Reward', dataIndex: 'name', align: 'center', key: 'reward' },
     { title: 'Description', dataIndex: 'description', key: 'description' },

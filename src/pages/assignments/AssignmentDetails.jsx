@@ -85,11 +85,8 @@ const AssignmentDetails = () => {
         assignment_id,
         submission
       })
-      console.log('submitted assignment', res.data)
-      console.log(res, res.status)
       messageApi.open({ type: 'success', content: 'Successfully submitted assignment.' })
       if (res.status === 201) {
-        console.log('res', res.data)
         const { exp, points } = res.data
         dispatch(setUser({ ...user, exp }))
         dispatch(addCoursePoints({ course_id: selectedCourse.pk, points }))
