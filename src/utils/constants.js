@@ -1,5 +1,5 @@
 const prod = {
-  API_URL: 'https://gamification-server.onrender.com/api',
+  API_URL: 'http://gamification-platform-server-dev.us-west-1.elasticbeanstalk.com/api',
   FILE_URL: 'https://gamification-server.onrender.com'
 }
 
