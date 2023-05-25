@@ -8,6 +8,7 @@ import SlideReviewModal from './SlideReviewModal'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteQuestion, editAnswer, surveySelector } from '../../../store/survey/surveySlice'
 import { useDrag, useDrop } from 'react-dnd'
+import renderScene from '../../../components/renderMultipleChoiceAnimation'
 
 const SlideReview = (props) => {
   const [open, setOpen] = useState(false)
@@ -43,23 +44,64 @@ const MultipleChoice = ({
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
+  const initialOptions = option_choices.map((opt) => ({
+    transitioned: false,
+    ...opt
+  }))
+  const [options, setOptions] = useState(initialOptions)
+  const [initialRender, setInitialRender] = useState(true)
 
   useEffect(() => {
-    if (answer && answer.length) {
+    const element = document.getElementById(name)
+    if (answer && answer.length && initialRender) {
       form.setFieldValue(name, answer[0].text)
+      const newOptions = options.map((opt) => {
+        if (opt.text === answer[0].text) return { ...opt, transitioned: true }
+        else return opt
+      })
+      setOptions(newOptions)
+      const { width, height } = element.getBoundingClientRect()
+      renderScene({
+        width,
+        height,
+        ref: element,
+        options: newOptions,
+        handleSelect,
+        questionType: 'MULTIPLECHOICE'
+      })
+    } else if (element && initialRender) {
+      const { width, height } = element.getBoundingClientRect()
+      renderScene({
+        width,
+        height,
+        ref: element,
+        options,
+        handleSelect,
+        questionType: 'MULTIPLECHOICE'
+      })
+    } else if (!initialRender && answer && answer.length) {
+      const newOptions = options.map((opt) => {
+        if (opt.text === answer[0].text) return { ...opt, transitioned: true }
+        else return opt
+      })
+      renderScene({ ref: element, options: newOptions, update: true })
     }
+    setInitialRender(false)
   }, [answer])
+
+  const handleSelect = (answer) => {
+    form.setFieldValue(name, answer)
+  }
 
   useEffect(() => {
     if (answer && value)
       dispatch(editAnswer({ questionIdx, sectionIdx, answer: value, question_type }))
   }, [value])
-  const ticks = option_choices.reduce((acc, el, i) => ({ ...acc, [i]: el.text }), {})
+
   return (
     <Form.Item
       name={name}
       rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
-      {/* <Slider marks={ticks} max={option_choices.length - 1} tooltip={{ open: false }} /> */}
       <Select
         options={[...Array.from(option_choices)].map((option) => ({
           label: option.text,
@@ -82,13 +124,56 @@ const MultipleSelect = ({
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
+  const initialOptions = option_choices.map((opt) => ({
+    transitioned: false,
+    ...opt
+  }))
+  const [options, setOptions] = useState(initialOptions)
+  const [initialRender, setInitialRender] = useState(true)
 
   useEffect(() => {
-    if (answer && answer.length) {
+    const element = document.getElementById(name)
+    if (answer && answer.length && initialRender) {
       const answers = answer.map((a) => a.text)
       form.setFieldValue(name, answers)
+      const newOptions = options.map((opt) => {
+        if (answers.indexOf(opt.text) !== -1) return { ...opt, transitioned: true }
+        else return opt
+      })
+      setOptions(newOptions)
+      const { width, height } = element.getBoundingClientRect()
+      renderScene({
+        width,
+        height,
+        ref: element,
+        options: newOptions,
+        handleSelect,
+        questionType: 'MULTIPLESELECT'
+      })
+    } else if (element && initialRender) {
+      const { width, height } = element.getBoundingClientRect()
+      renderScene({
+        width,
+        height,
+        ref: element,
+        options,
+        handleSelect,
+        questionType: 'MULTIPLESELECT'
+      })
+    } else if (!initialRender && answer) {
+      const answers = answer.map((a) => a.text)
+      const newOptions = options.map((opt) => {
+        if (answers.indexOf(opt.text) !== -1) return { ...opt, transitioned: true }
+        else return opt
+      })
+      renderScene({ ref: element, options: newOptions, update: true })
     }
+    setInitialRender(false)
   }, [answer])
+
+  const handleSelect = (answers) => {
+    form.setFieldValue(name, answers)
+  }
 
   useEffect(() => {
     if (answer && value) {
@@ -102,7 +187,7 @@ const MultipleSelect = ({
       rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       {/* <Slider marks={ticks} max={option_choices.length - 1} tooltip={{ open: false }} /> */}
       <Checkbox.Group
-        options={[...Array.from(option_choices)].map((option) => ({
+        options={options.map((option) => ({
           label: option.text,
           value: option.text
         }))}
@@ -133,30 +218,75 @@ const MultipleChoiceScale = ({
   is_required,
   number_of_scale
 }) => {
-  const options = scaleOptions[number_of_scale]
+  const initialOptions = scaleOptions[number_of_scale].map((text) => ({
+    transitioned: false,
+    text
+  }))
+  const [options, setOptions] = useState(initialOptions)
+  const [initialRender, setInitialRender] = useState(true)
+  const [objectsData, setObjectsData] = useState([])
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
 
   useEffect(() => {
-    if (answer && answer.length) {
+    const element = document.getElementById(name)
+    if (answer && answer.length && initialRender) {
       form.setFieldValue(name, answer[0].text)
+      const newOptions = options.map((opt) => {
+        if (opt.text === answer[0].text) return { ...opt, transitioned: true }
+        else return opt
+      })
+      setOptions(newOptions)
+      const { width, height } = element.getBoundingClientRect()
+      const objectsData = renderScene({
+        width,
+        height,
+        ref: element,
+        options: newOptions,
+        handleSelect,
+        questionType: 'SCALEMULTIPLECHOICE'
+      })
+      setObjectsData(objectsData)
+    } else if (element && initialRender) {
+      const { width, height } = element.getBoundingClientRect()
+      const objectsData = renderScene({
+        width,
+        height,
+        ref: element,
+        options,
+        handleSelect,
+        questionType: 'SCALEMULTIPLECHOICE'
+      })
+      setObjectsData(objectsData)
+    } else if (!initialRender && answer && answer.length) {
+      const newOptions = options.map((opt) => {
+        if (opt.text === answer[0].text) return { ...opt, transitioned: true }
+        else return opt
+      })
+      renderScene({ ref: element, options: newOptions, update: true })
     }
+    setInitialRender(false)
   }, [answer])
 
   useEffect(() => {
     if (answer && value)
       dispatch(editAnswer({ questionIdx, sectionIdx, answer: value, question_type }))
   }, [value])
+
+  const handleSelect = (answer) => {
+    form.setFieldValue(name, answer)
+  }
+
   return (
     <Form.Item
       name={name}
       rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
       <Select
         options={options.map((option) => ({
-          label: option,
-          value: option
+          label: option.text,
+          value: option.text
         }))}
       />
     </Form.Item>
@@ -327,67 +457,72 @@ const Question = (question) => {
       handlerId: monitor.getHandlerId()
     })
   }))
-
+  const { sectionIdx, questionIdx } = question
+  const id = `${sectionIdx}-${questionIdx}`
   const ref = useRef()
   const dragDropRef = dragRef(dropRef(ref))
 
   const handleDeleteQuestion = () => dispatch(deleteQuestion({ ...question }))
   return (
-    <Form.Item
-      rules={[
-        { required: questionProps.is_required, message: 'Please complete the above question.' }
-      ]}
-      label={
-        <div
-          className={questionProps.is_required ? 'required-field py-3' : 'py-3'}
-          style={{ opacity: isDragging ? 0.2 : 1 }}
-          ref={dragDropRef}>
-          {question_type === 'SLIDEREVIEW' ? 'Click on the slide to open the questionnaire' : text}
-        </div>
-      }>
-      <Row>
-        <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
-          {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
-          {question_type === 'MULTIPLESELECT' && <MultipleSelect {...questionProps} />}
-          {question_type === 'SCALEMULTIPLECHOICE' && <MultipleChoiceScale {...questionProps} />}
-          {question_type === 'NUMBER' && <Number {...questionProps} />}
-          {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
-          {question_type === 'MULTIPLETEXT' && <MultiLineText {...questionProps} />}
-          {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
-          {question_type === 'SLIDEREVIEW' && <SlideReview {...questionProps} />}
-        </Col>
-        {survey.instructorView && (
-          <Col span={2}>
-            <EditTwoTone
-              twoToneColor="#ffd43b"
-              style={{
-                fontSize: '1em',
-                margin: 10,
-                pointerEvents: 'auto',
-                cursor: 'pointer'
-              }}
-              onClick={() => setQuestionModalOpen(true)}
-            />
-            <DeleteTwoTone
-              twoToneColor="#dc3545"
-              style={{
-                fontSize: '1em',
-                margin: 10,
-                pointerEvents: 'auto',
-                cursor: 'pointer'
-              }}
-              onClick={handleDeleteQuestion}
-            />
+    <div id={id}>
+      <Form.Item
+        rules={[
+          { required: questionProps.is_required, message: 'Please complete the above question.' }
+        ]}
+        label={
+          <div
+            className={questionProps.is_required ? 'required-field py-3' : 'py-3'}
+            style={{ opacity: isDragging ? 0.2 : 1 }}
+            ref={dragDropRef}>
+            {question_type === 'SLIDEREVIEW'
+              ? 'Click on the slide to open the questionnaire'
+              : text}
+          </div>
+        }>
+        <Row>
+          <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
+            {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
+            {question_type === 'MULTIPLESELECT' && <MultipleSelect {...questionProps} />}
+            {question_type === 'SCALEMULTIPLECHOICE' && <MultipleChoiceScale {...questionProps} />}
+            {question_type === 'NUMBER' && <Number {...questionProps} />}
+            {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
+            {question_type === 'MULTIPLETEXT' && <MultiLineText {...questionProps} />}
+            {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
+            {question_type === 'SLIDEREVIEW' && <SlideReview {...questionProps} />}
           </Col>
-        )}
-        <AddQuestionModal
-          open={questionModalOpen}
-          setOpen={setQuestionModalOpen}
-          sectionIdx={question.sectionIdx}
-          questionIdx={question.questionIdx}
-        />
-      </Row>
-    </Form.Item>
+          {survey.instructorView && (
+            <Col span={2}>
+              <EditTwoTone
+                twoToneColor="#ffd43b"
+                style={{
+                  fontSize: '1em',
+                  margin: 10,
+                  pointerEvents: 'auto',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setQuestionModalOpen(true)}
+              />
+              <DeleteTwoTone
+                twoToneColor="#dc3545"
+                style={{
+                  fontSize: '1em',
+                  margin: 10,
+                  pointerEvents: 'auto',
+                  cursor: 'pointer'
+                }}
+                onClick={handleDeleteQuestion}
+              />
+            </Col>
+          )}
+          <AddQuestionModal
+            open={questionModalOpen}
+            setOpen={setQuestionModalOpen}
+            sectionIdx={question.sectionIdx}
+            questionIdx={question.questionIdx}
+          />
+        </Row>
+      </Form.Item>
+    </div>
   )
 }
 

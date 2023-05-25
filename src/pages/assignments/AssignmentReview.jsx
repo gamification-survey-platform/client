@@ -13,7 +13,7 @@ import {
 import { getArtifact } from '../../api/artifacts'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { useForm } from 'antd/es/form/Form'
-import { surveySelector, setSurvey } from '../../store/survey/surveySlice'
+import { surveySelector, setSurvey, setProgress } from '../../store/survey/surveySlice'
 import userSelector from '../../store/user/selectors'
 import { setUser } from '../../store/user/userSlice'
 import { DndProvider } from 'react-dnd'
@@ -22,15 +22,14 @@ import { addCoursePoints } from '../../store/courses/coursesSlice'
 
 const AssignmentReview = () => {
   const { course_id, assignment_id, review_id } = useParams()
-  const [progressData, setProgressData] = useState({ startPct: 0, endPct: 0 })
   const user = useSelector(userSelector)
   const [messageApi, contextHolder] = message.useMessage()
   const [spin, setSpin] = useState(false)
   const [form] = useForm()
   const [artifact, setArtifact] = useState()
   const dispatch = useDispatch()
-  const courses = useSelector(coursesSelector)
   const survey = useSelector(surveySelector)
+  const progress = survey.progress
 
   const navigate = useNavigate()
 
@@ -71,10 +70,10 @@ const AssignmentReview = () => {
     )
     const allFields = Object.values(form.getFieldsValue())
     const allFieldsLength = allFields.length > 0 ? allFields.length : 1
-    setProgressData({
-      startPct: progressData.endPct,
+    dispatch(setProgress({
+      startPct: progress.endPct,
       endPct: filledFields.length / allFieldsLength
-    })
+    }))
   }, [])
 
   const handleSaveReview = async (e) => {
@@ -119,23 +118,6 @@ const AssignmentReview = () => {
     }
   }
 
-  const setProgress = () => {
-    const numberOfQuestions = survey.sections.reduce(
-      (prev, section) => prev + section.questions.length,
-      0
-    )
-    const filledFields = survey.sections.reduce((prev, section) => {
-      const questionsAnswered = section.questions.reduce(
-        (prev, question) => (question.answer.length ? prev + 1 : prev),
-        0
-      )
-      return prev + questionsAnswered
-    }, 0)
-    setProgressData({
-      startPct: progressData.endPct,
-      endPct: filledFields / numberOfQuestions
-    })
-  }
 
   return (
     <>
@@ -144,7 +126,7 @@ const AssignmentReview = () => {
         <Spinner show={spin} />
       ) : (
         <DndProvider backend={HTML5Backend}>
-          <Form form={form} className="m-5 w-75" onFieldsChange={setProgress}>
+          <Form form={form} className="m-5 w-75">
             <div
               style={{
                 position: 'fixed',
@@ -154,7 +136,7 @@ const AssignmentReview = () => {
                 width: 300,
                 height: 300
               }}>
-              <ChartWrapper type="progressBar" data={progressData} />
+              <ChartWrapper type="progressBar" data={progress} />
             </div>
             <Row justify="space-between">
               <Col span={14}>

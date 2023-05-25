@@ -8,14 +8,15 @@ const initialState = {
   instructions: '',
   other_info: '',
   sections: [],
-  instructorView: true
+  instructorView: true,
+  progress: { startPct: 0, endPct: 0 }
 }
 
 const surveySlice = createSlice({
   name: 'survey',
   initialState,
   reducers: {
-    setSurvey: (_, action) => action.payload,
+    setSurvey: (state, action) => ({ ...state, ...action.payload }),
     changeView: (state) => ({ ...state, instructorView: !state.instructorView }),
     addSection: (state, action) => {
       const sections = [{ ...action.payload, questions: [] }, ...state.sections]
@@ -100,6 +101,22 @@ const surveySlice = createSlice({
         if (oldAnswer.length) oldAnswer[0] = answerObj
         else oldAnswer.push(answerObj)
       }
+      const numberOfQuestions = newState.sections.reduce(
+        (prev, section) => prev + section.questions.length,
+        0
+      )
+      const filledFields = newState.sections.reduce((prev, section) => {
+        const questionsAnswered = section.questions.reduce(
+          (prev, question) => (question.answer.length ? prev + 1 : prev),
+          0
+        )
+        return prev + questionsAnswered
+      }, 0)
+      const newProgress = {
+        startPct: newState.progress.endPct,
+        endPct: filledFields / numberOfQuestions
+      }
+      newState.progress = newProgress
       return newState
     },
     reorderSections: (state, action) => {
@@ -121,7 +138,8 @@ const surveySlice = createSlice({
         i === sectionIdx ? { ...section, questions } : { ...oldSection }
       )
       return { ...state, sections }
-    }
+    },
+    setProgress: (state, action) => ({ ...state, progress: action.payload })
   },
   extraReducers: (builder) => {
     builder.addCase(PURGE, () => initialState)
@@ -142,7 +160,8 @@ export const {
   editAnswer,
   changeView,
   reorderSections,
-  reorderQuestions
+  reorderQuestions,
+  setProgress
 } = surveySlice.actions
 
 export default surveySlice.reducer

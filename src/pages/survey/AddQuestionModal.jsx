@@ -68,7 +68,10 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
           .map((k) => formObj[k])
         if (editingQuestion && editingQuestion.option_choices) {
           option_choices = option_choices.map((t, i) => ({
-            pk: editingQuestion.option_choices[i].pk,
+            pk:
+              editingQuestion.option_choices.length > i
+                ? editingQuestion.option_choices[i].pk
+                : undefined,
             text: t
           }))
         } else {
