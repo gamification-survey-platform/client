@@ -71,7 +71,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
       .y((d) => d.y)
       .curve(d3.curveBasis)
     const path = line(points)
-    return { start, end, path, ...opt }
+    return { start, end: questionType === 'MULTIPLESELECT' ? end : endPoint, path, ...opt }
   })
   const objects = scene.selectAll('.object').data(objectsData)
 
@@ -129,7 +129,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
           .attr('transform', (d) => `translate(${d.start.x}, ${d.start.y})`)
       }
     })
-
+  /*
   scene
     .selectAll('.path')
     .data(objectsData)
@@ -144,7 +144,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
       d.pathLength = length
       return 'none'
     })
-
+  */
   groups
     .append('svg:image')
     .attr('height', objectSize)
