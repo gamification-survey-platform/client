@@ -70,10 +70,12 @@ const AssignmentReview = () => {
     )
     const allFields = Object.values(form.getFieldsValue())
     const allFieldsLength = allFields.length > 0 ? allFields.length : 1
-    dispatch(setProgress({
-      startPct: progress.endPct,
-      endPct: filledFields.length / allFieldsLength
-    }))
+    dispatch(
+      setProgress({
+        startPct: progress.endPct,
+        endPct: filledFields.length / allFieldsLength
+      })
+    )
   }, [])
 
   const handleSaveReview = async (e) => {
@@ -117,7 +119,6 @@ const AssignmentReview = () => {
       }
     }
   }
-
 
   return (
     <>

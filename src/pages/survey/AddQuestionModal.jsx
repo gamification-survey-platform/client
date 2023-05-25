@@ -182,6 +182,20 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
         <Form.Item name="is_required" label="Required?" valuePropName="checked">
           <Checkbox />
         </Form.Item>
+        <Form.Item
+          name="gamified"
+          label="Enable gamification for this question?"
+          valuePropName="checked">
+          <Checkbox />
+        </Form.Item>
+        <Form.Item
+          name="phrased_positively"
+          label={
+            'Is the question positively phrased? E.g. "Was the student\'s delivery good?" vs. "Was the student\'s delivery poor?'
+          }
+          valuePropName="checked">
+          <Checkbox />
+        </Form.Item>
       </Form>
     </Modal>
   )

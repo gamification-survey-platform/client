@@ -9,6 +9,8 @@ import { useDispatch, useSelector } from 'react-redux'
 import { deleteQuestion, editAnswer, surveySelector } from '../../../store/survey/surveySlice'
 import { useDrag, useDrop } from 'react-dnd'
 import renderScene from '../../../components/renderMultipleChoiceAnimation'
+import TextFeedback from '../../../components/TextFeedback'
+import Sentiment from 'sentiment'
 
 const SlideReview = (props) => {
   const [open, setOpen] = useState(false)
@@ -298,6 +300,7 @@ const FixedText = ({ sectionIdx, questionIdx, answer, question_type, is_required
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
+  const [text, setText] = useState('')
   useEffect(() => {
     if (answer && answer.length) {
       form.setFieldValue(name, answer[0].text)
@@ -309,12 +312,20 @@ const FixedText = ({ sectionIdx, questionIdx, answer, question_type, is_required
       dispatch(editAnswer({ sectionIdx, questionIdx, answer: value, question_type }))
   }, [value])
 
+  const handleBlur = () => {
+    const text = form.getFieldValue(name)
+    setText(text)
+  }
+
   return (
-    <Form.Item
-      name={name}
-      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
-      <Input />
-    </Form.Item>
+    <div>
+      <Form.Item
+        name={name}
+        rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
+        <Input onBlur={handleBlur} />
+      </Form.Item>
+      {text && <TextFeedback text={text} />}
+    </div>
   )
 }
 

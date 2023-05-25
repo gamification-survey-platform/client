@@ -29,6 +29,7 @@
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.8",
     "redux-persist": "^6.0.0",
+    "sentiment": "^5.0.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
