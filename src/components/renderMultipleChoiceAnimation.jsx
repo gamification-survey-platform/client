@@ -122,7 +122,13 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
         }
       } else {
         d.transitioned = false
-        handleSelect('')
+        if (questionType !== 'MULTIPLESELECT') {
+          handleSelect('')
+        } else {
+          // If multiple Select, choose all selected values
+          const selected = objectsData.filter((obj) => obj.transitioned).map((obj) => obj.text)
+          handleSelect(selected)
+        }
         object
           .transition()
           .duration(1000)
