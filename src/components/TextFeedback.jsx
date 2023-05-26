@@ -22,7 +22,10 @@ const TextFeedback = ({ text }) => {
   const [response, setResponse] = useState()
   useEffect(() => {
     const setImage = (score) => {
-      if (score === 0) return
+      if (score === 0) {
+        setResponse()
+        return
+      }
       let img
       if (score < -5) {
         img = disgusted[Math.floor(Math.random() * disgusted.length)]
@@ -36,7 +39,6 @@ const TextFeedback = ({ text }) => {
       setResponse(img)
     }
     const { score } = sentiment.analyze(text)
-    console.log(score)
     setImage(score)
   }, [text])
   return response ? <img src={response} /> : null
