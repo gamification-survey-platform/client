@@ -10,7 +10,6 @@ import { deleteQuestion, editAnswer, surveySelector } from '../../../store/surve
 import { useDrag, useDrop } from 'react-dnd'
 import renderScene from '../../../components/renderMultipleChoiceAnimation'
 import TextFeedback from '../../../components/TextFeedback'
-import Sentiment from 'sentiment'
 
 const SlideReview = (props) => {
   const [open, setOpen] = useState(false)
@@ -226,7 +225,6 @@ const MultipleChoiceScale = ({
   }))
   const [options, setOptions] = useState(initialOptions)
   const [initialRender, setInitialRender] = useState(true)
-  const [objectsData, setObjectsData] = useState([])
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
@@ -250,7 +248,6 @@ const MultipleChoiceScale = ({
         handleSelect,
         questionType: 'SCALEMULTIPLECHOICE'
       })
-      setObjectsData(objectsData)
     } else if (element && initialRender) {
       const { width, height } = element.getBoundingClientRect()
       const objectsData = renderScene({
@@ -261,7 +258,6 @@ const MultipleChoiceScale = ({
         handleSelect,
         questionType: 'SCALEMULTIPLECHOICE'
       })
-      setObjectsData(objectsData)
     } else if (!initialRender && answer && answer.length) {
       const newOptions = options.map((opt) => {
         if (opt.text === answer[0].text) return { ...opt, transitioned: true }
@@ -412,6 +408,8 @@ const TextArea = ({ sectionIdx, questionIdx, answer, question_type, is_required 
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
+  const [text, setText] = useState('')
+
   useEffect(() => {
     if (answer && answer.length) {
       form.setFieldValue(name, answer[0].text)
@@ -423,12 +421,20 @@ const TextArea = ({ sectionIdx, questionIdx, answer, question_type, is_required 
       dispatch(editAnswer({ sectionIdx, questionIdx, answer: value, question_type }))
   }, [value])
 
+  const handleBlur = () => {
+    const text = form.getFieldValue(name)
+    setText(text)
+  }
+
   return (
-    <Form.Item
-      name={name}
-      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
-      <Input.TextArea rows={4} />
-    </Form.Item>
+    <div>
+      <Form.Item
+        name={name}
+        rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
+        <Input.TextArea rows={4} onBlur={handleBlur} />
+      </Form.Item>
+      {text && <TextFeedback text={text} />}
+    </div>
   )
 }
 

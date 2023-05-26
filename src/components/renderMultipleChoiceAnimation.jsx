@@ -10,14 +10,29 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
   // If simply updating, no need to recreate SVG
   if (update) {
     const objects = d3.select(ref).select('#scene').selectAll('.object')
-    objects.transition().attr('transform', (d) => {
-      const option = options.find((option) => option.text === d.text)
-      if (option.transitioned) d.transitioned = true
-      else d.transitioned = false
-      return d.transitioned
-        ? `translate(${d.end.x}, ${d.end.y})`
-        : `translate(${d.start.x}, ${d.start.y})`
-    })
+    console.log(ref)
+    objects
+      .transition()
+      .duration(1000)
+      .attrTween('transform', (d, i) => {
+        const option = options.find((option) => option.text === d.text)
+        let transitionBackward = false
+        if (!option.transitioned && d.transitioned) {
+          d.transitioned = false
+          transitionBackward = true
+        }
+        return function (t) {
+          const node = d3.select(`#path-${i}`).node()
+          if (option.text === d.text && d.transitioned) {
+            const { x, y } = node.getPointAtLength(t * d.pathLength)
+            return `translate(${x}, ${y})`
+          } else if (transitionBackward) {
+            const { x, y } = node.getPointAtLength((1 - t) * d.pathLength)
+            return `translate(${x}, ${y})`
+          }
+          return `translate(${d.start.x}, ${d.start.y})`
+        }
+      })
     return
   }
 
@@ -64,7 +79,10 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     const start = { x: startX, y: height - objectSize }
     const end = { x: endX, y: endPoint.y }
     const midpoint = { x: (endX + startX) / 2, y: 0 }
-    const points = [start, midpoint, endPoint, end]
+    const points =
+      questionType === 'MULTIPLESELECT'
+        ? [start, midpoint, endPoint, end]
+        : [start, midpoint, endPoint]
     const line = d3
       .line()
       .x((d) => d.x)
@@ -74,16 +92,6 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     return { start, end: questionType === 'MULTIPLESELECT' ? end : endPoint, path, ...opt }
   })
   const objects = scene.selectAll('.object').data(objectsData)
-
-  function translateAlong(path) {
-    const length = path.getTotalLength()
-    return () => {
-      return (t) => {
-        const { x, y } = path.getPointAtLength(t * length)
-        return `translate(${x},${y})`
-      }
-    }
-  }
 
   const groups = objects
     .enter()
@@ -96,25 +104,9 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
       const object = d3.select(this)
       if (!d.transitioned) {
         d.transitioned = true
-        object
-          .transition()
-          .duration(1000)
-          .attr('transform', (d) => `translate(${d.end.x}, ${d.end.y})`)
-
         if (questionType !== 'MULTIPLESELECT') {
           // If not multipleselect, transition preselected values back
           handleSelect(d.text)
-          svg
-            .selectAll('.object')
-            .transition()
-            .duration(1000)
-            .attr('transform', function (otherD) {
-              if (otherD.text === d.text) return `translate(${otherD.end.x}, ${otherD.end.y})`
-              else {
-                otherD.transitioned = false
-                return `translate(${otherD.start.x}, ${otherD.start.y})`
-              }
-            })
         } else {
           // If multiple Select, choose all selected values
           const selected = objectsData.filter((obj) => obj.transitioned).map((obj) => obj.text)
@@ -129,13 +121,14 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
           const selected = objectsData.filter((obj) => obj.transitioned).map((obj) => obj.text)
           handleSelect(selected)
         }
+        /*
         object
           .transition()
           .duration(1000)
           .attr('transform', (d) => `translate(${d.start.x}, ${d.start.y})`)
+        */
       }
     })
-  /*
   scene
     .selectAll('.path')
     .data(objectsData)
@@ -150,7 +143,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
       d.pathLength = length
       return 'none'
     })
-  */
+
   groups
     .append('svg:image')
     .attr('height', objectSize)
@@ -181,6 +174,37 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     const parent = node.parentElement
     parent.insertBefore(rect, node)
   })
+
+  const pathCoordinates = [
+    [0, 0],
+    [50, 50],
+    [100, 0]
+  ]
+
+  const path = scene
+    .append('path')
+    .attr('d', d3.line()(pathCoordinates))
+    .attr('stroke', 'black')
+    .attr('fill', 'none')
+
+  const node = path.node()
+  const length = node.getTotalLength()
+
+  const circle = scene
+    .append('circle')
+    .attr('cx', 0)
+    .attr('cy', 0)
+    .attr('r', 5)
+    .style('fill', 'black')
+    .style('stroke', 'black')
+    .transition()
+    .duration(3000)
+    .attrTween('transform', function (d, i) {
+      return function (t) {
+        const { x, y } = node.getPointAtLength(t * length)
+        return `translate(${x}, ${y})`
+      }
+    })
 }
 
 export default renderScene
