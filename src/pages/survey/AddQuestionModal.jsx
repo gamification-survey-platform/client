@@ -9,7 +9,9 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
     question_type: 'MULTIPLECHOICE',
     option_choices: 1,
     number_of_text: 1,
-    number_of_scale: 3
+    number_of_scale: 3,
+    gamified: true,
+    phrased_positively: true
   }
   const [form] = useForm()
   const dispatch = useDispatch()
@@ -83,8 +85,15 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
       } else if (formObj.question_type === 'MULTIPLETEXT') {
         payload = { number_of_text: parseInt(formObj.number_of_text) }
       }
-      const { text, question_type, is_required, ...rest } = formObj
-      const questionObj = { text, question_type, is_required: !!is_required, ...payload }
+      const { text, question_type, is_required, gamified, phrased_positively, ...rest } = formObj
+      const questionObj = {
+        text,
+        question_type,
+        is_required: !!is_required,
+        gamified: !!gamified,
+        phrased_positively: !!phrased_positively,
+        ...payload
+      }
       questionIdx >= 0
         ? dispatch(editQuestion({ question: questionObj, questionIdx, sectionIdx }))
         : dispatch(addQuestion({ question: questionObj, sectionIdx }))
@@ -179,9 +188,11 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
             <Input />
           </Form.Item>
         )}
-        <Form.Item name="is_required" label="Required?" valuePropName="checked">
-          <Checkbox />
-        </Form.Item>
+        {question_type !== 'MULTIPLESELECT' && (
+          <Form.Item name="is_required" label="Required?" valuePropName="checked">
+            <Checkbox />
+          </Form.Item>
+        )}
         <Form.Item
           name="gamified"
           label="Enable gamification for this question?"
@@ -191,7 +202,11 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
         <Form.Item
           name="phrased_positively"
           label={
-            'Is the question positively phrased? E.g. "Was the student\'s delivery good?" vs. "Was the student\'s delivery poor?'
+            <div style={{ height: 100 }}>
+              <p className="m-0">Is the question positively phrased?</p>
+              <p className="m-0">{`E.g. "Was the student's delivery good?" vs.`}</p>
+              <p className="m-0">{`"Was the student's delivery poor?"`}</p>
+            </div>
           }
           valuePropName="checked">
           <Checkbox />
@@ -200,5 +215,6 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
     </Modal>
   )
 }
+//            'E.g. "Was the student\'s delivery good?" vs. "Was the student\'s delivery poor?'
 
 export default AddQuestionModal

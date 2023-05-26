@@ -30,7 +30,7 @@ const Theme = () => {
       const res = await editTheme({ [name]: value })
       if (res.status === 200) dispatch(setTheme({ [name]: value }))
     } catch (e) {
-      messageApi({ type: 'error', content: `Failed to set theme. ${e.message}` })
+      messageApi.open({ type: 'error', content: `Failed to set theme. ${e.message}` })
     }
   }
 
@@ -39,15 +39,35 @@ const Theme = () => {
       const res = await editTheme(values)
       if (res.status === 200) dispatch(setTheme(values))
     } catch (e) {
-      messageApi({ type: 'error', content: `Failed to set theme. ${e.message}` })
+      messageApi.open({ type: 'error', content: `Failed to set theme. ${e.message}` })
     }
   }
 
   return (
-    <Form form={form} className="my-3">
+    <Form form={form} className="my-3 ml-3">
       {contextHolder}
       <Row>
-        <Col span={12} className="text-center">
+        <Col span={6} className="border-right pr-3">
+          <Space direction="vertical" className="ml-3 align-items-center">
+            <Typography.Title level={3} className="text-center">
+              Choose a preset theme
+            </Typography.Title>
+            <Button onClick={() => handlePresetThemeChange(hot)}>Fire</Button>
+            <Button onClick={() => handlePresetThemeChange(cool)}>Water</Button>
+            <Button onClick={() => handlePresetThemeChange(earth)}>Earth</Button>
+          </Space>
+        </Col>
+        <Col span={6} className="border-right pr-3">
+          <Space direction="vertical" className="ml-3 align-items-center">
+            <Typography.Title level={3} className="text-center">
+              Choose a preset theme
+            </Typography.Title>
+            <Button onClick={() => handlePresetThemeChange(hot)}>Fire</Button>
+            <Button onClick={() => handlePresetThemeChange(cool)}>Water</Button>
+            <Button onClick={() => handlePresetThemeChange(earth)}>Earth</Button>
+          </Space>
+        </Col>
+        <Col span={6} className="text-center">
           <Row justify="center" className="mb-3">
             <Typography.Title level={3}>Customize your theme</Typography.Title>
           </Row>
@@ -70,16 +90,6 @@ const Theme = () => {
             <Form.Item name="colorError" label="Error Color">
               <ColorPicker onChange={(_, value) => handleThemeChange('colorError', value)} />
             </Form.Item>
-          </Space>
-        </Col>
-        <Col span={12}>
-          <Space direction="vertical" className="ml-3 align-items-center">
-            <Typography.Title level={3} className="text-center">
-              Choose a preset theme
-            </Typography.Title>
-            <Button onClick={() => handlePresetThemeChange(hot)}>Fire</Button>
-            <Button onClick={() => handlePresetThemeChange(cool)}>Water</Button>
-            <Button onClick={() => handlePresetThemeChange(earth)}>Earth</Button>
           </Space>
         </Col>
       </Row>

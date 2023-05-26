@@ -149,7 +149,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     .append('path')
     .attr('id', (d, i) => `path-${i}`)
     .attr('d', (d) => d.path)
-    .attr('stroke', 'black')
+    //.attr('stroke', 'black')
     .attr('fill', function (d) {
       const node = d3.select(this).node()
       const length = node.getTotalLength()
