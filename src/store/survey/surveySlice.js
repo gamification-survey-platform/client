@@ -106,10 +106,11 @@ const surveySlice = createSlice({
         0
       )
       const filledFields = newState.sections.reduce((prev, section) => {
-        const questionsAnswered = section.questions.reduce(
-          (prev, question) => (question.answer.length ? prev + 1 : prev),
-          0
-        )
+        const questionsAnswered = section.questions.reduce((prev, question) => {
+          if (question.answer.length) {
+            return prev + 1
+          } else return prev
+        }, 0)
         return prev + questionsAnswered
       }, 0)
       const newProgress = {
