@@ -18,7 +18,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
         const regex = new RegExp('translate\\((\\d*\\.?\\d*), (\\d*\\.?\\d*)\\)', 'gm')
         const [_, currX, currY] = regex.exec(currentPosition)
         return function (t) {
-          const node = d3.select(`#path-${i}`).node()
+          const node = d3.select(ref).select(`#path-${i}`).node()
           // At start
           if (parseFloat(currX) === d.start.x && parseFloat(currY) === d.start.y) {
             // Should transition forward
@@ -84,16 +84,27 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     const endX = endPoint.x - i * objectSize - i * 40
     const start = { x: startX, y: height - objectSize }
     const end = { x: endX, y: endPoint.y }
-    const midpoint = { x: (endX + startX) / 2, y: 0 }
-    const points =
-      questionType === 'MULTIPLESELECT'
-        ? [start, midpoint, endPoint, end]
-        : [start, midpoint, endPoint]
-    const line = d3
+    let line = d3
       .line()
       .x((d) => d.x)
       .y((d) => d.y)
-      .curve(d3.curveBasis)
+      .curve(d3.curveLinear)
+    const pathTypes = ['linear', 'arc', 'zigzag']
+    const pathType = pathTypes[Math.floor(Math.random() * pathTypes.length)]
+    let points = [start]
+    if (pathType === 'linear') {
+      points.push(endPoint)
+    } else if (pathType === 'arc') {
+      const midpoint = { x: (endX + startX) / 2, y: 0 }
+      points = points.concat([midpoint, endPoint])
+      line.curve(d3.curveBasis)
+    } else if (pathType === 'zigzag') {
+      const midpoint1 = { x: ((endX + startX) * 1) / 4, y: 0 }
+      const midpoint2 = { x: ((endX + startX) * 1) / 2, y: endPoint.y }
+      const midpoint3 = { x: ((endX + startX) * 3) / 4, y: 0 }
+      points = points.concat([midpoint1, midpoint2, midpoint3, endPoint])
+    }
+    if (questionType === 'MULTIPLESELECT') points.push(end)
     const path = line(points)
     return { start, end: questionType === 'MULTIPLESELECT' ? end : endPoint, path, ...opt }
   })
