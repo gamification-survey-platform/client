@@ -85,6 +85,7 @@ const MultipleChoice = ({
         if (opt.text === answer[0].text) return { ...opt, transitioned: true }
         else return opt
       })
+      setOptions(newOptions)
       renderScene({ ref: element, options: newOptions, update: true })
     }
     setInitialRender(false)
@@ -167,6 +168,7 @@ const MultipleSelect = ({
         if (answers.indexOf(opt.text) !== -1) return { ...opt, transitioned: true }
         else return opt
       })
+      setOptions(newOptions)
       renderScene({ ref: element, options: newOptions, update: true })
     }
     setInitialRender(false)
@@ -240,7 +242,7 @@ const MultipleChoiceScale = ({
       })
       setOptions(newOptions)
       const { width, height } = element.getBoundingClientRect()
-      const objectsData = renderScene({
+      renderScene({
         width,
         height,
         ref: element,
@@ -250,7 +252,7 @@ const MultipleChoiceScale = ({
       })
     } else if (element && initialRender) {
       const { width, height } = element.getBoundingClientRect()
-      const objectsData = renderScene({
+      renderScene({
         width,
         height,
         ref: element,
@@ -263,6 +265,8 @@ const MultipleChoiceScale = ({
         if (opt.text === answer[0].text) return { ...opt, transitioned: true }
         else return opt
       })
+      console.log(newOptions)
+      setOptions(newOptions)
       renderScene({ ref: element, options: newOptions, update: true })
     }
     setInitialRender(false)

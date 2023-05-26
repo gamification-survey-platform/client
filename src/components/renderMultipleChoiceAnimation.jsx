@@ -10,27 +10,33 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
   // If simply updating, no need to recreate SVG
   if (update) {
     const objects = d3.select(ref).select('#scene').selectAll('.object')
-    console.log(ref)
     objects
       .transition()
       .duration(1000)
-      .attrTween('transform', (d, i) => {
-        const option = options.find((option) => option.text === d.text)
-        let transitionBackward = false
-        if (!option.transitioned && d.transitioned) {
-          d.transitioned = false
-          transitionBackward = true
-        }
+      .attrTween('transform', function (d, i) {
+        const currentPosition = d3.select(this).attr('transform')
+        const regex = new RegExp('translate\\((\\d*\\.?\\d*), (\\d*\\.?\\d*)\\)', 'gm')
+        const [_, currX, currY] = regex.exec(currentPosition)
         return function (t) {
           const node = d3.select(`#path-${i}`).node()
-          if (option.text === d.text && d.transitioned) {
-            const { x, y } = node.getPointAtLength(t * d.pathLength)
-            return `translate(${x}, ${y})`
-          } else if (transitionBackward) {
-            const { x, y } = node.getPointAtLength((1 - t) * d.pathLength)
-            return `translate(${x}, ${y})`
+          // At start
+          if (parseFloat(currX) === d.start.x && parseFloat(currY) === d.start.y) {
+            // Should transition forward
+            if (d.transitioned) {
+              const { x, y } = node.getPointAtLength(t * d.pathLength)
+              return `translate(${x}, ${y})`
+            } else {
+              return `translate(${d.start.x}, ${d.start.y})`
+            }
+          } else {
+            // Should transition backward
+            if (!d.transitioned) {
+              const { x, y } = node.getPointAtLength((1 - t) * d.pathLength)
+              return `translate(${x}, ${y})`
+            } else {
+              return `translate(${d.end.x}, ${d.end.y})`
+            }
           }
-          return `translate(${d.start.x}, ${d.start.y})`
         }
       })
     return
@@ -103,12 +109,14 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     .on('click', function (event, d) {
       const object = d3.select(this)
       if (!d.transitioned) {
-        d.transitioned = true
         if (questionType !== 'MULTIPLESELECT') {
           // If not multipleselect, transition preselected values back
+          objectsData.forEach((obj) => (obj.transitioned = false))
+          d.transitioned = true
           handleSelect(d.text)
         } else {
           // If multiple Select, choose all selected values
+          d.transitioned = true
           const selected = objectsData.filter((obj) => obj.transitioned).map((obj) => obj.text)
           handleSelect(selected)
         }
@@ -121,12 +129,6 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
           const selected = objectsData.filter((obj) => obj.transitioned).map((obj) => obj.text)
           handleSelect(selected)
         }
-        /*
-        object
-          .transition()
-          .duration(1000)
-          .attr('transform', (d) => `translate(${d.start.x}, ${d.start.y})`)
-        */
       }
     })
   scene
@@ -174,37 +176,6 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     const parent = node.parentElement
     parent.insertBefore(rect, node)
   })
-
-  const pathCoordinates = [
-    [0, 0],
-    [50, 50],
-    [100, 0]
-  ]
-
-  const path = scene
-    .append('path')
-    .attr('d', d3.line()(pathCoordinates))
-    .attr('stroke', 'black')
-    .attr('fill', 'none')
-
-  const node = path.node()
-  const length = node.getTotalLength()
-
-  const circle = scene
-    .append('circle')
-    .attr('cx', 0)
-    .attr('cy', 0)
-    .attr('r', 5)
-    .style('fill', 'black')
-    .style('stroke', 'black')
-    .transition()
-    .duration(3000)
-    .attrTween('transform', function (d, i) {
-      return function (t) {
-        const { x, y } = node.getPointAtLength(t * length)
-        return `translate(${x}, ${y})`
-      }
-    })
 }
 
 export default renderScene
