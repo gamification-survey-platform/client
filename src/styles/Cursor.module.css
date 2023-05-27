@@ -1,0 +1,19 @@
+.flower {
+  cursor: url('../assets/cursors/flower.png'), auto;
+}
+
+.lightsaber {
+  cursor: url('../assets/cursors/lightsaber.png'), auto;
+}
+
+.mario {
+  cursor: url('../assets/cursors/mario.png'), auto;
+}
+
+.pokeball {
+  cursor: url('../assets/cursors/pokeball.png'), auto;
+}
+
+.wand {
+  cursor: url('../assets/cursors/wand.png'), auto;
+}
