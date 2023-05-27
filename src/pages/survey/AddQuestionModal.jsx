@@ -94,9 +94,11 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
         phrased_positively: !!phrased_positively,
         ...payload
       }
-      questionIdx >= 0
-        ? dispatch(editQuestion({ question: questionObj, questionIdx, sectionIdx }))
-        : dispatch(addQuestion({ question: questionObj, sectionIdx }))
+      if (questionIdx >= 0) {
+        dispatch(editQuestion({ question: questionObj, questionIdx, sectionIdx }))
+      } else {
+        dispatch(addQuestion({ question: questionObj, sectionIdx }))
+      }
       handleClose()
       await form.resetFields()
     }

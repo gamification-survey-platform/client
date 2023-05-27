@@ -10,6 +10,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
   // If simply updating, no need to recreate SVG
   if (update) {
     const objects = d3.select(ref).select('#scene').selectAll('.object')
+    console.log(options)
     objects
       .transition()
       .duration(1000)
@@ -117,7 +118,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     .attr('transform', (d) =>
       d.transitioned ? `translate(${d.end.x}, ${d.end.y})` : `translate(${d.start.x}, ${d.start.y})`
     )
-    .on('click', function (event, d) {
+    .on('click', function (event, d, i) {
       const object = d3.select(this)
       if (!d.transitioned) {
         if (questionType !== 'MULTIPLESELECT') {
@@ -135,6 +136,20 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
         d.transitioned = false
         if (questionType !== 'MULTIPLESELECT') {
           handleSelect('')
+          let index
+          objectsData.forEach((obj, i) => {
+            if (obj.text === d.text) index = i
+          })
+          object
+            .transition()
+            .duration(1000)
+            .attrTween('transform', function () {
+              return function (t) {
+                const node = d3.select(ref).select(`#path-${index}`).node()
+                const { x, y } = node.getPointAtLength((1 - t) * d.pathLength)
+                return `translate(${x}, ${y})`
+              }
+            })
         } else {
           // If multiple Select, choose all selected values
           const selected = objectsData.filter((obj) => obj.transitioned).map((obj) => obj.text)
