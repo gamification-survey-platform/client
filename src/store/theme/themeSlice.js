@@ -2,7 +2,8 @@ import { createSlice } from '@reduxjs/toolkit'
 
 const initialState = {
   color: null,
-  cursor: null
+  cursor: null,
+  multiple_choice: null
 }
 
 const themeSlice = createSlice({
@@ -18,10 +19,12 @@ const themeSlice = createSlice({
     },
     resetColorTheme: (state) => ({ ...state, color: null }),
     setCursor: (state, action) => ({ ...state, cursor: action.payload }),
-    resetCursor: (state) => ({ ...state, cursor: null })
+    resetCursor: (state) => ({ ...state, cursor: null }),
+    setMultipleChoice: (state, action) => ({ ...state, multiple_choice: action.payload })
   }
 })
 
-export const { setColorTheme, resetColorTheme, setCursor, resetCursor } = themeSlice.actions
+export const { setColorTheme, resetColorTheme, setCursor, resetCursor, setMultipleChoice } =
+  themeSlice.actions
 
 export default themeSlice.reducer

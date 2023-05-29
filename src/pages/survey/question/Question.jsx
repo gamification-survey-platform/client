@@ -8,7 +8,8 @@ import SlideReviewModal from './SlideReviewModal'
 import { useDispatch, useSelector } from 'react-redux'
 import { deleteQuestion, editAnswer, surveySelector } from '../../../store/survey/surveySlice'
 import { useDrag, useDrop } from 'react-dnd'
-import renderScene from '../../../components/renderMultipleChoiceAnimation'
+import themeSelector from '../../../store/theme/selectors'
+import renderScene from '../../../components/multiple-choice/renderMultipleChoiceAnimation'
 import TextFeedback from '../../../components/TextFeedback'
 
 const SlideReview = (props) => {
@@ -49,6 +50,7 @@ const MultipleChoice = ({
     transitioned: false,
     ...opt
   }))
+  const { multiple_choice } = useSelector(themeSelector)
   const [options, setOptions] = useState(initialOptions)
   const [initialRender, setInitialRender] = useState(true)
 
@@ -68,6 +70,7 @@ const MultipleChoice = ({
         ref: element,
         options: newOptions,
         handleSelect,
+        multipleChoiceTheme: multiple_choice,
         questionType: 'MULTIPLECHOICE'
       })
     } else if (element && initialRender) {
@@ -78,6 +81,7 @@ const MultipleChoice = ({
         ref: element,
         options,
         handleSelect,
+        multipleChoiceTheme: multiple_choice,
         questionType: 'MULTIPLECHOICE'
       })
     } else if (!initialRender && answer && answer.length) {
@@ -126,6 +130,7 @@ const MultipleSelect = ({
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
+  const { multiple_choice } = useSelector(themeSelector)
   const initialOptions = option_choices.map((opt) => ({
     transitioned: false,
     ...opt
@@ -150,6 +155,7 @@ const MultipleSelect = ({
         ref: element,
         options: newOptions,
         handleSelect,
+        multipleChoiceTheme: multiple_choice,
         questionType: 'MULTIPLESELECT'
       })
     } else if (element && initialRender) {
@@ -160,6 +166,7 @@ const MultipleSelect = ({
         ref: element,
         options,
         handleSelect,
+        multipleChoiceTheme: multiple_choice,
         questionType: 'MULTIPLESELECT'
       })
     } else if (!initialRender && answer) {
@@ -229,6 +236,7 @@ const MultipleChoiceScale = ({
   const [initialRender, setInitialRender] = useState(true)
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
+  const { multiple_choice } = useSelector(themeSelector)
   const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
 
@@ -247,6 +255,7 @@ const MultipleChoiceScale = ({
         height,
         ref: element,
         options: newOptions,
+        multipleChoiceTheme: multiple_choice,
         handleSelect,
         questionType: 'SCALEMULTIPLECHOICE'
       })
@@ -258,6 +267,7 @@ const MultipleChoiceScale = ({
         ref: element,
         options,
         handleSelect,
+        multipleChoiceTheme: multiple_choice,
         questionType: 'SCALEMULTIPLECHOICE'
       })
     } else if (!initialRender && answer && answer.length) {
@@ -265,7 +275,6 @@ const MultipleChoiceScale = ({
         if (opt.text === answer[0].text) return { ...opt, transitioned: true }
         else return opt
       })
-      console.log(newOptions)
       setOptions(newOptions)
       renderScene({ ref: element, options: newOptions, update: true })
     }

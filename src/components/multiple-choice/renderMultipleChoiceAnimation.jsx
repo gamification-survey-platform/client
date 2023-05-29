@@ -1,16 +1,18 @@
 import * as d3 from 'd3'
-import Basketball from '../assets/basketball.jpg'
-import BasketballHoop from '../assets/basketballHoop.jpeg'
-import Soccerball from '../assets/soccerball.png'
-import SoccerNet from '../assets/soccerNet.png'
-import Football from '../assets/football.jpeg'
-import Goalpost from '../assets/goalPost.png'
+import iconMapping from './iconMapping'
 
-const renderScene = ({ width, options, ref, handleSelect, questionType, update = false }) => {
+const renderScene = ({
+  width,
+  options,
+  ref,
+  handleSelect,
+  questionType,
+  multipleChoiceTheme = 'nature',
+  update = false
+}) => {
   // If simply updating, no need to recreate SVG
   if (update) {
     const objects = d3.select(ref).select('#scene').selectAll('.object')
-    console.log(options)
     objects
       .transition()
       .duration(1000)
@@ -42,9 +44,8 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
       })
     return
   }
-
-  const variants = ['basketball', 'football', 'soccer']
-  const variant = variants[d3.randomInt(variants.length)()]
+  const theme = iconMapping[multipleChoiceTheme || 'nature']
+  const { item: itemIcon, target: targetIcon } = theme[questionType]
 
   // Create SVG
   const wrapperRef = d3.select(ref)
@@ -73,11 +74,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     .attr('y', height - targetSize)
     .attr('width', targetSize)
     .attr('height', targetSize)
-    .attr('xlink:href', () => {
-      if (variant === 'basketball') return BasketballHoop
-      else if (variant === 'soccer') return SoccerNet
-      else if (variant === 'football') return Goalpost
-    })
+    .attr('xlink:href', targetIcon)
 
   // Create object data join
   const objectsData = options.map((opt, i) => {
@@ -176,11 +173,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     .append('svg:image')
     .attr('height', objectSize)
     .attr('width', objectSize)
-    .attr('xlink:href', () => {
-      if (variant === 'basketball') return Basketball
-      else if (variant === 'soccer') return Soccerball
-      else if (variant === 'football') return Football
-    })
+    .attr('xlink:href', itemIcon)
 
   groups
     .append('text')
@@ -188,7 +181,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     .text((d) => d.text)
     .style('font-size', 12)
     .style('font-weight', 'bold')
-    .attr('y', objectSize / 2)
+    .attr('y', objectSize - 12)
 
   d3.selectAll('.text').each(function (d) {
     const node = d3.select(this).node()
@@ -198,7 +191,7 @@ const renderScene = ({ width, options, ref, handleSelect, questionType, update =
     rect.setAttribute('y', textRect.y)
     rect.setAttribute('width', textRect.width)
     rect.setAttribute('height', textRect.height)
-    rect.setAttribute('fill', 'yellow')
+    rect.setAttribute('fill', 'gold')
     const parent = node.parentElement
     parent.insertBefore(rect, node)
   })

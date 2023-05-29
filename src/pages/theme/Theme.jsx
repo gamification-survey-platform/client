@@ -1,11 +1,11 @@
-import { Typography, Form, ColorPicker, Row, Button, Col, Space, Image } from 'antd'
+import { Typography, Form, ColorPicker, Row, Button, Col, Space } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useSelector } from 'react-redux'
 import themeSelector from '../../store/theme/selectors'
 import { useToken } from 'antd/es/theme/internal'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
-import { setColorTheme, setCursor } from '../../store/theme/themeSlice'
+import { setColorTheme, setCursor, setMultipleChoice } from '../../store/theme/themeSlice'
 import { editTheme } from '../../api/theme'
 import { hot, cool, earth } from './presetThemes'
 import Flower from '../../assets/cursors/flower.png'
@@ -13,6 +13,10 @@ import Lightsaber from '../../assets/cursors/lightsaber.png'
 import Wand from '../../assets/cursors/wand.png'
 import Pokeball from '../../assets/cursors/pokeball.png'
 import Mario from '../../assets/cursors/mario.png'
+import Dog from '../../assets/multiple-choice/nature/dog.jpeg'
+import Car from '../../assets/multiple-choice/transportation/car.avif'
+import Basketball from '../../assets/multiple-choice/sports/basketball.jpg'
+import Pie from '../../assets/multiple-choice/food/pie.png'
 import useMessage from 'antd/es/message/useMessage'
 import userSelector from '../../store/user/selectors'
 
@@ -31,6 +35,15 @@ const Theme = () => {
       form.setFieldsValue(token)
     }
   }, [color])
+
+  const handleMultipleChoiceThemeChange = async (value) => {
+    try {
+      const res = await editTheme({ multiple_choice: value })
+      if (res.status === 200) dispatch(setMultipleChoice(value))
+    } catch (e) {
+      messageApi.open({ type: 'error', content: `Failed to set theme. ${e.message}` })
+    }
+  }
 
   const handleThemeChange = async (name, value) => {
     try {
@@ -104,6 +117,31 @@ const Theme = () => {
     <Form form={form} className="my-3 ml-3">
       {contextHolder}
       <Row>
+        <Col span={6} className="border-right pr-3">
+          <Space direction="vertical" className="ml-3 align-items-center">
+            <Typography.Title level={3} className="text-center">
+              Choose a survey theme
+            </Typography.Title>
+            <Row>
+              <Button onClick={() => handleMultipleChoiceThemeChange('nature')}>Nature</Button>
+              <img className="ml-3" src={Dog} style={{ width: 50, height: 50 }} />
+            </Row>
+            <Row>
+              <Button onClick={() => handleMultipleChoiceThemeChange('sports')}>Sports</Button>
+              <img className="ml-3" src={Basketball} style={{ width: 50, height: 50 }} />
+            </Row>
+            <Row>
+              <Button onClick={() => handleMultipleChoiceThemeChange('food')}>Food</Button>
+              <img className="ml-3" src={Pie} style={{ width: 50, height: 50 }} />
+            </Row>
+            <Row>
+              <Button onClick={() => handleMultipleChoiceThemeChange('transportation')}>
+                Transportation
+              </Button>
+              <img className="ml-3" src={Car} style={{ width: 50, height: 50 }} />
+            </Row>
+          </Space>
+        </Col>
         <Col span={6} className="border-right pr-3">
           <Space direction="vertical" className="ml-3 align-items-center">
             <Typography.Title level={3} className="text-center">
