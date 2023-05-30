@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { surveySelector } from '../../store/survey/surveySlice'
 import { deleteSection, reorderQuestions } from '../../store/survey/surveySlice'
 import { useDrag, useDrop } from 'react-dnd'
+import { getSentimentEmoji } from './sentiment'
 
 const Section = ({ sectionIdx, artifact, handleReorderSections }) => {
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
@@ -135,6 +136,16 @@ const Section = ({ sectionIdx, artifact, handleReorderSections }) => {
                   handleReorderQuestions={handleReorderQuestions}
                 />
               ))}
+            {section.sentiment ? (
+              <Row justify="end" className="m-3" align="middle">
+                <Typography.Title level={3} className="mr-3">
+                  Section mood:
+                </Typography.Title>
+                <h1
+                  dangerouslySetInnerHTML={{ __html: `${getSentimentEmoji(section.sentiment)}` }}
+                />
+              </Row>
+            ) : null}
           </div>
         </Collapse.Panel>
       </Collapse>

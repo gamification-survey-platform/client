@@ -1,6 +1,21 @@
-import { createSlice, current } from '@reduxjs/toolkit'
+import { createSlice } from '@reduxjs/toolkit'
 import { PURGE } from 'redux-persist'
 import { cloneDeep } from 'lodash'
+import Sentiment from 'sentiment'
+
+const analyzeAnswer = ({ type, answer }) => {
+  if (type === 'SCALEMULTIPLECHOICE') {
+    if (answer.text.includes('disagree')) return -1
+    else if (answer.text.includes('agree')) return 1
+    else return 0
+  } else if (type === 'FIXEDTEXT' || type === 'TEXTAREA') {
+    const sentiment = new Sentiment()
+    const { score } = sentiment.analyze(answer.text)
+    if (score < 0) return -1
+    return 1
+  }
+  return 0
+}
 
 const initialState = {
   pk: -1,
@@ -9,7 +24,8 @@ const initialState = {
   other_info: '',
   sections: [],
   instructorView: true,
-  progress: { startPct: 0, endPct: 0 }
+  progress: { startPct: 0, endPct: 0 },
+  sentiment: undefined
 }
 
 const surveySlice = createSlice({
@@ -118,6 +134,24 @@ const surveySlice = createSlice({
         endPct: filledFields / numberOfQuestions
       }
       newState.progress = newProgress
+      let surveySentiment = 0
+      newState.sections.forEach((section) => {
+        let aggregate = 0
+        let count = 0
+        section.questions.forEach((question) => {
+          if (question.answer.length) {
+            aggregate += analyzeAnswer({ type: question.question_type, answer: question.answer[0] })
+            count += 1
+          }
+        })
+        if (count > 0) {
+          section.sentiment = aggregate / count
+          surveySentiment += section.sentiment
+        }
+      })
+      newState.sentiment = newState.sections.length
+        ? surveySentiment / newState.sections.length
+        : undefined
       return newState
     },
     reorderSections: (state, action) => {

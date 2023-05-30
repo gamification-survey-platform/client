@@ -4,12 +4,7 @@ import { useParams, useNavigate } from 'react-router'
 import Spinner from '../../components/Spinner'
 import Section from '../survey/Section'
 import { useDispatch, useSelector } from 'react-redux'
-import coursesSelector from '../../store/courses/selectors'
-import {
-  getArtifactReview,
-  saveArtifactReview,
-  submitArtifactReviewExp
-} from '../../api/artifactReview'
+import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
 import { getArtifact } from '../../api/artifacts'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { useForm } from 'antd/es/form/Form'
@@ -19,6 +14,7 @@ import { setUser } from '../../store/user/userSlice'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { addCoursePoints } from '../../store/courses/coursesSlice'
+import { getSentimentEmoji } from '../survey/sentiment'
 
 const AssignmentReview = () => {
   const { course_id, assignment_id, review_id } = useParams()
@@ -153,6 +149,22 @@ const AssignmentReview = () => {
                 {survey.sections.map((_, i) => (
                   <Section key={i} sectionIdx={i} artifact={artifact} />
                 ))}
+                {survey.sentiment ? (
+                  <Row
+                    justify="end"
+                    className="fixed-bottom mr-3"
+                    align="middle"
+                    style={{ bottom: '10%' }}>
+                    <Typography.Title level={5} className="mr-3">
+                      Survey sentiment:
+                    </Typography.Title>
+                    <h1
+                      dangerouslySetInnerHTML={{
+                        __html: `${getSentimentEmoji(survey.sentiment)}`
+                      }}
+                    />
+                  </Row>
+                ) : null}
                 <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
                   <Button type="primary" onClick={handleSaveReview}>
                     Submit Review
