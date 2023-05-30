@@ -11,6 +11,7 @@ import { useDrag, useDrop } from 'react-dnd'
 import themeSelector from '../../../store/theme/selectors'
 import renderScene from '../../../components/multiple-choice/renderMultipleChoiceAnimation'
 import TextFeedback from '../../../components/TextFeedback'
+import { getRandomEmoji } from './emojis'
 
 const SlideReview = (props) => {
   const [open, setOpen] = useState(false)
@@ -350,14 +351,16 @@ const MultiLineField = ({
   const name = `${sectionIdx}-${questionIdx}-${idx}`
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
+  const [response, setResponse] = useState()
   const dispatch = useDispatch()
   useEffect(() => {
     if (answer && idx < answer.length) {
       form.setFieldValue(name, answer[idx].text)
+      !response && answer[idx].text && setResponse(getRandomEmoji('positive'))
     }
   }, [answer])
   useEffect(() => {
-    if (answer && value)
+    if (answer && value) {
       dispatch(
         editAnswer({
           questionIdx,
@@ -368,14 +371,25 @@ const MultiLineField = ({
           number_of_text
         })
       )
+    }
   }, [value])
 
   return (
-    <Form.Item
-      name={name}
-      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
-      <Input />
-    </Form.Item>
+    <Row align="middle">
+      <Form.Item
+        name={name}
+        rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
+        <Input />
+      </Form.Item>
+      {response ? (
+        <h3
+          className="ml-3"
+          dangerouslySetInnerHTML={{
+            __html: `${response}`
+          }}
+        />
+      ) : null}
+    </Row>
   )
 }
 
@@ -395,24 +409,37 @@ const Number = ({ sectionIdx, questionIdx, answer, question_type, is_required })
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
+  const [response, setResponse] = useState()
   const dispatch = useDispatch()
   useEffect(() => {
     if (answer && answer.length) {
       form.setFieldValue(name, answer[0].text)
+      !response && setResponse(getRandomEmoji('positive'))
     }
   }, [answer])
 
   useEffect(() => {
-    if (answer && value)
+    if (answer && value) {
       dispatch(editAnswer({ sectionIdx, questionIdx, answer: value, question_type }))
+    }
   }, [value])
 
   return (
-    <Form.Item
-      name={name}
-      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
-      <Input type="number" />
-    </Form.Item>
+    <Row align="middle">
+      <Form.Item
+        name={name}
+        rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
+        <Input type="number" />
+      </Form.Item>
+      {response ? (
+        <h1
+          className="ml-3"
+          dangerouslySetInnerHTML={{
+            __html: `${response}`
+          }}
+        />
+      ) : null}
+    </Row>
   )
 }
 

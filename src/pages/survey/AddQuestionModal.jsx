@@ -187,7 +187,7 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
         )}
         {question_type === 'MULTIPLETEXT' && (
           <Form.Item label="Choose number of lines" name="number_of_text">
-            <Input />
+            <Input type="number" />
           </Form.Item>
         )}
         {question_type !== 'MULTIPLESELECT' && (
