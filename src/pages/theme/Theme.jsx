@@ -1,4 +1,4 @@
-import { Typography, Form, ColorPicker, Row, Button, Col, Space } from 'antd'
+import { Typography, Form, ColorPicker, Row, Button, Col, Space, Divider } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useSelector } from 'react-redux'
 import themeSelector from '../../store/theme/selectors'
@@ -116,89 +116,112 @@ const Theme = () => {
   return (
     <Form form={form} className="my-3 ml-3">
       {contextHolder}
-      <Row>
-        <Col span={6} className="border-right pr-3">
-          <Space direction="vertical" className="ml-3 align-items-center">
-            <Typography.Title level={3} className="text-center">
-              Choose a survey theme
-            </Typography.Title>
-            <Row>
-              <Button onClick={() => handleMultipleChoiceThemeChange('nature')}>Nature</Button>
-              <img className="ml-3" src={Dog} style={{ width: 50, height: 50 }} />
-            </Row>
-            <Row>
-              <Button onClick={() => handleMultipleChoiceThemeChange('sports')}>Sports</Button>
-              <img className="ml-3" src={Basketball} style={{ width: 50, height: 50 }} />
-            </Row>
-            <Row>
-              <Button onClick={() => handleMultipleChoiceThemeChange('food')}>Food</Button>
-              <img className="ml-3" src={Pie} style={{ width: 50, height: 50 }} />
-            </Row>
-            <Row>
-              <Button onClick={() => handleMultipleChoiceThemeChange('transportation')}>
-                Transportation
-              </Button>
-              <img className="ml-3" src={Car} style={{ width: 50, height: 50 }} />
-            </Row>
-          </Space>
-        </Col>
-        <Col span={6} className="border-right pr-3">
-          <Space direction="vertical" className="ml-3 align-items-center">
-            <Typography.Title level={3} className="text-center">
-              Choose a preset theme
-            </Typography.Title>
-            <Button onClick={() => handlePresetThemeChange(hot)}>Fire</Button>
-            <Button onClick={() => handlePresetThemeChange(cool)}>Water</Button>
-            <Button onClick={() => handlePresetThemeChange(earth)}>Earth</Button>
-            <Button className="mt-3" onClick={handleResetColorTheme}>
-              Reset Color Theme
-            </Button>
-          </Space>
-        </Col>
-        <Col span={6} className="border-right px-3">
-          <Space direction="vertical" className="ml-3 align-items-center">
-            <Typography.Title level={3} className="text-center">
-              Choose a cursor
-            </Typography.Title>
-            <img src={Flower} role="button" onClick={() => handleCursorChange('flower')} />
-            <img src={Lightsaber} role="button" onClick={() => handleCursorChange('lightsaber')} />
-            <img src={Mario} role="button" onClick={() => handleCursorChange('mario')} />
-            <img src={Pokeball} role="button" onClick={() => handleCursorChange('pokeball')} />
-            <img src={Wand} role="button" onClick={() => handleCursorChange('wand')} />
-            <Button className="mt-3" onClick={handleResetCursor}>
-              Reset to default
-            </Button>
-          </Space>
-        </Col>
-        <Col span={6} className="text-center">
-          <Row justify="center" className="mb-3">
-            <Typography.Title level={3}>Customize your theme</Typography.Title>
-          </Row>
-          <Space direction="vertical" className="align-items-center">
-            <Form.Item name="colorBgBase" label="Background Base Color">
-              <ColorPicker onChange={(_, value) => handleThemeChange('colorBgBase', value)} />
-            </Form.Item>
-            <Form.Item name="colorTextBase" label="Text Color">
-              <ColorPicker onChange={(_, value) => handleThemeChange('colorTextBase', value)} />
-            </Form.Item>
-            <Form.Item name="colorPrimary" label="Primary Color">
-              <ColorPicker onChange={(_, value) => handleThemeChange('colorPrimary', value)} />
-            </Form.Item>
-            <Form.Item name="colorSuccess" label="Success Color">
-              <ColorPicker onChange={(_, value) => handleThemeChange('colorSuccess', value)} />
-            </Form.Item>
-            <Form.Item name="colorWarning" label="Warning Color">
-              <ColorPicker onChange={(_, value) => handleThemeChange('colorWarning', value)} />
-            </Form.Item>
-            <Form.Item name="colorError" label="Error Color">
-              <ColorPicker onChange={(_, value) => handleThemeChange('colorError', value)} />
-            </Form.Item>
-            <Form.Item>
-              <Button onClick={handleResetColorTheme}>Reset Color Theme</Button>
-            </Form.Item>
-          </Space>
-        </Col>
+      <Row justify="start">
+        <Typography.Title level={2}>Level 0</Typography.Title>
       </Row>
+      <Space direction="vertical" size="large" align="center" className="w-100">
+        <Row justify="start" className="mb-3">
+          <Typography.Title level={5}>Theme Customization</Typography.Title>
+        </Row>
+        <Space direction="horizontal" size="large">
+          <Form.Item name="colorBgBase" label="Background Base Color">
+            <ColorPicker onChange={(_, value) => handleThemeChange('colorBgBase', value)} />
+          </Form.Item>
+          <Form.Item name="colorTextBase" label="Text Color">
+            <ColorPicker onChange={(_, value) => handleThemeChange('colorTextBase', value)} />
+          </Form.Item>
+          <Form.Item name="colorPrimary" label="Primary Color">
+            <ColorPicker onChange={(_, value) => handleThemeChange('colorPrimary', value)} />
+          </Form.Item>
+          <Form.Item name="colorSuccess" label="Success Color">
+            <ColorPicker onChange={(_, value) => handleThemeChange('colorSuccess', value)} />
+          </Form.Item>
+          <Form.Item name="colorWarning" label="Warning Color">
+            <ColorPicker onChange={(_, value) => handleThemeChange('colorWarning', value)} />
+          </Form.Item>
+          <Form.Item name="colorError" label="Error Color">
+            <ColorPicker onChange={(_, value) => handleThemeChange('colorError', value)} />
+          </Form.Item>
+        </Space>
+        <Form.Item>
+          <Button onClick={handleResetColorTheme}>Reset Color Theme</Button>
+        </Form.Item>
+      </Space>
+      <Divider />
+      <Row justify="start">
+        <Typography.Title level={2}>Level 1</Typography.Title>
+      </Row>
+      <Space direction="vertical" size="large" align="center" className="w-100">
+        <Row justify="start" className="mb-3">
+          <Typography.Title level={5}>Choose Survey Theme</Typography.Title>
+        </Row>
+        <Space direction="horizontal" size="large">
+          <Button onClick={() => handlePresetThemeChange(hot)}>Fire</Button>
+          <Button onClick={() => handlePresetThemeChange(cool)}>Water</Button>
+          <Button onClick={() => handlePresetThemeChange(earth)}>Earth</Button>
+        </Space>
+        <Button className="mt-3" onClick={handleResetColorTheme}>
+          Reset Color Theme
+        </Button>
+      </Space>
+      <Divider />
+      <Row justify="start">
+        <Typography.Title level={2}>Level 2</Typography.Title>
+      </Row>
+      <Space direction="vertical" size="large" align="center" className="w-100">
+        <Row justify="start" className="mb-3">
+          <Typography.Title level={5}>Choose Cursor</Typography.Title>
+        </Row>
+        <Space direction="horizontal" size="large" align="center" className="w-100">
+          <img src={Flower} role="button" onClick={() => handleCursorChange('flower')} />
+          <img src={Lightsaber} role="button" onClick={() => handleCursorChange('lightsaber')} />
+          <img src={Mario} role="button" onClick={() => handleCursorChange('mario')} />
+          <img src={Pokeball} role="button" onClick={() => handleCursorChange('pokeball')} />
+          <img src={Wand} role="button" onClick={() => handleCursorChange('wand')} />
+        </Space>
+        <Button className="mt-3" onClick={handleResetCursor}>
+          Reset to default
+        </Button>
+      </Space>
+      <Divider />
+      <Row justify="start">
+        <Typography.Title level={2}>Level 3</Typography.Title>
+      </Row>
+      <Space direction="vertical" size="large" align="center" className="w-100">
+        <Row justify="start" className="mb-3">
+          <Typography.Title level={5}>Choose Survey Theme</Typography.Title>
+        </Row>
+        <Space direction="horizontal" size="large">
+          <Button
+            size="large"
+            style={{ minHeight: 60 }}
+            icon={<img src={Dog} style={{ width: 50, height: 50 }} />}
+            onClick={() => handleMultipleChoiceThemeChange('nature')}>
+            Nature
+          </Button>
+          <Button
+            size="large"
+            style={{ minHeight: 60 }}
+            icon={<img src={Basketball} style={{ width: 50, height: 50 }} />}
+            onClick={() => handleMultipleChoiceThemeChange('sports')}>
+            Sports
+          </Button>
+          <Button
+            size="large"
+            style={{ minHeight: 60 }}
+            icon={<img src={Pie} style={{ width: 50, height: 50 }} />}
+            onClick={() => handleMultipleChoiceThemeChange('food')}>
+            Food
+          </Button>
+          <Button
+            size="large"
+            style={{ minHeight: 60 }}
+            icon={<img src={Car} style={{ width: 50, height: 50 }} />}
+            onClick={() => handleMultipleChoiceThemeChange('transportation')}>
+            Transportation
+          </Button>
+        </Space>
+      </Space>
     </Form>
   )
 }
