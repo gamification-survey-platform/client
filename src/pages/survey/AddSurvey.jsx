@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
-import { Button, Form, message, Alert, Input, DatePicker } from 'antd'
+import { Button, Form, message, Popover, Input, DatePicker, Space } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router'
 import { createSurvey, deleteSurveyTemplate, editSurveyTemplate } from '../../api/survey'
 import coursesSelector from '../../store/courses/selectors'
 import dayjs from 'dayjs'
+import Checkbox from 'antd/es/checkbox/Checkbox'
+import SurveyTrivia from './SurveyTrivia'
+import { QuestionCircleTwoTone } from '@ant-design/icons'
 
 const AddSurvey = () => {
   const [messageApi, contextHolder] = message.useMessage()
@@ -16,6 +19,7 @@ const AddSurvey = () => {
   const navigate = useNavigate()
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const [form] = useForm()
+  const [enableTrivia, setEnableTrivia] = useState(false)
 
   useEffect(() => {
     if (editingSurvey) {
@@ -31,6 +35,7 @@ const AddSurvey = () => {
       const fields = form.getFieldsValue()
       const { date_due, date_released } = fields
       const now = dayjs()
+      console.log(fields)
       if (!date_due || !date_released) {
         messageApi.open({ type: 'error', content: 'Please input date due and/or date release.' })
         throw new Error()
@@ -41,6 +46,17 @@ const AddSurvey = () => {
         messageApi.open({ type: 'error', content: 'Date due must be after date release.' })
         throw new Error()
       }
+      let trivia = {}
+      if (enableTrivia) {
+        trivia = {
+          trivia_question: fields.trivia_question,
+          trivia_answer: fields.trivia_answer,
+          hints: []
+        }
+        Object.keys(fields).forEach((key) => {
+          if (key.startsWith('hint')) trivia.hints.push(fields[key])
+        })
+      }
       const surveyData = {
         course_id: selectedCourse.pk,
         assignment_id,
@@ -48,7 +64,8 @@ const AddSurvey = () => {
           ...fields,
           date_due: new Date(date_due.format('MM/DD/YYYY hh:mm')),
           date_released: new Date(date_released.format('MM/DD/YYYY hh:mm')),
-          other_info: fields.other_info || ''
+          other_info: fields.other_info || '',
+          trivia
         }
       }
       const res = await createSurvey(surveyData)
@@ -137,6 +154,33 @@ const AddSurvey = () => {
             </Form.Item>
           </>
         )}
+        <Form.Item
+          label={
+            <div>
+              Enable Trivia
+              <Popover
+                content={() => (
+                  <Space style={{ maxWidth: 500 }} direction="vertical">
+                    <div>
+                      Enabling this feature displays a question (concerning the course, instructor
+                      or any other topic of choice) that a person filling in the survey can guess.
+                    </div>
+                    <div>
+                      As the user progresses with filling it the survey, hints will be displayed to
+                      facilitate guessing the trivia&apos;s answer.
+                    </div>
+                  </Space>
+                )}>
+                {' '}
+                <QuestionCircleTwoTone
+                  style={{ fontSize: '1.2em', pointerEvents: 'auto', cursor: 'pointer' }}
+                />
+              </Popover>
+            </div>
+          }>
+          <Checkbox value={enableTrivia} onChange={() => setEnableTrivia(!enableTrivia)} />
+        </Form.Item>
+        {enableTrivia ? <SurveyTrivia /> : null}
         <Form.Item className="text-center">
           {editingSurvey ? (
             <>

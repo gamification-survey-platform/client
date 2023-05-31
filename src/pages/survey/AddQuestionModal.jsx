@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
-import { Modal, Form, Input, Select, Checkbox } from 'antd'
+import { Modal, Form, Input, Select, Checkbox, Popover, Typography, Space } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useDispatch, useSelector } from 'react-redux'
 import { addQuestion, editQuestion, surveySelector } from '../../store/survey/surveySlice'
+import { QuestionCircleTwoTone } from '@ant-design/icons'
 
 const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
   const initialValues = {
@@ -197,17 +198,60 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
         )}
         <Form.Item
           name="gamified"
-          label="Enable gamification for this question?"
+          label={
+            <div>
+              Enable Gamification
+              <Popover
+                content={() => (
+                  <Space style={{ maxWidth: 500 }} direction="vertical">
+                    <div>
+                      Enabling this feature gamifies the survey form filling process by adding user
+                      interaction and feedback.
+                    </div>
+                    <div>
+                      This includes sentiment analysis, feedback, and interactive multiple choice
+                      effects.
+                    </div>
+                  </Space>
+                )}>
+                {' '}
+                <QuestionCircleTwoTone
+                  style={{ fontSize: '1.2em', pointerEvents: 'auto', cursor: 'pointer' }}
+                />
+              </Popover>
+            </div>
+          }
           valuePropName="checked">
           <Checkbox />
         </Form.Item>
         <Form.Item
           name="phrased_positively"
           label={
-            <div style={{ height: 100 }}>
-              <p className="m-0">Is the question positively phrased?</p>
-              <p className="m-0">{`E.g. "Was the student's delivery good?" vs.`}</p>
-              <p className="m-0">{`"Was the student's delivery poor?"`}</p>
+            <div>
+              Positively phrased
+              <Popover
+                content={() => (
+                  <Space style={{ maxWidth: 500 }} direction="vertical">
+                    A positively phrased question is a question where a higher response means the
+                    student/team performed better in this element.
+                    <div>For example:</div>
+                    <i>{"The student's delivery skills were good"}</i>
+                    <>Is positively phrased</>
+                    <i>{"The student's delivery skills were poor"}</i>
+                    <>Is negatively phrased</>
+                    <strong>Why do we need this?</strong>
+                    <>
+                      The platform uses sentiment analysis to calculate each section&rsquo;s
+                      sentiment and aggregates the result to provide the student with an overall
+                      survey sentiment.
+                    </>
+                  </Space>
+                )}>
+                {' '}
+                <QuestionCircleTwoTone
+                  style={{ fontSize: '1.2em', pointerEvents: 'auto', cursor: 'pointer' }}
+                />
+              </Popover>
             </div>
           }
           valuePropName="checked">
