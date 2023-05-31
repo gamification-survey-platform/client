@@ -17,6 +17,7 @@ const renderScene = ({
       .transition()
       .duration(1000)
       .attrTween('transform', function (d, i) {
+        const option = options.find((opt) => opt.text === d.text)
         const currentPosition = d3.select(this).attr('transform')
         const regex = new RegExp('translate\\((\\d*\\.?\\d*), (\\d*\\.?\\d*)\\)', 'gm')
         const [_, currX, currY] = regex.exec(currentPosition)
@@ -25,7 +26,7 @@ const renderScene = ({
           // At start
           if (parseFloat(currX) === d.start.x && parseFloat(currY) === d.start.y) {
             // Should transition forward
-            if (d.transitioned) {
+            if (option.transitioned) {
               const { x, y } = node.getPointAtLength(t * d.pathLength)
               return `translate(${x}, ${y})`
             } else {
@@ -33,7 +34,7 @@ const renderScene = ({
             }
           } else {
             // Should transition backward
-            if (!d.transitioned) {
+            if (!option.transitioned) {
               const { x, y } = node.getPointAtLength((1 - t) * d.pathLength)
               return `translate(${x}, ${y})`
             } else {
@@ -117,21 +118,25 @@ const renderScene = ({
     )
     .on('click', function (event, d, i) {
       const object = d3.select(this)
-      if (!d.transitioned) {
+      const currentPosition = d3.select(this).attr('transform')
+      const regex = new RegExp('translate\\((\\d*\\.?\\d*), (\\d*\\.?\\d*)\\)', 'gm')
+      const [_, currX, currY] = regex.exec(currentPosition)
+      if (parseFloat(currX) === d.start.x && parseFloat(currY) === d.start.y) {
+        d.transitioned = true
         if (questionType !== 'MULTIPLESELECT') {
           // If not multipleselect, transition preselected values back
           objectsData.forEach((obj) => (obj.transitioned = false))
-          d.transitioned = true
           handleSelect(d.text)
         } else {
           // If multiple Select, choose all selected values
-          d.transitioned = true
           const selected = objectsData.filter((obj) => obj.transitioned).map((obj) => obj.text)
           handleSelect(selected)
         }
       } else {
         d.transitioned = false
         if (questionType !== 'MULTIPLESELECT') {
+          // Edge case to handle empty selection
+          // Force transition early
           handleSelect('')
           let index
           objectsData.forEach((obj, i) => {

@@ -88,7 +88,7 @@ const MultipleChoice = ({
     } else if (!initialRender && answer && answer.length) {
       const newOptions = options.map((opt) => {
         if (opt.text === answer[0].text) return { ...opt, transitioned: true }
-        else return opt
+        else return { ...opt, transitioned: false }
       })
       setOptions(newOptions)
       renderScene({ ref: element, options: newOptions, update: true })
@@ -174,7 +174,7 @@ const MultipleSelect = ({
       const answers = answer.map((a) => a.text)
       const newOptions = options.map((opt) => {
         if (answers.indexOf(opt.text) !== -1) return { ...opt, transitioned: true }
-        else return opt
+        else return { ...opt, transitioned: false }
       })
       setOptions(newOptions)
       renderScene({ ref: element, options: newOptions, update: true })
@@ -274,7 +274,7 @@ const MultipleChoiceScale = ({
     } else if (!initialRender && answer && answer.length) {
       const newOptions = options.map((opt) => {
         if (opt.text === answer[0].text) return { ...opt, transitioned: true }
-        else return opt
+        else return { ...opt, transitioned: false }
       })
       setOptions(newOptions)
       renderScene({ ref: element, options: newOptions, update: true })
