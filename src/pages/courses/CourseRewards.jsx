@@ -8,6 +8,7 @@ import { getCourseRewards, getCoursePurchases, patchCoursePurchases } from '../.
 import Reward from '../../components/Reward'
 import RewardsModal from './RewardsModal'
 import useMessage from 'antd/es/message/useMessage'
+import dayjs from 'dayjs'
 
 const CourseRewards = () => {
   const user = useSelector(userSelector)
@@ -60,6 +61,15 @@ const CourseRewards = () => {
     { title: 'Reward', dataIndex: 'name', align: 'center', key: 'reward' },
     { title: 'Description', dataIndex: 'description', key: 'description' },
     { title: 'Buyer', dataIndex: 'buyer', key: 'buyer' },
+    {
+      title: 'Date Purchased',
+      dataIndex: 'date_purchased',
+      key: 'date_purchased',
+      render: (d) => {
+        const dayObject = dayjs(d.date_purchased)
+        return dayObject.format('MM/DD/YYYY')
+      }
+    },
     {
       title: 'Fulfilled',
       dataIndex: 'fulfilled',

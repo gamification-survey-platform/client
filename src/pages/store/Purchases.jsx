@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux'
 import { Space, Table, Typography } from 'antd'
 import useMessage from 'antd/es/message/useMessage'
 import { getPurchases } from '../../api/rewards'
+import dayjs from 'dayjs'
 
 const Purchases = () => {
   const [messageApi, contextHolder] = useMessage()
@@ -26,6 +27,15 @@ const Purchases = () => {
   const columns = [
     { title: 'Reward', dataIndex: 'name', align: 'center', key: 'reward' },
     { title: 'Course', dataIndex: 'belong_to', align: 'center', key: 'course' },
+    {
+      title: 'Date Purchased',
+      dataIndex: 'date_purchased',
+      key: 'date_purchased',
+      render: (d) => {
+        const dayObject = dayjs(d.date_purchased)
+        return dayObject.format('MM/DD/YYYY')
+      }
+    },
     { title: 'Description', dataIndex: 'description', key: 'description' }
   ]
 
