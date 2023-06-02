@@ -5,10 +5,7 @@ import { Button, Row } from 'antd'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 import { DeleteTwoTone } from '@ant-design/icons'
 
-const SurveyTrivia = () => {
-  const form = useFormInstance()
-  const [hints, setHints] = useState([])
-
+const SurveyTrivia = ({ hints, setHints }) => {
   const handleDeleteHint = (idx) => {
     const newHints = hints.filter((_, i) => i !== idx)
     setHints(newHints)
@@ -16,13 +13,13 @@ const SurveyTrivia = () => {
   return (
     <div className="w-50">
       <Form.Item
-        name="trivia_question"
+        name="question"
         label="Trivia Question"
         rules={[{ required: true, message: 'Please input a trivia question.' }]}>
         <Input />
       </Form.Item>
       <Form.Item
-        name="trivia_answer"
+        name="answer"
         label="Trivia Answer"
         rules={[{ required: true, message: 'Please input a trivia answer.' }]}>
         <Input />

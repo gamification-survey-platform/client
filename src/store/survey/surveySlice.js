@@ -3,15 +3,20 @@ import { PURGE } from 'redux-persist'
 import { cloneDeep } from 'lodash'
 import Sentiment from 'sentiment'
 
-const analyzeAnswer = ({ type, answer }) => {
+const analyzeAnswer = ({ type, answer, phrased_positively }) => {
   if (type === 'SCALEMULTIPLECHOICE') {
-    if (answer.text.includes('disagree')) return -1
-    else if (answer.text.includes('agree')) return 1
-    else return 0
+    if (answer.text.includes('neutral')) return 0
+    if (phrased_positively) {
+      if (answer.text.includes('disagree')) return -1
+      else if (answer.text.includes('agree')) return 1
+    } else {
+      if (answer.text.includes('disagree')) return 1
+      else if (answer.text.includes('agree')) return -1
+    }
   } else if (type === 'FIXEDTEXT' || type === 'TEXTAREA') {
     const sentiment = new Sentiment()
     const { score } = sentiment.analyze(answer.text)
-    if (score < 0) return -1
+    if (score < 0 && phrased_positively) return -1
     return 1
   }
   return 0
@@ -140,7 +145,11 @@ const surveySlice = createSlice({
         let count = 0
         section.questions.forEach((question) => {
           if (question.answer.length) {
-            aggregate += analyzeAnswer({ type: question.question_type, answer: question.answer[0] })
+            aggregate += analyzeAnswer({
+              type: question.question_type,
+              answer: question.answer[0],
+              phrased_positively: question.phrased_positively
+            })
             count += 1
           }
         })

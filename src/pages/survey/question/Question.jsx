@@ -41,7 +41,8 @@ const MultipleChoice = ({
   option_choices,
   answer,
   question_type,
-  is_required
+  is_required,
+  gamified
 }) => {
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
@@ -65,33 +66,35 @@ const MultipleChoice = ({
       })
       setOptions(newOptions)
       const { width, height } = element.getBoundingClientRect()
-      renderScene({
-        width,
-        height,
-        ref: element,
-        options: newOptions,
-        handleSelect,
-        multipleChoiceTheme: multiple_choice,
-        questionType: 'MULTIPLECHOICE'
-      })
+      gamified &&
+        renderScene({
+          width,
+          height,
+          ref: element,
+          options: newOptions,
+          handleSelect,
+          multipleChoiceTheme: multiple_choice,
+          questionType: 'MULTIPLECHOICE'
+        })
     } else if (element && initialRender) {
       const { width, height } = element.getBoundingClientRect()
-      renderScene({
-        width,
-        height,
-        ref: element,
-        options,
-        handleSelect,
-        multipleChoiceTheme: multiple_choice,
-        questionType: 'MULTIPLECHOICE'
-      })
+      gamified &&
+        renderScene({
+          width,
+          height,
+          ref: element,
+          options,
+          handleSelect,
+          multipleChoiceTheme: multiple_choice,
+          questionType: 'MULTIPLECHOICE'
+        })
     } else if (!initialRender && answer && answer.length) {
       const newOptions = options.map((opt) => {
         if (opt.text === answer[0].text) return { ...opt, transitioned: true }
         else return { ...opt, transitioned: false }
       })
       setOptions(newOptions)
-      renderScene({ ref: element, options: newOptions, update: true })
+      gamified && renderScene({ ref: element, options: newOptions, update: true })
     }
     setInitialRender(false)
   }, [answer])
@@ -125,7 +128,8 @@ const MultipleSelect = ({
   option_choices,
   answer,
   question_type,
-  is_required
+  is_required,
+  gamified
 }) => {
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
@@ -150,26 +154,28 @@ const MultipleSelect = ({
       })
       setOptions(newOptions)
       const { width, height } = element.getBoundingClientRect()
-      renderScene({
-        width,
-        height,
-        ref: element,
-        options: newOptions,
-        handleSelect,
-        multipleChoiceTheme: multiple_choice,
-        questionType: 'MULTIPLESELECT'
-      })
+      gamified &&
+        renderScene({
+          width,
+          height,
+          ref: element,
+          options: newOptions,
+          handleSelect,
+          multipleChoiceTheme: multiple_choice,
+          questionType: 'MULTIPLESELECT'
+        })
     } else if (element && initialRender) {
       const { width, height } = element.getBoundingClientRect()
-      renderScene({
-        width,
-        height,
-        ref: element,
-        options,
-        handleSelect,
-        multipleChoiceTheme: multiple_choice,
-        questionType: 'MULTIPLESELECT'
-      })
+      gamified &&
+        renderScene({
+          width,
+          height,
+          ref: element,
+          options,
+          handleSelect,
+          multipleChoiceTheme: multiple_choice,
+          questionType: 'MULTIPLESELECT'
+        })
     } else if (!initialRender && answer) {
       const answers = answer.map((a) => a.text)
       const newOptions = options.map((opt) => {
@@ -177,7 +183,7 @@ const MultipleSelect = ({
         else return { ...opt, transitioned: false }
       })
       setOptions(newOptions)
-      renderScene({ ref: element, options: newOptions, update: true })
+      gamified && renderScene({ ref: element, options: newOptions, update: true })
     }
     setInitialRender(false)
   }, [answer])
@@ -227,7 +233,8 @@ const MultipleChoiceScale = ({
   answer,
   question_type,
   is_required,
-  number_of_scale
+  number_of_scale,
+  gamified
 }) => {
   const initialOptions = scaleOptions[number_of_scale].map((text) => ({
     transitioned: false,
@@ -251,33 +258,35 @@ const MultipleChoiceScale = ({
       })
       setOptions(newOptions)
       const { width, height } = element.getBoundingClientRect()
-      renderScene({
-        width,
-        height,
-        ref: element,
-        options: newOptions,
-        multipleChoiceTheme: multiple_choice,
-        handleSelect,
-        questionType: 'SCALEMULTIPLECHOICE'
-      })
+      gamified &&
+        renderScene({
+          width,
+          height,
+          ref: element,
+          options: newOptions,
+          multipleChoiceTheme: multiple_choice,
+          handleSelect,
+          questionType: 'SCALEMULTIPLECHOICE'
+        })
     } else if (element && initialRender) {
       const { width, height } = element.getBoundingClientRect()
-      renderScene({
-        width,
-        height,
-        ref: element,
-        options,
-        handleSelect,
-        multipleChoiceTheme: multiple_choice,
-        questionType: 'SCALEMULTIPLECHOICE'
-      })
+      gamified &&
+        renderScene({
+          width,
+          height,
+          ref: element,
+          options,
+          handleSelect,
+          multipleChoiceTheme: multiple_choice,
+          questionType: 'SCALEMULTIPLECHOICE'
+        })
     } else if (!initialRender && answer && answer.length) {
       const newOptions = options.map((opt) => {
         if (opt.text === answer[0].text) return { ...opt, transitioned: true }
         else return { ...opt, transitioned: false }
       })
       setOptions(newOptions)
-      renderScene({ ref: element, options: newOptions, update: true })
+      gamified && renderScene({ ref: element, options: newOptions, update: true })
     }
     setInitialRender(false)
   }, [answer])
@@ -305,7 +314,7 @@ const MultipleChoiceScale = ({
   )
 }
 
-const FixedText = ({ sectionIdx, questionIdx, answer, question_type, is_required }) => {
+const FixedText = ({ sectionIdx, questionIdx, answer, question_type, is_required, gamified }) => {
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
@@ -334,7 +343,7 @@ const FixedText = ({ sectionIdx, questionIdx, answer, question_type, is_required
         rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
         <Input onBlur={handleBlur} />
       </Form.Item>
-      {text && <TextFeedback text={text} />}
+      {text && gamified && <TextFeedback text={text} />}
     </div>
   )
 }
@@ -346,7 +355,8 @@ const MultiLineField = ({
   idx,
   answer,
   number_of_text,
-  is_required
+  is_required,
+  gamified
 }) => {
   const name = `${sectionIdx}-${questionIdx}-${idx}`
   const form = useFormInstance()
@@ -381,7 +391,7 @@ const MultiLineField = ({
         rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
         <Input />
       </Form.Item>
-      {response ? (
+      {response && gamified ? (
         <h3
           className="ml-3"
           dangerouslySetInnerHTML={{
@@ -405,7 +415,7 @@ const MultiLineText = (props) => {
   )
 }
 
-const Number = ({ sectionIdx, questionIdx, answer, question_type, is_required }) => {
+const Number = ({ sectionIdx, questionIdx, answer, question_type, is_required, gamified }) => {
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
@@ -431,7 +441,7 @@ const Number = ({ sectionIdx, questionIdx, answer, question_type, is_required })
         rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
         <Input type="number" />
       </Form.Item>
-      {response ? (
+      {response && gamified ? (
         <h1
           className="ml-3"
           dangerouslySetInnerHTML={{
@@ -443,7 +453,7 @@ const Number = ({ sectionIdx, questionIdx, answer, question_type, is_required })
   )
 }
 
-const TextArea = ({ sectionIdx, questionIdx, answer, question_type, is_required }) => {
+const TextArea = ({ sectionIdx, questionIdx, answer, question_type, is_required, gamified }) => {
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
@@ -473,7 +483,7 @@ const TextArea = ({ sectionIdx, questionIdx, answer, question_type, is_required 
         rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
         <Input.TextArea rows={4} onBlur={handleBlur} />
       </Form.Item>
-      {text && <TextFeedback text={text} />}
+      {text && gamified && <TextFeedback text={text} />}
     </div>
   )
 }

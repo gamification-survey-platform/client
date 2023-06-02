@@ -20,14 +20,25 @@ const AddSurvey = () => {
   const selectedCourse = courses.find((course) => course.course_number === course_id)
   const [form] = useForm()
   const [enableTrivia, setEnableTrivia] = useState(false)
+  const [hints, setHints] = useState([])
 
   useEffect(() => {
     if (editingSurvey) {
       form.setFieldsValue(editingSurvey)
       form.setFieldValue('template_name', editingSurvey.name)
+      if (editingSurvey.trivia) {
+        form.setFieldValue('enableTrivia', true)
+        const { question, answer, hints } = editingSurvey.trivia
+        setEnableTrivia(true)
+        form.setFieldValue('question', question)
+        form.setFieldValue('answer', answer)
+        setHints(hints)
+        hints.forEach((hint, i) => {
+          form.setFieldValue(`hint-${i}`, hint)
+        })
+      }
     }
   }, [])
-
   const handleSubmit = async (event) => {
     event.preventDefault()
     event.stopPropagation()
@@ -35,7 +46,6 @@ const AddSurvey = () => {
       const fields = form.getFieldsValue()
       const { date_due, date_released } = fields
       const now = dayjs()
-      console.log(fields)
       if (!date_due || !date_released) {
         messageApi.open({ type: 'error', content: 'Please input date due and/or date release.' })
         throw new Error()
@@ -49,12 +59,17 @@ const AddSurvey = () => {
       let trivia = {}
       if (enableTrivia) {
         trivia = {
-          trivia_question: fields.trivia_question,
-          trivia_answer: fields.trivia_answer,
+          question: fields.question,
+          answer: fields.answer,
           hints: []
         }
+        delete fields['question']
+        delete fields['answer']
         Object.keys(fields).forEach((key) => {
-          if (key.startsWith('hint')) trivia.hints.push(fields[key])
+          if (key.startsWith('hint')) {
+            trivia.hints.push(fields[key])
+            delete fields[key]
+          }
         })
       }
       const surveyData = {
@@ -80,9 +95,26 @@ const AddSurvey = () => {
     event.stopPropagation()
     try {
       const survey = form.getFieldsValue()
+      let trivia = {}
+      if (enableTrivia) {
+        trivia = {
+          id: editingSurvey.trivia ? editingSurvey.trivia.id : undefined,
+          question: survey.question,
+          answer: survey.answer,
+          hints: []
+        }
+        delete survey['question']
+        delete survey['answer']
+        Object.keys(survey).forEach((key) => {
+          if (key.startsWith('hint')) {
+            trivia.hints.push(survey[key])
+            delete survey[key]
+          }
+        })
+      }
       const res = await editSurveyTemplate({
         feedback_survey_id: editingSurvey.pk,
-        survey: { other_info: '', ...survey }
+        survey: { other_info: '', trivia, ...survey }
       })
       if (res.status === 200) {
         navigate(-1)
@@ -155,6 +187,8 @@ const AddSurvey = () => {
           </>
         )}
         <Form.Item
+          name="enableTrivia"
+          valuePropName="checked"
           label={
             <div>
               Enable Trivia
@@ -180,7 +214,7 @@ const AddSurvey = () => {
           }>
           <Checkbox value={enableTrivia} onChange={() => setEnableTrivia(!enableTrivia)} />
         </Form.Item>
-        {enableTrivia ? <SurveyTrivia /> : null}
+        {enableTrivia ? <SurveyTrivia hints={hints} setHints={setHints} /> : null}
         <Form.Item className="text-center">
           {editingSurvey ? (
             <>
