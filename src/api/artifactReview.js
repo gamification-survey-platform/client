@@ -67,11 +67,26 @@ const saveArtifactReview = async ({ course_id, assignment_id, review_id, review 
   }
 }
 
+const submitTriviaAnswer = async ({ course_id, assignment_id, review_id, answer }) => {
+  try {
+    const res = await api.post(
+      `courses/${course_id}/assignments/${assignment_id}/artifact_reviews/${review_id}/trivia`,
+      {
+        answer
+      }
+    )
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
 export {
   getArtifactReviews,
   getUserArtifactReviews,
   getArtifactReview,
   saveArtifactReview,
   assignArtifactReview,
-  unassignArtifactReview
+  unassignArtifactReview,
+  submitTriviaAnswer
 }

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Row, Col, Button, Alert, Form, Typography, message } from 'antd'
+import { Row, Col, Button, Alert, Form, Typography, message, Input, notification } from 'antd'
 import { useParams, useNavigate } from 'react-router'
 import Spinner from '../../components/Spinner'
 import Section from '../survey/Section'
 import { useDispatch, useSelector } from 'react-redux'
-import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
+import { getArtifactReview, saveArtifactReview, submitTriviaAnswer } from '../../api/artifactReview'
 import { getArtifact } from '../../api/artifacts'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { useForm } from 'antd/es/form/Form'
@@ -20,14 +20,40 @@ const AssignmentReview = () => {
   const { course_id, assignment_id, review_id } = useParams()
   const user = useSelector(userSelector)
   const [messageApi, contextHolder] = message.useMessage()
+  const [notificationApi, notificationContextHolder] = notification.useNotification()
   const [spin, setSpin] = useState(false)
   const [form] = useForm()
+  const [triviaForm] = useForm()
   const [artifact, setArtifact] = useState()
   const dispatch = useDispatch()
   const survey = useSelector(surveySelector)
   const progress = survey.progress
+  const [triviaProgress, setTriviaProgress] = useState(0)
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (survey.trivia) {
+      const { hints } = survey.trivia
+      const hintsToShow = hints.length ? Math.floor(progress.endPct * hints.length) : 0
+      for (let i = triviaProgress; i <= hintsToShow; i++) {
+        if (i === 0) {
+          notification.open({
+            message: 'This survey has a trivia question!',
+            description: 'Answer at the bottom of the survey for more experience points',
+            key: i
+          })
+        } else {
+          notification.open({
+            message: `Hint ${i}`,
+            description: hints[i - 1],
+            key: i
+          })
+        }
+      }
+      setTriviaProgress(hintsToShow + 1)
+    }
+  }, [progress])
 
   useEffect(() => {
     const fetchReview = async () => {
@@ -116,9 +142,24 @@ const AssignmentReview = () => {
     }
   }
 
+  const handleTriviaSubmit = async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    try {
+      triviaForm.validateFields()
+      const answer = triviaForm.getFieldValue('answer')
+      const res = await submitTriviaAnswer({ course_id, assignment_id, review_id, answer })
+      if (res.status === 201) messageApi.open({ type: 'success', content: res.data.message })
+    } catch (e) {
+      console.error(e)
+      messageApi.open({ type: 'error', content: e.message })
+    }
+  }
+
   return (
     <>
       {contextHolder}
+      {notificationContextHolder}
       {spin ? (
         <Spinner show={spin} />
       ) : (
@@ -150,11 +191,9 @@ const AssignmentReview = () => {
                   <Section key={i} sectionIdx={i} artifact={artifact} />
                 ))}
                 {survey.sentiment ? (
-                  <Row
-                    justify="end"
+                  <div
                     className="fixed-bottom mr-3"
-                    align="middle"
-                    style={{ bottom: '10%' }}>
+                    style={{ bottom: '10%', left: '85%', display: 'flex', alignItems: 'center' }}>
                     <Typography.Title level={5} className="mr-3">
                       Survey sentiment:
                     </Typography.Title>
@@ -163,7 +202,7 @@ const AssignmentReview = () => {
                         __html: `${getSentimentEmoji(survey.sentiment)}`
                       }}
                     />
-                  </Row>
+                  </div>
                 ) : null}
                 <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
                   <Button type="primary" onClick={handleSaveReview}>
@@ -173,6 +212,24 @@ const AssignmentReview = () => {
               </>
             }
           </Form>
+          {survey.trivia ? (
+            <Form form={triviaForm} className="m-5 w-75" style={{ marginBottom: '100!important' }}>
+              <Typography.Title level={4}>
+                Trivia Question: {survey.trivia.question}
+              </Typography.Title>
+              <Form.Item
+                label="Enter your answer to the trivia here:"
+                name="answer"
+                rules={[{ required: true, message: 'Please input a valid answer.' }]}>
+                <Input />
+              </Form.Item>
+              <Row justify="center">
+                <Form.Item>
+                  <Button onClick={handleTriviaSubmit}>Submit Trivia Answer</Button>
+                </Form.Item>
+              </Row>
+            </Form>
+          ) : null}
         </DndProvider>
       )}
     </>
