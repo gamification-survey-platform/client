@@ -9,6 +9,20 @@ const getTheme = async () => {
   }
 }
 
+const createTheme = async (data) => {
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+    const res = await api.post(`theme/`, data, config)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
 const editTheme = async (data) => {
   try {
     const res = await api.patch(`theme/`, data)
@@ -18,4 +32,4 @@ const editTheme = async (data) => {
   }
 }
 
-export { getTheme, editTheme }
+export { getTheme, createTheme, editTheme }

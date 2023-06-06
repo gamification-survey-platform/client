@@ -20,6 +20,7 @@ import Store from './pages/store/Store'
 import Purchases from './pages/store/Purchases'
 import CourseRewards from './pages/courses/CourseRewards'
 import Theme from './pages/theme/Theme'
+import Guide from './pages/Guide'
 
 const routes = [
   {
@@ -47,6 +48,14 @@ const routes = [
     element: (
       <ProtectedRoute>
         <Courses />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/guide',
+    element: (
+      <ProtectedRoute>
+        <Guide />
       </ProtectedRoute>
     )
   },

@@ -6,7 +6,7 @@ import userSelector from '../store/user/selectors'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
 import { Layout, Menu, Image, Typography } from 'antd'
-import { UserOutlined, BookOutlined, AntDesignOutlined } from '@ant-design/icons'
+import { UserOutlined, BookOutlined, AntDesignOutlined, SettingOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
 import ChartWrapper from './visualization/ChartWrapper'
@@ -39,11 +39,16 @@ const initialItems = [
   },
   {
     key: '3',
+    icon: <SettingOutlined />,
+    label: 'Guide'
+  },
+  {
+    key: '4',
     icon: <GiShoppingCart />,
     label: 'Store'
   },
   {
-    key: '4',
+    key: '5',
     icon: <AntDesignOutlined />,
     label: 'Theme'
   }
@@ -84,9 +89,12 @@ const AppHeader = ({ children }) => {
         navigate('/courses')
         break
       case '3':
-        navigate('/store')
+        navigate('/guide')
         break
       case '4':
+        navigate('/store')
+        break
+      case '5':
         navigate('/theme')
         break
     }
@@ -100,7 +108,7 @@ const AppHeader = ({ children }) => {
           <div
             style={{
               position: 'absolute',
-              top: '30%',
+              top: 300,
               left: 10,
               zIndex: 1,
               height: '30vh',
@@ -108,7 +116,9 @@ const AppHeader = ({ children }) => {
             }}>
             <div className="text-center text-white">
               <Image width={100} src={rankings[user.level].image} />
-              <p>Ranking: {rankings[user.level].title}</p>
+              <p>
+                Level {user.level}: {rankings[user.level].title}
+              </p>
               <p>
                 {user.exp} / {user.next_level_exp}
               </p>
