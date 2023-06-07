@@ -1,11 +1,9 @@
 const prod = {
-  API_URL: 'http://gamification-platform-server-dev.us-west-1.elasticbeanstalk.com/api',
-  FILE_URL: 'https://gamification-server.onrender.com'
+  API_URL: 'http://ec2-13-57-207-133.us-west-1.compute.amazonaws.com:8000/api'
 }
 
 const dev = {
-  API_URL: 'http://localhost:8000/api',
-  FILE_URL: 'http://localhost:8000'
+  API_URL: 'http://localhost:8000/api'
 }
 
 export default process.env.NODE_ENV === 'production' ? prod : dev

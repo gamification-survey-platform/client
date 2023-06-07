@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { Modal, Form, Input, Select, Checkbox, Popover, Typography, Space } from 'antd'
+import { Modal, Form, Input, Select, Checkbox, Popover, Typography, Space, theme } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useDispatch, useSelector } from 'react-redux'
 import { addQuestion, editQuestion, surveySelector } from '../../store/survey/surveySlice'
@@ -19,6 +19,8 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
   const question_type = Form.useWatch('question_type', form)
   const option_choices = Form.useWatch('option_choices', form)
   const survey = useSelector(surveySelector)
+  const { defaultAlgorithm, defaultSeed } = theme
+  const { colorSuccess, colorError } = defaultAlgorithm(defaultSeed)
   const editingQuestion =
     questionIdx >= 0
       ? survey.sections.find((s, i) => sectionIdx === i).questions.find((q, j) => j === questionIdx)
@@ -104,7 +106,7 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
       await form.resetFields()
     }
   }
-
+  console.log(theme)
   return (
     <Modal
       title={editingQuestion ? 'Edit Question' : 'Add Question'}
@@ -235,9 +237,11 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
                     A positively phrased question is a question where a higher response means the
                     student/team performed better in this element.
                     <div>For example:</div>
-                    <i>{"The student's delivery skills were good"}</i>
+                    <i style={{ color: colorSuccess }}>
+                      {"The student's delivery skills were good"}
+                    </i>
                     <>Is positively phrased</>
-                    <i>{"The student's delivery skills were poor"}</i>
+                    <i style={{ color: colorError }}>{"The student's delivery skills were poor"}</i>
                     <>Is negatively phrased</>
                     <strong>Why do we need this?</strong>
                     <>

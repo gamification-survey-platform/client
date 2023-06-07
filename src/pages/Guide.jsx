@@ -52,7 +52,7 @@ const Guide = () => {
       <Typography.Text>
         We believe peer feedback is a critical component of learning and evaluation. However,
         students pay little attention to this process. Both students and evaluators can learn much
-        more with more thorough and thoughtful feedback. The goal of this platform is to <br />
+        more with more thorough and thoughtful feedback. <br />
         Our goal is to <strong>gamify</strong> the peer evaluation process so students are more
         diligent when providing their feedback - for both peer and instructor benefit.
       </Typography.Text>
@@ -62,6 +62,7 @@ const Guide = () => {
         growing access to as they work more with the platform. These elements are unlocked based on
         the user&apos;s level, which is visible on the left sidebar.
       </Typography.Text>
+      <br />
       <Typography.Text>These gamification elements are explained below</Typography.Text>
       <Typography.Title level={4} className="my-3">
         Gamification Elements

@@ -45,7 +45,7 @@ const AssignmentReview = () => {
           })
         } else {
           notification.open({
-            message: `Hint ${i}`,
+            message: `Trivia Hint ${i}`,
             description: hints[i - 1],
             key: i
           })
@@ -149,7 +149,12 @@ const AssignmentReview = () => {
       triviaForm.validateFields()
       const answer = triviaForm.getFieldValue('answer')
       const res = await submitTriviaAnswer({ course_id, assignment_id, review_id, answer })
-      if (res.status === 201) messageApi.open({ type: 'success', content: res.data.message })
+      if (res.status === 201) {
+        const { message, exp, level, next_exp_level, points } = res.data
+        messageApi.open({ type: 'success', content: message })
+        dispatch(setUser({ ...user, exp, level, next_exp_level }))
+        dispatch(addCoursePoints({ course_id, points }))
+      }
     } catch (e) {
       console.error(e)
       messageApi.open({ type: 'error', content: e.message })
@@ -165,10 +170,38 @@ const AssignmentReview = () => {
       ) : (
         <DndProvider backend={HTML5Backend}>
           <Form form={form} className="m-5 w-75">
+            {survey.trivia ? (
+              <div
+                style={{
+                  backgroundColor: 'rgba(0, 0, 0, 0.02)',
+                  border: '1px solid #d9d9d9',
+                  borderRadius: '5%',
+                  position: 'fixed',
+                  top: 75,
+                  right: 10,
+                  zIndex: 1,
+                  width: 250
+                }}>
+                <Form form={triviaForm} className="m-3" style={{ marginBottom: '100!important' }}>
+                  <div className="text-center">
+                    <Typography.Text className="my-1">Trivia Question</Typography.Text>
+                  </div>
+                  <Typography.Text className="mb-1"> {survey.trivia.question}</Typography.Text>
+                  <Form.Item name="answer">
+                    <Input placeholder="Enter answer." />
+                  </Form.Item>
+                  <Row justify="center">
+                    <Form.Item>
+                      <Button onClick={handleTriviaSubmit}>Submit Trivia Answer</Button>
+                    </Form.Item>
+                  </Row>
+                </Form>
+              </div>
+            ) : null}
             <div
               style={{
                 position: 'fixed',
-                top: '10%',
+                bottom: 50,
                 right: 0,
                 zIndex: 1,
                 width: 300,
@@ -192,8 +225,7 @@ const AssignmentReview = () => {
                 ))}
                 {survey.sentiment ? (
                   <div
-                    className="fixed-bottom mr-3"
-                    style={{ bottom: '10%', left: '85%', display: 'flex', alignItems: 'center' }}>
+                    style={{ position: 'fixed', bottom: 35, right: 10, display: 'flex', alignItems: 'center' }}>
                     <Typography.Title level={5} className="mr-3">
                       Survey sentiment:
                     </Typography.Title>
@@ -204,7 +236,7 @@ const AssignmentReview = () => {
                     />
                   </div>
                 ) : null}
-                <div className="fixed-bottom" style={{ left: '90%', bottom: '5%' }}>
+                <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
                   <Button type="primary" onClick={handleSaveReview}>
                     Submit Review
                   </Button>
@@ -212,24 +244,6 @@ const AssignmentReview = () => {
               </>
             }
           </Form>
-          {survey.trivia ? (
-            <Form form={triviaForm} className="m-5 w-75" style={{ marginBottom: '100!important' }}>
-              <Typography.Title level={4}>
-                Trivia Question: {survey.trivia.question}
-              </Typography.Title>
-              <Form.Item
-                label="Enter your answer to the trivia here:"
-                name="answer"
-                rules={[{ required: true, message: 'Please input a valid answer.' }]}>
-                <Input />
-              </Form.Item>
-              <Row justify="center">
-                <Form.Item>
-                  <Button onClick={handleTriviaSubmit}>Submit Trivia Answer</Button>
-                </Form.Item>
-              </Row>
-            </Form>
-          ) : null}
         </DndProvider>
       )}
     </>

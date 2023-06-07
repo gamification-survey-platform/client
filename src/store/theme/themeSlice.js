@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
+import { PURGE } from 'redux-persist'
 
 const initialState = {
   color: null,
@@ -15,12 +16,16 @@ const themeSlice = createSlice({
       Object.keys(action.payload).forEach((key) => {
         if (action.payload[key].length) nonemptyPayload[key] = action.payload[key]
       })
-      return { ...state, color: { ...nonemptyPayload } }
+      const oldColors = state.color ? state.color : {}
+      return { ...state, color: { ...oldColors, ...nonemptyPayload } }
     },
     resetColorTheme: (state) => ({ ...state, color: null }),
     setCursor: (state, action) => ({ ...state, cursor: action.payload }),
     resetCursor: (state) => ({ ...state, cursor: null }),
     setMultipleChoice: (state, action) => ({ ...state, multiple_choice: action.payload })
+  },
+  extraReducers: (builder) => {
+    builder.addCase(PURGE, () => initialState)
   }
 })
 

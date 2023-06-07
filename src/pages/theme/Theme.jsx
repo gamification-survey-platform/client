@@ -1,4 +1,4 @@
-import { Typography, Form, ColorPicker, Row, Button, Col, Space, Divider, SeedToken } from 'antd'
+import { Typography, Form, ColorPicker, Row, Button, theme, Space, Divider } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useSelector } from 'react-redux'
 import themeSelector from '../../store/theme/selectors'
@@ -27,6 +27,8 @@ const Theme = () => {
   const [messageApi, contextHolder] = useMessage()
   const [_, token] = useToken()
   const dispatch = useDispatch()
+  const { defaultAlgorithm, defaultSeed } = theme
+  const mapToken = defaultAlgorithm(defaultSeed)
 
   useEffect(() => {
     if (color && Object.keys(color).length) {
@@ -88,10 +90,8 @@ const Theme = () => {
 
   const handleResetColorTheme = async () => {
     try {
-      const overridenThemes = {}
-      Object.keys(color).forEach((key) => (overridenThemes[key] = ''))
-      const res = await editTheme(overridenThemes)
-      if (res.status === 200) dispatch(setColorTheme(overridenThemes))
+      const res = await editTheme(mapToken)
+      if (res.status === 200) dispatch(setColorTheme(res.data))
     } catch (e) {
       messageApi.open({ type: 'error', content: `Failed to set theme. ${e.message}` })
     }
