@@ -21,6 +21,7 @@ import Purchases from './pages/store/Purchases'
 import CourseRewards from './pages/courses/CourseRewards'
 import Theme from './pages/theme/Theme'
 import Guide from './pages/Guide'
+import CustomThemeForm from './pages/theme/CustomThemeForm'
 
 const routes = [
   {
@@ -184,6 +185,14 @@ const routes = [
     element: (
       <ProtectedRoute>
         <Theme />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/theme/custom',
+    element: (
+      <ProtectedRoute>
+        <CustomThemeForm />
       </ProtectedRoute>
     )
   },

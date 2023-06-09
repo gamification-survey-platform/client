@@ -1,8 +1,10 @@
 import api from './apiUtils'
+import { writeToS3 } from '../utils/s3helpers'
 
 const getTheme = async () => {
   try {
     const res = await api.get(`theme/`)
+    console.log(res)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -17,6 +19,29 @@ const createTheme = async (data) => {
       }
     }
     const res = await api.post(`theme/`, data, config)
+    console.log(res)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
+const editThemeIcon = async (data) => {
+  try {
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+    const res = await api.patch(`theme/`, data, config)
+    if (res.data.delete_url) {
+      await writeToS3({ url: res.data.delete_url, method: 'DELETE' })
+    }
+    if (res.data.upload_url && res.data.upload_url.url && res.data.upload_url.fields) {
+      const icon = Object.values(data)[0]
+      const { url, fields } = res.data.upload_url
+      await writeToS3({ url, fields, method: 'POST', file: icon })
+    }
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -26,10 +51,11 @@ const createTheme = async (data) => {
 const editTheme = async (data) => {
   try {
     const res = await api.patch(`theme/`, data)
+    console.log(res)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
   }
 }
 
-export { getTheme, createTheme, editTheme }
+export { getTheme, createTheme, editTheme, editThemeIcon }

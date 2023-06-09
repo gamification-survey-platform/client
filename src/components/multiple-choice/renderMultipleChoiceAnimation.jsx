@@ -7,7 +7,8 @@ const renderScene = ({
   ref,
   handleSelect,
   questionType,
-  multipleChoiceTheme = 'nature',
+  item: itemIcon,
+  target: targetIcon,
   update = false
 }) => {
   // If simply updating, no need to recreate SVG
@@ -45,8 +46,6 @@ const renderScene = ({
       })
     return
   }
-  const theme = iconMapping[multipleChoiceTheme || 'nature']
-  const { item: itemIcon, target: targetIcon } = theme[questionType]
 
   // Create SVG
   const wrapperRef = d3.select(ref)
@@ -69,7 +68,7 @@ const renderScene = ({
 
   // Store endpoint at right most part of scene
   let endPoint = { x: sceneWidth - objectSize, y: 0 + targetSize - objectSize }
-  const target = scene
+  scene
     .append('svg:image')
     .attr('x', sceneWidth - targetSize)
     .attr('y', height - targetSize)

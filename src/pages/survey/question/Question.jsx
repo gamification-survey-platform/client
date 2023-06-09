@@ -52,7 +52,7 @@ const MultipleChoice = ({
     transitioned: false,
     ...opt
   }))
-  const { multiple_choice } = useSelector(themeSelector)
+  const { multiple_choice_item, multiple_choice_target } = useSelector(themeSelector)
   const [options, setOptions] = useState(initialOptions)
   const [initialRender, setInitialRender] = useState(true)
 
@@ -73,7 +73,8 @@ const MultipleChoice = ({
           ref: element,
           options: newOptions,
           handleSelect,
-          multipleChoiceTheme: multiple_choice,
+          item: multiple_choice_item,
+          target: multiple_choice_target,
           questionType: 'MULTIPLECHOICE'
         })
     } else if (element && initialRender) {
@@ -85,7 +86,8 @@ const MultipleChoice = ({
           ref: element,
           options,
           handleSelect,
-          multipleChoiceTheme: multiple_choice,
+          item: multiple_choice_item,
+          target: multiple_choice_target,
           questionType: 'MULTIPLECHOICE'
         })
     } else if (!initialRender && answer && answer.length) {
@@ -135,7 +137,7 @@ const MultipleSelect = ({
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
-  const { multiple_choice } = useSelector(themeSelector)
+  const { multiple_select_item, multiple_select_target } = useSelector(themeSelector)
   const initialOptions = option_choices.map((opt) => ({
     transitioned: false,
     ...opt
@@ -161,7 +163,8 @@ const MultipleSelect = ({
           ref: element,
           options: newOptions,
           handleSelect,
-          multipleChoiceTheme: multiple_choice,
+          item: multiple_select_item,
+          target: multiple_select_target,
           questionType: 'MULTIPLESELECT'
         })
     } else if (element && initialRender) {
@@ -173,7 +176,8 @@ const MultipleSelect = ({
           ref: element,
           options,
           handleSelect,
-          multipleChoiceTheme: multiple_choice,
+          item: multiple_select_item,
+          target: multiple_select_target,
           questionType: 'MULTIPLESELECT'
         })
     } else if (!initialRender && answer) {
@@ -244,7 +248,7 @@ const MultipleChoiceScale = ({
   const [initialRender, setInitialRender] = useState(true)
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
-  const { multiple_choice } = useSelector(themeSelector)
+  const { scale_multiple_choice_item, scale_multiple_choice_target } = useSelector(themeSelector)
   const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
 
@@ -264,7 +268,8 @@ const MultipleChoiceScale = ({
           height,
           ref: element,
           options: newOptions,
-          multipleChoiceTheme: multiple_choice,
+          item: scale_multiple_choice_item,
+          target: scale_multiple_choice_target,
           handleSelect,
           questionType: 'SCALEMULTIPLECHOICE'
         })
@@ -277,7 +282,8 @@ const MultipleChoiceScale = ({
           ref: element,
           options,
           handleSelect,
-          multipleChoiceTheme: multiple_choice,
+          item: scale_multiple_choice_item,
+          target: scale_multiple_choice_target,
           questionType: 'SCALEMULTIPLECHOICE'
         })
     } else if (!initialRender && answer && answer.length) {

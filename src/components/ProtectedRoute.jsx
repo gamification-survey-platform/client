@@ -4,7 +4,6 @@ import { useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
 import themeSelector from '../store/theme/selectors'
 import { ConfigProvider } from 'antd'
-import CursorStyles from '../styles/Cursor.module.css'
 
 const ProtectedRoute = ({ redirectPath = '/', children }) => {
   const loggedInUser = useSelector(userSelector)
@@ -14,8 +13,13 @@ const ProtectedRoute = ({ redirectPath = '/', children }) => {
     return <Navigate to={redirectPath} />
   }
 
+  const cursorStyles = {}
+  if (cursor) {
+    cursorStyles.cursor = `url(${cursor}), auto`
+  }
+
   return (
-    <div className={CursorStyles[`${cursor}`]}>
+    <div style={{ ...cursorStyles }}>
       <ConfigProvider
         theme={{
           token: colorTheme
