@@ -6,7 +6,6 @@ import Bird from '../../assets/multiple-choice/nature/bird.jpeg'
 import Bone from '../../assets/multiple-choice/nature/bone.jpeg'
 import Bowl from '../../assets/multiple-choice/nature/bowl.png'
 import Nest from '../../assets/multiple-choice/nature/nest.jpeg'
-
 const initialState = {
   color: null,
   cursor: null,

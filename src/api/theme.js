@@ -4,7 +4,6 @@ import { writeToS3 } from '../utils/s3helpers'
 const getTheme = async () => {
   try {
     const res = await api.get(`theme/`)
-    console.log(res)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
