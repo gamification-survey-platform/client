@@ -9,6 +9,7 @@ import Nest from '../../assets/multiple-choice/nature/nest.jpeg'
 const initialState = {
   color: null,
   cursor: null,
+  is_published: false,
   multiple_choice_item: Dog,
   scale_multiple_choice_item: Cat,
   multiple_select_item: Bird,
@@ -44,7 +45,8 @@ const themeSlice = createSlice({
         }
       })
       return { ...state, ...newIconState }
-    }
+    },
+    setTheme: (state, action) => ({ ...state, ...action.payload })
   },
   extraReducers: (builder) => {
     builder.addCase(PURGE, () => initialState)
@@ -57,7 +59,8 @@ export const {
   setCursor,
   resetCursor,
   setIconTheme,
-  resetIconTheme
+  resetIconTheme,
+  setTheme
 } = themeSlice.actions
 
 export default themeSlice.reducer

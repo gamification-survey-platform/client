@@ -3,22 +3,16 @@ import { writeToS3 } from '../utils/s3helpers'
 
 const getTheme = async () => {
   try {
-    const res = await api.get(`theme/`)
+    const res = await api.get(`themes/`)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
   }
 }
 
-const createTheme = async (data) => {
+const getPublishedThemes = async () => {
   try {
-    const config = {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }
-    const res = await api.post(`theme/`, data, config)
-    console.log(res)
+    const res = await api.get(`published_themes/`)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -32,7 +26,7 @@ const editThemeIcon = async (data) => {
         'Content-Type': 'multipart/form-data'
       }
     }
-    const res = await api.patch(`theme/`, data, config)
+    const res = await api.patch(`themes/`, data, config)
     if (res.data.delete_url) {
       await writeToS3({ url: res.data.delete_url, method: 'DELETE' })
     }
@@ -49,12 +43,11 @@ const editThemeIcon = async (data) => {
 
 const editTheme = async (data) => {
   try {
-    const res = await api.patch(`theme/`, data)
-    console.log(res)
+    const res = await api.patch(`themes/`, data)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
   }
 }
 
-export { getTheme, createTheme, editTheme, editThemeIcon }
+export { getTheme, getPublishedThemes, editTheme, editThemeIcon }

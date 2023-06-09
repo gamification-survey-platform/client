@@ -11,7 +11,7 @@ import { Space, Row, Col, Card, Image, Button } from 'antd'
 import Spinner from '../components/Spinner'
 import StudentReviewsList from '../components/StudentReviewsList'
 import { getTheme } from '../api/theme'
-import { setColorTheme, setCursor, setIconTheme } from '../store/theme/themeSlice'
+import { setColorTheme, setCursor, setIconTheme, setTheme } from '../store/theme/themeSlice'
 
 const Home = () => {
   const user = useSelector(userSelector)
@@ -42,13 +42,16 @@ const Home = () => {
         if (res.status === 200) {
           const { cursor, ...rest } = res.data
           const colors = {}
+          const otherFields = {}
           cursor && dispatch(setCursor(cursor))
           Object.keys(rest).forEach((k) => {
             if (k.startsWith('color')) colors[k] = rest[k]
             else if (k.includes('item') || k.includes('target'))
               dispatch(setIconTheme({ field: k, url: rest[k] }))
+            else otherFields[k] = rest[k]
           })
           Object.keys(colors).length && dispatch(setColorTheme(colors))
+          dispatch(setTheme(otherFields))
         }
       } catch (e) {
         console.error(e.message)
