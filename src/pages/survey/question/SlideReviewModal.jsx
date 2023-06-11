@@ -10,6 +10,7 @@ const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, sectionPk }) =>
   const [form] = useForm()
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
+  const { file_path } = artifact
   const dispatch = useDispatch()
   const enableBackward = pageNumber > 1
   const enableForward = pageNumber < numPages
@@ -83,7 +84,7 @@ const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, sectionPk }) =>
             </Form.Item>
           </Col>
           <Col offset={1} span={10}>
-            <Document file={artifact} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
+            <Document file={file_path} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
               {' '}
               <Page pageNumber={pageNumber} width={500} />
             </Document>

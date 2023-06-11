@@ -106,7 +106,7 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
       await form.resetFields()
     }
   }
-  console.log(theme)
+
   return (
     <Modal
       title={editingQuestion ? 'Edit Question' : 'Add Question'}

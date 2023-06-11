@@ -16,6 +16,7 @@ import { getRandomEmoji } from './emojis'
 const SlideReview = (props) => {
   const [open, setOpen] = useState(false)
   const { artifact, answer } = props
+  const { file_path } = artifact
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
   }, [])
@@ -24,7 +25,7 @@ const SlideReview = (props) => {
     <Col offset={1} style={{ cursor: 'pointer' }}>
       {artifact && (
         <>
-          <Document file={artifact} onClick={() => setOpen(!open)}>
+          <Document file={file_path} onClick={() => setOpen(!open)}>
             {' '}
             <Page pageNumber={answer && answer.length ? answer[0].page : 1} width={200} />
           </Document>
