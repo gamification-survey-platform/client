@@ -40,7 +40,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix",
     "format": "prettier --write './**/*.{js,jsx,ts,tsx,css,md,json}' --config ./.prettierrc",
-    "sync": "aws s3 sync --profile 'gamification' ./build 's3://gamification-platform-client/'"
+    "sync": "npm run build && aws s3 sync --profile 'gamification' ./build 's3://gamification-platform-client/'"
   },
   "eslintConfig": {
     "extends": [
