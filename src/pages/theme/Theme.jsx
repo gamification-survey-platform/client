@@ -11,12 +11,14 @@ import CustomizeColorForm from './CustomizeColorForm'
 import SelectPresetThemeForm from './SelectPresetThemeForm'
 import CustomizeCursorForm from './CustomizeCursorForm'
 import CustomizeSurveyIconForm from './CustomizeSurveyIconForm'
+import styles from '../../styles/Theme.module.css'
 
 const Theme = () => {
   const [form] = useForm()
   const { name, color } = useSelector(themeSelector)
   const [_, token] = useToken()
-
+  // const { level } = useSelector(userSelector)
+  const level = 0
   useEffect(() => {
     if (color && Object.keys(color).length) {
       form.setFieldsValue(color)
@@ -26,7 +28,6 @@ const Theme = () => {
 
     if (name) form.setFieldsValue({ name })
   }, [color, name])
-
   return (
     <>
       <Form form={form} className="my-3 ml-3">

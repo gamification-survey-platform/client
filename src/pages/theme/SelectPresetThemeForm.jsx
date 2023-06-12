@@ -3,13 +3,16 @@ import { useEffect, useState } from 'react'
 import { getPublishedThemes } from '../../api/theme'
 import useMessage from 'antd/es/message/useMessage'
 import { editTheme, editThemeIcon } from '../../api/theme'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setColorTheme, setIconTheme } from '../../store/theme/themeSlice'
+import styles from '../../styles/Theme.module.css'
+import userSelector from '../../store/user/selectors'
 
 const SelectPresetThemeForm = () => {
   const [publishedThemes, setPublishedThemes] = useState([])
   const [messageApi, contextHolder] = useMessage()
   const dispatch = useDispatch()
+  const { level } = useSelector(userSelector)
 
   useEffect(() => {
     const fetchPublishedThemes = async () => {
@@ -30,6 +33,13 @@ const SelectPresetThemeForm = () => {
 
   const handleThemeSelect = async (theme) => {
     try {
+      if (level < 2) {
+        messageApi.open({
+          type: 'error',
+          content: 'This feature is only available for users above level 2!'
+        })
+        return
+      }
       const { id, name, creator, ...fieldsToChange } = theme
       Object.keys(fieldsToChange).forEach(async (key) => {
         if (key.includes('color')) {
@@ -71,7 +81,12 @@ const SelectPresetThemeForm = () => {
   ]
 
   return (
-    <Space direction="vertical" size="large" align="center" className="w-100">
+    <Space
+      direction="vertical"
+      size="large"
+      align="center"
+      className={`w-100 ${level < 4 ? styles.locked : ''}`}>
+      {contextHolder}
       <Row justify="start" className="mb-3">
         <Typography.Title level={5}>Choose user defined theme</Typography.Title>
       </Row>

@@ -7,6 +7,7 @@ import { editThemeIcon } from '../../api/theme'
 import useMessage from 'antd/es/message/useMessage'
 import userSelector from '../../store/user/selectors'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
+import styles from '../../styles/Theme.module.css'
 
 const CustomizeSurveyIconForm = () => {
   const form = useFormInstance()
@@ -73,7 +74,11 @@ const CustomizeSurveyIconForm = () => {
     }
   }
   return (
-    <Space direction="vertical" size="large" align="center" className="w-100">
+    <Space
+      direction="vertical"
+      size="large"
+      align="center"
+      className={`w-100 ${level < 4 ? styles.locked : ''}`}>
       {contextHolder}
       <Row justify="start" className="mb-3">
         <Typography.Title level={5}>Choose Survey Theme Icons</Typography.Title>

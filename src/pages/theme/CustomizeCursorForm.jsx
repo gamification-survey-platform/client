@@ -8,6 +8,7 @@ import useMessage from 'antd/es/message/useMessage'
 import userSelector from '../../store/user/selectors'
 import { dataURLtoFile } from './utils'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
+import styles from '../../styles/Theme.module.css'
 
 const CustomizeCursorForm = () => {
   const form = useFormInstance()
@@ -64,7 +65,11 @@ const CustomizeCursorForm = () => {
   }
 
   return (
-    <Space direction="vertical" size="large" align="center" className="w-100">
+    <Space
+      direction="vertical"
+      size="large"
+      align="center"
+      className={`w-100 ${level < 3 ? styles.locked : ''}`}>
       {contextHolder}
       <Row justify="start" className="mb-3">
         <Typography.Title level={5}>Choose Cursor</Typography.Title>

@@ -8,43 +8,51 @@ const Guide = () => {
     { title: 'Description', dataIndex: 'description', key: 'description' }
   ]
 
-  const dataSource = [
+  let dataSource = [
     {
-      key: '0',
       element: 'Ranking',
-      level: '0',
+      level: 'All',
       description:
         "User's level in the gamification platform. This is visible in the left sidebar along with an associated label. A user can increase their level by interacting with the platform in three ways: submitting an assignment (20 points), submitting a peer review (10 points), or getting a trivia answer correct (5 points)."
     },
     {
-      key: '1',
       element: 'Theme Customization',
-      level: '0',
+      level: 'All',
       description:
         'Allows the user to change the site design settings. This includes and is not limited to the site color, button colors, message colors, etc. This feature is accessible under the Theme menu option.'
     },
     {
-      key: '2',
+      element: 'Survey Gamification',
+      level: 'All',
+      description:
+        'Filling out the survey is a gamified process. The process is gamified by the instructor enabling certain features for multiple choice questions, text questions, and adding survey trivia.'
+    },
+    {
       element: 'Preset Theme Selection',
-      level: '1',
+      level: '2',
       description:
         'Allows the user to choose a theme created by another user. This feature is accessible in the Theme menu option.'
     },
     {
-      key: '3',
-      element: 'Cursor Selection',
-      level: '2',
+      element: 'Cursor Selection Customization',
+      level: '3',
       description:
         'Allows the user to choose a their cursor icon. Options include a Flower, Lightsaber, Mushroom, Pokeball, or Wand. This feature is accessible in the Theme menu option.'
     },
     {
-      key: '3',
-      element: 'Survey Theme',
-      level: '3',
+      element: 'Survey Theme Customization',
+      level: '4',
       description:
         'Allows the user to choose a survey theme. The survey theme is used in certain question formats when a user is completing a peer review. This feature is accessible in the Theme menu option.'
+    },
+    {
+      element: 'Theme Publishing',
+      level: '5',
+      description:
+        'Allows the user to publish a survey theme. Published themes are given a name and are available for other users to choose. Upon achieving level 2.'
     }
   ]
+  dataSource = dataSource.map((d, i) => ({ ...d, key: i }))
   return (
     <div className="m-5">
       <Typography.Title level={2}>Welcome to Gamification Platform!</Typography.Title>

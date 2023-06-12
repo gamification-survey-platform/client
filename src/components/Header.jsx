@@ -63,7 +63,7 @@ const AppHeader = ({ children }) => {
 
   useEffect(() => {
     if (user && user.is_staff) {
-      setItems(items.filter((item) => item.key !== '3' && item.key !== '4'))
+      setItems(items.filter((item) => item.key !== '3' && item.key !== '4' && item.key !== '5'))
     } else if (user && user.level < 0) {
       setItems(items.filter((item) => item.key !== '4'))
     }

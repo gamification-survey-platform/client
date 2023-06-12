@@ -21,6 +21,7 @@ import { setColorTheme } from '../../store/theme/themeSlice'
 import { editTheme } from '../../api/theme'
 import useMessage from 'antd/es/message/useMessage'
 import userSelector from '../../store/user/selectors'
+import styles from '../../styles/Theme.module.css'
 
 const CustomizeColorForm = () => {
   const { level } = useSelector(userSelector)
@@ -55,7 +56,11 @@ const CustomizeColorForm = () => {
     }
   }
   return (
-    <Space direction="vertical" size="large" align="center" className="w-100">
+    <Space
+      direction="vertical"
+      size="large"
+      align="center"
+      className={`w-100 ${level < 1 ? styles.locked : ''}`}>
       {contextHolder}
       <Row justify="start" className="mb-3">
         <Typography.Title level={5}>Theme Customization</Typography.Title>

@@ -2,7 +2,15 @@ import api from './apiUtils'
 
 const createCourse = async (courseData) => {
   try {
-    const res = await api.post(`courses/`, courseData)
+    let config = {}
+    if (courseData.picture) {
+      config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    }
+    const res = await api.post(`courses/`, courseData, config)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -11,7 +19,16 @@ const createCourse = async (courseData) => {
 
 const editCourse = async ({ course_id, course }) => {
   try {
-    const res = await api.put(`courses/${course_id}/`, course)
+    let config = {}
+    console.log(course)
+    if (course.picture) {
+      config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    }
+    const res = await api.put(`courses/${course_id}/`, course, config)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -20,7 +37,7 @@ const editCourse = async ({ course_id, course }) => {
 
 const deleteCourse = async (course_id) => {
   try {
-    const res = await api.delete(`courses/${course_id}`, { params: { course_id } })
+    const res = await api.delete(`courses/${course_id}/`)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)

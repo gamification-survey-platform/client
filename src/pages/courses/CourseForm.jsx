@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Form,
   Select,
@@ -9,7 +9,9 @@ import {
   Typography,
   message,
   InputNumber,
-  Checkbox
+  Checkbox,
+  Upload,
+  Image
 } from 'antd'
 import dayjs from 'dayjs'
 import { useDispatch, useSelector } from 'react-redux'
@@ -25,6 +27,7 @@ const CourseForm = () => {
   const user = useSelector(userSelector)
   const courses = useSelector(coursesSelector)
   const [messageApi, contextHolder] = message.useMessage()
+  const [coursePicture, setCoursePicture] = useState()
   const navigate = useNavigate()
   const [form] = useForm()
   const params = useParams()
@@ -45,6 +48,7 @@ const CourseForm = () => {
       try {
         const courseData = { ...form.getFieldsValue(), andrew_id: user.andrewId }
         courseData.semester = `${courseData.semester} ${courseData.semesterYear}`
+        courseData.picture = coursePicture
         delete courseData.semesterYear
         const res = editingCourse
           ? await editCourseApi({ course_id: editingCourse.pk, course: courseData })
@@ -67,6 +71,7 @@ const CourseForm = () => {
       }
     }
   }
+
   return (
     <div className="m-5">
       {contextHolder}
@@ -114,6 +119,22 @@ const CourseForm = () => {
           name="syllabus"
           rules={[{ required: true, message: 'Please input an syllabus' }]}>
           <Input.TextArea rows={6} />
+        </Form.Item>
+        <Form.Item name="picture">
+          <Upload
+            maxCount={1}
+            accept="image/png, image/jpeg"
+            beforeUpload={(file) => {
+              setCoursePicture(file)
+              return false
+            }}>
+            <Button>
+              {editingCourse && editingCourse.picture ? 'Reset' : 'Set'} course picture
+            </Button>
+          </Upload>
+          {editingCourse && editingCourse.picture ? (
+            <Image src={editingCourse.picture} width={50} className="mt-3" />
+          ) : null}
         </Form.Item>
         <Form.Item label="Visible" name="visible" valuePropName="checked">
           <Checkbox />
