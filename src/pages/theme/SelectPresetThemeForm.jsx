@@ -1,10 +1,10 @@
 import { Typography, Table, Row, Button, Space } from 'antd'
 import { useEffect, useState } from 'react'
-import { getPublishedThemes } from '../../api/theme'
+import { getPublishedThemes, subscribeToTheme } from '../../api/theme'
 import useMessage from 'antd/es/message/useMessage'
-import { editTheme, editThemeIcon } from '../../api/theme'
+import { getTheme } from '../../api/theme'
 import { useDispatch, useSelector } from 'react-redux'
-import { setColorTheme, setIconTheme } from '../../store/theme/themeSlice'
+import { setColorTheme, setIconTheme, setTheme, setCursor } from '../../store/theme/themeSlice'
 import styles from '../../styles/Theme.module.css'
 import userSelector from '../../store/user/selectors'
 
@@ -25,12 +25,6 @@ const SelectPresetThemeForm = () => {
     fetchPublishedThemes()
   }, [])
 
-  const presignedUrlToKey = (url) => {
-    const regex = new RegExp('.*.com\\/*(.*\\/.*)\\?.*', 'gm')
-    const matches = regex.exec(url)
-    return matches.length > 1 ? matches[1] : null
-  }
-
   const handleThemeSelect = async (theme) => {
     try {
       if (level < 2) {
@@ -41,26 +35,24 @@ const SelectPresetThemeForm = () => {
         return
       }
       const { id, name, creator, ...fieldsToChange } = theme
-      Object.keys(fieldsToChange).forEach(async (key) => {
-        if (key.includes('color')) {
-          const res = await editTheme({ [key]: fieldsToChange[key] })
-          if (res.status === 200) dispatch(setColorTheme({ [key]: fieldsToChange[key] }))
-        } else if (key === 'cursor' || key.includes('item') || key.includes('target')) {
-          const imageKey = presignedUrlToKey(fieldsToChange[key])
-          if (imageKey) {
-            const res = await editThemeIcon({ [key]: imageKey })
-            if (res.status === 200) {
-              const {
-                upload_url = null,
-                download_url = null,
-                delete_url = null,
-                ...rest
-              } = res.data
-              dispatch(setIconTheme({ field: key, url: download_url }))
-            }
-          }
+      const res = await subscribeToTheme(id)
+      if (res.status === 200) {
+        const res = await getTheme()
+        if (res.status === 200) {
+          const { cursor, ...rest } = res.data
+          const colors = {}
+          const otherFields = {}
+          cursor && dispatch(setCursor(cursor))
+          Object.keys(rest).forEach((k) => {
+            if (k.startsWith('color')) colors[k] = rest[k]
+            else if (k.includes('item') || k.includes('target'))
+              dispatch(setIconTheme({ field: k, url: rest[k] }))
+            else otherFields[k] = rest[k]
+          })
+          Object.keys(colors).length && dispatch(setColorTheme(colors))
+          dispatch(setTheme(otherFields))
         }
-      })
+      }
     } catch (e) {
       console.error(e)
       messageApi.open({ type: 'error', content: `Failed to set theme. ${e.message}` })

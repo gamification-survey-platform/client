@@ -19,6 +19,15 @@ const getPublishedThemes = async () => {
   }
 }
 
+const subscribeToTheme = async (theme_id) => {
+  try {
+    const res = await api.patch(`themes/`, { theme_id })
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
 const editThemeIcon = async (data) => {
   try {
     const config = {
@@ -50,4 +59,4 @@ const editTheme = async (data) => {
   }
 }
 
-export { getTheme, getPublishedThemes, editTheme, editThemeIcon }
+export { getTheme, getPublishedThemes, editTheme, editThemeIcon, subscribeToTheme }
