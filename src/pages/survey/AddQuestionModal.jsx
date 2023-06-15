@@ -2,7 +2,8 @@ import { useEffect } from 'react'
 import { Modal, Form, Input, Select, Checkbox, Popover, Typography, Space, theme } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useDispatch, useSelector } from 'react-redux'
-import { addQuestion, editQuestion, surveySelector } from '../../store/survey/surveySlice'
+import { addQuestion, editQuestion } from '../../store/survey/surveySlice'
+import surveySelector from '../../store/survey/selectors'
 import { QuestionCircleTwoTone } from '@ant-design/icons'
 
 const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {

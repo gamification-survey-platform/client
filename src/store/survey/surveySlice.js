@@ -190,8 +190,6 @@ const surveySlice = createSlice({
   }
 })
 
-export const surveySelector = (state) => state.survey
-
 export const {
   setSurvey,
   addSection,

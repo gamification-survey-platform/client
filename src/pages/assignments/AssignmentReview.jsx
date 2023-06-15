@@ -8,7 +8,8 @@ import { getArtifactReview, saveArtifactReview, submitTriviaAnswer } from '../..
 import { getArtifact } from '../../api/artifacts'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { useForm } from 'antd/es/form/Form'
-import { surveySelector, setSurvey, setProgress } from '../../store/survey/surveySlice'
+import { setSurvey, setProgress } from '../../store/survey/surveySlice'
+import surveySelector from '../../store/survey/selectors'
 import userSelector from '../../store/user/selectors'
 import { setUser } from '../../store/user/userSlice'
 import { DndProvider } from 'react-dnd'
@@ -20,7 +21,7 @@ const AssignmentReview = () => {
   const { course_id, assignment_id, review_id } = useParams()
   const user = useSelector(userSelector)
   const [messageApi, contextHolder] = message.useMessage()
-  const [notificationApi, notificationContextHolder] = notification.useNotification()
+  const [_, notificationContextHolder] = notification.useNotification()
   const [spin, setSpin] = useState(false)
   const [form] = useForm()
   const [triviaForm] = useForm()
@@ -225,7 +226,13 @@ const AssignmentReview = () => {
                 ))}
                 {survey.sentiment ? (
                   <div
-                    style={{ position: 'fixed', bottom: 35, right: 10, display: 'flex', alignItems: 'center' }}>
+                    style={{
+                      position: 'fixed',
+                      bottom: 35,
+                      right: 10,
+                      display: 'flex',
+                      alignItems: 'center'
+                    }}>
                     <Typography.Title level={5} className="mr-3">
                       Survey sentiment:
                     </Typography.Title>

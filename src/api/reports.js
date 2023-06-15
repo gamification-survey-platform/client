@@ -41,4 +41,15 @@ const getKeywords = async ({ course_id, assignment_id, artifact_id }) => {
   }
 }
 
-export { getStudentStatistics, getKeywords, getInstructorIpsatization }
+const getArtifactAnswers = async ({ course_id, assignment_id, artifact_id }) => {
+  try {
+    const res = await api.get(
+      `courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact_id}/answers`
+    )
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
+export { getArtifactAnswers, getStudentStatistics, getKeywords, getInstructorIpsatization }

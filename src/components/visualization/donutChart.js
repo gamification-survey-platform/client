@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
 
-const renderDonutChart = ({ data: rawData, ref, chartHeight, chartWidth }) => {
+const renderDonutChart = ({ data: chartData, ref, chartHeight, chartWidth }) => {
   const chart = d3.select(ref.current)
   chart.select('svg').remove()
   const margin = 40
@@ -12,7 +12,6 @@ const renderDonutChart = ({ data: rawData, ref, chartHeight, chartWidth }) => {
     .arc()
     .innerRadius(innerRadius - 10)
     .outerRadius(outerRadius + 10)
-
   const svg = chart
     .append('svg')
     .attr('height', chartHeight)
@@ -20,10 +19,10 @@ const renderDonutChart = ({ data: rawData, ref, chartHeight, chartWidth }) => {
     .append('g')
     .attr('transform', `translate(${chartWidth / 2}, ${chartHeight / 2})`)
 
-  svg.append('text').text('Title').attr('text-anchor', 'middle')
+  svg.append('text').text(chartData.title).attr('text-anchor', 'middle')
 
   const pie = d3.pie().value((d) => d[1])
-  const data = pie(Object.entries(rawData))
+  const data = pie(Object.entries(chartData.data))
   const fills = d3.schemeCategory10
   svg
     .selectAll('.arc')

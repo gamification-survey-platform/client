@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { getArtifactReviews } from '../api/artifactReview'
-import { Space, Tag, Col, Typography } from 'antd'
+import { Space, Row, Tag, Col, Typography } from 'antd'
 import { getMembers } from '../api/members'
 import { useParams } from 'react-router'
 import { useSelector } from 'react-redux'
@@ -57,19 +57,29 @@ const StaffSubmissionList = () => {
     }
     fetchCourseMembers()
   }, [artifacts])
-
   return (
     <Col span={6} className="border-left p-5 my-3">
       <Space direction="vertical" size="middle" className="text-center">
         <Typography.Title level={5}>Completed Submissions</Typography.Title>
         {Object.keys(artifacts).map((reviewee) => {
-          const { file_path } = artifacts[reviewee]
+          const { artifact_pk, file_path } = artifacts[reviewee]
           return (
-            <Link key={`${reviewee}-completed`} to={file_path}>
-              <Tag role="button" color="green" className={styles.tag}>
-                {reviewee}
-              </Tag>
-            </Link>
+            <Space direction="vertical" key={`${reviewee}-completed`}>
+              <Row>{reviewee}</Row>
+              <Row>
+                <Link to={file_path}>
+                  <Tag role="button" color="green" className={styles.tag}>
+                    Submission
+                  </Tag>
+                </Link>
+                <Link
+                  to={`/courses/${courseNumber}/assignments/${assignment_id}/artifacts/${artifact_pk}/reports`}>
+                  <Tag role="button" color="blue" className={styles.tag}>
+                    Reviews
+                  </Tag>
+                </Link>
+              </Row>
+            </Space>
           )
         })}
         <Typography.Title level={5}>Pending Submissions</Typography.Title>

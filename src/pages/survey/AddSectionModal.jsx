@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { Modal, Button, Form, Checkbox, Input } from 'antd'
 import { useForm } from 'antd/es/form/Form'
-import { addSection, editSection, surveySelector } from '../../store/survey/surveySlice'
+import { addSection, editSection } from '../../store/survey/surveySlice'
+import surveySelector from '../../store/survey/selectors'
 import { useDispatch, useSelector } from 'react-redux'
 
 const AddSectionModal = ({ open, setOpen, sectionIdx }) => {

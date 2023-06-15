@@ -8,12 +8,8 @@ import { getSurveyDetails, saveSurvey } from '../../api/survey'
 import { useDispatch, useSelector } from 'react-redux'
 import coursesSelector from '../../store/courses/selectors'
 import Spinner from '../../components/Spinner'
-import {
-  changeView,
-  reorderSections,
-  setSurvey,
-  surveySelector
-} from '../../store/survey/surveySlice'
+import { changeView, reorderSections, setSurvey } from '../../store/survey/surveySlice'
+import surveySelector from '../../store/survey/selectors'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 

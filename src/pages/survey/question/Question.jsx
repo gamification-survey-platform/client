@@ -6,7 +6,8 @@ import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 import { Document, Page, pdfjs } from 'react-pdf'
 import SlideReviewModal from './SlideReviewModal'
 import { useDispatch, useSelector } from 'react-redux'
-import { deleteQuestion, editAnswer, surveySelector } from '../../../store/survey/surveySlice'
+import { deleteQuestion, editAnswer } from '../../../store/survey/surveySlice'
+import surveySelector from '../../../store/survey/selectors'
 import { useDrag, useDrop } from 'react-dnd'
 import themeSelector from '../../../store/theme/selectors'
 import renderScene from '../../../components/multiple-choice/renderMultipleChoiceAnimation'
@@ -55,7 +56,6 @@ const MultipleChoice = ({
   const { multiple_choice_item, multiple_choice_target } = useSelector(themeSelector)
   const [options, setOptions] = useState(initialOptions)
   const [initialRender, setInitialRender] = useState(true)
-
   useEffect(() => {
     const element = document.getElementById(name)
     if (answer && answer.length && initialRender) {
@@ -217,7 +217,7 @@ const MultipleSelect = ({
   )
 }
 
-const scaleOptions = {
+export const scaleOptions = {
   3: ['disagree', 'neutral', 'agree'],
   5: ['strongly disagree', 'disagree', 'neutral', 'agree', 'strongly agree'],
   7: [
