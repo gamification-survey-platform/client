@@ -66,7 +66,11 @@ const SelectPresetThemeForm = () => {
       key: 'creator',
       align: 'center',
       render: (_, theme) => {
-        return <Button onClick={() => handleThemeSelect(theme)}>{theme.name}</Button>
+        return (
+          <Button disabled={level < 2} onClick={() => handleThemeSelect(theme)}>
+            {theme.name}
+          </Button>
+        )
       }
     },
     { title: 'Creator', dataIndex: 'creator', key: 'creator', align: 'center' }

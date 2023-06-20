@@ -13,7 +13,6 @@ import {
 } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useSelector } from 'react-redux'
-import themeSelector from '../../store/theme/selectors'
 import { useToken } from 'antd/es/theme/internal'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -67,26 +66,46 @@ const CustomizeColorForm = () => {
       </Row>
       <Space direction="horizontal" size="large">
         <Form.Item name="colorBgBase" label="Background Base Color">
-          <ColorPicker onChange={(_, value) => handleColorChange('colorBgBase', value)} />
+          <ColorPicker
+            disabled={level < 1}
+            onChange={(_, value) => handleColorChange('colorBgBase', value)}
+          />
         </Form.Item>
         <Form.Item name="colorTextBase" label="Text Color">
-          <ColorPicker onChange={(_, value) => handleColorChange('colorTextBase', value)} />
+          <ColorPicker
+            disabled={level < 1}
+            onChange={(_, value) => handleColorChange('colorTextBase', value)}
+          />
         </Form.Item>
         <Form.Item name="colorPrimary" label="Primary Color">
-          <ColorPicker onChange={(_, value) => handleColorChange('colorPrimary', value)} />
+          <ColorPicker
+            disabled={level < 1}
+            onChange={(_, value) => handleColorChange('colorPrimary', value)}
+          />
         </Form.Item>
         <Form.Item name="colorSuccess" label="Success Color">
-          <ColorPicker onChange={(_, value) => handleColorChange('colorSuccess', value)} />
+          <ColorPicker
+            disabled={level < 1}
+            onChange={(_, value) => handleColorChange('colorSuccess', value)}
+          />
         </Form.Item>
         <Form.Item name="colorWarning" label="Warning Color">
-          <ColorPicker onChange={(_, value) => handleColorChange('colorWarning', value)} />
+          <ColorPicker
+            disabled={level < 1}
+            onChange={(_, value) => handleColorChange('colorWarning', value)}
+          />
         </Form.Item>
         <Form.Item name="colorError" label="Error Color">
-          <ColorPicker onChange={(_, value) => handleColorChange('colorError', value)} />
+          <ColorPicker
+            disabled={level < 1}
+            onChange={(_, value) => handleColorChange('colorError', value)}
+          />
         </Form.Item>
       </Space>
       <Form.Item>
-        <Button onClick={handleResetColorTheme}>Reset Color Theme</Button>
+        <Button disabled={level < 1} onClick={handleResetColorTheme}>
+          Reset Color Theme
+        </Button>
       </Form.Item>
     </Space>
   )

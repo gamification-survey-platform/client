@@ -75,10 +75,12 @@ const PublishThemeForm = () => {
           label="Theme name"
           name="name"
           rules={[{ required: true, message: 'Your theme needs a name!' }]}>
-          <Input />
+          <Input disabled={level < 5} />
         </Form.Item>
         <Space direction="vertical">
-          <Button onClick={handleThemeNameChange}>Change Theme Name</Button>
+          <Button disabled={level < 5} onClick={handleThemeNameChange}>
+            Change Theme Name
+          </Button>
           <Button disabled={level < 5} onClick={handleThemePublishChange}>
             {is_published ? 'Hide' : 'Publish'} Your Theme
           </Button>

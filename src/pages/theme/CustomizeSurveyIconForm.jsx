@@ -99,10 +99,10 @@ const CustomizeSurveyIconForm = () => {
                       await handleChangeSurveyIcon(`${formName}_item`, file)
                       return false
                     }}>
-                    <Button>Upload {name} Question Item</Button>
+                    <Button disabled={level < 4}>Upload {name} Question Item</Button>
                   </Upload>
                 </Form.Item>
-                <AntdImage src={item} height={50} />
+                <AntdImage preview={level >= 4} src={item} height={50} />
               </Space>
               <Space direction="vertical">
                 <Form.Item name={`${formName}_target`}>
@@ -114,15 +114,15 @@ const CustomizeSurveyIconForm = () => {
                       await handleChangeSurveyIcon(`${formName}_target`, file)
                       return false
                     }}>
-                    <Button>Upload {name} Question Target</Button>
+                    <Button disabled={level < 4}>Upload {name} Question Target</Button>
                   </Upload>
                 </Form.Item>
-                <AntdImage src={target} height={50} />
+                <AntdImage preview={level >= 4} src={target} height={50} />
               </Space>
             </Space>
           )
         })}
-        <Button className="mt-3" onClick={handleResetSurveyIcons}>
+        <Button disabled={level < 4} className="mt-3" onClick={handleResetSurveyIcons}>
           Reset to default
         </Button>
       </Space>

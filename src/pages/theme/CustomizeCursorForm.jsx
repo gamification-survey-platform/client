@@ -80,11 +80,11 @@ const CustomizeCursorForm = () => {
           showUploadList={false}
           accept="image/png, image/jpeg, image/jpg"
           beforeUpload={handleCursorChange}>
-          <Button>Upload Cursor Icon</Button>
+          <Button disabled={level < 3}>Upload Cursor Icon</Button>
         </Upload>
       </Form.Item>
       {cursor ? <AntdImage src={cursor} /> : null}
-      <Button className="mt-3" onClick={handleResetCursor}>
+      <Button disabled={level < 3} className="mt-3" onClick={handleResetCursor}>
         Reset to default
       </Button>
     </Space>
