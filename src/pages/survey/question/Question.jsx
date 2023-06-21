@@ -13,6 +13,9 @@ import themeSelector from '../../../store/theme/selectors'
 import renderScene from '../../../components/multiple-choice/renderMultipleChoiceAnimation'
 import TextFeedback from '../../../components/TextFeedback'
 import { getRandomEmoji } from './emojis'
+import styles from '../../../styles/Question.module.css'
+
+const randomEmoji = getRandomEmoji('positive')
 
 const SlideReview = (props) => {
   const [open, setOpen] = useState(false)
@@ -202,6 +205,7 @@ const MultipleSelect = ({
     }
   }, [value])
   const ticks = option_choices.reduce((acc, el, i) => ({ ...acc, [i]: el.text }), {})
+  console.log(name)
   return (
     <Form.Item
       name={name}
@@ -347,7 +351,7 @@ const FixedText = ({ sectionIdx, questionIdx, answer, question_type, is_required
       <Form.Item
         name={name}
         rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
-        <Input onBlur={handleBlur} />
+        <Input onBlur={handleBlur} className={styles.input} />
       </Form.Item>
       {text && gamified && <TextFeedback text={text} />}
     </div>
@@ -372,7 +376,7 @@ const MultiLineField = ({
   useEffect(() => {
     if (answer && idx < answer.length) {
       form.setFieldValue(name, answer[idx].text)
-      !response && answer[idx].text && setResponse(getRandomEmoji('positive'))
+      !response && answer[idx].text && setResponse(randomEmoji)
     }
   }, [answer])
   useEffect(() => {
@@ -395,7 +399,7 @@ const MultiLineField = ({
       <Form.Item
         name={name}
         rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
-        <Input />
+        <Input className={styles.input} />
       </Form.Item>
       {response && gamified ? (
         <h3
@@ -430,7 +434,7 @@ const Number = ({ sectionIdx, questionIdx, answer, question_type, is_required, g
   useEffect(() => {
     if (answer && answer.length) {
       form.setFieldValue(name, answer[0].text)
-      !response && setResponse(getRandomEmoji('positive'))
+      !response && setResponse(randomEmoji)
     }
   }, [answer])
 
@@ -445,7 +449,7 @@ const Number = ({ sectionIdx, questionIdx, answer, question_type, is_required, g
       <Form.Item
         name={name}
         rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
-        <Input type="number" />
+        <Input type="number" className={styles.input} />
       </Form.Item>
       {response && gamified ? (
         <h1
@@ -537,8 +541,9 @@ const Question = (question) => {
 
   const handleDeleteQuestion = () => dispatch(deleteQuestion({ ...question }))
   return (
-    <div id={id}>
+    <div id={id} className="mb-5">
       <Form.Item
+        className={styles.questionWrapper}
         rules={[
           { required: questionProps.is_required, message: 'Please complete the above question.' }
         ]}

@@ -5,7 +5,7 @@ const PROGRESS_LABELS = {
   0.2: "You've got a ways to go.",
   0.5: "That's some progress.",
   0.6: 'Nice, getting closer!',
-  0.8: 'Come on almost there!',
+  0.8: 'Come on, almost there!',
   0.9: 'Last stretch!'
 }
 
