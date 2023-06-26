@@ -55,38 +55,28 @@ const PublishThemeForm = () => {
   }
 
   return (
-    <div
-      style={{
-        backgroundColor: '#F5F5F5',
-        border: '1px solid #d9d9d9',
-        borderRadius: '5%',
-        position: 'fixed',
-        padding: '1rem',
-        top: 75,
-        right: 10,
-        zIndex: 1,
-        width: 250
-      }}
-      className="text-center">
+    <Space
+      direction="vertical"
+      size="large"
+      align="center"
+      className={`w-100 ${level < 5 ? styles.locked : ''}`}>
       {contextHolder}
-      <Typography.Title level={5}>Level 5</Typography.Title>
-      <div className={level < 4 ? styles.locked : ''}>
-        <Form.Item
-          label="Theme name"
-          name="name"
-          rules={[{ required: true, message: 'Your theme needs a name!' }]}>
-          <Input disabled={level < 5} />
-        </Form.Item>
-        <Space direction="vertical">
-          <Button disabled={level < 5} onClick={handleThemeNameChange}>
-            Change Theme Name
-          </Button>
-          <Button disabled={level < 5} onClick={handleThemePublishChange}>
-            {is_published ? 'Hide' : 'Publish'} Your Theme
-          </Button>
-        </Space>
-      </div>
-    </div>
+      <Typography.Title level={5}>Publish your theme</Typography.Title>
+      <Form.Item
+        label="Theme name"
+        name="name"
+        rules={[{ required: true, message: 'Your theme needs a name!' }]}>
+        <Input disabled={level < 5} />
+      </Form.Item>
+      <Space direction="vertical" align="center">
+        <Button disabled={level < 5} onClick={handleThemeNameChange}>
+          Change Theme Name
+        </Button>
+        <Button disabled={level < 5} onClick={handleThemePublishChange}>
+          {is_published ? 'Hide' : 'Publish'} Your Theme
+        </Button>
+      </Space>
+    </Space>
   )
 }
 

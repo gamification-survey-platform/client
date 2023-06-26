@@ -31,7 +31,6 @@ const Theme = () => {
   return (
     <>
       <Form form={form} className="my-3 ml-3">
-        <PublishThemeForm />
         <Row justify="start">
           <Typography.Title level={2}>Level 1</Typography.Title>
         </Row>
@@ -51,6 +50,11 @@ const Theme = () => {
           <Typography.Title level={2}>Level 4</Typography.Title>
         </Row>
         <CustomizeSurveyIconForm />
+        <Divider />
+        <Row justify="start">
+          <Typography.Title level={2}>Level 5</Typography.Title>
+        </Row>
+        <PublishThemeForm />
       </Form>
     </>
   )

@@ -6,7 +6,13 @@ import userSelector from '../store/user/selectors'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
 import { Layout, Menu, Image, Typography } from 'antd'
-import { UserOutlined, BookOutlined, AntDesignOutlined, SettingOutlined } from '@ant-design/icons'
+import {
+  UserOutlined,
+  BookOutlined,
+  AntDesignOutlined,
+  SettingOutlined,
+  HomeOutlined
+} from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
 import ChartWrapper from './visualization/ChartWrapper'
@@ -27,6 +33,11 @@ const rankings = [
 ]
 
 const initialItems = [
+  {
+    key: '0',
+    icon: <HomeOutlined />,
+    label: 'Dashboard'
+  },
   {
     key: '1',
     icon: <UserOutlined />,
@@ -103,7 +114,13 @@ const AppHeader = ({ children }) => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Layout.Sider collapsible onCollapse={(collapsed) => setCollapsed(collapsed)}>
-        <Menu theme="dark" mode="inline" items={items} onClick={handleClick} />
+        <Menu
+          theme="dark"
+          mode="inline"
+          items={items}
+          onClick={handleClick}
+          defaultSelectedKeys={['0']}
+        />
         {collapsed || user.is_staff ? null : (
           <div
             style={{
