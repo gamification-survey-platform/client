@@ -6,7 +6,7 @@ import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
 import { editAnswer } from '../../../store/survey/surveySlice'
 
-const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, sectionPk }) => {
+const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, questionIdx, sectionIdx }) => {
   const [form] = useForm()
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
@@ -14,7 +14,6 @@ const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, sectionPk }) =>
   const dispatch = useDispatch()
   const enableBackward = pageNumber > 1
   const enableForward = pageNumber < numPages
-
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
   }, [open])
@@ -30,8 +29,8 @@ const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, sectionPk }) =>
     const answer = (form.getFieldValue(`${pk}`) || '').trim()
     dispatch(
       editAnswer({
-        questionPk: pk,
-        sectionPk,
+        questionIdx,
+        sectionIdx,
         answer,
         page: pageNumber,
         question_type: 'SLIDEREVIEW'

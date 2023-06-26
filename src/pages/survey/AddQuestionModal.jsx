@@ -88,6 +88,8 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
         payload = { number_of_scale: parseInt(formObj.number_of_scale) }
       } else if (formObj.question_type === 'MULTIPLETEXT') {
         payload = { number_of_text: parseInt(formObj.number_of_text) }
+      } else if (formObj.question_type === 'NUMBER') {
+        payload = { min: parseInt(formObj.min), max: parseInt(formObj.max) }
       }
       const { text, question_type, is_required, gamified, phrased_positively, ...rest } = formObj
       const questionObj = {
@@ -115,12 +117,14 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
       onOk={handleSubmit}
       onCancel={handleClose}>
       <Form form={form} initialValues={initialValues}>
-        <Form.Item
-          name="text"
-          label="Question"
-          rules={[{ required: true, message: 'Please enter a question' }]}>
-          <Input />
-        </Form.Item>
+        {question_type !== 'SLIDEREVIEW' ? (
+          <Form.Item
+            name="text"
+            label="Question"
+            rules={[{ required: true, message: 'Please enter a question' }]}>
+            <Input />
+          </Form.Item>
+        ) : null}
         <Form.Item
           name="question_type"
           label="Question Type"
@@ -133,7 +137,8 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
               { value: 'SCALEMULTIPLECHOICE', label: 'Multiple Choice With Scale' },
               { value: 'FIXEDTEXT', label: 'Fixed Text' },
               { value: 'MULTIPLETEXT', label: 'Multi-line Text' },
-              { value: 'TEXTAREA', label: 'Textarea' }
+              { value: 'TEXTAREA', label: 'Textarea' },
+              { value: 'SLIDEREVIEW', label: 'Slide review' }
             ]}
           />
         </Form.Item>
@@ -167,6 +172,16 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
               </div>
             )}
           </div>
+        )}
+        {question_type === 'NUMBER' && (
+          <>
+            <Form.Item label="Minimum value" name="min">
+              <Input type="number" />
+            </Form.Item>
+            <Form.Item label="Maximum value" name="max">
+              <Input type="number" />
+            </Form.Item>
+          </>
         )}
         {question_type === 'SCALEMULTIPLECHOICE' && (
           <Form.Item
@@ -266,6 +281,5 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
     </Modal>
   )
 }
-//            'E.g. "Was the student\'s delivery good?" vs. "Was the student\'s delivery poor?'
 
 export default AddQuestionModal

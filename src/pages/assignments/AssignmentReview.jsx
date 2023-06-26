@@ -110,13 +110,17 @@ const AssignmentReview = () => {
         survey.sections.forEach((s) => {
           s.questions.forEach((q) => {
             const { question_type, answer } = q
-            if (
-              question_type === 'SLIDEREVIEW' ||
-              question_type === 'MULTIPLETEXT' ||
-              question_type === 'MULTIPLESELECT'
-            )
+            if (question_type === 'MULTIPLETEXT' || question_type === 'MULTIPLESELECT') {
               answer.forEach((a) => review.push({ question_pk: q.pk, answer_text: a.text || '' }))
-            else {
+            } else if (question_type === 'SLIDEREVIEW') {
+              for (const a of answer) {
+                review.push({
+                  question_pk: q.pk,
+                  answer_text: a.text.length ? a.text : '',
+                  page: a.page
+                })
+              }
+            } else {
               review.push({
                 question_pk: q.pk,
                 answer_text: answer.length ? answer[0].text : ''
@@ -124,6 +128,7 @@ const AssignmentReview = () => {
             }
           })
         })
+
         const res = await saveArtifactReview({
           course_id,
           assignment_id: assignment_id,

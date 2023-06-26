@@ -56,7 +56,7 @@ const AssignmentSurvey = () => {
       if (res.status === 200) navigate(-1)
     } catch (e) {
       console.error(e)
-      messageApi.open({ type: 'error', content: 'Failed to save survey.' })
+      messageApi.open({ type: 'error', content: `Failed to save survey. ${e.message}` })
     }
   }
 

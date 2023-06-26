@@ -3,7 +3,7 @@ import { Document, Page, pdfjs } from 'react-pdf'
 import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons'
 
 const PdfPreview = ({ artifact }) => {
-  const { file_path, artifact_pk } = artifact
+  const { file_path } = artifact
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
   const enableBackward = pageNumber > 1
@@ -22,7 +22,7 @@ const PdfPreview = ({ artifact }) => {
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
   }, [])
-
+  console.log(pageNumber, file_path)
   return (
     <div
       className="text-center p-5 ml-5"
