@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
-import { Form, Row, Col, Select, Input, Checkbox } from 'antd'
+import { Form, Row, Col, Select, Input, Checkbox, InputNumber } from 'antd'
 import { EditTwoTone, DeleteTwoTone } from '@ant-design/icons'
 import AddQuestionModal from '../AddQuestionModal'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
@@ -30,7 +30,7 @@ const SlideReview = (props) => {
         <>
           <Document file={artifact.file_path} onClick={() => setOpen(!open)}>
             {' '}
-            <Page pageNumber={answer && answer.length ? answer[0].page : 1} width={200} />
+            <Page pageNumber={answer && answer.length ? parseInt(answer[0].page) : 1} width={200} />
           </Document>
           <SlideReviewModal {...props} open={open} setOpen={setOpen} />
         </>
@@ -425,7 +425,16 @@ const MultiLineText = (props) => {
   )
 }
 
-const Number = ({ sectionIdx, questionIdx, answer, question_type, is_required, gamified }) => {
+const Number = ({
+  sectionIdx,
+  questionIdx,
+  answer,
+  question_type,
+  is_required,
+  gamified,
+  min,
+  max
+}) => {
   const name = `${sectionIdx}-${questionIdx}`
   const form = useFormInstance()
   const value = Form.useWatch(name, form)
@@ -443,13 +452,12 @@ const Number = ({ sectionIdx, questionIdx, answer, question_type, is_required, g
       dispatch(editAnswer({ sectionIdx, questionIdx, answer: value, question_type }))
     }
   }, [value])
-
   return (
     <Row align="middle">
       <Form.Item
         name={name}
         rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
-        <Input type="number" className={styles.input} />
+        <InputNumber type="number" min={min} max={max} className={styles.input} />
       </Form.Item>
       {response && gamified ? (
         <h1
@@ -538,12 +546,14 @@ const Question = (question) => {
   const id = `${sectionIdx}-${questionIdx}`
   const ref = useRef()
   const dragDropRef = dragRef(dropRef(ref))
-
+  const isMultipleChoice = ['SCALEMULTIPLECHOICE', 'MULTIPLECHOICE', 'MULTIPLESELECT'].includes(
+    question_type
+  )
   const handleDeleteQuestion = () => dispatch(deleteQuestion({ ...question }))
   return (
     <div id={id} className="mb-5">
       <Form.Item
-        className={styles.questionWrapper}
+        className={isMultipleChoice && styles.questionWrapper}
         rules={[
           { required: questionProps.is_required, message: 'Please complete the above question.' }
         ]}

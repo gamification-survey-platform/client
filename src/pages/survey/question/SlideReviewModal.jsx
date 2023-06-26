@@ -8,6 +8,7 @@ import { editAnswer } from '../../../store/survey/surveySlice'
 
 const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, questionIdx, sectionIdx }) => {
   const [form] = useForm()
+  const name = `${sectionIdx}-${questionIdx}`
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
   const { file_path } = artifact
@@ -25,8 +26,19 @@ const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, questionIdx, se
     ? { cursor: 'pointer', fontSize: 20 }
     : { opacity: 0.5, cursor: 'auto', fontSize: 20 }
 
+  useEffect(() => {
+    if (answer && answer.length) {
+      const answerForPage = answer.find((a) => parseInt(a.page) === pageNumber)
+      if (answerForPage && answerForPage.text) {
+        form.setFieldValue(name, answerForPage.text)
+      } else {
+        form.setFieldValue(name, '')
+      }
+    }
+  }, [answer, pageNumber])
+
   const saveAnswer = () => {
-    const answer = (form.getFieldValue(`${pk}`) || '').trim()
+    const answer = (form.getFieldValue(`${name}`) || '').trim()
     dispatch(
       editAnswer({
         questionIdx,
@@ -63,7 +75,10 @@ const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, questionIdx, se
       forceRender
       title={'Slide Reviews'}
       open={open}
-      onCancel={() => setOpen(false)}
+      onCancel={() => {
+        setPageNumber(1)
+        setOpen(false)
+      }}
       footer={
         <div>
           <Divider />
@@ -78,7 +93,7 @@ const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, questionIdx, se
       <Form form={form}>
         <Row className="text-center">
           <Col span={10}>
-            <Form.Item name={pk}>
+            <Form.Item name={name}>
               <Input.TextArea rows={20} style={{ height: 'auto' }} />
             </Form.Item>
           </Col>

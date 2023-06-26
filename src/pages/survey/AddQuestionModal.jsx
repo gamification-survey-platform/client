@@ -117,14 +117,12 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
       onOk={handleSubmit}
       onCancel={handleClose}>
       <Form form={form} initialValues={initialValues}>
-        {question_type !== 'SLIDEREVIEW' ? (
-          <Form.Item
-            name="text"
-            label="Question"
-            rules={[{ required: true, message: 'Please enter a question' }]}>
-            <Input />
-          </Form.Item>
-        ) : null}
+        <Form.Item
+          name="text"
+          label="Question"
+          rules={[{ required: true, message: 'Please enter a question' }]}>
+          <Input />
+        </Form.Item>
         <Form.Item
           name="question_type"
           label="Question Type"
