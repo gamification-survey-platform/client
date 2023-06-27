@@ -28,6 +28,7 @@ const Store = () => {
     }
     fetchRewards()
   }, [])
+
   return (
     <div className="m-5">
       <Row justify="space-around">
@@ -38,9 +39,11 @@ const Store = () => {
       </Row>
       {courseNames.map((course_name, i) => {
         const courseRewards = rewards.filter((r) => r.belong_to === course_name)
+        const coursePoints = courses.find((course) => course.course_name === course_name).points
         return (
           <div key={i}>
             <Typography.Title level={4}>{course_name}</Typography.Title>
+            <Typography.Title level={5}>Purchasing power: {coursePoints}</Typography.Title>
             <Row gutter={16} style={{ margin: '1rem' }}>
               {courseRewards.map((reward, i) => {
                 return <Reward key={i} {...reward} rewards={rewards} setRewards={setRewards} />

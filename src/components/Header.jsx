@@ -93,6 +93,9 @@ const AppHeader = ({ children }) => {
   const handleClick = (e) => {
     const { key } = e
     switch (key) {
+      case '0':
+        navigate('/dashboard')
+        break
       case '1':
         navigate('/profile')
         break

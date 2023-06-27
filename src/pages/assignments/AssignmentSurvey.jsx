@@ -89,6 +89,7 @@ const AssignmentSurvey = () => {
                     <Typography.Text>
                       Drag and Drop sections or questions to reorder elements
                     </Typography.Text>
+                    <br />
                     <Typography.Text>
                       Please organize your questions into designated questions to ensure
                       intrasection answer consistency.

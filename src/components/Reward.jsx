@@ -37,7 +37,6 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
   const dispatch = useDispatch()
   const courses = useSelector(coursesSelector)
   const course = courses.find(({ course_name }) => course_name === belong_to)
-  const user = useSelector(userSelector)
   const { points: userPoints } = course
   const [open, setOpen] = useState(false)
   const deleteReward = async () => {

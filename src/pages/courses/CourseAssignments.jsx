@@ -200,7 +200,7 @@ const CourseAssignments = () => {
   ) : (
     <div className="m-5">
       <Table columns={columns} dataSource={dataSource} />
-      {user && user.is_staff && (
+      {selectedCourse.user_role === 'Instructor' && (
         <Button className="m-3" onClick={handleAddAssignment}>
           Add Assignment
         </Button>

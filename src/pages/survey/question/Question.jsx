@@ -13,6 +13,8 @@ import themeSelector from '../../../store/theme/selectors'
 import renderScene from '../../../components/multiple-choice/renderMultipleChoiceAnimation'
 import TextFeedback from '../../../components/TextFeedback'
 import { getRandomEmoji } from './emojis'
+import coursesSelector from '../../../store/courses/selectors'
+import { useParams } from 'react-router'
 import styles from '../../../styles/Question.module.css'
 
 const randomEmoji = getRandomEmoji('positive')
@@ -69,17 +71,17 @@ const MultipleChoice = ({
       })
       setOptions(newOptions)
       const { width, height } = element.getBoundingClientRect()
-      gamified &&
-        renderScene({
-          width,
-          height,
-          ref: element,
-          options: newOptions,
-          handleSelect,
-          item: multiple_choice_item,
-          target: multiple_choice_target,
-          questionType: 'MULTIPLECHOICE'
-        })
+      gamified
+      renderScene({
+        width,
+        height,
+        ref: element,
+        options: newOptions,
+        handleSelect,
+        item: multiple_choice_item,
+        target: multiple_choice_target,
+        questionType: 'MULTIPLECHOICE'
+      })
     } else if (element && initialRender) {
       const { width, height } = element.getBoundingClientRect()
       gamified &&
@@ -508,6 +510,10 @@ const TextArea = ({ sectionIdx, questionIdx, answer, question_type, is_required,
 
 const Question = (question) => {
   const { text, handleReorderQuestions, index, ...questionProps } = question
+  const courses = useSelector(coursesSelector)
+  const { course_id } = useParams()
+  const course = courses.find(({ course_number }) => course_id === course_number)
+  questionProps.gamified = questionProps.gamified && course.user_role === 'Student'
   const survey = useSelector(surveySelector)
   const { question_type } = question
   const [questionModalOpen, setQuestionModalOpen] = useState(false)

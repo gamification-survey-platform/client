@@ -200,7 +200,7 @@ const AddSurvey = () => {
                       or any other topic of choice) that a person filling in the survey can guess.
                     </div>
                     <div>
-                      As the user progresses with filling it the survey, hints will be displayed to
+                      As the user progresses with filling in the survey, hints will be displayed to
                       facilitate guessing the trivia&apos;s answer.
                     </div>
                   </Space>
