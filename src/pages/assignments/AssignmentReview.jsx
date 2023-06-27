@@ -16,9 +16,14 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { addCoursePoints } from '../../store/courses/coursesSlice'
 import { getSentimentEmoji } from '../survey/sentiment'
+import coursesSelector from '../../store/courses/selectors'
 
 const AssignmentReview = () => {
   const { course_id, assignment_id, review_id } = useParams()
+  const courses = useSelector(coursesSelector)
+  const course = courses.find(
+    ({ course_number }) => parseInt(course_number) === parseInt(course_id)
+  )
   const user = useSelector(userSelector)
   const [messageApi, contextHolder] = message.useMessage()
   const [_, notificationContextHolder] = notification.useNotification()
@@ -70,7 +75,7 @@ const AssignmentReview = () => {
           const { artifact_pk } = res.data
           if (artifact_pk) {
             const artifactRes = await getArtifact({
-              course_id,
+              course_id: course.pk,
               assignment_id: assignment_id,
               artifact_pk
             })
@@ -130,7 +135,7 @@ const AssignmentReview = () => {
         })
 
         const res = await saveArtifactReview({
-          course_id,
+          course_id: course.pk,
           assignment_id: assignment_id,
           review_id,
           review

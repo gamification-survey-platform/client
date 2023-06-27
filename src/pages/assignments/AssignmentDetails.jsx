@@ -104,11 +104,6 @@ const AssignmentDetails = () => {
     handleSubmit
   }
 
-  const tagStyles = {
-    borderWidth: 'medium',
-    fontWeight: 'bold'
-  }
-
   return spin ? (
     <Spinner show={spin} />
   ) : (

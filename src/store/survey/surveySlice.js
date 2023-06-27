@@ -110,14 +110,17 @@ const surveySlice = createSlice({
           .questions.find((q, i) => i === questionIdx).answer = newAnswer
       } else if (question_type === 'SLIDEREVIEW') {
         let modified = false
-        oldAnswer.forEach((a) => {
-          if (a.page === page) {
+        const newAnswer = oldAnswer.map((a) => {
+          if (parseInt(a.page) === page) {
             modified = true
             return answerObj
           }
           return a
         })
-        if (!modified) oldAnswer.push(answerObj)
+        if (!modified) newAnswer.push(answerObj)
+        newState.sections
+          .find((s, i) => i === sectionIdx)
+          .questions.find((q, i) => i === questionIdx).answer = newAnswer
       } else {
         if (oldAnswer.length) oldAnswer[0] = answerObj
         else oldAnswer.push(answerObj)

@@ -512,7 +512,9 @@ const Question = (question) => {
   const { text, handleReorderQuestions, index, ...questionProps } = question
   const courses = useSelector(coursesSelector)
   const { course_id } = useParams()
-  const course = courses.find(({ course_number }) => course_id === course_number)
+  const course = courses.find(
+    ({ course_number }) => parseInt(course_id) === parseInt(course_number)
+  )
   questionProps.gamified = questionProps.gamified && course.user_role === 'Student'
   const survey = useSelector(surveySelector)
   const { question_type } = question

@@ -1,24 +1,32 @@
 import { Space, Col, Typography, Tag } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import styles from '../styles/ReviewsList.module.css'
 
-const ReviewList = ({ title, color, reviews }) => (
-  <>
-    <Typography.Title level={5}>{title}</Typography.Title>
-    {reviews.map((review) => {
-      const { course_id, assignment_id } = review
-      return (
-        <Link
-          key={review.id}
-          to={`/courses/${course_id}/assignments/${assignment_id}/reviews/${review.id}`}>
-          <Tag role="button" color={color} className={styles.tag}>
-            {review.reviewing}
-          </Tag>
-        </Link>
-      )
-    })}
-  </>
-)
+const ReviewList = ({ title, color, reviews }) => {
+  const { course_id } = useParams()
+
+  return (
+    <>
+      <Typography.Title level={5}>{title}</Typography.Title>
+      {reviews.map((review) => {
+        const { course_number, assignment_id, assignment_type } = review
+        let tagTitle = ''
+        if (!course_id) tagTitle += `${course_number}: `
+        if (assignment_type === 'Team') tagTitle += `Team `
+        tagTitle += `${review.reviewing}`
+        return (
+          <Link
+            key={review.id}
+            to={`/courses/${course_number}/assignments/${assignment_id}/reviews/${review.id}`}>
+            <Tag role="button" color={color} className={styles.tag}>
+              {tagTitle}
+            </Tag>
+          </Link>
+        )
+      })}
+    </>
+  )
+}
 
 const StudentReviewsList = ({
   artifactReviews,
