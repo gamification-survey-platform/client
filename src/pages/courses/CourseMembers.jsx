@@ -64,7 +64,7 @@ const CourseMembers = () => {
     }
   ]
 
-  if (user.is_staff) columns = columns.concat(staffColumns)
+  if (selectedCourse.user_role === 'Instructor') columns = columns.concat(staffColumns)
 
   useEffect(() => {
     const fetchCourseMembers = async () => {
@@ -191,7 +191,7 @@ const CourseMembers = () => {
     <div className="m-5">
       {contextHolder}
       <Table columns={columns} dataSource={dataSource} />
-      {user.is_staff && (
+      {selectedCourse.user_role === 'Instructor' && (
         <div className="d-flex justify-content-center">
           <Form className="w-50 text-center" form={form} initialValues={initialValues}>
             <Typography.Title level={4}>Add Member</Typography.Title>

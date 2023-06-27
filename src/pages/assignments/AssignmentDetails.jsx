@@ -23,7 +23,6 @@ const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
   const user = useSelector(userSelector)
   const dispatch = useDispatch()
-  const [userRole, setUserRole] = useState()
   const [artifact, setArtifact] = useState()
   const [spin, setSpin] = useState(false)
   const [artifactReviews, setArtifactReviews] = useState([])
@@ -64,7 +63,6 @@ const AssignmentDetails = () => {
       const res = await getAssignment({ course_id: selectedCourse.pk, assignment_id })
       if (res.status === 200) {
         setAssignment(res.data.assignment)
-        setUserRole(res.data.user_role)
       } else messageApi.open({ type: 'error', content: 'Failed to fetch assignment.' })
     }
     fetchAssignment()
@@ -73,8 +71,8 @@ const AssignmentDetails = () => {
   }, [])
 
   useEffect(() => {
-    if (!user.is_staff) fetchArtifact()
-  }, [userRole])
+    if (selectedCourse.user_role === 'Student') fetchArtifact()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -132,7 +130,7 @@ const AssignmentDetails = () => {
           <Divider />
           <Typography.Text>{assignment.description}</Typography.Text>
         </Col>
-        {user.is_staff ? (
+        {selectedCourse.user_role === 'Instructor' ? (
           <StaffSubmissionList />
         ) : (
           <StudentReviewsList artifactReviews={artifactReviews} />
@@ -140,12 +138,12 @@ const AssignmentDetails = () => {
       </Row>
       <Divider />
       <Row>
-        {user.is_staff ? (
+        {selectedCourse.user_role === 'Instructor' ? (
           <StaffArtifactReviewList />
         ) : (
           <>
             <Col span={3}>
-              {!user.is_staff && (
+              {selectedCourse.user_role === 'Student' && (
                 <Space direction="vertical" className="mt-3">
                   <Row>
                     {assignment.submission_type === 'URL' && (

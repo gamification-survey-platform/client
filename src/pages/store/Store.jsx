@@ -26,11 +26,7 @@ const Store = () => {
         }
       })
     }
-    if (user && user.is_staff) {
-      navigate(-1)
-    } else {
-      fetchRewards()
-    }
+    fetchRewards()
   }, [])
   return (
     <div className="m-5">

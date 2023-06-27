@@ -141,7 +141,7 @@ const CourseAssignments = () => {
     }
   ]
 
-  if (user.is_staff) columns = columns.concat(staffColumns)
+  if (selectedCourse.user_role === 'Instructor') columns = columns.concat(staffColumns)
   useEffect(() => {
     const fetchAssignments = async () => {
       setSpin(true)

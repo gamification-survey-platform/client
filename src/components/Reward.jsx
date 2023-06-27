@@ -85,7 +85,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
         <Divider />
         <strong className="text-success">{inventory} remaining</strong>
       </div>
-      {user.is_staff ? (
+      {course.user_role === 'Instructor' ? (
         <div className="text-center">
           <Divider />
           <Row justify="center">
