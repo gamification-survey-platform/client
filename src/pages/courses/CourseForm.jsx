@@ -11,7 +11,7 @@ import {
   InputNumber,
   Checkbox,
   Upload,
-  Image
+  Image as AntdImage
 } from 'antd'
 import dayjs from 'dayjs'
 import { useDispatch, useSelector } from 'react-redux'
@@ -20,6 +20,7 @@ import { createCourse as createCourseApi, editCourse as editCourseApi } from '..
 import { addCourse, editCourse } from '../../store/courses/coursesSlice'
 import coursesSelector from '../../store/courses/selectors'
 import userSelector from '../../store/user/selectors'
+import { dataURLtoFile } from '../../utils/imageUtils'
 import { useForm } from 'antd/es/form/Form'
 
 const CourseForm = () => {
@@ -40,6 +41,28 @@ const CourseForm = () => {
     }
   }, [editingCourse, form])
 
+  const formatCoursePicture = async () => {
+    const promise = new Promise((resolve) => {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const img = new Image()
+        img.onload = async () => {
+          const canvas = document.createElement('canvas')
+          const ctx = canvas.getContext('2d')
+          canvas.width = 100
+          canvas.height = 100
+          ctx.drawImage(img, 0, 0, 100, 100)
+          const data = canvas.toDataURL('image/png')
+          const file = dataURLtoFile(data, coursePicture.name)
+          resolve(file)
+        }
+        img.src = e.target.result
+      }
+      reader.readAsDataURL(coursePicture)
+    })
+    return promise
+  }
+
   const handleSubmit = async (event) => {
     event.preventDefault()
     event.stopPropagation()
@@ -48,7 +71,8 @@ const CourseForm = () => {
       try {
         const courseData = { ...form.getFieldsValue(), andrew_id: user.andrewId }
         courseData.semester = `${courseData.semester} ${courseData.semesterYear}`
-        courseData.picture = coursePicture
+        const formattedPicture = await formatCoursePicture(coursePicture)
+        courseData.picture = formattedPicture
         delete courseData.semesterYear
         const res = editingCourse
           ? await editCourseApi({ course_id: editingCourse.pk, course: courseData })
@@ -133,7 +157,7 @@ const CourseForm = () => {
             </Button>
           </Upload>
           {editingCourse && editingCourse.picture ? (
-            <Image src={editingCourse.picture} width={50} className="mt-3" />
+            <AntdImage src={editingCourse.picture} width={50} className="mt-3" />
           ) : null}
         </Form.Item>
         <Form.Item label="Visible" name="visible" valuePropName="checked">

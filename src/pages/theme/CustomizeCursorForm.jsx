@@ -6,7 +6,7 @@ import { setCursor } from '../../store/theme/themeSlice'
 import { editThemeIcon } from '../../api/theme'
 import useMessage from 'antd/es/message/useMessage'
 import userSelector from '../../store/user/selectors'
-import { dataURLtoFile } from './utils'
+import { dataURLtoFile } from '../../utils/imageUtils'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 import styles from '../../styles/Theme.module.css'
 
