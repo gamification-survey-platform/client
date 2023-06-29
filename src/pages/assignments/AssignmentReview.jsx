@@ -39,7 +39,7 @@ const AssignmentReview = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (survey.trivia) {
+    if (survey.trivia && !survey.trivia.completed) {
       const { hints } = survey.trivia
       const hintsToShow = hints.length ? Math.floor(progress.endPct * hints.length) : 0
       for (let i = triviaProgress; i <= hintsToShow; i++) {
@@ -186,7 +186,7 @@ const AssignmentReview = () => {
       ) : (
         <DndProvider backend={HTML5Backend}>
           <Form form={form} className="m-5 w-75">
-            {survey.trivia ? (
+            {survey.trivia && !survey.trivia.completed ? (
               <div
                 style={{
                   backgroundColor: 'rgba(0, 0, 0, 0.02)',
