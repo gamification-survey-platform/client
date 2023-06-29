@@ -159,7 +159,12 @@ const AssignmentReview = () => {
     try {
       triviaForm.validateFields()
       const answer = triviaForm.getFieldValue('answer')
-      const res = await submitTriviaAnswer({ course_id, assignment_id, review_id, answer })
+      const res = await submitTriviaAnswer({
+        course_id: course.pk,
+        assignment_id,
+        review_id,
+        answer
+      })
       if (res.status === 201) {
         const { message, exp, level, next_exp_level, points } = res.data
         messageApi.open({ type: 'success', content: message })
