@@ -11,7 +11,8 @@ import {
   BookOutlined,
   AntDesignOutlined,
   SettingOutlined,
-  HomeOutlined
+  HomeOutlined,
+  OrderedListOutlined
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
@@ -62,6 +63,11 @@ const initialItems = [
     key: '5',
     icon: <AntDesignOutlined />,
     label: 'Theme'
+  },
+  {
+    key: '6',
+    icon: <OrderedListOutlined />,
+    label: 'Leaderboard'
   }
 ]
 
@@ -74,7 +80,11 @@ const AppHeader = ({ children }) => {
 
   useEffect(() => {
     if (user && user.is_staff) {
-      setItems(items.filter((item) => item.key !== '3' && item.key !== '4' && item.key !== '5'))
+      setItems(
+        items.filter(
+          (item) => item.key !== '3' && item.key !== '4' && item.key !== '5' && item.key !== '6'
+        )
+      )
     } else if (user && user.level < 0) {
       setItems(items.filter((item) => item.key !== '4'))
     }
@@ -111,6 +121,9 @@ const AppHeader = ({ children }) => {
       case '5':
         navigate('/theme')
         break
+      case '6':
+        navigate('/leaderboard')
+        break
     }
   }
 
@@ -128,10 +141,10 @@ const AppHeader = ({ children }) => {
           <div
             style={{
               position: 'absolute',
-              top: 300,
+              top: 350,
               left: 10,
               zIndex: 1,
-              height: '30vh',
+              height: '25vh',
               width: 180
             }}>
             <div className="text-center text-white">

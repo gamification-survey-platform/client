@@ -77,6 +77,20 @@ const Courses = () => {
     },
     {
       title: '',
+      dataIndex: 'leaderboard',
+      key: 'leaderboard',
+      render: (_, course) => {
+        return (
+          <LinkContainer to={`/courses/${course.course_number}/leaderboard`}>
+            <Tag role="button" color="magenta">
+              Leaderboard
+            </Tag>
+          </LinkContainer>
+        )
+      }
+    },
+    {
+      title: '',
       dataIndex: 'rewards',
       key: 'rewards',
       render: (_, course) => {

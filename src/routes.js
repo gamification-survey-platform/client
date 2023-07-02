@@ -21,6 +21,7 @@ import Purchases from './pages/store/Purchases'
 import CourseRewards from './pages/courses/CourseRewards'
 import Theme from './pages/theme/Theme'
 import Guide from './pages/Guide'
+import Leaderboard from './pages/Leaderboard'
 
 const routes = [
   {
@@ -172,6 +173,14 @@ const routes = [
     )
   },
   {
+    path: '/courses/:course_id/leaderboard',
+    element: (
+      <ProtectedRoute>
+        <Leaderboard />
+      </ProtectedRoute>
+    )
+  },
+  {
     path: '/store/',
     element: (
       <ProtectedRoute>
@@ -192,6 +201,14 @@ const routes = [
     element: (
       <ProtectedRoute>
         <Purchases />
+      </ProtectedRoute>
+    )
+  },
+  {
+    path: '/leaderboard/',
+    element: (
+      <ProtectedRoute>
+        <Leaderboard />
       </ProtectedRoute>
     )
   },
