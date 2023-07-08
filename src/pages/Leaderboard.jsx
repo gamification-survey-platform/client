@@ -17,13 +17,15 @@ const Leaderboard = () => {
       if (course_id) {
         const res = await getCourseLeaderboard({ course_id: course.pk })
         if (res.status === 200) {
-          const data = res.data.map((d, i) => ({ ...d, key: i }))
+          const data = res.data
+            .map((d, i) => ({ ...d, key: i }))
+            .sort((a, b) => b.course_experience - a.course_experience)
           setData(data)
         }
       } else {
         const res = await getPlatformLeaderboard()
         if (res.status === 200) {
-          const data = res.data.map((d, i) => ({ ...d, key: i }))
+          const data = res.data.map((d, i) => ({ ...d, key: i })).sort((a, b) => b.exp - a.exp)
           setData(data)
         }
       }

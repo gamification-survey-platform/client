@@ -51,23 +51,23 @@ const initialItems = [
   },
   {
     key: '3',
-    icon: <SettingOutlined />,
-    label: 'Guide'
-  },
-  {
-    key: '4',
     icon: <GiShoppingCart />,
     label: 'Store'
   },
   {
-    key: '5',
+    key: '4',
     icon: <AntDesignOutlined />,
     label: 'Theme'
   },
   {
-    key: '6',
+    key: '5',
     icon: <OrderedListOutlined />,
     label: 'Leaderboard'
+  },
+  {
+    key: '6',
+    icon: <SettingOutlined />,
+    label: 'Guide'
   }
 ]
 

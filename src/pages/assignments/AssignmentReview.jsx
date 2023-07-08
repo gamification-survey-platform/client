@@ -177,6 +177,12 @@ const AssignmentReview = () => {
     }
   }
 
+  const handleTriviaEnter = async (e) => {
+    if (survey.trivia && e.keyCode === 13) {
+      await handleTriviaSubmit(e)
+    }
+  }
+
   return (
     <>
       {contextHolder}
@@ -185,7 +191,7 @@ const AssignmentReview = () => {
         <Spinner show={spin} />
       ) : (
         <DndProvider backend={HTML5Backend}>
-          <Form form={form} className="m-5 w-75">
+          <Form form={form} className="m-5 w-75" onKeyDown={handleTriviaEnter}>
             {survey.trivia && !survey.trivia.completed ? (
               <div
                 style={{
@@ -198,7 +204,11 @@ const AssignmentReview = () => {
                   zIndex: 1,
                   width: 250
                 }}>
-                <Form form={triviaForm} className="m-3" style={{ marginBottom: '100!important' }}>
+                <Form
+                  form={triviaForm}
+                  className="m-3"
+                  style={{ marginBottom: '100!important' }}
+                  onKeyDown={handleTriviaEnter}>
                   <div className="text-center">
                     <Typography.Text className="my-1">Trivia Question</Typography.Text>
                   </div>

@@ -4,7 +4,6 @@ const addMember = async ({ course_id, memberId, memberRole, teamId = null }) => 
   try {
     const res = await api.post(`courses/${course_id}/members/`, {
       andrew_id: memberId,
-      userRole: memberRole,
       team: teamId || ''
     })
     return res

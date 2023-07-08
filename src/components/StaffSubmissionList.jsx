@@ -46,7 +46,7 @@ const StaffSubmissionList = () => {
       const res = await getMembers({ course_id: course.pk })
       if (res.status === 200) {
         const allMembers = res.data
-          .filter(({ userRole }) => userRole === 'Student')
+          .filter(({ is_staff }) => is_staff)
           .map(({ andrew_id }) => andrew_id)
         const completedMembers = Object.keys(artifacts)
         const filteredPendingMembers = allMembers.filter(

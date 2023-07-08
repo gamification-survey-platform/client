@@ -9,6 +9,8 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { scaleOptions } from '../survey/question/Question'
 import courseSelector from '../../store/courses/selectors'
+import SlideReviewReport from '../survey/question/SlideReviewReport'
+import { Document, Page, pdfjs } from 'react-pdf'
 
 const StudentReport = () => {
   const { course_id: course_number, assignment_id, artifact_id } = useParams()
@@ -16,9 +18,13 @@ const StudentReport = () => {
   const [report, setReport] = useState()
   const [statistics, setStatistics] = useState()
   const [form] = useForm()
-  const dispatch = useDispatch()
   const [keywords, setKeywords] = useState()
   const course = courses.find((course) => course.course_number === course_number)
+  const [openSlideReview, setOpenSlideReview] = useState(false)
+
+  useEffect(() => {
+    pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
+  }, [])
 
   useEffect(() => {
     const fetchArtifactAnswers = async () => {
@@ -68,7 +74,8 @@ const StudentReport = () => {
                       text,
                       question_type,
                       number_of_scale = undefined,
-                      option_choices = undefined
+                      option_choices = undefined,
+                      file_path = undefined
                     } = question
                     let data
                     if (statistics && statistics.sections[title]) {
@@ -83,8 +90,27 @@ const StudentReport = () => {
 
                     return (
                       <Row key={i}>
-                        <Col span={8}>
+                        <Col span={data ? 8 : 20}>
                           <Typography.Title level={4}>{text}</Typography.Title>
+                          {question_type === 'SLIDEREVIEW' && (
+                            <div style={{ cursor: 'pointer' }}>
+                              <Row>
+                                <Document
+                                  file={file_path}
+                                  onClick={() => setOpenSlideReview(!openSlideReview)}>
+                                  {' '}
+                                  <Page pageNumber={1} width={400} />
+                                </Document>
+                                <div>Click on submission to view feedback.</div>
+                              </Row>
+                              <SlideReviewReport
+                                file_path={file_path}
+                                artifact_reviews={artifact_reviews}
+                                open={openSlideReview}
+                                setOpen={setOpenSlideReview}
+                              />
+                            </div>
+                          )}
                           {question_type === 'SCALEMULTIPLECHOICE' ? (
                             <Row className="ml-3">
                               <Typography.Title level={5}>
@@ -100,16 +126,20 @@ const StudentReport = () => {
                               </Typography.Title>
                             </Row>
                           ) : null}
-                          <Row className="ml-3">
-                            <Typography.Title level={5}>Answers</Typography.Title>
-                          </Row>
-                          {artifact_reviews.map((review, i) => {
-                            return (
-                              <Row key={i} className="ml-5">
-                                {review.map((r, i) => r.text).join(', ')}
+                          {question_type !== 'SLIDEREVIEW' && (
+                            <>
+                              <Row className="ml-3">
+                                <Typography.Title level={5}>Answers</Typography.Title>
                               </Row>
-                            )
-                          })}
+                              {artifact_reviews.map((review, i) => {
+                                return (
+                                  <Row key={i} className="ml-5">
+                                    {review.map((r, i) => r.text).join(', ')}
+                                  </Row>
+                                )
+                              })}
+                            </>
+                          )}
                         </Col>
                         {data ? (
                           <Col span={16}>

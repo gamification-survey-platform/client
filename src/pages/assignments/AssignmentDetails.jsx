@@ -71,7 +71,7 @@ const AssignmentDetails = () => {
   }, [])
 
   useEffect(() => {
-    if (selectedCourse.user_role === 'Student') fetchArtifact()
+    if (!user.is_staff) fetchArtifact()
   }, [])
 
   const handleSubmit = async (e) => {
@@ -125,7 +125,7 @@ const AssignmentDetails = () => {
           <Divider />
           <Typography.Text>{assignment.description}</Typography.Text>
         </Col>
-        {selectedCourse.user_role === 'Instructor' ? (
+        {user.is_staff ? (
           <StaffSubmissionList />
         ) : (
           <StudentReviewsList artifactReviews={artifactReviews} />
@@ -133,34 +133,26 @@ const AssignmentDetails = () => {
       </Row>
       <Divider />
       <Row>
-        {selectedCourse.user_role === 'Instructor' ? (
+        {user.is_staff ? (
           <StaffArtifactReviewList />
         ) : (
           <>
             <Col span={3}>
-              {selectedCourse.user_role === 'Student' && (
-                <Space direction="vertical" className="mt-3">
-                  <Row>
-                    {assignment.submission_type === 'URL' && (
-                      <FileSubmission {...submissionProps} />
-                    )}
-                    {assignment.submission_type === 'File' && (
-                      <FileSubmission {...submissionProps} />
-                    )}
-                    {assignment.submission_type === 'Text' && (
-                      <FileSubmission {...submissionProps} />
-                    )}
+              <Space direction="vertical" className="mt-3">
+                <Row>
+                  {assignment.submission_type === 'URL' && <FileSubmission {...submissionProps} />}
+                  {assignment.submission_type === 'File' && <FileSubmission {...submissionProps} />}
+                  {assignment.submission_type === 'Text' && <FileSubmission {...submissionProps} />}
+                </Row>
+                {artifact && (
+                  <Row className="text-center">
+                    <Link
+                      to={`/courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact.artifact_pk}/reports`}>
+                      <Button type="primary">View Reports</Button>
+                    </Link>
                   </Row>
-                  {artifact && (
-                    <Row className="text-center">
-                      <Link
-                        to={`/courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact.artifact_pk}/reports`}>
-                        <Button type="primary">View Reports</Button>
-                      </Link>
-                    </Row>
-                  )}
-                </Space>
-              )}
+                )}
+              </Space>
             </Col>
             {artifact && (
               <Col span={2} offset={4}>

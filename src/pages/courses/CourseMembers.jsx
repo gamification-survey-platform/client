@@ -42,7 +42,13 @@ const CourseMembers = () => {
 
   let columns = [
     { title: 'Andrew ID', dataIndex: 'andrew_id', align: 'center', key: 'andrew_id' },
-    { title: 'User Role', dataIndex: 'userRole', align: 'center', key: 'userRole' },
+    {
+      title: 'User Role',
+      dataIndex: 'userRole',
+      align: 'center',
+      key: 'userRole',
+      render: (_, d) => (d.is_staff ? 'Instructor' : 'Student')
+    },
     { title: 'Team', dataIndex: 'team', align: 'center', key: 'team' }
   ]
 

@@ -94,7 +94,7 @@ const Courses = () => {
       dataIndex: 'rewards',
       key: 'rewards',
       render: (_, course) => {
-        return course.user_role === 'Instructor' ? (
+        return user.is_staff ? (
           <LinkContainer to={`/courses/${course.course_number}/rewards`}>
             <Tag role="button" color="geekblue">
               Rewards
@@ -108,7 +108,7 @@ const Courses = () => {
       dataIndex: 'edit',
       key: 'edit',
       render: (_, course) => {
-        return course.user_role === 'Instructor' ? (
+        return user.is_staff ? (
           <LinkContainer to={`/courses/${course.course_number}/edit`}>
             <Tag role="button" color="gold">
               Edit
@@ -122,7 +122,7 @@ const Courses = () => {
       dataIndex: 'delete',
       key: 'delete',
       render: (_, course) =>
-        course.user_role === 'Instructor' ? (
+        user.is_staff ? (
           <Tag role="button" color="red" onClick={() => handleDeleteCourse(course.pk)}>
             Delete
           </Tag>

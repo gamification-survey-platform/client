@@ -1,18 +1,13 @@
 import { useEffect, useState } from 'react'
-import { Modal, Form, Input, Row, Col, Divider, Button } from 'antd'
+import { Modal, Form, Input, Row, Col, Divider, Button, Typography } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { Document, Page, pdfjs } from 'react-pdf'
 import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons'
 import { useDispatch } from 'react-redux'
-import { editAnswer } from '../../../store/survey/surveySlice'
 
-const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, questionIdx, sectionIdx }) => {
-  const [form] = useForm()
-  const name = `${sectionIdx}-${questionIdx}`
+const SlideReviewReport = ({ file_path, artifact_reviews, open, setOpen }) => {
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
-  const { file_path } = artifact
-  const dispatch = useDispatch()
   const enableBackward = pageNumber > 1
   const enableForward = pageNumber < numPages
   useEffect(() => {
@@ -26,79 +21,50 @@ const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, questionIdx, se
     ? { cursor: 'pointer', fontSize: 20 }
     : { opacity: 0.5, cursor: 'auto', fontSize: 20 }
 
-  useEffect(() => {
-    if (answer && answer.length) {
-      const answerForPage = answer.find((a) => parseInt(a.page) === pageNumber)
-      if (answerForPage && answerForPage.text) {
-        form.setFieldValue(name, answerForPage.text)
-      } else {
-        form.setFieldValue(name, '')
-      }
-    }
-  }, [answer, pageNumber])
-
-  const saveAnswer = () => {
-    const answer = (form.getFieldValue(`${name}`) || '').trim()
-    dispatch(
-      editAnswer({
-        questionIdx,
-        sectionIdx,
-        answer,
-        page: pageNumber,
-        question_type: 'SLIDEREVIEW'
-      })
-    )
-  }
-
   const handlePageBackward = () => {
     if (pageNumber > 1) {
-      saveAnswer()
       setPageNumber(pageNumber - 1)
-      const newPageAnswer = answer.find((a) => a.page === pageNumber - 1)
-      const answerText = newPageAnswer ? newPageAnswer.text : ''
-      form.setFieldValue(`${pk}`, answerText)
     }
   }
 
   const handlePageForward = () => {
     if (pageNumber < numPages) {
-      saveAnswer()
       setPageNumber(pageNumber + 1)
-      const newPageAnswer = answer.find((a) => a.page === pageNumber + 1)
-      const answerText = newPageAnswer ? newPageAnswer.text : ''
-      form.setFieldValue(`${pk}`, answerText)
     }
   }
-
+  console.log(artifact_reviews)
   return (
     <Modal
       forceRender
       title={'Slide Reviews'}
       open={open}
       onCancel={() => {
-        saveAnswer()
         setPageNumber(1)
         setOpen(false)
       }}
-      footer={
-        <div>
-          <Divider />
-          <Row justify="center">Autosaves on page navigation or closing</Row>
-        </div>
-      }
-      width={1000}>
-      <Form form={form}>
-        <Row className="text-center">
-          <Col span={10}>
-            <Form.Item name={name}>
-              <Input.TextArea rows={20} style={{ height: 'auto' }} />
-            </Form.Item>
-          </Col>
+      width={1000}
+      footer={null}>
+      <div>
+        <Row>
           <Col offset={1} span={10}>
             <Document file={file_path} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
               {' '}
               <Page pageNumber={pageNumber} width={500} />
             </Document>
+          </Col>
+          <Col offset={1} span={10}>
+            <Typography.Title level={5}>
+              Peer feedback is separated by dividing lines
+            </Typography.Title>
+            {artifact_reviews.map((review, i) => {
+              const pageAnswer = review.find((r) => parseInt(r.page) === pageNumber)
+              return (
+                <>
+                  <Divider />
+                  <div key={i}>{pageAnswer.text}</div>
+                </>
+              )
+            })}
           </Col>
         </Row>
         <Row justify="center">
@@ -118,9 +84,9 @@ const SlideReviewModal = ({ pk, artifact, answer, open, setOpen, questionIdx, se
             />
           </div>
         </Row>
-      </Form>
+      </div>
     </Modal>
   )
 }
 
-export default SlideReviewModal
+export default SlideReviewReport
