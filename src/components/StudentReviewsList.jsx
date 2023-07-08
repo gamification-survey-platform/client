@@ -30,16 +30,21 @@ const ReviewList = ({ title, color, reviews }) => {
 
 const StudentReviewsList = ({
   artifactReviews,
+  showReopen = true,
   showPending = true,
   showLate = true,
-  showCompleted = true
+  showCompleted = false
 }) => {
+  const reopenReviews = artifactReviews.filter((r) => r.status === 'REOPEN')
   const pendingReviews = artifactReviews.filter((r) => r.status === 'INCOMPLETE')
   const lateReviews = artifactReviews.filter((r) => r.status === 'LATE')
   const completedReviews = artifactReviews.filter((r) => r.status === 'COMPLETED')
   return (
     <Col span={6} className="border-left p-5 my-3">
       <Space direction="vertical" size="middle" className="text-center">
+        {showReopen ? (
+          <ReviewList title={'Reopened Reviews'} color="magenta" reviews={reopenReviews} />
+        ) : null}
         {showLate ? (
           <ReviewList title={'Late Reviews'} color="volcano" reviews={lateReviews} />
         ) : null}

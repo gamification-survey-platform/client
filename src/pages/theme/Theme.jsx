@@ -4,14 +4,11 @@ import { useSelector } from 'react-redux'
 import themeSelector from '../../store/theme/selectors'
 import { useToken } from 'antd/es/theme/internal'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import userSelector from '../../store/user/selectors'
 import PublishThemeForm from './PublishThemeForm'
 import CustomizeColorForm from './CustomizeColorForm'
 import SelectPresetThemeForm from './SelectPresetThemeForm'
 import CustomizeCursorForm from './CustomizeCursorForm'
 import CustomizeSurveyIconForm from './CustomizeSurveyIconForm'
-import styles from '../../styles/Theme.module.css'
 
 const Theme = () => {
   const [form] = useForm()
