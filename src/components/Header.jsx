@@ -113,16 +113,16 @@ const AppHeader = ({ children }) => {
         navigate('/courses')
         break
       case '3':
-        navigate('/guide')
-        break
-      case '4':
         navigate('/store')
         break
-      case '5':
+      case '4':
         navigate('/theme')
         break
-      case '6':
+      case '5':
         navigate('/leaderboard')
+        break
+      case '6':
+        navigate('/guide')
         break
     }
   }

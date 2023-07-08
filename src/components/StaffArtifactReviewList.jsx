@@ -2,9 +2,10 @@ import { forwardRef, useEffect, useState, useCallback } from 'react'
 import {
   assignArtifactReview,
   unassignArtifactReview,
-  getArtifactReviews
+  getArtifactReviews,
+  editArtifactReviewStatus
 } from '../api/artifactReview'
-import { Space, List, Col, Typography } from 'antd'
+import { Space, List, Col, Typography, Button } from 'antd'
 import { getMembers } from '../api/members'
 import { useParams } from 'react-router'
 import { useSelector } from 'react-redux'
@@ -37,7 +38,17 @@ const Member = forwardRef(({ member, handleCancel }, ref) => {
 })
 Member.displayName = 'Member'
 
-const ArtifactReviewers = ({ reviewing, reviewers, handleHover, handleDrop, removeReviewer }) => {
+const ArtifactReviewers = ({
+  reviewing,
+  reviewers,
+  handleHover,
+  handleDrop,
+  removeReviewer,
+  setArtifactReviews,
+  artifactReviews
+}) => {
+  const [messageApi, contextHolder] = useMessage()
+  const { course_id: courseNumber, assignment_id } = useParams()
   const [, dropRef] = useDrop(
     () => ({
       accept: 'MEMBER',
@@ -54,14 +65,55 @@ const ArtifactReviewers = ({ reviewing, reviewers, handleHover, handleDrop, remo
     }),
     [reviewers, handleHover, handleDrop]
   )
+
+  const reopenReview = async (e, artifact_review_id) => {
+    e.preventDefault()
+    e.stopPropagation()
+    try {
+      const res = await editArtifactReviewStatus({
+        course_id: courseNumber,
+        assignment_id,
+        artifact_review_id,
+        status: 'REOPEN'
+      })
+      console.log(res, reviewing)
+      if (res.status === 200) {
+        const newArtifactReviews = {
+          ...artifactReviews,
+          [reviewing]: artifactReviews[reviewing].map((r) => {
+            if (r.id === artifact_review_id) return { ...r, status: 'REOPEN' }
+            return { ...r }
+          })
+        }
+        setArtifactReviews(newArtifactReviews)
+      }
+    } catch (error) {
+      messageApi.open({
+        type: 'error',
+        content: `Failed to assign review with error: ${error.message}`
+      })
+    }
+  }
+
   return (
     <div ref={dropRef}>
+      {contextHolder}
       <List
         header={<Typography.Title level={5}>Reviewee: {reviewing}</Typography.Title>}
         bordered
         dataSource={reviewers}
         renderItem={(item) => {
           const styles = item.hovering ? { opacity: 0.5 } : {}
+          if (item.status === 'COMPLETED') {
+            return (
+              <List.Item style={{ backgroundColor: '#d9d9d9' }}>
+                <Typography.Text>{item.reviewer}</Typography.Text>
+                <Button className="ml-1" danger onClick={(e) => reopenReview(e, item.id)}>
+                  Reopen
+                </Button>
+              </List.Item>
+            )
+          }
           return (
             <List.Item style={styles}>
               <Typography.Text>{item.reviewer}</Typography.Text>
@@ -201,6 +253,8 @@ const StaffArtifactReviewList = () => {
                 handleHover={handleHover}
                 handleDrop={handleDrop}
                 removeReviewer={removeReviewer}
+                setArtifactReviews={setArtifactReviews}
+                artifactReviews={artifactReviews}
               />
             )
           })}

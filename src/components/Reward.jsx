@@ -72,8 +72,11 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
   }
 
   return (
-    <Card className="m-1 w-25" cover={<Cover type={type} picture={picture} />}>
-      <Card.Meta title={name} />
+    <Card
+      className="m-1 w-25"
+      style={{ color: inventory === 0 ? 'grey' : 'black' }}
+      cover={<Cover type={type} picture={picture} />}>
+      <Card.Meta title={name} style={{ color: inventory === 0 ? 'grey!important' : 'black' }} />
       <div className="m-1 text-left">
         <Divider />
         <strong>For course</strong>

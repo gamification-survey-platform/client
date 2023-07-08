@@ -81,6 +81,25 @@ const submitTriviaAnswer = async ({ course_id, assignment_id, review_id, answer 
   }
 }
 
+const editArtifactReviewStatus = async ({
+  course_id,
+  assignment_id,
+  artifact_review_id,
+  status
+}) => {
+  try {
+    const res = await api.patch(
+      `courses/${course_id}/assignments/${assignment_id}/artifact_reviews/${artifact_review_id}/status/`,
+      {
+        status
+      }
+    )
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
 export {
   getArtifactReviews,
   getUserArtifactReviews,
@@ -88,5 +107,6 @@ export {
   saveArtifactReview,
   assignArtifactReview,
   unassignArtifactReview,
-  submitTriviaAnswer
+  submitTriviaAnswer,
+  editArtifactReviewStatus
 }
