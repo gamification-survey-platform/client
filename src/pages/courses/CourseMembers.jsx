@@ -32,7 +32,6 @@ const CourseMembers = () => {
   const courses = useSelector(coursesSelector)
   const [csvFile, setCSVFile] = useState()
   const selectedCourse = courses.find((course) => course.course_number === course_id)
-  const userRole = selectedCourse ? selectedCourse.user_role : ''
   const [form] = useForm()
   const initialValues = {
     memberRole: 'Student'
@@ -70,7 +69,7 @@ const CourseMembers = () => {
     }
   ]
 
-  if (selectedCourse.user_role === 'Instructor') columns = columns.concat(staffColumns)
+  if (user.is_staff) columns = columns.concat(staffColumns)
 
   useEffect(() => {
     const fetchCourseMembers = async () => {
@@ -197,7 +196,7 @@ const CourseMembers = () => {
     <div className="m-5">
       {contextHolder}
       <Table columns={columns} dataSource={dataSource} />
-      {selectedCourse.user_role === 'Instructor' && (
+      {user.is_staff && (
         <div className="d-flex justify-content-center">
           <Form className="w-50 text-center" form={form} initialValues={initialValues}>
             <Typography.Title level={4}>Add Member</Typography.Title>
