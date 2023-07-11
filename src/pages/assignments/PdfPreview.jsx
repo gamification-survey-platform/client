@@ -16,16 +16,22 @@ const PdfPreview = ({ artifact }) => {
     ? { cursor: 'pointer', fontSize: 20 }
     : { opacity: 0.5, cursor: 'auto', fontSize: 20 }
 
-  const handlePackBackward = () => pageNumber > 1 && setPageNumber(pageNumber - 1)
-  const handlePageForward = () => pageNumber < numPages && setPageNumber(pageNumber + 1)
+  const handlePackBackward = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    pageNumber > 1 && setPageNumber(pageNumber - 1)
+  }
+  const handlePageForward = (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    pageNumber < numPages && setPageNumber(pageNumber + 1)
+  }
 
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
   }, [])
   return (
-    <div
-      className="text-center p-5 ml-5"
-      style={{ width: 600, border: 'solid 1px grey', borderRadius: '10%' }}>
+    <div className="text-center p-5 ml-5" style={{ width: 600, height: 700 }}>
       <h4>Previous Submission:</h4>
       <Document file={file_path} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
         {' '}
