@@ -16,7 +16,7 @@ const MessageModal = ({ open, setOpen }) => {
         messageApi.open({
           type: 'success',
           content: `Successfully sent message to ${data.receiver}`
-        })()
+        })
         setOpen(false)
       }
     } catch (e) {
