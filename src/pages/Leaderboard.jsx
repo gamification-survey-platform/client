@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import { useParams } from 'react-router'
 import coursesSelector from '../store/courses/selectors'
 import { useSelector } from 'react-redux'
+import styles from '../styles/Leaderboard.module.css'
 
 const Leaderboard = () => {
   const [data, setData] = useState()
@@ -85,7 +86,21 @@ const Leaderboard = () => {
 
   return (
     <div className="m-5">
-      <Table dataSource={data} columns={columns} />
+      <Table
+        rowClassName={(record, index) => {
+          if (course_id) {
+            if (index < 3) return styles.tableRowLime6
+            else if (index < 6) return styles.tableRowLime4
+            else if (index < 10) return styles.tableRowLime2
+          } else {
+            if (index < 5) return styles.tableRowLime6
+            else if (index < 10) return styles.tableRowLime4
+            else if (index < 20) return styles.tableRowLime2
+          }
+        }}
+        dataSource={data}
+        columns={columns}
+      />
     </div>
   )
 }

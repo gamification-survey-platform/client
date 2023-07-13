@@ -32,7 +32,7 @@ const SlideReviewReport = ({ file_path, artifact_reviews, open, setOpen }) => {
       setPageNumber(pageNumber + 1)
     }
   }
-  console.log(artifact_reviews)
+
   return (
     <Modal
       forceRender
@@ -58,10 +58,11 @@ const SlideReviewReport = ({ file_path, artifact_reviews, open, setOpen }) => {
             </Typography.Title>
             {artifact_reviews.map((review, i) => {
               const pageAnswer = review.find((r) => parseInt(r.page) === pageNumber)
+              const text = pageAnswer && pageAnswer.text ? pageAnswer.text : ''
               return (
                 <>
                   <Divider />
-                  <div key={i}>{pageAnswer.text}</div>
+                  <div key={i}>{text}</div>
                 </>
               )
             })}

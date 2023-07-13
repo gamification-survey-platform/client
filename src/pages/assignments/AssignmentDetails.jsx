@@ -177,11 +177,19 @@ const AssignmentDetails = () => {
           <>
             <Col span={5}>
               <Space direction="vertical" className="mt-3">
-                <Row>
-                  {assignment.submission_type === 'URL' && <FileSubmission {...submissionProps} />}
-                  {assignment.submission_type === 'File' && <FileSubmission {...submissionProps} />}
-                  {assignment.submission_type === 'Text' && <FileSubmission {...submissionProps} />}
-                </Row>
+                {!artifact && (
+                  <Row>
+                    {assignment.submission_type === 'URL' && (
+                      <FileSubmission {...submissionProps} />
+                    )}
+                    {assignment.submission_type === 'File' && (
+                      <FileSubmission {...submissionProps} />
+                    )}
+                    {assignment.submission_type === 'Text' && (
+                      <FileSubmission {...submissionProps} />
+                    )}
+                  </Row>
+                )}
                 {artifact && (
                   <Row className="text-center">
                     <Link

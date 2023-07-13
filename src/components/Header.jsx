@@ -200,7 +200,10 @@ const AppHeader = ({ children }) => {
             <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
           <div>
-            <Dropdown menu={{ items: notifications }} trigger={['click']}>
+            <Dropdown
+              menu={{ items: notifications }}
+              trigger={['click']}
+              onOpenChange={(open) => open && setUnreadCount(0)}>
               <Badge count={unreadCount} style={{ cursor: 'pointer' }}>
                 <BellOutlined style={{ fontSize: '1.5em', cursor: 'pointer' }} />
               </Badge>
