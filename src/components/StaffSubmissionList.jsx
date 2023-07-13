@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
-import { getArtifactReviews } from '../api/artifactReview'
+import { getAssignmentArtifactReviews } from '../api/artifactReview'
 import { Space, Row, Tag, Col, Typography } from 'antd'
 import { getMembers } from '../api/members'
 import { useParams } from 'react-router'
@@ -19,7 +19,7 @@ const StaffSubmissionList = () => {
   const course = courses.find(({ course_number }) => courseNumber === course_number)
   useEffect(() => {
     const fetchArtifacts = async () => {
-      const res = await getArtifactReviews({ course_id: course.pk, assignment_id })
+      const res = await getAssignmentArtifactReviews({ course_id: course.pk, assignment_id })
       const allArtifactReviews = {}
       for (const review of res.data) {
         const { reviewing } = review

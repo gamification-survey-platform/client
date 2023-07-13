@@ -11,19 +11,22 @@ import 'react-pdf/dist/esm/Page/TextLayer.css'
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css'
 import { getUserArtifact, submitArtifact } from '../../api/artifacts'
 import PdfPreview from './PdfPreview'
-import { getArtifactReviews } from '../../api/artifactReview'
+import { getArtifactReviewers, getAssignmentArtifactReviews } from '../../api/artifactReview'
 import Spinner from '../../components/Spinner'
 import { setUser } from '../../store/user/userSlice'
 import StudentReviewsList from '../../components/StudentReviewsList'
 import StaffArtifactReviewList from '../../components/StaffArtifactReviewList'
 import StaffSubmissionList from '../../components/StaffSubmissionList'
 import { addCoursePoints } from '../../store/courses/coursesSlice'
+import { FaHandPointRight } from 'react-icons/fa'
+import { sendNotification } from '../../api/notifications'
 
 const AssignmentDetails = () => {
   const { assignment_id, course_id } = useParams()
   const user = useSelector(userSelector)
   const dispatch = useDispatch()
   const [artifact, setArtifact] = useState()
+  const [artifactReviewers, setArtifactReviewers] = useState()
   const [spin, setSpin] = useState(false)
   const [artifactReviews, setArtifactReviews] = useState([])
   const [submission, setSubmission] = useState()
@@ -43,8 +46,8 @@ const AssignmentDetails = () => {
   const courses = useSelector(coursesSelector)
   const selectedCourse = courses.find((course) => course.course_number === course_id)
 
-  const fetchArtifactReviews = async () => {
-    const res = await getArtifactReviews({ course_id: selectedCourse.pk, assignment_id })
+  const fetchAssignmentArtifactReviews = async () => {
+    const res = await getAssignmentArtifactReviews({ course_id: selectedCourse.pk, assignment_id })
     if (res.status === 200) {
       setArtifactReviews(res.data)
     } else messageApi.open({ type: 'error', content: 'Failed to fetch artifact reviews.' })
@@ -66,13 +69,30 @@ const AssignmentDetails = () => {
       } else messageApi.open({ type: 'error', content: 'Failed to fetch assignment.' })
     }
     fetchAssignment()
-    fetchArtifactReviews()
+    fetchAssignmentArtifactReviews()
     setSpin(false)
   }, [])
 
   useEffect(() => {
     if (!user.is_staff) fetchArtifact()
   }, [])
+
+  useEffect(() => {
+    const fetchArtifactReviews = async () => {
+      const res = await getArtifactReviewers({
+        course_id: selectedCourse.pk,
+        assignment_id,
+        artifact_id: artifact.artifact_pk
+      })
+      if (res.status === 200) {
+        const incompleteReviewers = res.data.filter((reviewer) => reviewer.status === 'INCOMPLETE')
+        setArtifactReviewers(incompleteReviewers)
+      }
+    }
+    if (artifact) {
+      fetchArtifactReviews()
+    }
+  }, [artifact])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -95,6 +115,24 @@ const AssignmentDetails = () => {
       console.error(e)
       messageApi.open({ type: 'error', content: e.message })
       setSubmission()
+    }
+  }
+
+  const handlePokeReviewer = async (e, reviewerAndrewId, reviewer_id) => {
+    e.preventDefault()
+    e.stopPropagation
+    try {
+      const res = await sendNotification({
+        type: 'POKE',
+        receiver: reviewer_id,
+        text: `Please review my submission for ${assignment.assignment_name}!`
+      })
+      if (res.status === 201) {
+        messageApi.open({ type: 'success', content: `Poked ${reviewerAndrewId}!` })
+      }
+    } catch (e) {
+      console.error(e)
+      messageApi.open({ type: 'error', content: e.message })
     }
   }
 
@@ -137,7 +175,7 @@ const AssignmentDetails = () => {
           <StaffArtifactReviewList />
         ) : (
           <>
-            <Col span={3}>
+            <Col span={5}>
               <Space direction="vertical" className="mt-3">
                 <Row>
                   {assignment.submission_type === 'URL' && <FileSubmission {...submissionProps} />}
@@ -153,6 +191,27 @@ const AssignmentDetails = () => {
                   </Row>
                 )}
               </Space>
+              {artifactReviewers ? (
+                <Space direction="vertical" className="mt-3">
+                  <Typography.Title level={4}>Your Pending Reviewers</Typography.Title>
+                  <Typography.Text>Poke them to remind them to review!</Typography.Text>
+                  {artifactReviewers.map((reviewer, i) => {
+                    const { reviewer: reviewerAndrewId, user: reviewer_id } = reviewer
+                    return (
+                      <Button
+                        key={i}
+                        onClick={(e) => handlePokeReviewer(e, reviewerAndrewId, reviewer_id)}>
+                        <FaHandPointRight
+                          size={'1.5em'}
+                          className="mr-3"
+                          style={{ color: 'gold' }}
+                        />
+                        {reviewerAndrewId}
+                      </Button>
+                    )
+                  })}
+                </Space>
+              ) : null}
             </Col>
             {artifact && (
               <Col span={2} offset={4}>

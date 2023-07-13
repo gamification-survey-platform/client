@@ -5,14 +5,15 @@ import { useDispatch, useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
-import { Layout, Menu, Image, Typography } from 'antd'
+import { Layout, Menu, Image, Typography, Badge, Dropdown } from 'antd'
 import {
   UserOutlined,
   BookOutlined,
   AntDesignOutlined,
   SettingOutlined,
   HomeOutlined,
-  OrderedListOutlined
+  OrderedListOutlined,
+  BellOutlined
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
@@ -23,6 +24,8 @@ import Gold from '../assets/gold.png'
 import Diamond from '../assets/diamond.png'
 import Master from '../assets/master.png'
 import Grandmaster from '../assets/grandmaster.png'
+import { getNotifications } from '../api/notifications'
+import Notification from './Notification'
 
 const rankings = [
   { title: 'Bronze', image: Bronze },
@@ -77,6 +80,8 @@ const AppHeader = ({ children }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [items, setItems] = useState(initialItems)
+  const [notifications, setNotifications] = useState([])
+  const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
     if (user && user.is_staff) {
@@ -89,6 +94,28 @@ const AppHeader = ({ children }) => {
       setItems(items.filter((item) => item.key !== '4'))
     }
   }, [user])
+
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const res = await getNotifications()
+        if (res.status === 200) {
+          const unreadNotifications = res.data.filter((notification) => !notification.is_read)
+          setUnreadCount(unreadNotifications.length)
+          const data = res.data.map((notification, i) => {
+            return {
+              key: `${i}`,
+              label: <Notification {...notification} />
+            }
+          })
+          setNotifications(data)
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    }
+    fetchNotifications()
+  }, [])
 
   const handleLogout = async (e) => {
     e.preventDefault()
@@ -172,9 +199,16 @@ const AppHeader = ({ children }) => {
           <LinkContainer to="/dashboard" style={{ cursor: 'pointer', paddingLeft: 10 }}>
             <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
-          <LinkContainer to="/" onClick={handleLogout}>
-            <Typography.Text role="button">Logout</Typography.Text>
-          </LinkContainer>
+          <div>
+            <Dropdown menu={{ items: notifications }} trigger={['click']}>
+              <Badge count={unreadCount} style={{ cursor: 'pointer' }}>
+                <BellOutlined style={{ fontSize: '1.5em', cursor: 'pointer' }} />
+              </Badge>
+            </Dropdown>
+            <LinkContainer to="/" onClick={handleLogout} className="ml-3">
+              <Typography.Text role="button">Logout</Typography.Text>
+            </LinkContainer>
+          </div>
         </Layout.Header>
         <Layout.Content>{children}</Layout.Content>
       </Layout>
