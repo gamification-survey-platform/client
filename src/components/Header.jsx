@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
-import { Layout, Menu, Image, Typography, Badge, Dropdown } from 'antd'
+import { Layout, Menu, Image, Typography, Badge, Dropdown, Button } from 'antd'
 import {
   UserOutlined,
   BookOutlined,
@@ -13,7 +13,8 @@ import {
   SettingOutlined,
   HomeOutlined,
   OrderedListOutlined,
-  BellOutlined
+  BellOutlined,
+  MailOutlined
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
@@ -26,6 +27,8 @@ import Master from '../assets/master.png'
 import Grandmaster from '../assets/grandmaster.png'
 import { getNotifications } from '../api/notifications'
 import Notification from './Notification'
+import MessageModal from './MessageModal'
+import styles from '../styles/Header.module.css'
 
 const rankings = [
   { title: 'Bronze', image: Bronze },
@@ -77,6 +80,7 @@ const initialItems = [
 const AppHeader = ({ children }) => {
   const user = useSelector(userSelector)
   const [collapsed, setCollapsed] = useState()
+  const [messageModalOpen, setMessageModalOpen] = useState(false)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [items, setItems] = useState(initialItems)
@@ -165,15 +169,7 @@ const AppHeader = ({ children }) => {
           defaultSelectedKeys={['0']}
         />
         {collapsed || user.is_staff ? null : (
-          <div
-            style={{
-              position: 'absolute',
-              top: 350,
-              left: 10,
-              zIndex: 1,
-              height: '25vh',
-              width: 180
-            }}>
+          <div className={styles.progressTriangleWrapper}>
             <div className="text-center text-white">
               <Image width={100} src={rankings[user.level].image} />
               <p>
@@ -188,24 +184,22 @@ const AppHeader = ({ children }) => {
         )}
       </Layout.Sider>
       <Layout className="site-layout">
-        <Layout.Header
-          style={{
-            paddingLeft: 10,
-            backgroundColor: 'white',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center'
-          }}>
-          <LinkContainer to="/dashboard" style={{ cursor: 'pointer', paddingLeft: 10 }}>
+        <Layout.Header className={styles.headerWrapper}>
+          <LinkContainer to="/dashboard" className={styles.logo}>
             <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
           <div>
+            <MailOutlined
+              className={styles.icon}
+              role="button"
+              onClick={() => setMessageModalOpen(true)}
+            />
             <Dropdown
               menu={{ items: notifications }}
               trigger={['click']}
               onOpenChange={(open) => open && setUnreadCount(0)}>
-              <Badge count={unreadCount} style={{ cursor: 'pointer' }}>
-                <BellOutlined style={{ fontSize: '1.5em', cursor: 'pointer' }} />
+              <Badge count={unreadCount} className={styles.badge}>
+                <BellOutlined className={styles.icon} />
               </Badge>
             </Dropdown>
             <LinkContainer to="/" onClick={handleLogout} className="ml-3">
@@ -213,7 +207,10 @@ const AppHeader = ({ children }) => {
             </LinkContainer>
           </div>
         </Layout.Header>
-        <Layout.Content>{children}</Layout.Content>
+        <Layout.Content>
+          {children}
+          <MessageModal open={messageModalOpen} setOpen={setMessageModalOpen} />
+        </Layout.Content>
       </Layout>
     </Layout>
   )

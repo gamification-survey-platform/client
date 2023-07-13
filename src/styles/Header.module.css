@@ -1,0 +1,31 @@
+.icon {
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.badge {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.progressTriangleWrapper {
+  position: absolute;
+  top: 350px;
+  left: 10px;
+  z-index: 1;
+  height: 25vh;
+  width: 180px;
+}
+
+.headerWrapper {
+  padding-left: 10px;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  cursor: pointer;
+  padding-left: 10px;
+}
