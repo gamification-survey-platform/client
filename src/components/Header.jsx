@@ -5,9 +5,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
-import { Layout, Menu, Image, Typography, Badge, Dropdown, Button } from 'antd'
+import { Layout, Menu, Image, Typography, Badge, Dropdown, Button, Tag, Row } from 'antd'
+import useMessage from 'antd/es/message/useMessage'
 import {
   UserOutlined,
+  PlusOutlined,
   BookOutlined,
   AntDesignOutlined,
   SettingOutlined,
@@ -18,6 +20,7 @@ import {
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
+import { MdPlusOne } from 'react-icons/md'
 import ChartWrapper from './visualization/ChartWrapper'
 import Bronze from '../assets/bronze.png'
 import Silver from '../assets/silver.png'
@@ -26,6 +29,7 @@ import Diamond from '../assets/diamond.png'
 import Master from '../assets/master.png'
 import Grandmaster from '../assets/grandmaster.png'
 import { getNotifications } from '../api/notifications'
+import { setUser } from '../store/user/userSlice'
 import Notification from './Notification'
 import MessageModal from './MessageModal'
 import styles from '../styles/Header.module.css'
@@ -81,6 +85,7 @@ const AppHeader = ({ children }) => {
   const user = useSelector(userSelector)
   const [collapsed, setCollapsed] = useState()
   const [messageModalOpen, setMessageModalOpen] = useState(false)
+  const [messageApi, contextHolder] = useMessage()
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [items, setItems] = useState(initialItems)
@@ -96,6 +101,20 @@ const AppHeader = ({ children }) => {
       )
     } else if (user && user.level < 0) {
       setItems(items.filter((item) => item.key !== '4'))
+    }
+
+    if (user && user.daily_streak_increment) {
+      messageApi.open({
+        icon: <MdPlusOne size={'1.5em'} className="mr-1" />,
+        content: 'Daily check in',
+        style: {
+          position: 'absolute',
+          top: 0,
+          right: 30,
+          color: 'green'
+        }
+      })
+      dispatch(setUser({ ...user, daily_streak_increment: false }))
     }
   }, [user])
 
@@ -160,6 +179,7 @@ const AppHeader = ({ children }) => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
+      {contextHolder}
       <Layout.Sider collapsible onCollapse={(collapsed) => setCollapsed(collapsed)}>
         <Menu
           theme="dark"
@@ -189,6 +209,12 @@ const AppHeader = ({ children }) => {
             <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
           <div>
+            <Tag className="mr-3 py-1" color="gold">
+              <Row>
+                <div className="mr-1">Daily Streak:</div>
+                <Badge color="gold" count={user.daily_streak} showZero={true} />
+              </Row>
+            </Tag>
             <MailOutlined
               className={styles.icon}
               role="button"
