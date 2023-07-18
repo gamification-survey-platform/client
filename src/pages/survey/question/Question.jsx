@@ -206,8 +206,6 @@ const MultipleSelect = ({
       dispatch(editAnswer({ questionIdx, sectionIdx, answer: value, question_type }))
     }
   }, [value])
-  const ticks = option_choices.reduce((acc, el, i) => ({ ...acc, [i]: el.text }), {})
-  console.log(name)
   return (
     <Form.Item
       name={name}
@@ -450,7 +448,7 @@ const Number = ({
   }, [answer])
 
   useEffect(() => {
-    if (answer && value) {
+    if (answer && (value === 0 || value)) {
       dispatch(editAnswer({ sectionIdx, questionIdx, answer: value, question_type }))
     }
   }, [value])

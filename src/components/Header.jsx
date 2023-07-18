@@ -5,18 +5,18 @@ import { useDispatch, useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
-import { Layout, Menu, Image, Typography, Badge, Dropdown, Button, Tag, Row } from 'antd'
+import { Layout, Menu, Image, Tooltip, Badge, Dropdown } from 'antd'
 import useMessage from 'antd/es/message/useMessage'
 import {
   UserOutlined,
-  PlusOutlined,
   BookOutlined,
   AntDesignOutlined,
   SettingOutlined,
   HomeOutlined,
   OrderedListOutlined,
   BellOutlined,
-  MailOutlined
+  FireOutlined,
+  LogoutOutlined
 } from '@ant-design/icons'
 import { useNavigate } from 'react-router'
 import { GiShoppingCart } from 'react-icons/gi'
@@ -31,7 +31,6 @@ import Grandmaster from '../assets/grandmaster.png'
 import { getNotifications } from '../api/notifications'
 import { setUser } from '../store/user/userSlice'
 import Notification from './Notification'
-import MessageModal from './MessageModal'
 import styles from '../styles/Header.module.css'
 
 const rankings = [
@@ -84,7 +83,6 @@ const initialItems = [
 const AppHeader = ({ children }) => {
   const user = useSelector(userSelector)
   const [collapsed, setCollapsed] = useState()
-  const [messageModalOpen, setMessageModalOpen] = useState(false)
   const [messageApi, contextHolder] = useMessage()
   const dispatch = useDispatch()
   const navigate = useNavigate()
@@ -209,17 +207,15 @@ const AppHeader = ({ children }) => {
             <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
           <div>
-            <Tag className="mr-3 py-1" color="gold">
-              <Row>
-                <div className="mr-1">Daily Streak:</div>
-                <Badge color="gold" count={user.daily_streak} showZero={true} />
-              </Row>
-            </Tag>
-            <MailOutlined
-              className={styles.icon}
-              role="button"
-              onClick={() => setMessageModalOpen(true)}
-            />
+            <Tooltip title="Daily streak" color={'gold'} placement="left">
+              <FireOutlined className={styles.icon} />
+              <Badge
+                color="gold"
+                count={user.daily_streak}
+                showZero={true}
+                style={{ position: 'absolute' }}
+              />
+            </Tooltip>
             <Dropdown
               menu={{ items: notifications }}
               trigger={['click']}
@@ -228,15 +224,10 @@ const AppHeader = ({ children }) => {
                 <BellOutlined className={styles.icon} />
               </Badge>
             </Dropdown>
-            <LinkContainer to="/" onClick={handleLogout} className="ml-3">
-              <Typography.Text role="button">Logout</Typography.Text>
-            </LinkContainer>
+            <LogoutOutlined className={styles.icon} role="button" onClick={handleLogout} />
           </div>
         </Layout.Header>
-        <Layout.Content>
-          {children}
-          <MessageModal open={messageModalOpen} setOpen={setMessageModalOpen} />
-        </Layout.Content>
+        <Layout.Content>{children}</Layout.Content>
       </Layout>
     </Layout>
   )

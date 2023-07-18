@@ -157,7 +157,12 @@ const AssignmentReview = () => {
     e.preventDefault()
     e.stopPropagation()
     try {
-      triviaForm.validateFields()
+      await triviaForm.validateFields()
+    } catch (e) {
+      console.error(e)
+      return
+    }
+    try {
       const answer = triviaForm.getFieldValue('answer')
       const res = await submitTriviaAnswer({
         course_id: course.pk,
@@ -213,7 +218,9 @@ const AssignmentReview = () => {
                     <Typography.Text className="my-1">Trivia Question</Typography.Text>
                   </div>
                   <Typography.Text className="mb-1"> {survey.trivia.question}</Typography.Text>
-                  <Form.Item name="answer">
+                  <Form.Item
+                    name="answer"
+                    rules={[{ required: true, message: 'Please enter a valid answer!' }]}>
                     <Input placeholder="Enter answer." />
                   </Form.Item>
                   <Row justify="center">

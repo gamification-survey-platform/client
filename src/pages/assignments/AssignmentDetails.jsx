@@ -85,7 +85,12 @@ const AssignmentDetails = () => {
         artifact_id: artifact.artifact_pk
       })
       if (res.status === 200) {
-        const incompleteReviewers = res.data.filter((reviewer) => reviewer.status === 'INCOMPLETE')
+        const incompleteReviewers = res.data.filter(
+          (reviewer) =>
+            reviewer.status === 'INCOMPLETE' ||
+            reviewer.status === 'REOPEN' ||
+            reviewer.status === 'LATE'
+        )
         setArtifactReviewers(incompleteReviewers)
       }
     }
@@ -204,15 +209,16 @@ const AssignmentDetails = () => {
                   <Typography.Title level={4}>Your Pending Reviewers</Typography.Title>
                   <Typography.Text>Poke them to remind them to review!</Typography.Text>
                   {artifactReviewers.map((reviewer, i) => {
-                    const { reviewer: reviewerAndrewId, user: reviewer_id } = reviewer
+                    const { reviewer: reviewerAndrewId, user: reviewer_id, pokable } = reviewer
                     return (
                       <Button
+                        disabled={!pokable}
                         key={i}
                         onClick={(e) => handlePokeReviewer(e, reviewerAndrewId, reviewer_id)}>
                         <FaHandPointRight
                           size={'1.5em'}
                           className="mr-3"
-                          style={{ color: 'gold' }}
+                          style={{ color: pokable ? 'gold' : '' }}
                         />
                         {reviewerAndrewId}
                       </Button>

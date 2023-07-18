@@ -1,6 +1,7 @@
 .icon {
   font-size: 1.5em;
-  cursor: pointer;
+  padding-right: 10px;
+  color: white;
 }
 
 .badge {
@@ -19,7 +20,7 @@
 
 .headerWrapper {
   padding-left: 10px;
-  background-color: white;
+  background-color: #001529;
   display: flex;
   justify-content: space-between;
   align-items: center;
