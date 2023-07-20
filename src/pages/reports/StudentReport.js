@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router'
+import { useParams, useLocation } from 'react-router'
 import { getArtifactAnswers, getKeywords, getStudentStatistics } from '../../api/reports'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { Row, Typography, Form, Collapse, Col } from 'antd'
@@ -10,10 +10,14 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import { scaleOptions } from '../survey/question/Question'
 import courseSelector from '../../store/courses/selectors'
 import SlideReviewReport from '../survey/question/SlideReviewReport'
+import { QuestionCircleTwoTone } from '@ant-design/icons'
 import { Document, Page, pdfjs } from 'react-pdf'
+import FeedbackRequestModal from '../../components/FeedbackRequestModal'
+import ResponseToRequestFeedbackModal from '../../components/ResponseToFeedbackRequestModal'
 
 const StudentReport = () => {
   const { course_id: course_number, assignment_id, artifact_id } = useParams()
+  const { state = null } = useLocation()
   const courses = useSelector(courseSelector)
   const [report, setReport] = useState()
   const [statistics, setStatistics] = useState()
@@ -21,6 +25,18 @@ const StudentReport = () => {
   const [keywords, setKeywords] = useState()
   const course = courses.find((course) => course.course_number === course_number)
   const [openSlideReview, setOpenSlideReview] = useState(false)
+  const [requestFeedbackData, setRequestFeedbackData] = useState()
+  const [responseToRequestFeedbackData, setResponseToRequestFeedbackData] = useState()
+
+  useEffect(() => {
+    if (state && report) {
+      const { section, question } = state
+      const name = `${section}-${question}`
+      const questionElement = document.getElementById(name)
+      if (questionElement) questionElement.scrollIntoView(true)
+      setInterval(() => setResponseToRequestFeedbackData({ report, ...state }), 1000)
+    }
+  }, [state, report])
 
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
@@ -56,17 +72,37 @@ const StudentReport = () => {
     fetchKeywords()
   }, [])
 
+  const handleFeedbackClick = async (section, question, answer) => {
+    setRequestFeedbackData({ section, question, answer })
+  }
+
   return (
-    <Form form={form} className="m-5 w-75" disabled={true}>
-      <DndProvider backend={HTML5Backend}>
+    <>
+      {requestFeedbackData ? (
+        <FeedbackRequestModal data={requestFeedbackData} setData={setRequestFeedbackData} />
+      ) : null}
+      {responseToRequestFeedbackData ? (
+        <ResponseToRequestFeedbackModal
+          data={responseToRequestFeedbackData}
+          setData={setResponseToRequestFeedbackData}
+        />
+      ) : null}
+      <Form form={form} className="m-5 w-75" disabled={true}>
         <Typography.Title level={2} className="text-center">
           Student Report
+        </Typography.Title>
+        <Typography.Title level={5}>
+          Click on ? to ask for more feedback from your reviewer
         </Typography.Title>
         {report &&
           report.sections.map((section, i) => {
             const { title } = section
             return (
-              <Collapse key={i} size="large" className="mb-3">
+              <Collapse
+                key={i}
+                size="large"
+                className="mb-3"
+                defaultActiveKey={state ? 0 : undefined}>
                 <Collapse.Panel header={title}>
                   {section.questions.map((question, i) => {
                     const {
@@ -91,7 +127,9 @@ const StudentReport = () => {
                     return (
                       <Row key={i}>
                         <Col span={data ? 8 : 20}>
-                          <Typography.Title level={4}>{text}</Typography.Title>
+                          <Typography.Title level={4} id={`${section.pk}-${question.pk}`}>
+                            {text}
+                          </Typography.Title>
                           {question_type === 'SLIDEREVIEW' && (
                             <div style={{ cursor: 'pointer' }}>
                               <Row>
@@ -135,13 +173,18 @@ const StudentReport = () => {
                                 return (
                                   <Row key={i} className="ml-5">
                                     {review.map((r, i) => r.text).join(', ')}
+                                    <QuestionCircleTwoTone
+                                      className="ml-3"
+                                      role="button"
+                                      onClick={() => handleFeedbackClick(section, question, review)}
+                                    />
                                   </Row>
                                 )
                               })}
                             </>
                           )}
                         </Col>
-                        {data ? (
+                        {data && !responseToRequestFeedbackData ? (
                           <Col span={16}>
                             <div style={{ height: 400 }}>
                               <ChartWrapper type="donut" data={data} />
@@ -163,8 +206,8 @@ const StudentReport = () => {
             </div>
           </>
         )}
-      </DndProvider>
-    </Form>
+      </Form>
+    </>
   )
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Row, Col, Button, Alert, Form, Typography, message, Input, notification } from 'antd'
-import { useParams, useNavigate } from 'react-router'
+import { useParams, useNavigate, useLocation } from 'react-router'
 import Spinner from '../../components/Spinner'
 import Section from '../survey/Section'
 import { useDispatch, useSelector } from 'react-redux'
@@ -17,8 +17,10 @@ import { HTML5Backend } from 'react-dnd-html5-backend'
 import { addCoursePoints } from '../../store/courses/coursesSlice'
 import { getSentimentEmoji } from '../survey/sentiment'
 import coursesSelector from '../../store/courses/selectors'
+import RespondToFeedbackRequestModal from '../../components/RespondToFeedbackRequestModal'
 
 const AssignmentReview = () => {
+  const { state = null } = useLocation()
   const { course_id, assignment_id, review_id } = useParams()
   const courses = useSelector(coursesSelector)
   const course = courses.find(
@@ -35,8 +37,34 @@ const AssignmentReview = () => {
   const survey = useSelector(surveySelector)
   const progress = survey.progress
   const [triviaProgress, setTriviaProgress] = useState(0)
+  const [respondToRequestFeedbackData, setRespondToRequestFeedbackData] = useState()
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (state && survey.sections.length) {
+      const { section, question } = state
+      let sectionIdx, questionIdx
+      for (let i = 0; i < survey.sections.length; i++) {
+        const s = survey.sections[i]
+        if (s.pk === section) {
+          sectionIdx = i
+          for (let j = 0; j < s.questions.length; j++) {
+            const q = s.questions[j]
+            if (q.pk === question) {
+              questionIdx = j
+              break
+            }
+          }
+          break
+        }
+      }
+      const name = `${sectionIdx}-${questionIdx}`
+      const questionElement = document.getElementById(name)
+      if (questionElement) questionElement.scrollIntoView(true)
+      setTimeout(() => setRespondToRequestFeedbackData(state), 1000)
+    }
+  }, [state, survey.sections])
 
   useEffect(() => {
     if (survey.trivia && !survey.trivia.completed) {
@@ -197,6 +225,12 @@ const AssignmentReview = () => {
       ) : (
         <DndProvider backend={HTML5Backend}>
           <Form form={form} className="m-5 w-75" onKeyDown={handleTriviaEnter}>
+            {respondToRequestFeedbackData ? (
+              <RespondToFeedbackRequestModal
+                data={respondToRequestFeedbackData}
+                setData={setRespondToRequestFeedbackData}
+              />
+            ) : null}
             {survey.trivia && !survey.trivia.completed ? (
               <div
                 style={{

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
 import { persistor } from '../store/store'
 import { logout } from '../store/user/userSlice'
-import { Layout, Menu, Image, Tooltip, Badge, Dropdown } from 'antd'
+import { Layout, Menu, Image, Tooltip, Badge, Dropdown, Row } from 'antd'
 import useMessage from 'antd/es/message/useMessage'
 import {
   UserOutlined,
@@ -206,26 +206,31 @@ const AppHeader = ({ children }) => {
           <LinkContainer to="/dashboard" className={styles.logo}>
             <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
-          <div>
+          <Row>
             <Tooltip title="Daily streak" color={'gold'} placement="left">
-              <FireOutlined className={styles.icon} />
-              <Badge
-                color="gold"
-                count={user.daily_streak}
-                showZero={true}
-                style={{ position: 'absolute' }}
-              />
+              <div className="mr-3">
+                <FireOutlined className={styles.icon} />
+                <Badge
+                  color="gold"
+                  count={user.daily_streak}
+                  showZero={true}
+                  style={{ position: 'absolute' }}
+                />
+              </div>
             </Tooltip>
             <Dropdown
               menu={{ items: notifications }}
               trigger={['click']}
               onOpenChange={(open) => open && setUnreadCount(0)}>
-              <Badge count={unreadCount} className={styles.badge}>
+              <div className="mr-3" style={{ height: '3em', cursor: 'pointer' }}>
                 <BellOutlined className={styles.icon} />
-              </Badge>
+                <Badge count={unreadCount} style={{ position: 'absolute', bottom: 5 }} />
+              </div>
             </Dropdown>
-            <LogoutOutlined className={styles.icon} role="button" onClick={handleLogout} />
-          </div>
+            <div>
+              <LogoutOutlined className={styles.icon} role="button" onClick={handleLogout} />
+            </div>
+          </Row>
         </Layout.Header>
         <Layout.Content>{children}</Layout.Content>
       </Layout>
