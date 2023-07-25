@@ -16,7 +16,6 @@ const RespondToFeedbackRequestModal = ({ data, setData }) => {
   const question = section.questions.find((q) => q.pk === data.question)
   const [form] = useForm()
   const [messageApi, contextHolder] = useMessage()
-
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
   }, [data])

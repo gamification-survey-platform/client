@@ -92,11 +92,7 @@ const AppHeader = ({ children }) => {
 
   useEffect(() => {
     if (user && user.is_staff) {
-      setItems(
-        items.filter(
-          (item) => item.key !== '3' && item.key !== '4' && item.key !== '5' && item.key !== '6'
-        )
-      )
+      setItems(items.filter((item) => item.key !== '3' && item.key !== '4' && item.key !== '5'))
     } else if (user && user.level < 0) {
       setItems(items.filter((item) => item.key !== '4'))
     }
@@ -223,6 +219,8 @@ const AppHeader = ({ children }) => {
               onOpenChange={(open) => {
                 if (open) {
                   setUnreadCount(0)
+                }
+                if (open && unreadCount === 0) {
                   setNotifications(
                     notifications.map((notification) => ({ ...notification, is_read: true }))
                   )

@@ -70,8 +70,8 @@ const StudentReport = () => {
     fetchKeywords()
   }, [])
 
-  const handleFeedbackClick = async (section, question, answer, slideReview = false) => {
-    setRequestFeedbackData({ section, question, answer, slideReview })
+  const handleFeedbackClick = async (section, question, answer, slide_review = false) => {
+    setRequestFeedbackData({ section, question, answer, slide_review })
   }
 
   return (

@@ -56,7 +56,7 @@ const SlideReviewReport = ({
         <FeedbackRequestModal
           data={requestFeedbackData}
           setData={setRequestFeedbackData}
-          slideReview={true}
+          slide_review={true}
         />
       ) : null}
       <div>

@@ -42,7 +42,9 @@ const FeedbackRequestNotification = ({
   ...rest
 }) => {
   const formattedTimestamp = dayjs(timestamp).format('h:mm A d/M/YY')
-  const data = JSON.parse(text, (k, v) => (typeof v === 'object' || isNaN(v) ? v : parseInt(v, 10)))
+  const data = JSON.parse(text, (k, v) =>
+    typeof v === 'object' || isNaN(v) || typeof v === 'boolean' ? v : parseInt(v, 10)
+  )
   const navigate = useNavigate()
   const handleClick = () => {
     const { course_number, assignment_id, artifact_review } = data
@@ -72,7 +74,9 @@ const FeedbackResponseNotification = ({
   ...rest
 }) => {
   const formattedTimestamp = dayjs(timestamp).format('h:mm A d/M/YY')
-  const data = JSON.parse(text, (k, v) => (typeof v === 'object' || isNaN(v) ? v : parseInt(v, 10)))
+  const data = JSON.parse(text, (k, v) =>
+    typeof v === 'object' || isNaN(v) || typeof v === 'boolean' ? v : parseInt(v, 10)
+  )
   const navigate = useNavigate()
   const handleClick = () => {
     const { course_number, assignment_id, artifact } = data

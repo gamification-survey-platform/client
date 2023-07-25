@@ -13,10 +13,10 @@ const FeedbackRequestModal = ({ data, setData }) => {
       form.validateFields()
       const text = form.getFieldValue('text')
       const { section, question, artifact_review_id, answer } = data
-      const artifact_review = data.slideReview
+      const artifact_review = data.slide_review
         ? answer.artifact_review_id
         : answer[0].artifact_review_id
-      const receiver = data.slideReview
+      const receiver = data.slide_review
         ? answer.artifact_reviewer_id
         : answer[0].artifact_reviewer_id
       const jsonData = JSON.stringify({
@@ -27,12 +27,11 @@ const FeedbackRequestModal = ({ data, setData }) => {
         course_number: course_id,
         assignment_id,
         text,
-        slide_review: !!data.slideReview,
-        page: data.slideReview ? answer.page : undefined,
-        answer_text: data.slideReview ? answer.text : undefined
+        slide_review: !!data.slide_review,
+        page: data.slide_review ? answer.page : undefined,
+        answer_text: data.slide_review ? answer.text : undefined
       })
       const res = await sendNotification({ type: 'FEEDBACK_REQUEST', receiver, text: jsonData })
-      console.log(data)
       if (res.status === 201) {
         messageApi.open({
           type: 'success',
@@ -66,7 +65,7 @@ const FeedbackRequestModal = ({ data, setData }) => {
           <Typography.Title level={5}>Question: {data.question.text}</Typography.Title>
           <Divider />
           <Typography.Title level={5}>Review Answer:</Typography.Title>
-          {data.slideReview ? (
+          {data.slide_review ? (
             <Typography.Text>{data.answer.text}</Typography.Text>
           ) : (
             <Typography.Text>{data.answer.map((r, i) => r.text).join(', ')}</Typography.Text>

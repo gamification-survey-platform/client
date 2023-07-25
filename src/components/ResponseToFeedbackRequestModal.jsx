@@ -9,7 +9,6 @@ const ResponseToFeedbackRequestModal = ({ data, setData }) => {
   const section = data.report.sections.find((s) => s.pk === data.section)
   const question = section.questions.find((q) => q.pk === data.question)
   const navigate = useNavigate()
-
   useEffect(() => {
     pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
   }, [data])
