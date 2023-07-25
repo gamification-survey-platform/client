@@ -3,10 +3,8 @@ import { useParams, useLocation } from 'react-router'
 import { getArtifactAnswers, getKeywords, getStudentStatistics } from '../../api/reports'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { Row, Typography, Form, Collapse, Col } from 'antd'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useForm } from 'antd/es/form/Form'
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
 import { scaleOptions } from '../survey/question/Question'
 import courseSelector from '../../store/courses/selectors'
 import SlideReviewReport from '../survey/question/SlideReviewReport'
@@ -34,7 +32,7 @@ const StudentReport = () => {
       const name = `${section}-${question}`
       const questionElement = document.getElementById(name)
       if (questionElement) questionElement.scrollIntoView(true)
-      setInterval(() => setResponseToRequestFeedbackData({ report, ...state }), 1000)
+      setTimeout(() => setResponseToRequestFeedbackData({ report, ...state }), 1000)
     }
   }, [state, report])
 
@@ -72,8 +70,8 @@ const StudentReport = () => {
     fetchKeywords()
   }, [])
 
-  const handleFeedbackClick = async (section, question, answer) => {
-    setRequestFeedbackData({ section, question, answer })
+  const handleFeedbackClick = async (section, question, answer, slideReview = false) => {
+    setRequestFeedbackData({ section, question, answer, slideReview })
   }
 
   return (
@@ -92,7 +90,7 @@ const StudentReport = () => {
           Student Report
         </Typography.Title>
         <Typography.Title level={5}>
-          Click on ? to ask for more feedback from your reviewer
+          Click on <QuestionCircleTwoTone /> to ask for more feedback from your reviewer
         </Typography.Title>
         {report &&
           report.sections.map((section, i) => {
@@ -142,6 +140,9 @@ const StudentReport = () => {
                                 <div>Click on submission to view feedback.</div>
                               </Row>
                               <SlideReviewReport
+                                section={section}
+                                question={question}
+                                handleFeedbackClick={handleFeedbackClick}
                                 file_path={file_path}
                                 artifact_reviews={artifact_reviews}
                                 open={openSlideReview}

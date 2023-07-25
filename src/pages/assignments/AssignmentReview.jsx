@@ -62,7 +62,7 @@ const AssignmentReview = () => {
       const name = `${sectionIdx}-${questionIdx}`
       const questionElement = document.getElementById(name)
       if (questionElement) questionElement.scrollIntoView(true)
-      setTimeout(() => setRespondToRequestFeedbackData(state), 1000)
+      setTimeout(() => setRespondToRequestFeedbackData({ ...state, artifact }), 1000)
     }
   }, [state, survey.sections])
 

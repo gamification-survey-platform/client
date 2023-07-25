@@ -1,13 +1,21 @@
 import { useEffect, useState } from 'react'
-import { Modal, Form, Input, Row, Col, Divider, Button, Typography } from 'antd'
-import { useForm } from 'antd/es/form/Form'
+import { Modal, Row, Col, Divider, Typography } from 'antd'
 import { Document, Page, pdfjs } from 'react-pdf'
-import { RightCircleFilled, LeftCircleFilled } from '@ant-design/icons'
-import { useDispatch } from 'react-redux'
+import { RightCircleFilled, LeftCircleFilled, QuestionCircleTwoTone } from '@ant-design/icons'
+import FeedbackRequestModal from '../../../components/FeedbackRequestModal'
 
-const SlideReviewReport = ({ file_path, artifact_reviews, open, setOpen }) => {
+const SlideReviewReport = ({
+  file_path,
+  artifact_reviews,
+  open,
+  setOpen,
+  handleFeedbackClick,
+  section,
+  question
+}) => {
   const [numPages, setNumPages] = useState(0)
   const [pageNumber, setPageNumber] = useState(1)
+  const [requestFeedbackData, setRequestFeedbackData] = useState()
   const enableBackward = pageNumber > 1
   const enableForward = pageNumber < numPages
   useEffect(() => {
@@ -44,6 +52,13 @@ const SlideReviewReport = ({ file_path, artifact_reviews, open, setOpen }) => {
       }}
       width={1000}
       footer={null}>
+      {requestFeedbackData ? (
+        <FeedbackRequestModal
+          data={requestFeedbackData}
+          setData={setRequestFeedbackData}
+          slideReview={true}
+        />
+      ) : null}
       <div>
         <Row>
           <Col offset={1} span={10}>
@@ -60,10 +75,17 @@ const SlideReviewReport = ({ file_path, artifact_reviews, open, setOpen }) => {
               const pageAnswer = review.find((r) => parseInt(r.page) === pageNumber)
               const text = pageAnswer && pageAnswer.text ? pageAnswer.text : ''
               return (
-                <>
+                <div key={i}>
                   <Divider />
-                  <div key={i}>{text}</div>
-                </>
+                  <Row>
+                    <div key={i}>{text}</div>
+                    <QuestionCircleTwoTone
+                      className="ml-3"
+                      role="button"
+                      onClick={() => handleFeedbackClick(section, question, pageAnswer, true)}
+                    />
+                  </Row>
+                </div>
               )
             })}
           </Col>

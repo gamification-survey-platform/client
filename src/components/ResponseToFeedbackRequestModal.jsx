@@ -1,15 +1,18 @@
-import { Form, Modal, Input, Typography, Divider } from 'antd'
-import { useForm } from 'antd/es/form/Form'
-import useMessage from 'antd/es/message/useMessage'
-import { sendNotification } from '../api/notifications'
-import { useNavigate, useParams } from 'react-router'
-import { useSelector } from 'react-redux'
+import { Modal, Typography } from 'antd'
+import { Document, Page, pdfjs } from 'react-pdf'
+import { useEffect } from 'react'
+
+import { useNavigate } from 'react-router'
 
 const ResponseToFeedbackRequestModal = ({ data, setData }) => {
   const { course_number, assignment_id } = data
   const section = data.report.sections.find((s) => s.pk === data.section)
   const question = section.questions.find((q) => q.pk === data.question)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`
+  }, [data])
 
   return (
     <Modal
@@ -20,7 +23,8 @@ const ResponseToFeedbackRequestModal = ({ data, setData }) => {
         setData()
       }}
       footer={null}
-      style={{ top: 20, left: '20%' }}>
+      width={data.slide_review ? 1000 : 500}
+      style={{ top: 20, left: data.slide_review ? '' : '20%' }}>
       <Typography.Title level={5} className="mb-1">
         Your reviewer provided feedback on:
         <br />
@@ -28,6 +32,21 @@ const ResponseToFeedbackRequestModal = ({ data, setData }) => {
         <br />
         Question: {question.text}
       </Typography.Title>
+      {data.slide_review && data.page ? (
+        <>
+          <Document file={question.file_path}>
+            {' '}
+            <Page pageNumber={data.page} width={800} />
+          </Document>
+          <br />
+        </>
+      ) : null}
+      <Typography.Text>
+        You asked:
+        <br />
+        {data.request}
+      </Typography.Text>
+      <br />
       <Typography.Text>
         They said:
         <br />
