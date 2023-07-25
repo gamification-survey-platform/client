@@ -5,7 +5,6 @@ import { getMembers } from '../api/members'
 import { useParams } from 'react-router'
 import { useSelector } from 'react-redux'
 import coursesSelector from '../store/courses/selectors'
-import useMessage from 'antd/es/message/useMessage'
 import { getArtifact } from '../api/artifacts'
 import { Link } from 'react-router-dom'
 import styles from '../styles/ReviewsList.module.css'
@@ -13,7 +12,6 @@ import styles from '../styles/ReviewsList.module.css'
 const StaffSubmissionList = () => {
   const [artifacts, setArtifacts] = useState({})
   const [pendingMembers, setPendingMembers] = useState([])
-  const [messageApi, contextHolder] = useMessage()
   const { course_id: courseNumber, assignment_id } = useParams()
   const courses = useSelector(coursesSelector)
   const course = courses.find(({ course_number }) => courseNumber === course_number)
@@ -46,7 +44,7 @@ const StaffSubmissionList = () => {
       const res = await getMembers({ course_id: course.pk })
       if (res.status === 200) {
         const allMembers = res.data
-          .filter(({ is_staff }) => is_staff)
+          .filter(({ is_staff }) => !is_staff)
           .map(({ andrew_id }) => andrew_id)
         const completedMembers = Object.keys(artifacts)
         const filteredPendingMembers = allMembers.filter(
