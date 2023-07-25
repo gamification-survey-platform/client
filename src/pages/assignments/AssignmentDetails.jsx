@@ -134,6 +134,10 @@ const AssignmentDetails = () => {
       })
       if (res.status === 201) {
         messageApi.open({ type: 'success', content: `Poked ${reviewerAndrewId}!` })
+        const newReviewers = artifactReviewers.map((reviewer) =>
+          reviewer.user === reviewer_id ? { ...reviewer, pokable: false } : reviewer
+        )
+        setArtifactReviewers(newReviewers)
       }
     } catch (e) {
       console.error(e)
@@ -146,7 +150,6 @@ const AssignmentDetails = () => {
     setSubmission,
     handleSubmit
   }
-
   return spin ? (
     <Spinner show={spin} />
   ) : (

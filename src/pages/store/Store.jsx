@@ -32,7 +32,7 @@ const Store = () => {
   return (
     <div className="m-5">
       <Row justify="space-around">
-        <Typography.Title>Welcome to the Gamificaton Store</Typography.Title>
+        <Typography.Title>Welcome to the Gamification Store</Typography.Title>
         <LinkContainer to={'/purchases'}>
           <Button type="primary">View My Purchases</Button>
         </LinkContainer>

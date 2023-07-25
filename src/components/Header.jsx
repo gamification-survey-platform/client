@@ -123,13 +123,7 @@ const AppHeader = ({ children }) => {
         if (res.status === 200) {
           const unreadNotifications = res.data.filter((notification) => !notification.is_read)
           setUnreadCount(unreadNotifications.length)
-          const data = res.data.map((notification, i) => {
-            return {
-              key: `${i}`,
-              label: <Notification {...notification} />
-            }
-          })
-          setNotifications(data)
+          setNotifications(res.data)
         }
       } catch (e) {
         console.error(e)
@@ -174,7 +168,12 @@ const AppHeader = ({ children }) => {
         break
     }
   }
-
+  const notificationElements = notifications.map((notification, i) => {
+    return {
+      key: `${i}`,
+      label: <Notification {...notification} />
+    }
+  })
   return (
     <Layout style={{ minHeight: '100vh' }}>
       {contextHolder}
@@ -219,9 +218,16 @@ const AppHeader = ({ children }) => {
               </div>
             </Tooltip>
             <Dropdown
-              menu={{ items: notifications }}
+              menu={{ items: notificationElements }}
               trigger={['click']}
-              onOpenChange={(open) => open && setUnreadCount(0)}>
+              onOpenChange={(open) => {
+                if (open) {
+                  setUnreadCount(0)
+                  setNotifications(
+                    notifications.map((notification) => ({ ...notification, is_read: true }))
+                  )
+                }
+              }}>
               <div className="mr-3" style={{ height: '3em', cursor: 'pointer' }}>
                 <BellOutlined className={styles.icon} />
                 <Badge count={unreadCount} style={{ position: 'absolute', bottom: 5 }} />

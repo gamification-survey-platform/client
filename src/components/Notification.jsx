@@ -87,7 +87,7 @@ const FeedbackResponseNotification = ({
     <div onClick={handleClick}>
       <Row className="font-weight-bold">
         {!is_read ? <UnreadCircle /> : null}
-        {sender_andrew_id} has provided feedback on your submission.
+        Your feedback request was answered!
       </Row>
       <Row>{data.text}</Row>
       <Row>Click here navigate to your report.</Row>
