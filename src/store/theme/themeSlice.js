@@ -1,21 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { PURGE } from 'redux-persist'
-import Dog from '../../assets/multiple-choice/nature/dog.jpeg'
-import Cat from '../../assets/multiple-choice/nature/cat.jpeg'
-import Bird from '../../assets/multiple-choice/nature/bird.jpeg'
-import Bone from '../../assets/multiple-choice/nature/bone.jpeg'
-import Bowl from '../../assets/multiple-choice/nature/bowl.png'
-import Nest from '../../assets/multiple-choice/nature/nest.jpeg'
+import MC1 from '../../assets/multiple-choice/multiChoice1.png'
+import MC2 from '../../assets/multiple-choice/multiChoice2.png'
+import MC3 from '../../assets/multiple-choice/multiChoice3.png'
+import T1 from '../../assets/multiple-choice/target1.png'
+import T2 from '../../assets/multiple-choice/target2.png'
+import T3 from '../../assets/multiple-choice/target3.png'
 const initialState = {
   color: null,
   cursor: null,
   is_published: false,
-  multiple_choice_item: Dog,
-  scale_multiple_choice_item: Cat,
-  multiple_select_item: Bird,
-  multiple_choice_target: Bone,
-  scale_multiple_choice_target: Bowl,
-  multiple_select_target: Nest
+  multiple_choice_item: MC1,
+  scale_multiple_choice_item: MC2,
+  multiple_select_item: MC3,
+  multiple_choice_target: T1,
+  scale_multiple_choice_target: T2,
+  multiple_select_target: T3
 }
 
 const themeSlice = createSlice({

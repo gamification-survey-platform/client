@@ -556,6 +556,11 @@ const Question = (question) => {
     question_type
   )
   const handleDeleteQuestion = () => dispatch(deleteQuestion({ ...question }))
+  let questionText
+  if (question_type === 'SLIDEREVIEW') questionText = 'Click on the slide to open the questionnaire'
+  else if (question_type === 'NUMBER' && !isNaN(questionProps.min) && !isNaN(questionProps.max))
+    questionText = `${text} (Enter a number in between [${questionProps.min}, ${questionProps.max}])`
+  else questionText = text
   return (
     <div id={id} className="mb-5">
       <Form.Item
@@ -568,9 +573,7 @@ const Question = (question) => {
             className={questionProps.is_required ? 'required-field py-3' : 'py-3'}
             style={{ opacity: isDragging ? 0.2 : 1 }}
             ref={dragDropRef}>
-            {question_type === 'SLIDEREVIEW'
-              ? 'Click on the slide to open the questionnaire'
-              : text}
+            {questionText}
           </div>
         }>
         <Row>
