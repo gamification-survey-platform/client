@@ -10,6 +10,7 @@ import { deleteQuestion, editAnswer } from '../../../store/survey/surveySlice'
 import surveySelector from '../../../store/survey/selectors'
 import { useDrag, useDrop } from 'react-dnd'
 import themeSelector from '../../../store/theme/selectors'
+import userSelector from '../../../store/user/selectors'
 import renderScene from '../../../components/multiple-choice/renderMultipleChoiceAnimation'
 import TextFeedback from '../../../components/TextFeedback'
 import { getRandomEmoji } from './emojis'
@@ -510,10 +511,11 @@ const Question = (question) => {
   const { text, handleReorderQuestions, index, ...questionProps } = question
   const courses = useSelector(coursesSelector)
   const { course_id } = useParams()
+  const user = useSelector(userSelector)
   const course = courses.find(
     ({ course_number }) => parseInt(course_id) === parseInt(course_number)
   )
-  questionProps.gamified = questionProps.gamified && course.user_role === 'Student'
+  questionProps.gamified = questionProps.gamified && !user.is_staff
   const survey = useSelector(surveySelector)
   const { question_type } = question
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
