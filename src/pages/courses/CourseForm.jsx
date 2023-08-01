@@ -49,9 +49,9 @@ const CourseForm = () => {
         img.onload = async () => {
           const canvas = document.createElement('canvas')
           const ctx = canvas.getContext('2d')
-          canvas.width = 100
-          canvas.height = 100
-          ctx.drawImage(img, 0, 0, 100, 100)
+          canvas.width = 300
+          canvas.height = 300
+          ctx.drawImage(img, 0, 0, 300, 300)
           const data = canvas.toDataURL('image/png')
           const file = dataURLtoFile(data, coursePicture.name)
           resolve(file)
