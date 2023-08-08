@@ -36,8 +36,14 @@ const Landing = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault()
-    form.validateFields(['andrewId', 'password'])
     const { andrewId, password } = form.getFieldsValue()
+    try {
+      await form.validateFields(['andrewId', 'password'])
+    } catch (e) {
+      console.error(e)
+      messageApi.open({ type: 'error', content: 'Please fill out the relevant fields!' })
+      return
+    }
     try {
       const res = await registerApi({ andrewId, password })
       if (res.status === 200)
@@ -45,6 +51,7 @@ const Landing = () => {
           type: 'success',
           content: `Successfully registered! Please login to continue.`
         })
+      form.setFieldsValue({ andrewId: '', password: '' })
     } catch (e) {
       console.error(e)
       messageApi.open({ type: 'error', content: e.message })
