@@ -37,6 +37,7 @@ const surveySlice = createSlice({
   name: 'survey',
   initialState,
   reducers: {
+    resetSurvey: (state, action) => initialState,
     setSurvey: (state, action) => ({ ...state, ...action.payload }),
     changeView: (state) => ({ ...state, instructorView: !state.instructorView }),
     addSection: (state, action) => {
@@ -194,6 +195,7 @@ const surveySlice = createSlice({
 })
 
 export const {
+  resetSurvey,
   setSurvey,
   addSection,
   editSection,
