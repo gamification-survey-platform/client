@@ -56,7 +56,7 @@ const Leaderboard = () => {
         else if (ranking === 2) trophyColor = 'silver'
         else trophyColor = '#CD7F32'
         return (
-          <Row align="middle" justify="center">
+          <Row align="left" style={{ paddingLeft: '30%' }}>
             {renderTrophy ? (
               <TrophyFilled className="mr-1" style={{ color: trophyColor, fontSize: '1rem' }} />
             ) : null}
@@ -78,8 +78,9 @@ const Leaderboard = () => {
       title: 'Date Joined',
       dataIndex: 'date_joined',
       key: 'date_joined',
+      align: 'center',
       render: (_, { date_joined }) => {
-        return dayjs(date_joined).format('MM/DD/YYYY')
+        return <Row align="center">{dayjs(date_joined).format('MM/DD/YYYY')}</Row>
       }
     }
   ]
