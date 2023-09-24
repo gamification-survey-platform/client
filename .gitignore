@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+/venv
 
 # testing
 /coverage
@@ -30,3 +31,4 @@ terraform/terraform.tfvars
 # Ignore Terraform .tfstate files
 *.tfstate
 *.tfstate.*
+.gitignore
