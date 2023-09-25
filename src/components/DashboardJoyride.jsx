@@ -87,7 +87,7 @@ const DashboardJoyride = () => {
 
   return (
     <>
-      <QuestionCircleOutlined onClick={startJoyride} style={{ cursor: 'pointer', color: '#4b0082' }} />
+      <QuestionCircleOutlined onClick={startJoyride} style={{ cursor: 'pointer', color: '#FFFFFF', fontSize: '24px', marginRight: '10px' }} />
       <Joyride
         key={joyrideKey}
         callback={handleJoyrideCallback}
@@ -109,7 +109,7 @@ const DashboardJoyride = () => {
         }}
       />
     </>
-  );
+    );
 };
 
 export default DashboardJoyride;
