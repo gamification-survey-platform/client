@@ -12,6 +12,7 @@ import Spinner from '../components/Spinner'
 import StudentReviewsList from '../components/StudentReviewsList'
 import { getTheme } from '../api/theme'
 import { setColorTheme, setCursor, setIconTheme, setTheme } from '../store/theme/themeSlice'
+import DashboardJoyride from '../components/DashboardJoyride'
 
 const Home = () => {
   const user = useSelector(userSelector)
@@ -66,6 +67,7 @@ const Home = () => {
     <Spinner show={spin} />
   ) : (
     <Row>
+      <DashboardJoyride />
       <Col span={user.is_staff ? 24 : 17}>
         <Row gutter={10} className="m-3">
           {courses.map((course, i) => {

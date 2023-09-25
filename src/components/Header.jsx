@@ -46,37 +46,37 @@ const initialItems = [
   {
     key: '0',
     icon: <HomeOutlined />,
-    label: 'Dashboard'
+    label: <div className="Dashboard">Dashboard</div>
   },
   {
     key: '1',
     icon: <UserOutlined />,
-    label: 'Profile'
+    label: <div className="profile">Profile</div>
   },
   {
     key: '2',
     icon: <BookOutlined />,
-    label: 'Courses'
+    label: <div className="courses">Courses</div>
   },
   {
     key: '3',
     icon: <GiShoppingCart />,
-    label: 'Store'
+    label: <div className="store">Store</div>
   },
   {
     key: '4',
     icon: <AntDesignOutlined />,
-    label: 'Theme'
+    label: <div className="theme">Theme</div>
   },
   {
     key: '5',
     icon: <OrderedListOutlined />,
-    label: 'Leaderboard'
+    label: <div className="leaderboard">Leaderboard</div>
   },
   {
     key: '6',
     icon: <SettingOutlined />,
-    label: 'Guide'
+    label: <div className="guide">Guide</div>
   }
 ]
 
@@ -203,7 +203,7 @@ const AppHeader = ({ children }) => {
           </LinkContainer>
           <Row>
             <Tooltip title="Daily streak" color={'gold'} placement="left">
-              <div className="mr-3">
+              <div className="mr-3 daily-streak">
                 <FireOutlined className={styles.icon} />
                 <Badge
                   color="gold"
@@ -226,12 +226,12 @@ const AppHeader = ({ children }) => {
                   )
                 }
               }}>
-              <div className="mr-3" style={{ height: '3em', cursor: 'pointer' }}>
+              <div className="mr-3 notification" style={{ height: '3em', cursor: 'pointer' }}>
                 <BellOutlined className={styles.icon} />
                 <Badge count={unreadCount} style={{ position: 'absolute', bottom: 5 }} />
               </div>
             </Dropdown>
-            <div>
+            <div className="logout">
               <LogoutOutlined className={styles.icon} role="button" onClick={handleLogout} />
             </div>
           </Row>
