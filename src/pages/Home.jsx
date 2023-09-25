@@ -67,7 +67,6 @@ const Home = () => {
     <Spinner show={spin} />
   ) : (
     <Row>
-      <DashboardJoyride />
       <Col span={user.is_staff ? 24 : 17}>
         <Row gutter={10} className="m-3">
           {courses.map((course, i) => {

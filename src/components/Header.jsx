@@ -32,6 +32,7 @@ import { getNotifications } from '../api/notifications'
 import { setUser } from '../store/user/userSlice'
 import Notification from './Notification'
 import styles from '../styles/Header.module.css'
+import DashboardJoyride from './DashboardJoyride'
 
 const rankings = [
   { title: 'Bronze', image: Bronze },
@@ -202,6 +203,11 @@ const AppHeader = ({ children }) => {
             <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
           <Row>
+            <Tooltip title="Start Tutorial" color={'gold'} placement="left">
+              <div className="mr-3">
+                <DashboardJoyride />
+              </div>
+            </Tooltip>
             <Tooltip title="Daily streak" color={'gold'} placement="left">
               <div className="mr-3 daily-streak">
                 <FireOutlined className={styles.icon} />

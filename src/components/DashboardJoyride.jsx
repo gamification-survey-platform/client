@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import Joyride, { STATUS } from 'react-joyride';
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 const DashboardJoyride = () => {
-  const [run, setRun] = useState(true); // to control whether the tour should run
-  
+  const [run, setRun] = useState(false);
+  const [joyrideKey, setJoyrideKey] = useState(0);
+
+  const startJoyride = () => {
+    setRun(true);
+    setJoyrideKey(joyrideKey + 1);
+  };
+
   const steps = [
     {
       target: '.Dashboard',
@@ -63,25 +70,29 @@ const DashboardJoyride = () => {
   };
 
   return (
-    <Joyride
-      callback={handleJoyrideCallback}
-      continuous={true}
-      getHelpers={(helpers) => window.helpers = helpers} 
-      run={run}
-      scrollToFirstStep={true}
-      showProgress={true}
-      showSkipButton={true}
-      steps={steps}
-      styles={{
-        options: {
-          // Change main color
-          primaryColor: '#4b0082',
-          // Change overlay color
-          overlayColor: 'rgba(79, 26, 0, 0.4)',
-          width: 900
-        },
-      }}
-    />
+    <>
+      <QuestionCircleOutlined onClick={startJoyride} style={{ cursor: 'pointer', color: '#4b0082' }} />
+      <Joyride
+        key={joyrideKey}
+        callback={handleJoyrideCallback}
+        continuous={true}
+        getHelpers={(helpers) => window.helpers = helpers} 
+        run={run}
+        scrollToFirstStep={true}
+        showProgress={true}
+        disableBeacon={true}
+        startAt={0}
+        showSkipButton={true}
+        steps={steps}
+        styles={{
+          options: {
+            primaryColor: '#4b0082',
+            overlayColor: 'rgba(79, 26, 0, 0.4)',
+            width: 900
+          },
+        }}
+      />
+    </>
   );
 };
 
