@@ -18,65 +18,115 @@ const DashboardJoyride = () => {
   const steps = [
     {
       target: '.Dashboard',
-      content: 'This is your dashboard. You can find all the information about your progress here.',
+      content: (
+        <>
+          <p><strong>Dashboard:</strong> Your central hub for accessing features and information.</p>
+          <p>Here, it provides a quick overview of your status and activities on the platform.</p>
+        </>
+      ),
       placement: 'right',
       disableBeacon: true
     },
     {
       target: '.profile',
-      content: 'This is your profile. You can edit and upload your picture here.',
+      content: (
+        <>
+          <p><strong>Profile Section:</strong> Personalize your experience.</p>
+          <p>Edit your name, upload a profile picture, and manage your personal information to keep your profile up to date.</p>
+        </>
+      ),
       placement: 'right',
       disableBeacon: true
     },
     {
       target: '.courses',
-      content: 'Here you can find your courses.',
+      content: (
+        <>
+          <p><strong>Courses:</strong> Explore your learning path.</p>
+          <p>Find and manage your courses here. You can access course materials, submit assignments.</p>
+        </>
+      ),
       placement: 'right',
       disableBeacon: true
     },
     {
       target: '.store',
-      content: 'This is the store. You can find various items here.',
+      content: (
+        <>
+          <p><strong>Store:</strong> Discover and acquire resources.</p>
+          <p>Browse and purchase items, resources, and additional features to enhance your learning experience.</p>
+        </>
+      ),
       placement: 'right',
       disableBeacon: true
     },
     {
       target: '.theme',
-      content: 'You can customize the theme of your dashboard from here.',
+      content: (
+        <>
+          <p><strong>Theme Customization:</strong> Tailor the look and feel of your dashboard.</p>
+          <p>Customize the theme, adjust the layout, and choose your preferred color scheme to create a comfortable and personalized learning environment.</p>
+        </>
+      ),
       placement: 'right',
       disableBeacon: true
     },
     {
-        target: '.leaderboard',
-        content: 'This is the leaderboard. You can view your rankings here.',
-        placement: 'right',
-        disableBeacon: true
+      target: '.leaderboard',
+      content: (
+        <>
+          <p><strong>Leaderboard:</strong> Track your achievements and compare your performance.</p>
+          <p>View your rankings, earn badges, and see how you stack up against your peers. Aim high and stay motivated!</p>
+        </>
+      ),
+      placement: 'right',
+      disableBeacon: true
     },
     {
-        target: '.guide',
-        content: 'This is the guide. You can find helpful information about using the platform here.',
-        placement: 'right',
-        disableBeacon: true
+      target: '.guide',
+      content: (
+        <>
+          <p><strong>Guide:</strong> Get help and support.</p>
+          <p>Access helpful information, tutorials, and FAQs about using the platform. It is your go-to place for finding answers and learning how to make the most out of the platform.</p>
+        </>
+      ),
+      placement: 'right',
+      disableBeacon: true
     },
     {
-        target: '.daily-streak',
-        content: 'This shows your daily streak. Keep logging in daily to increase it!',
-        placement: 'bottom',
-        disableBeacon: true
+      target: '.daily-streak',
+      content: (
+        <>
+          <p><strong>Daily Streak:</strong> Build consistent learning habits.</p>
+          <p>Keep logging in daily to maintain and increase your streak. It is a fun way to stay committed to your learning goals!</p>
+        </>
+      ),
+      placement: 'bottom',
+      disableBeacon: true
     },
     {
-        target: '.notification',
-        content: 'Here you can see your notifications. Click to view them.',
-        placement: 'bottom',
-        disableBeacon: true
+      target: '.notification',
+      content: (
+        <>
+          <p><strong>Notifications:</strong> Stay informed about updates and activities.</p>
+          <p>Check your notifications regularly to keep up with announcements, feedback, and messages. Don’t miss out on important alerts and news!</p>
+        </>
+      ),
+      placement: 'bottom',
+      disableBeacon: true
     },
     {
-        target: '.logout',
-        content: 'Click here to log out of your account.',
-        placement: 'bottom',
-        disableBeacon: true
+      target: '.logout',
+      content: (
+        <>
+          <p><strong>Logout:</strong> Securely exit the platform.</p>
+          <p>Click here to log out of your account when you have finished your session. Remember to log out, especially when using shared devices.</p>
+        </>
+      ),
+      placement: 'bottom',
+      disableBeacon: true
     },
-  ];
+];
 
   const handleJoyrideCallback = (data) => {
     const { status } = data;
