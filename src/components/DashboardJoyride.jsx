@@ -115,6 +115,7 @@ const DashboardJoyride = () => {
         showProgress={true}
         disableBeacon={true}
         startAt={0}
+        hideCloseButton={true}
         showSkipButton={true}
         steps={steps}
         styles={{
