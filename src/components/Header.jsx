@@ -52,7 +52,7 @@ const initialItems = [
   {
     key: '1',
     icon: <UserOutlined />,
-    label: <div className="profile">Profile</div>
+    label: 'Profile'
   },
   {
     key: '2',

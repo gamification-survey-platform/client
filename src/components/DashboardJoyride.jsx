@@ -28,17 +28,6 @@ const DashboardJoyride = () => {
       disableBeacon: true
     },
     {
-      target: '.profile',
-      content: (
-        <>
-          <p><strong>Profile Section:</strong> Personalize your experience.</p>
-          <p>Edit your name, upload a profile picture, and manage your personal information to keep your profile up to date.</p>
-        </>
-      ),
-      placement: 'right',
-      disableBeacon: true
-    },
-    {
       target: '.courses',
       content: (
         <>
@@ -103,29 +92,7 @@ const DashboardJoyride = () => {
       ),
       placement: 'bottom',
       disableBeacon: true
-    },
-    {
-      target: '.notification',
-      content: (
-        <>
-          <p><strong>Notifications:</strong> Stay informed about updates and activities.</p>
-          <p>Check your notifications regularly to keep up with announcements, feedback, and messages. Don’t miss out on important alerts and news!</p>
-        </>
-      ),
-      placement: 'bottom',
-      disableBeacon: true
-    },
-    {
-      target: '.logout',
-      content: (
-        <>
-          <p><strong>Logout:</strong> Securely exit the platform.</p>
-          <p>Click here to log out of your account when you have finished your session. Remember to log out, especially when using shared devices.</p>
-        </>
-      ),
-      placement: 'bottom',
-      disableBeacon: true
-    },
+    }
 ];
 
   const handleJoyrideCallback = (data) => {
