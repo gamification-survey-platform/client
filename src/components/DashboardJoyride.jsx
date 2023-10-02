@@ -20,8 +20,8 @@ const DashboardJoyride = () => {
       target: '.Dashboard',
       content: (
         <>
-          <p><strong>Dashboard:</strong> Your central hub for accessing features and information.</p>
-          <p>Here, it provides a quick overview of your status and activities on the platform.</p>
+          <p><strong>Dashboard:</strong> Your central hub for accessing courses information.</p>
+          <p>Here, it provides a quick overview of your activities on the platform.</p>
         </>
       ),
       placement: 'right',
@@ -32,7 +32,7 @@ const DashboardJoyride = () => {
       content: (
         <>
           <p><strong>Courses:</strong> Explore your learning path.</p>
-          <p>Find and manage your courses here. You can access course materials, submit assignments.</p>
+          <p>Find and manage your courses here. You can access course materials including Assignments, Members, View, Leaderboard, and submit assignments.</p>
         </>
       ),
       placement: 'right',
