@@ -205,7 +205,7 @@ const AppHeader = ({ children }) => {
           <Row>
             <Tooltip title="Start Tutorial" color={'gold'} placement="left">
               <div className="mr-3">
-                <DashboardJoyride />
+                <DashboardJoyride isFirstLogin={user?.is_first_login || false} />
               </div>
             </Tooltip>
             <Tooltip title="Daily streak" color={'gold'} placement="left">

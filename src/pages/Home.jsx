@@ -12,7 +12,6 @@ import Spinner from '../components/Spinner'
 import StudentReviewsList from '../components/StudentReviewsList'
 import { getTheme } from '../api/theme'
 import { setColorTheme, setCursor, setIconTheme, setTheme } from '../store/theme/themeSlice'
-import DashboardJoyride from '../components/DashboardJoyride'
 
 const Home = () => {
   const user = useSelector(userSelector)

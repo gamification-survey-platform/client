@@ -2,8 +2,8 @@ import Joyride, { STATUS } from 'react-joyride';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import React, { useState, useEffect } from 'react';
 
-const DashboardJoyride = () => {
-  const [run, setRun] = useState(false);
+const DashboardJoyride = ({ isFirstLogin }) => {
+  const [run, setRun] = useState(isFirstLogin);
   const [joyrideKey, setJoyrideKey] = useState(0);
 
   const startJoyride = () => {
