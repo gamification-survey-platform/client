@@ -50,33 +50,11 @@ const DashboardJoyride = () => {
       disableBeacon: true
     },
     {
-      target: '.theme',
-      content: (
-        <>
-          <p><strong>Theme Customization:</strong> Tailor the look and feel of your dashboard.</p>
-          <p>Customize the theme, adjust the layout, and choose your preferred color scheme to create a comfortable and personalized learning environment.</p>
-        </>
-      ),
-      placement: 'right',
-      disableBeacon: true
-    },
-    {
       target: '.leaderboard',
       content: (
         <>
           <p><strong>Leaderboard:</strong> Track your achievements and compare your performance.</p>
           <p>View your rankings, earn badges, and see how you stack up against your peers. Aim high and stay motivated!</p>
-        </>
-      ),
-      placement: 'right',
-      disableBeacon: true
-    },
-    {
-      target: '.guide',
-      content: (
-        <>
-          <p><strong>Guide:</strong> Get help and support.</p>
-          <p>Access helpful information, tutorials, and FAQs about using the platform. It is your go-to place for finding answers and learning how to make the most out of the platform.</p>
         </>
       ),
       placement: 'right',

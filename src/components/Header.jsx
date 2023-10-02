@@ -67,7 +67,7 @@ const initialItems = [
   {
     key: '4',
     icon: <AntDesignOutlined />,
-    label: <div className="theme">Theme</div>
+    label: 'Theme'
   },
   {
     key: '5',
@@ -77,7 +77,7 @@ const initialItems = [
   {
     key: '6',
     icon: <SettingOutlined />,
-    label: <div className="guide">Guide</div>
+    label: 'Guide'
   }
 ]
 
