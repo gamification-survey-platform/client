@@ -61,6 +61,17 @@ const DashboardJoyride = () => {
       disableBeacon: true
     },
     {
+      target: '.gamification',
+      content: (
+        <>
+          <p><strong>Gamification:</strong> Visualize your progress and stay motivated!</p>
+          <p>This element shows your work progress. Try to fill up the triangle by completing tasks and engaging with the platform!</p>
+        </>
+      ),
+      placement: 'bottom',
+      disableBeacon: true
+    },
+    {
       target: '.daily-streak',
       content: (
         <>

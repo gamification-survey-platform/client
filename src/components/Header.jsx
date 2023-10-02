@@ -183,7 +183,7 @@ const AppHeader = ({ children }) => {
           defaultSelectedKeys={['0']}
         />
         {collapsed || user.is_staff ? null : (
-          <div className={styles.progressTriangleWrapper}>
+          <div className={`gamification ${styles.progressTriangleWrapper}`}>
             <div className="text-center text-white">
               <Image width={100} src={rankings[user.level].image} />
               <p>
