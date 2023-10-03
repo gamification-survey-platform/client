@@ -39,6 +39,17 @@ const DashboardJoyride = ({ isFirstLogin }) => {
       disableBeacon: true
     },
     {
+      target: '.first-course-assignment',
+      content: (
+        <>
+          <p><strong>Assignment:</strong> Submit your tasks here.</p>
+          <p>This section is where you can find and submit assignments for your course.</p>
+        </>
+      ),
+      placement: 'right',
+      disableBeacon: true
+    },
+    {
       target: '.store',
       content: (
         <>
