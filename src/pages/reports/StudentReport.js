@@ -165,7 +165,7 @@ const StudentReport = () => {
                               </Typography.Title>
                             </Row>
                           ) : null}
-                          {question_type !== 'SLIDEREVIEW' && question_type === 'MULTIPLECHOICE' && (
+                          {question_type !== 'SLIDEREVIEW' && question_type === 'SCALEMULTIPLECHOICE' && (
                             <>
                               <Row className="ml-3">
                                 <Typography.Title level={5}>Answers</Typography.Title>
