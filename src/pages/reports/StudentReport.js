@@ -165,9 +165,9 @@ const StudentReport = () => {
                               </Typography.Title>
                             </Row>
                           ) : null}
-                          {question_type !== 'SLIDEREVIEW' && (
+                          {question_type !== 'SLIDEREVIEW' && question_type === 'MULTIPLECHOICE' && (
                             <>
-                              {/* <Row className="ml-3">
+                              <Row className="ml-3">
                                 <Typography.Title level={5}>Answers</Typography.Title>
                               </Row>
                               {artifact_reviews.map((review, i) => {
@@ -181,7 +181,7 @@ const StudentReport = () => {
                                     />
                                   </Row>
                                 )
-                              })} */}
+                              })}
                             </>
                           )}
                         </Col>
