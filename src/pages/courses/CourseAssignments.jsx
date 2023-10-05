@@ -202,7 +202,6 @@ const CourseAssignments = () => {
       <Table 
         columns={columns} 
         dataSource={dataSource}
-        rowClassName={(record, index) => index === 0 ? 'first-course-assignment' : ''}
       />
       {user.is_staff && (
         <Button className="m-3" onClick={handleAddAssignment}>

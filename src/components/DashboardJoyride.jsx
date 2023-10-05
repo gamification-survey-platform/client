@@ -1,10 +1,12 @@
-import Joyride, { STATUS } from 'react-joyride';
+import Joyride, { STATUS, ACTIONS, EVENTS } from 'react-joyride';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardJoyride = ({ isFirstLogin }) => {
   const [run, setRun] = useState(isFirstLogin);
   const [joyrideKey, setJoyrideKey] = useState(0);
+  const navigate = useNavigate();
 
   const startJoyride = () => {
     setRun(true);
@@ -96,7 +98,12 @@ const DashboardJoyride = ({ isFirstLogin }) => {
 ];
 
   const handleJoyrideCallback = (data) => {
-    const { status } = data;
+    const { status, step, action, type } = data;
+
+    if (type === EVENTS.STEP_AFTER && action === ACTIONS.NEXT && step.target === ".Dashboard") {
+      navigate('/courses');
+    }
+
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRun(false);
     }
