@@ -199,14 +199,18 @@ const CourseAssignments = () => {
     <Spinner show={spin} />
   ) : (
     <div className="m-5">
-      <Table columns={columns} dataSource={dataSource} />
+      <Table 
+        columns={columns} 
+        dataSource={dataSource}
+        rowClassName={(record, index) => index === 0 ? 'first-course-assignment' : ''}
+      />
       {user.is_staff && (
         <Button className="m-3" onClick={handleAddAssignment}>
           Add Assignment
         </Button>
       )}
     </div>
-  )
+  );
 }
 
 export default CourseAssignments

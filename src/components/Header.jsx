@@ -32,6 +32,7 @@ import { getNotifications } from '../api/notifications'
 import { setUser } from '../store/user/userSlice'
 import Notification from './Notification'
 import styles from '../styles/Header.module.css'
+import DashboardJoyride from './DashboardJoyride'
 
 const rankings = [
   { title: 'Bronze', image: Bronze },
@@ -46,7 +47,7 @@ const initialItems = [
   {
     key: '0',
     icon: <HomeOutlined />,
-    label: 'Dashboard'
+    label: <div className="Dashboard">Dashboard</div>
   },
   {
     key: '1',
@@ -56,12 +57,12 @@ const initialItems = [
   {
     key: '2',
     icon: <BookOutlined />,
-    label: 'Courses'
+    label: <div className="courses">Courses</div>
   },
   {
     key: '3',
     icon: <GiShoppingCart />,
-    label: 'Store'
+    label: <div className="store">Store</div>
   },
   {
     key: '4',
@@ -71,7 +72,7 @@ const initialItems = [
   {
     key: '5',
     icon: <OrderedListOutlined />,
-    label: 'Leaderboard'
+    label: <div className="leaderboard">Leaderboard</div>
   },
   {
     key: '6',
@@ -182,7 +183,7 @@ const AppHeader = ({ children }) => {
           defaultSelectedKeys={['0']}
         />
         {collapsed || user.is_staff ? null : (
-          <div className={styles.progressTriangleWrapper}>
+          <div className={`gamification ${styles.progressTriangleWrapper}`}>
             <div className="text-center text-white">
               <Image width={100} src={rankings[user.level].image} />
               <p>
@@ -202,8 +203,13 @@ const AppHeader = ({ children }) => {
             <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
           <Row>
-            <Tooltip title="Daily streak" color={'gold'} placement="left">
+            <Tooltip title="Start Tutorial" color={'gold'} placement="left">
               <div className="mr-3">
+                <DashboardJoyride isFirstLogin={user?.is_first_login || false} />
+              </div>
+            </Tooltip>
+            <Tooltip title="Daily streak" color={'gold'} placement="left">
+              <div className="mr-3 daily-streak">
                 <FireOutlined className={styles.icon} />
                 <Badge
                   color="gold"
@@ -226,12 +232,12 @@ const AppHeader = ({ children }) => {
                   )
                 }
               }}>
-              <div className="mr-3" style={{ height: '3em', cursor: 'pointer' }}>
+              <div className="mr-3 notification" style={{ height: '3em', cursor: 'pointer' }}>
                 <BellOutlined className={styles.icon} />
                 <Badge count={unreadCount} style={{ position: 'absolute', bottom: 5 }} />
               </div>
             </Dropdown>
-            <div>
+            <div className="logout">
               <LogoutOutlined className={styles.icon} role="button" onClick={handleLogout} />
             </div>
           </Row>
