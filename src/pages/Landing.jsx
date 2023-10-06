@@ -7,6 +7,7 @@ import { setUser } from '../store/user/userSlice'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'antd/es/form/Form'
 import Spinner from '../components/Spinner'
+import { addMember } from '../api/members'
 
 const Landing = () => {
   const [form] = useForm()
@@ -35,28 +36,54 @@ const Landing = () => {
   }
 
   const handleRegister = async (e) => {
-    e.preventDefault()
-    const { andrewId, password } = form.getFieldsValue()
+    e.preventDefault();
+    const { andrewId, password } = form.getFieldsValue();
     try {
-      await form.validateFields(['andrewId', 'password'])
+        await form.validateFields(['andrewId', 'password']);
     } catch (e) {
-      console.error(e)
-      messageApi.open({ type: 'error', content: 'Please fill out the relevant fields!' })
-      return
+        console.error(e);
+        messageApi.open({ type: 'error', content: 'Please fill out the relevant fields!' });
+        return;
     }
     try {
-      const res = await registerApi({ andrewId, password })
-      if (res.status === 200)
-        messageApi.open({
-          type: 'success',
-          content: `Successfully registered! Please login to continue.`
-        })
-      form.setFieldsValue({ andrewId: '', password: '' })
+        const res = await registerApi({ andrewId, password });
+        if (res.status === 200) {
+            messageApi.open({
+                type: 'success',
+                content: `Successfully registered! Please login to continue.`
+            });
+        form.setFieldsValue({ andrewId: '', password: '' }); 
+            try {
+                const addMemberResponse = await addMember({
+                    course_id: "10000",
+                    memberId: andrewId,
+                    memberRole: 'Student'
+                });
+                if (addMemberResponse.status === 201) {
+                    messageApi.open({
+                        type: 'success',
+                        content: `You've been registered to course 10000 as well!`
+                    });
+                } else {
+                    console.error(addMemberResponse);
+                    messageApi.open({
+                        type: 'error',
+                        content: 'There was an issue registering you to course 10000.'
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+                messageApi.open({
+                    type: 'error',
+                    content: 'Failed to automatically register to course 10000.'
+                });
+            }
+        }
     } catch (e) {
-      console.error(e)
-      messageApi.open({ type: 'error', content: e.message })
+        console.error(e);
+        messageApi.open({ type: 'error', content: e.message });
     }
-  }
+}
 
   const handleEnter = (e) => e.keyCode === 13 && handleLogin(e)
 
