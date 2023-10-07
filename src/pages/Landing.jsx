@@ -52,7 +52,6 @@ const Landing = () => {
                 type: 'success',
                 content: `Successfully registered! Please login to continue.`
             });
-        form.setFieldsValue({ andrewId: '', password: '' }); 
             try {
                 const addMemberResponse = await addMember({
                     course_id: "10000",
@@ -78,6 +77,7 @@ const Landing = () => {
                     content: 'Failed to automatically register to course 10000.'
                 });
             }
+        form.setFieldsValue({ andrewId: '', password: '' }); 
         }
     } catch (e) {
         console.error(e);
