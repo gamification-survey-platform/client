@@ -124,8 +124,8 @@ const StudentReport = () => {
 
                     return (
                       <Row key={i}>
-                        <Col span={data ? 8 : 20}>
-                          <Typography.Title level={4} id={`${section.pk}-${question.pk}`}>
+                        <Col span={data ? 10 : 20}>
+                          <Typography.Title level={4} id={`${section.pk}-${question.pk}`} style={{ marginTop: 150, marginLeft: 40 }}>
                             {text}
                           </Typography.Title>
                           {question_type === 'SLIDEREVIEW' && (
@@ -150,13 +150,13 @@ const StudentReport = () => {
                               />
                             </div>
                           )}
-                          {question_type === 'SCALEMULTIPLECHOICE' ? (
+                          {/* {question_type === 'SCALEMULTIPLECHOICE' ? (
                             <Row className="ml-3">
                               <Typography.Title level={5}>
                                 Options: {scaleOptions[number_of_scale].join(', ')}
                               </Typography.Title>
                             </Row>
-                          ) : null}
+                          ) : null} */}
                           {question_type === 'MULTIPLECHOICE' ||
                           question_type === 'MULTIPLESELECT' ? (
                             <Row className="ml-3">
@@ -165,7 +165,7 @@ const StudentReport = () => {
                               </Typography.Title>
                             </Row>
                           ) : null}
-                          {question_type !== 'SLIDEREVIEW' && (
+                          {question_type !== 'SLIDEREVIEW' && question_type !== 'SCALEMULTIPLECHOICE' && (
                             <>
                               <Row className="ml-3">
                                 <Typography.Title level={5}>Answers</Typography.Title>
@@ -186,7 +186,7 @@ const StudentReport = () => {
                           )}
                         </Col>
                         {data && !responseToRequestFeedbackData ? (
-                          <Col span={16}>
+                          <Col span={8}>
                             <div style={{ height: 400 }}>
                               <ChartWrapper type="donut" data={data} />
                             </div>

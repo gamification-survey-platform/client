@@ -35,16 +35,17 @@ const Courses = () => {
       title: '',
       dataIndex: 'assignments',
       key: 'assignments',
-      render: (_, course) => {
+      render: (_, course, index) => {
         return (
           <LinkContainer
             to={`/courses/${course.course_number}/assignments`}
+            className={index === 0 ? 'first-course-assignment' : ''}
             style={{ textAlign: 'center' }}>
             <Tag role="button" color="blue">
               Assignments
             </Tag>
           </LinkContainer>
-        )
+        );
       }
     },
     {

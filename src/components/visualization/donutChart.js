@@ -19,7 +19,7 @@ const renderDonutChart = ({ data: chartData, ref, chartHeight, chartWidth }) => 
     .append('g')
     .attr('transform', `translate(${chartWidth / 2}, ${chartHeight / 2})`)
 
-  svg.append('text').text(chartData.title).attr('text-anchor', 'middle')
+  // svg.append('text').text(chartData.title).attr('text-anchor', 'middle')
 
   const pie = d3.pie().value((d) => d[1])
   const data = pie(Object.entries(chartData.data))
