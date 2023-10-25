@@ -50,7 +50,7 @@ const renderScene = ({
   const wrapperRef = d3.select(ref)
   wrapperRef.select('svg').remove()
   const height = 100
-  const objectSize = 50
+  const objectSize = 70
   const svg = wrapperRef.append('svg').attr('height', height).attr('width', width).append('g')
   const widthMargin = 50
   const sceneWidth = width - widthMargin * 2
@@ -177,14 +177,17 @@ const renderScene = ({
     .attr('height', objectSize)
     .attr('width', objectSize)
     .attr('xlink:href', itemIcon)
+    .attr('y', -10)
+    .style('fill', 'red')
 
   groups
     .append('text')
-    .attr('class', 'text')
+    // .attr('class', 'text')
     .text((d) => d.text)
-    .style('font-size', 12)
+    .style('font-size', 10)
     .style('font-weight', 'bold')
-    .attr('y', objectSize - 12)
+    .attr('y', objectSize - 3)
+
 
   d3.selectAll('.text').each(function (d) {
     const node = d3.select(this).node()
