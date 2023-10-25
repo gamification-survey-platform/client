@@ -5,14 +5,19 @@ import DefaultImage from '../assets/default.jpg'
 import { Upload, Row, Col, Form, Image, Button, Typography } from 'antd'
 
 import { useForm } from 'antd/es/form/Form'
+import { Switch} from 'antd'
 import Input from 'antd/es/input/Input'
 import { editProfile, updateProfilePic } from '../api/profile'
 import useMessage from 'antd/es/message/useMessage'
 import { setUser } from '../store/user/userSlice'
+import { set_gamified_mode } from '../gamified'
+import { gamified_mode } from '../gamified'
 
 const Profile = () => {
+
   const user = useSelector(userSelector)
   const [editing, setEditing] = useState(false)
+  const [gamified, setGamified] = useState(false)
   const [messageApi, contextHolder] = useMessage()
   const { first_name, last_name, email, date_joined: unformattedDate } = user
   const dispatch = useDispatch()
@@ -24,6 +29,11 @@ const Profile = () => {
     day: 'numeric'
   })
   const initialValues = { first_name, last_name, email, date_joined }
+
+  const gamificationModeChange = (checked) =>{
+    set_gamified_mode(checked)
+    setGamified(checked)
+  }
 
   const handleClick = async (e) => {
     if (!editing) {
@@ -59,6 +69,7 @@ const Profile = () => {
     }
     return false
   }
+
   return (
     <>
       <Row className="mt-5">
@@ -107,11 +118,14 @@ const Profile = () => {
             <Form.Item
               name="email"
               label="Email"
-              rules={[{ required: true, message: 'Please add a last name' }]}>
+              rules={[{ required: true, message: 'Please add an email' }]}>
               <Input disabled={!editing} />
             </Form.Item>
             <Form.Item name="date_joined" label="Date Joined">
               <Input disabled />
+            </Form.Item>
+            <Form.Item name="gamification_mode" label="Gamification mode" valuePropName="checked">
+              <Switch defaultChecked = {gamified_mode()} onChange={gamificationModeChange}/>
             </Form.Item>
           </Form>
         </Col>

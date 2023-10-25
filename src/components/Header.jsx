@@ -33,6 +33,7 @@ import { setUser } from '../store/user/userSlice'
 import Notification from './Notification'
 import styles from '../styles/Header.module.css'
 import DashboardJoyride from './DashboardJoyride'
+import { gamified_mode } from '../gamified'
 
 const rankings = [
   { title: 'Bronze', image: Bronze },
@@ -182,7 +183,7 @@ const AppHeader = ({ children }) => {
           onClick={handleClick}
           defaultSelectedKeys={['0']}
         />
-        {collapsed || user.is_staff ? null : (
+        {collapsed || user.is_staff || !gamified_mode() ? null : (
           <div className={`gamification ${styles.progressTriangleWrapper}`}>
             <div className="text-center text-white">
               <Image width={100} src={rankings[user.level].image} />

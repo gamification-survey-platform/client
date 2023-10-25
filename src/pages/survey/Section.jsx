@@ -9,6 +9,7 @@ import surveySelector from '../../store/survey/selectors'
 import { deleteSection, reorderQuestions } from '../../store/survey/surveySlice'
 import { useDrag, useDrop } from 'react-dnd'
 import { getSentimentEmoji } from './sentiment'
+import { gamified_mode } from '../../gamified'
 
 const Section = ({ sectionIdx, artifact, handleReorderSections }) => {
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
@@ -136,7 +137,7 @@ const Section = ({ sectionIdx, artifact, handleReorderSections }) => {
                   handleReorderQuestions={handleReorderQuestions}
                 />
               ))}
-            {section.sentiment ? (
+            {gamified_mode() && section.sentiment ? (
               <Row justify="end" className="m-3" align="middle">
                 <Typography.Title level={3} className="mr-3">
                   Section mood:

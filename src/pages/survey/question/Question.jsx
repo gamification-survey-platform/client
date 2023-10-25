@@ -17,6 +17,7 @@ import { getRandomEmoji } from './emojis'
 import coursesSelector from '../../../store/courses/selectors'
 import { useParams } from 'react-router'
 import styles from '../../../styles/Question.module.css'
+import { gamified_mode } from '../../../gamified'
 
 const randomEmoji = getRandomEmoji('positive')
 
@@ -257,6 +258,7 @@ const MultipleChoiceScale = ({
   const value = Form.useWatch(name, form)
   const dispatch = useDispatch()
 
+  //use animation
   useEffect(() => {
     const element = document.getElementById(name)
     if (answer && answer.length && initialRender) {
@@ -377,7 +379,7 @@ const MultiLineField = ({
   useEffect(() => {
     if (answer && idx < answer.length) {
       form.setFieldValue(name, answer[idx].text)
-      !response && answer[idx].text && setResponse(randomEmoji)
+      !response && answer[idx].text && gamified_mode() && setResponse(randomEmoji)
     }
   }, [answer])
   useEffect(() => {
@@ -444,7 +446,7 @@ const Number = ({
   useEffect(() => {
     if (answer && answer.length) {
       form.setFieldValue(name, answer[0].text)
-      !response && setResponse(randomEmoji)
+      !response && gamified_mode() && setResponse(randomEmoji)
     }
   }, [answer])
 
@@ -515,7 +517,7 @@ const Question = (question) => {
   const course = courses.find(
     ({ course_number }) => parseInt(course_id) === parseInt(course_number)
   )
-  questionProps.gamified = questionProps.gamified && !user.is_staff
+  questionProps.gamified = questionProps.gamified && !user.is_staff && gamified_mode()
   const survey = useSelector(surveySelector)
   const { question_type } = question
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
