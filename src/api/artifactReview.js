@@ -42,6 +42,15 @@ const getUserArtifactReviews = async () => {
   }
 }
 
+const getOptionalReview = async ({course_id, assignment_id, user_id}) => {
+  try {
+    const res = await api.get(`courses/${course_id}/assignments/${assignment_id}/user/${user_id}/optional_review`)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
 const getArtifactReview = async ({ course_id, assignment_id, review_id }) => {
   try {
     const res = await api.get(
@@ -120,5 +129,6 @@ export {
   assignArtifactReview,
   unassignArtifactReview,
   submitTriviaAnswer,
-  editArtifactReviewStatus
+  editArtifactReviewStatus,
+  getOptionalReview
 }

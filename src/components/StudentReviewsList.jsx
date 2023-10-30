@@ -36,11 +36,14 @@ const StudentReviewsList = ({
   showReopen = true,
   showPending = true,
   showLate = true,
+  showOptional = true,
   showCompleted = false
 }) => {
   const dispatch = useDispatch()
   const reopenReviews = artifactReviews.filter((r) => r.status === 'REOPEN')
   const pendingReviews = artifactReviews.filter((r) => r.status === 'INCOMPLETE')
+  console.log('hello')
+  console.log(pendingReviews)
   const lateReviews = artifactReviews.filter((r) => r.status === 'LATE')
   const completedReviews = artifactReviews.filter((r) => r.status === 'COMPLETED')
 
@@ -59,6 +62,9 @@ const StudentReviewsList = ({
         ) : null}
         {showPending ? (
           <ReviewList title={'Pending Reviews'} color="gold" reviews={pendingReviews} />
+        ) : null}
+        {showOptional ? (
+          <ReviewList title={'Optional Reviews'} color="blue" reviews={pendingReviews} />
         ) : null}
         {showCompleted ? (
           <ReviewList title={'Completed Reviews'} color="green" reviews={completedReviews} />

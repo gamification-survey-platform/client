@@ -12,10 +12,32 @@ const addMember = async ({ course_id, memberId, memberRole, teamId = null }) => 
   }
 }
 
+const changeMember = async ({ course_id, memberId, memberRole, teamId }) => {
+  console.log('memberId', memberId)
+  try {
+    const res = await api.patch(`courses/${course_id}/members/`, {
+      andrew_id: memberId,
+      team_id: teamId
+    })
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
 const getMembers = async ({ course_id, andrew_id = null }) => {
   try {
     const config = andrew_id ? { params: { andrew_id } } : {}
     const res = await api.get(`courses/${course_id}/members/`, config)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
+  }
+}
+
+const getCourseTeams = async ({ course_id }) => {
+  try {
+    const res = await api.get(`courses/${course_id}/teams/`)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -42,4 +64,4 @@ const removeMember = async ({ course_id, andrew_id }) => {
   }
 }
 
-export { addMember, getMembers, remindMember, removeMember }
+export { addMember, getMembers, remindMember, removeMember, changeMember, getCourseTeams }

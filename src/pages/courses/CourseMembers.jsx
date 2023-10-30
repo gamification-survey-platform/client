@@ -14,7 +14,7 @@ import {
   Space
 } from 'antd'
 import { useParams } from 'react-router'
-import { addMember, getMembers, removeMember } from '../../api/members'
+import { addMember, getMembers, removeMember, changeMember, getCourseTeams } from '../../api/members'
 import { UploadOutlined, InfoCircleOutlined } from '@ant-design/icons'
 import coursesSelector from '../../store/courses/selectors'
 import { useForm } from 'antd/es/form/Form'
@@ -23,8 +23,10 @@ import Upload from 'antd/es/upload/Upload'
 import Papa from 'papaparse'
 import userSelector from '../../store/user/selectors'
 
+const { Option } = Select
 const CourseMembers = () => {
   const [members, setMembers] = useState([])
+  const [allTeams, setTeam] = useState([])
   const [messageApi, contextHolder] = message.useMessage()
   const { course_id } = useParams()
   const [spin, setSpin] = useState(false)
@@ -39,6 +41,19 @@ const CourseMembers = () => {
 
   const dataSource = members.map((m, i) => ({ ...m, key: i }))
 
+
+  const handleTeamChange = async (value, record) => {
+    try {
+      await changeMember({course_id: selectedCourse.pk, memberId: record.andrew_id, teamId: value})
+      // print("result,", res)
+
+    } catch (e) {
+      console.error(e)
+    }
+
+  };
+
+
   let columns = [
     { title: 'Andrew ID', dataIndex: 'andrew_id', align: 'center', key: 'andrew_id' },
     {
@@ -48,7 +63,24 @@ const CourseMembers = () => {
       key: 'userRole',
       render: (_, d) => (d.is_staff ? 'Instructor' : 'Student')
     },
-    { title: 'Team', dataIndex: 'team', align: 'center', key: 'team' }
+    {
+      title: 'Team', 
+      dataIndex: 'team', 
+      align: 'center', 
+      key: 'team',
+      render: (text, record) => (
+        <Select 
+            defaultValue={text} 
+            style={{ width: 120 }} 
+            onChange={(value) => handleTeamChange(value, record)}
+        >
+            {allTeams.map(team => (
+                <Option key={team.team_id} value={team.team_id}>{team.team_id}</Option>
+            ))}
+
+        </Select>
+      )
+    }
   ]
 
   const staffColumns = [
@@ -80,6 +112,16 @@ const CourseMembers = () => {
     }
     fetchCourseMembers()
   }, [])
+
+
+  useEffect(() => {
+    const fetchCourseTeams = async () => {
+      const res = await getCourseTeams({ course_id: selectedCourse.pk })
+      print("res:", res)
+      if (res.status === 200) setTeam(res.data)
+    }
+    fetchCourseTeams()
+  }, []); 
 
   const handleAddMember = async (event) => {
     event.preventDefault()

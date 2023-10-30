@@ -44,6 +44,7 @@ const deleteCourse = async (course_id) => {
   }
 }
 
+
 const getUserCourses = async () => {
   try {
     const res = await api.get('courses/')
@@ -62,4 +63,4 @@ const getCourse = async (course_id) => {
   }
 }
 
-export { createCourse, editCourse, deleteCourse, getCourse, getUserCourses }
+export { createCourse, editCourse, deleteCourse, getCourse, getUserCourses}

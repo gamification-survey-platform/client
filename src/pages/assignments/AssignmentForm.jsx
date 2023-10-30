@@ -137,6 +137,18 @@ const AssignmentForm = () => {
           <Input type="number" />
         </Form.Item>
         <Form.Item
+          label="Minimum reviewers"
+          name="min_reviewers"
+          rules={[
+            {
+              required: true,
+              message: 'A positive number must be entered.',
+              pattern: new RegExp(/^[1-9][0-9]*$/)
+            }
+          ]}>
+          <InputNumber min={1} step={1} />
+        </Form.Item>
+        <Form.Item
           label="Weight (how much of the grade should this contribute towards)"
           name="weight"
           rules={[

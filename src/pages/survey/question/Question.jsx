@@ -515,7 +515,9 @@ const Question = (question) => {
   const course = courses.find(
     ({ course_number }) => parseInt(course_id) === parseInt(course_number)
   )
-  questionProps.gamified = questionProps.gamified && !user.is_staff
+  // questionProps.gamified = questionProps.gamified && !user.is_staff
+  questionProps.gamified =  false
+
   const survey = useSelector(surveySelector)
   const { question_type } = question
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
