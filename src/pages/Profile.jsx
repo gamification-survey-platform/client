@@ -17,7 +17,6 @@ const Profile = () => {
 
   const user = useSelector(userSelector)
   const [editing, setEditing] = useState(false)
-  const [gamified, setGamified] = useState(false)
   const [messageApi, contextHolder] = useMessage()
   const { first_name, last_name, email, date_joined: unformattedDate } = user
   const dispatch = useDispatch()
@@ -32,7 +31,6 @@ const Profile = () => {
 
   const gamificationModeChange = (checked) =>{
     set_gamified_mode(checked)
-    setGamified(checked)
   }
 
   const handleClick = async (e) => {
@@ -44,6 +42,7 @@ const Profile = () => {
         const data = form.getFieldsValue()
         const user_id = user.pk
         const res = await editProfile({ user_id, data })
+        console.log("example", data)
         dispatch(setUser(res.data))
         setEditing(false)
       } catch (e) {
@@ -125,7 +124,7 @@ const Profile = () => {
               <Input disabled />
             </Form.Item>
             <Form.Item name="gamification_mode" label="Gamification mode" valuePropName="checked">
-              <Switch defaultChecked = {gamified_mode()} onChange={gamificationModeChange}/>
+              <Switch defaultChecked = {gamified_mode(user)} onChange={gamificationModeChange}/>
             </Form.Item>
           </Form>
         </Col>
