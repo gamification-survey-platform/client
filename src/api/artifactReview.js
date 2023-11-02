@@ -36,6 +36,7 @@ const getAssignmentArtifactReviews = async ({ course_id, assignment_id }) => {
 const getUserArtifactReviews = async () => {
   try {
     const res = await api.get(`artifact_reviews/`)
+    console.log(res)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)

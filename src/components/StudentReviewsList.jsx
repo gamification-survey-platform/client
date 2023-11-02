@@ -42,10 +42,9 @@ const StudentReviewsList = ({
   const dispatch = useDispatch()
   const reopenReviews = artifactReviews.filter((r) => r.status === 'REOPEN')
   const pendingReviews = artifactReviews.filter((r) => r.status === 'INCOMPLETE')
-  console.log('hello')
-  console.log(pendingReviews)
   const lateReviews = artifactReviews.filter((r) => r.status === 'LATE')
   const completedReviews = artifactReviews.filter((r) => r.status === 'COMPLETED')
+  const optionalReviews = artifactReviews.filter((r) => r.status === 'OPTIONAL_INCOMPLETE')
 
   useEffect(() => {
     dispatch(resetSurvey())
@@ -64,7 +63,7 @@ const StudentReviewsList = ({
           <ReviewList title={'Pending Reviews'} color="gold" reviews={pendingReviews} />
         ) : null}
         {showOptional ? (
-          <ReviewList title={'Optional Reviews'} color="blue" reviews={pendingReviews} />
+          <ReviewList title={'Optional Reviews'} color="blue" reviews={optionalReviews} />
         ) : null}
         {showCompleted ? (
           <ReviewList title={'Completed Reviews'} color="green" reviews={completedReviews} />
