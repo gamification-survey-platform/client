@@ -76,7 +76,9 @@ const Home = () => {
                   cover={
                     <Image preview={false} src={course.picture ? course.picture : DefaultImage} />
                   }
-                  key={i}>
+                  key={i}
+                  style={{minWidth:200}}
+                  >
                   <Space direction="vertical" size="middle" align="center">
                     <Row justify="center" className="text-center">
                       <p>{course.course_name}</p>
