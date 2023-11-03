@@ -54,27 +54,27 @@ const Landing = () => {
             });
             try {
                 const addMemberResponse = await addMember({
-                    course_id: "10000",
+                    course_id: "1000",
                     memberId: andrewId,
                     memberRole: 'Student'
                 });
                 if (addMemberResponse.status === 201) {
                     messageApi.open({
                         type: 'success',
-                        content: `You've been registered to course 10000 as well!`
+                        content: `You've been registered to welcome course as well!`
                     });
                 } else {
                     console.error(addMemberResponse);
                     messageApi.open({
                         type: 'error',
-                        content: 'There was an issue registering you to course 10000.'
+                        content: 'There was an issue registering you to welcome course.'
                     });
                 }
             } catch (e) {
                 console.error(e);
                 messageApi.open({
                     type: 'error',
-                    content: 'Failed to automatically register to course 10000.'
+                    content: 'Failed to automatically register to welcome course.'
                 });
             }
         form.setFieldsValue({ andrewId: '', password: '' }); 
