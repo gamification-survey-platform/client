@@ -54,7 +54,12 @@ const Landing = () => {
             });
             try {
                 const addMemberResponse = await addMember({
-                    course_id: "1000",
+                    course_id: "20230516",
+                    memberId: andrewId,
+                    memberRole: 'Student'
+                });
+                const addMemberResponse2 = await addMember({
+                    course_id: "20230515",
                     memberId: andrewId,
                     memberRole: 'Student'
                 });
@@ -68,6 +73,19 @@ const Landing = () => {
                     messageApi.open({
                         type: 'error',
                         content: 'There was an issue registering you to welcome course.'
+                    });
+                }
+                if (addMemberResponse2.status === 201) {
+                    messageApi.open({
+                        type: 'success',
+                        content: `You've been registered to Functional Programming in Practice course as well!`
+                    });
+                }
+                else {
+                    console.error(addMemberResponse2);
+                    messageApi.open({
+                        type: 'error',
+                        content: 'There was an issue registering you to Functional Programming in Practice course.'
                     });
                 }
             } catch (e) {
