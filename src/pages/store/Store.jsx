@@ -32,7 +32,7 @@ const Store = () => {
 
   return (
     <div className="m-5">
-      {gamified_mode() ? (
+      {gamified_mode(user) ? (
       <div>
           <Row justify="space-around">
           <Typography.Title>Welcome to the Gamification Store</Typography.Title>

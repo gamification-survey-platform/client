@@ -95,7 +95,7 @@ const AppHeader = ({ children }) => {
   useEffect(() => {
     if (user && user.is_staff) {
       setItems(items.filter((item) => item.key !== '3' && item.key !== '4' && item.key !== '5'))
-    } else if (user && !gamified_mode() ){
+    } else if (user && !gamified_mode(user) ){
       setItems(items.filter((item) => item.key !== '3' && item.key !== '4' && item.key !== '5' && item.key !== '6'))
     } else if (user && user.level < 0) {
       setItems(items.filter((item) => item.key !== '4'))
@@ -185,7 +185,7 @@ const AppHeader = ({ children }) => {
           onClick={handleClick}
           defaultSelectedKeys={['0']}
         />
-        {collapsed || user.is_staff || !gamified_mode() ? null : (
+        {collapsed || user.is_staff || !gamified_mode(user) ? null : (
           <div className={`gamification ${styles.progressTriangleWrapper}`}>
             <div className="text-center text-white">
               <Image width={100} src={rankings[user.level].image} />

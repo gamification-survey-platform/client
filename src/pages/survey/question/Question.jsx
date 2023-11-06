@@ -376,10 +376,11 @@ const MultiLineField = ({
   const value = Form.useWatch(name, form)
   const [response, setResponse] = useState()
   const dispatch = useDispatch()
+  const user = useSelector(userSelector)
   useEffect(() => {
     if (answer && idx < answer.length) {
       form.setFieldValue(name, answer[idx].text)
-      !response && answer[idx].text && gamified_mode() && setResponse(randomEmoji)
+      !response && answer[idx].text && gamified_mode(user) && setResponse(randomEmoji)
     }
   }, [answer])
   useEffect(() => {
@@ -517,7 +518,7 @@ const Question = (question) => {
   const course = courses.find(
     ({ course_number }) => parseInt(course_id) === parseInt(course_number)
   )
-  questionProps.gamified = questionProps.gamified && !user.is_staff && gamified_mode()
+  questionProps.gamified = questionProps.gamified && !user.is_staff && gamified_mode(user)
   const survey = useSelector(surveySelector)
   const { question_type } = question
   const [questionModalOpen, setQuestionModalOpen] = useState(false)
