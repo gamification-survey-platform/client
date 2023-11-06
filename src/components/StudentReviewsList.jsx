@@ -62,7 +62,7 @@ const StudentReviewsList = ({
         {showPending ? (
           <ReviewList title={'Pending Reviews'} color="gold" reviews={pendingReviews} />
         ) : null}
-        {showOptional ? (
+        {showOptional && pendingReviews.length === 0 ? (
           <ReviewList title={'Optional Reviews'} color="blue" reviews={optionalReviews} />
         ) : null}
         {showCompleted ? (
