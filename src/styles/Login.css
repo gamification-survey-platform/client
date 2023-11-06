@@ -1,0 +1,45 @@
+.login-container {
+    width: 100%;
+    margin-top: 5rem;
+  }
+  
+  .login-card {
+    width: 100%;
+    max-width: 360px; /* Adjust card width */
+    padding: 2rem;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Add some shadow for depth */
+    border-radius: 10px; /* Optional: round corners */
+    background: #fff; /* Use a light background */
+  }
+  
+  .login-header {
+    margin-bottom: 1rem;
+  }
+  
+  .login-subheader {
+    color: #555; /* Softer color for the subtitle */
+    margin-bottom: 2rem;
+  }
+  
+  .login-form {
+    width: 100%;
+  }
+  
+  .login-form-item {
+    margin-bottom: 1rem;
+  }
+  
+  .login-form-button, .register-button {
+    width: 210px;
+    height: 40px; /* Fixed height for buttons */
+  }
+  
+  .login-form-button {
+    margin-top: 1rem;
+  }
+  
+  .register-button {
+    background: #f0f0f0; /* Differentiate it from the login button */
+    border-color: #d9d9d9;
+  }
+    

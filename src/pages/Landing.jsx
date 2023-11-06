@@ -7,6 +7,7 @@ import { setUser } from '../store/user/userSlice'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'antd/es/form/Form'
 import Spinner from '../components/Spinner'
+import '../styles/Login.css'
 
 const Landing = () => {
   const [form] = useForm()
@@ -63,45 +64,55 @@ const Landing = () => {
   return (
     <Space
       direction="vertical"
-      size="middle"
+      size="large"
       align="center"
-      style={{ width: '100%', marginTop: '5rem' }}>
+      className="login-container" // use className for custom styling
+    >
       {contextHolder}
       {spin ? (
         <Spinner show={spin} />
       ) : (
-        <Card style={{ width: 800 }}>
-          <Row justify="center">
+        <Card className="login-card">
+          <Row justify="center" className="login-header">
             <Typography.Title level={1}>Welcome!</Typography.Title>
           </Row>
           <Row justify="center">
-            <Typography.Title level={2}>Let&lsquo;s get started.</Typography.Title>
+            <Typography.Title level={4} className="login-subheader">
+              Let&lsquo;s get started.
+            </Typography.Title>
           </Row>
-          <Form form={form} onFinish={handleLogin} onKeyUp={handleEnter}>
-            <Row justify="center">
-              <Form.Item
-                name="andrewId"
-                rules={[{ required: true, message: 'Please input a Andrew ID!' }]}>
-                <Input prefix={<UserOutlined />} placeholder="Andrew ID" />
-              </Form.Item>
-            </Row>
-            <Row justify="center">
-              <Form.Item
-                name="password"
-                rules={[{ required: true, message: 'Please input a Password!' }]}>
-                <Input.Password prefix={<LockOutlined />} placeholder="Password" />
-              </Form.Item>
-            </Row>
+          <Form
+            form={form}
+            onFinish={handleLogin}
+            onKeyUp={handleEnter}
+            className="login-form"
+          >
+            <Form.Item
+              name="andrewId"
+              rules={[{ required: true, message: 'Please input your Andrew ID!' }]}
+              className="login-form-item"
+            >
+              <Input prefix={<UserOutlined />} placeholder="Andrew ID" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: 'Please input your Password!' }]}
+              className="login-form-item"
+            >
+              <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+            </Form.Item>
             <Row justify="center">
               <Form.Item>
-                <Button onClick={handleLogin} type="primary">
+                <Button type="primary" htmlType="submit" className="login-form-button" onClick={handleLogin}>
                   Log in
                 </Button>
               </Form.Item>
             </Row>
             <Row justify="center">
               <Form.Item>
-                <Button onClick={handleRegister}>Register Now!</Button>
+                <Button onClick={handleRegister} className="register-button">
+                  Register!
+                </Button>
               </Form.Item>
             </Row>
           </Form>
