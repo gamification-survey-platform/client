@@ -7,6 +7,7 @@ import { setUser } from '../store/user/userSlice'
 import { useDispatch } from 'react-redux'
 import { useForm } from 'antd/es/form/Form'
 import Spinner from '../components/Spinner'
+import { addMember } from '../api/members'
 
 const Landing = () => {
   const [form] = useForm()
@@ -35,28 +36,72 @@ const Landing = () => {
   }
 
   const handleRegister = async (e) => {
-    e.preventDefault()
-    const { andrewId, password } = form.getFieldsValue()
+    e.preventDefault();
+    const { andrewId, password } = form.getFieldsValue();
     try {
-      await form.validateFields(['andrewId', 'password'])
+        await form.validateFields(['andrewId', 'password']);
     } catch (e) {
-      console.error(e)
-      messageApi.open({ type: 'error', content: 'Please fill out the relevant fields!' })
-      return
+        console.error(e);
+        messageApi.open({ type: 'error', content: 'Please fill out the relevant fields!' });
+        return;
     }
     try {
-      const res = await registerApi({ andrewId, password })
-      if (res.status === 200)
-        messageApi.open({
-          type: 'success',
-          content: `Successfully registered! Please login to continue.`
-        })
-      form.setFieldsValue({ andrewId: '', password: '' })
+        const res = await registerApi({ andrewId, password });
+        if (res.status === 200) {
+            messageApi.open({
+                type: 'success',
+                content: `Successfully registered! Please login to continue.`
+            });
+            try {
+                const addMemberResponse = await addMember({
+                    course_id: "20230516",
+                    memberId: andrewId,
+                    memberRole: 'Student'
+                });
+                const addMemberResponse2 = await addMember({
+                    course_id: "20230515",
+                    memberId: andrewId,
+                    memberRole: 'Student'
+                });
+                if (addMemberResponse.status === 201) {
+                    messageApi.open({
+                        type: 'success',
+                        content: `You've been registered to welcome course as well!`
+                    });
+                } else {
+                    console.error(addMemberResponse);
+                    messageApi.open({
+                        type: 'error',
+                        content: 'There was an issue registering you to welcome course.'
+                    });
+                }
+                if (addMemberResponse2.status === 201) {
+                    messageApi.open({
+                        type: 'success',
+                        content: `You've been registered to Functional Programming in Practice course as well!`
+                    });
+                }
+                else {
+                    console.error(addMemberResponse2);
+                    messageApi.open({
+                        type: 'error',
+                        content: 'There was an issue registering you to Functional Programming in Practice course.'
+                    });
+                }
+            } catch (e) {
+                console.error(e);
+                messageApi.open({
+                    type: 'error',
+                    content: 'Failed to automatically register to welcome course.'
+                });
+            }
+        form.setFieldsValue({ andrewId: '', password: '' }); 
+        }
     } catch (e) {
-      console.error(e)
-      messageApi.open({ type: 'error', content: e.message })
+        console.error(e);
+        messageApi.open({ type: 'error', content: e.message });
     }
-  }
+}
 
   const handleEnter = (e) => e.keyCode === 13 && handleLogin(e)
 
