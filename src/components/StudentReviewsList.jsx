@@ -4,6 +4,7 @@ import styles from '../styles/ReviewsList.module.css'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { resetSurvey } from '../store/survey/surveySlice'
+import { Tooltip } from 'antd';
 
 const ReviewList = ({ title, color, reviews }) => {
   const { course_id } = useParams()
@@ -60,11 +61,23 @@ const StudentReviewsList = ({
           <ReviewList title={'Late Reviews'} color="volcano" reviews={lateReviews} />
         ) : null}
         {showPending ? (
-          <ReviewList title={'Pending Reviews'} color="gold" reviews={pendingReviews} />
+          <ReviewList title={'Pending Necessary Reviews'} color="gold" reviews={pendingReviews} />
         ) : null}
-        {showOptional && pendingReviews.length === 0 ? (
+        {showOptional? (
+          <ReviewList title={
+            <span>
+            Optional Reviews {' '}
+            <Tooltip title="The optional reviews will show when you finish all the necessary reviews">
+              <span style={{ cursor: 'help' }}>?</span>
+            </Tooltip>
+          </span>
+          } 
+          color="blue" 
+          reviews={optionalReviews} />
+        ) : null}
+        {/* {showOptional && pendingReviews.length === 0 ? (
           <ReviewList title={'Optional Reviews'} color="blue" reviews={optionalReviews} />
-        ) : null}
+        ) : null} */}
         {showCompleted ? (
           <ReviewList title={'Completed Reviews'} color="green" reviews={completedReviews} />
         ) : null}
