@@ -45,7 +45,6 @@ const CourseMembers = () => {
   const handleTeamChange = async (value, record) => {
     try {
       await changeMember({course_id: selectedCourse.pk, memberId: record.andrew_id, teamId: value})
-      // print("result,", res)
 
     } catch (e) {
       console.error(e)
@@ -117,7 +116,6 @@ const CourseMembers = () => {
   useEffect(() => {
     const fetchCourseTeams = async () => {
       const res = await getCourseTeams({ course_id: selectedCourse.pk })
-      print("res:", res)
       if (res.status === 200) setTeam(res.data)
     }
     fetchCourseTeams()
