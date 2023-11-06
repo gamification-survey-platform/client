@@ -14,7 +14,7 @@ export const gamified_mode = (initial_user_setting) => {
         gamified = initial_user_setting.gamification_mode
         user_id = initial_user_setting.pk
         initial = false
-        return gamified
     }
+    console.log("current gamified mode: ", gamified)
     return gamified
 }

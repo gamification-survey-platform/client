@@ -123,7 +123,8 @@ const Profile = () => {
             <Form.Item name="date_joined" label="Date Joined">
               <Input disabled />
             </Form.Item>
-            <Form.Item name="gamification_mode" label="Gamification mode" valuePropName="checked">
+            {/* Currently do not allow to user to change gamification mode, switch is hidden */}
+            <Form.Item name="gamification_mode" label="Gamification mode" valuePropName="checked" hidden>
               <Switch defaultChecked = {gamified_mode(user)} onChange={gamificationModeChange}/>
             </Form.Item>
           </Form>

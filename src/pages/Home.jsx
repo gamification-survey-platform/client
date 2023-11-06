@@ -12,6 +12,7 @@ import Spinner from '../components/Spinner'
 import StudentReviewsList from '../components/StudentReviewsList'
 import { getTheme } from '../api/theme'
 import { setColorTheme, setCursor, setIconTheme, setTheme } from '../store/theme/themeSlice'
+import { gamified_mode } from '../gamified'
 
 const Home = () => {
   const user = useSelector(userSelector)
@@ -19,6 +20,8 @@ const Home = () => {
   const [artifactReviews, setArtifactReviews] = useState([])
   const [spin, setSpin] = useState(false)
   const dispatch = useDispatch()
+
+  gamified_mode(user)
 
   useEffect(() => {
     const loadData = async () => {

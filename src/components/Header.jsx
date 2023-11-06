@@ -95,6 +95,8 @@ const AppHeader = ({ children }) => {
   useEffect(() => {
     if (user && user.is_staff) {
       setItems(items.filter((item) => item.key !== '3' && item.key !== '4' && item.key !== '5'))
+    } else if (user && !gamified_mode() ){
+      setItems(items.filter((item) => item.key !== '3' && item.key !== '4' && item.key !== '5' && item.key !== '6'))
     } else if (user && user.level < 0) {
       setItems(items.filter((item) => item.key !== '4'))
     }
@@ -210,7 +212,7 @@ const AppHeader = ({ children }) => {
               </div>
             </Tooltip>
             <Tooltip title="Daily streak" color={'gold'} placement="left">
-              <div className="mr-3 daily-streak">
+              {  !gamified_mode() ? null : (<div className="mr-3 daily-streak">
                 <FireOutlined className={styles.icon} />
                 <Badge
                   color="gold"
@@ -218,7 +220,7 @@ const AppHeader = ({ children }) => {
                   showZero={true}
                   style={{ position: 'absolute' }}
                 />
-              </div>
+              </div>)}
             </Tooltip>
             <Dropdown
               menu={{ items: notificationElements }}

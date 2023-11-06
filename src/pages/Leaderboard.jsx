@@ -103,7 +103,7 @@ const Leaderboard = () => {
         dataSource={data}
         columns={columns}
       />) : (<div className='h4'> 
-        Turn on gamification mode to see leaderboard
+        Currently unavailable
       </div>)}
     </div>
   )
