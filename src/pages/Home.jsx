@@ -12,6 +12,7 @@ import Spinner from '../components/Spinner'
 import StudentReviewsList from '../components/StudentReviewsList'
 import { getTheme } from '../api/theme'
 import { setColorTheme, setCursor, setIconTheme, setTheme } from '../store/theme/themeSlice'
+import { gamified_mode } from '../gamified'
 
 const Home = () => {
   const user = useSelector(userSelector)
@@ -19,6 +20,8 @@ const Home = () => {
   const [artifactReviews, setArtifactReviews] = useState([])
   const [spin, setSpin] = useState(false)
   const dispatch = useDispatch()
+
+  gamified_mode(user)
 
   useEffect(() => {
     const loadData = async () => {
@@ -77,7 +80,9 @@ const Home = () => {
                   cover={
                     <Image preview={false} src={course.picture ? course.picture : DefaultImage} />
                   }
-                  key={i}>
+                  key={i}
+                  style={{minWidth:200}}
+                  >
                   <Space direction="vertical" size="middle" align="center">
                     <Row justify="center" className="text-center">
                       <p>{course.course_name}</p>

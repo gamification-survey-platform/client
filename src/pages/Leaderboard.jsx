@@ -8,6 +8,7 @@ import { useParams } from 'react-router'
 import coursesSelector from '../store/courses/selectors'
 import { useSelector } from 'react-redux'
 import styles from '../styles/Leaderboard.module.css'
+import { gamified_mode } from '../gamified'
 
 const Leaderboard = () => {
   const [data, setData] = useState()
@@ -87,7 +88,7 @@ const Leaderboard = () => {
 
   return (
     <div className="m-5">
-      <Table
+      {gamified_mode() ? (<Table
         rowClassName={(record, index) => {
           if (course_id) {
             if (index < 3) return styles.tableRowLime6
@@ -101,7 +102,9 @@ const Leaderboard = () => {
         }}
         dataSource={data}
         columns={columns}
-      />
+      />) : (<div className='h4'> 
+        Currently unavailable
+      </div>)}
     </div>
   )
 }

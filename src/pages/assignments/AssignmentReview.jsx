@@ -18,6 +18,7 @@ import { addCoursePoints } from '../../store/courses/coursesSlice'
 import { getSentimentEmoji } from '../survey/sentiment'
 import coursesSelector from '../../store/courses/selectors'
 import RespondToFeedbackRequestModal from '../../components/RespondToFeedbackRequestModal'
+import { gamified_mode } from '../../gamified'
 
 const AssignmentReview = () => {
   const { state = null } = useLocation()
@@ -290,7 +291,7 @@ const AssignmentReview = () => {
                 {survey.sections.map((_, i) => (
                   <Section key={i} sectionIdx={i} artifact={artifact} />
                 ))}
-                {survey.sentiment ? (
+                {gamified_mode() &&survey.sentiment ? (
                   <div
                     style={{
                       position: 'fixed',

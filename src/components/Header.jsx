@@ -33,6 +33,7 @@ import { setUser } from '../store/user/userSlice'
 import Notification from './Notification'
 import styles from '../styles/Header.module.css'
 import DashboardJoyride from './DashboardJoyride'
+import { gamified_mode } from '../gamified'
 
 const rankings = [
   { title: 'Bronze', image: Bronze },
@@ -94,6 +95,8 @@ const AppHeader = ({ children }) => {
   useEffect(() => {
     if (user && user.is_staff) {
       setItems(items.filter((item) => item.key !== '3' && item.key !== '4' && item.key !== '5'))
+    } else if (user && !gamified_mode() ){
+      setItems(items.filter((item) => item.key !== '3' && item.key !== '4' && item.key !== '5' && item.key !== '6'))
     } else if (user && user.level < 0) {
       setItems(items.filter((item) => item.key !== '4'))
     }
@@ -182,7 +185,7 @@ const AppHeader = ({ children }) => {
           onClick={handleClick}
           defaultSelectedKeys={['0']}
         />
-        {collapsed || user.is_staff ? null : (
+        {collapsed || user.is_staff || !gamified_mode() ? null : (
           <div className={`gamification ${styles.progressTriangleWrapper}`}>
             <div className="text-center text-white">
               <Image width={100} src={rankings[user.level].image} />
@@ -209,7 +212,7 @@ const AppHeader = ({ children }) => {
               </div>
             </Tooltip>
             <Tooltip title="Daily streak" color={'gold'} placement="left">
-              <div className="mr-3 daily-streak">
+              {  !gamified_mode() ? null : (<div className="mr-3 daily-streak">
                 <FireOutlined className={styles.icon} />
                 <Badge
                   color="gold"
@@ -217,7 +220,7 @@ const AppHeader = ({ children }) => {
                   showZero={true}
                   style={{ position: 'absolute' }}
                 />
-              </div>
+              </div>)}
             </Tooltip>
             <Dropdown
               menu={{ items: notificationElements }}
