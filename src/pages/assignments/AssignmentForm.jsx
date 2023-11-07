@@ -130,12 +130,13 @@ const AssignmentForm = () => {
           rules={[
             {
               required: true,
-              message: 'A positive number must be entered.',
-              pattern: new RegExp(/^[0-9]+$/)
+              message: 'Please enter a positive number with or without decimal precision.',
+              pattern: new RegExp(/^\d+(\.\d+)?$/)
             }
           ]}>
-          <Input type="number" />
+          <Input type="number" step="0.01" /> {/* Added step attribute to allow decimal values */}
         </Form.Item>
+
         <Form.Item
           label="Minimum reviewers"
           name="min_reviewers"
