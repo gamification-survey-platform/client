@@ -16,29 +16,39 @@ const Leaderboard = () => {
   const [data, setData] = useState()
   const { course_id } = useParams()
   const courses = useSelector(coursesSelector)
+  const [currentPage, setCurrentPage] = useState(1);
   const course = courses.find((course) => course.course_number === course_id)
   useEffect(() => {
     const fetchLeaderboard = async () => {
+      let response;
       if (course_id) {
-        const res = await getCourseLeaderboard({ course_id: course.pk })
-        if (res.status === 200) {
-          const data = res.data
-            .sort((a, b) => b.course_experience - a.course_experience)
-            .map((d, ranking) => ({ ...d, key: ranking, ranking: ranking + 1 }))
-          setData(data)
-        }
+        response = await getCourseLeaderboard({ course_id: course.pk });
       } else {
-        const res = await getPlatformLeaderboard()
-        if (res.status === 200) {
-          const data = res.data
-            .sort((a, b) => b.exp - a.exp)
-            .map((d, ranking) => ({ ...d, key: ranking, ranking: ranking + 1 }))
-          setData(data)
-        }
+        response = await getPlatformLeaderboard();
       }
-    }
-    fetchLeaderboard()
-  }, [course_id])
+      
+      if (response.status === 200) {
+        const sortedData = response.data.sort((a, b) => b.course_experience - a.course_experience);
+  
+        // Map over the data to assign rankings, giving the same rank to users with the same experience.
+        let rank = 0;
+        let prevExperience = null;
+        const dataWithRanking = sortedData.map((d, index) => {
+          // Increment rank only if the current experience is less than the previous one.
+          if (prevExperience !== d.course_experience) {
+            rank = index + 1;
+            prevExperience = d.course_experience;
+          }
+  
+          return { ...d, key: index, ranking: rank };
+        });
+  
+        setData(dataWithRanking);
+      }
+    };
+  
+    fetchLeaderboard();
+  }, [course_id]);
 
   const columns = [
     {
@@ -53,7 +63,7 @@ const Leaderboard = () => {
       align: 'center',
       key: 'andrew_id',
       render: (_, { image, andrew_id, ranking }) => {
-        const renderTrophy = ranking < 10
+        const renderTrophy = ranking < 4
         let trophyColor
         if (ranking === 1) trophyColor = 'gold'
         else if (ranking === 2) trophyColor = 'silver'
@@ -88,18 +98,30 @@ const Leaderboard = () => {
     }
   ]
 
+  const paginationConfig = {
+    pageSize: 20, 
+    onChange: (page) => {
+      setCurrentPage(page);
+    },
+  };
+
   return (
     <div className="m-5">
-      {gamified_mode(user) ? (<Table
+      {gamified_mode(user) ? (<Table pagination={paginationConfig}
         rowClassName={(record, index) => {
-          if (course_id) {
-            if (index < 3) return styles.tableRowLime6
-            else if (index < 6) return styles.tableRowLime4
-            else if (index < 10) return styles.tableRowLime2
-          } else {
-            if (index < 5) return styles.tableRowLime6
-            else if (index < 10) return styles.tableRowLime4
-            else if (index < 20) return styles.tableRowLime2
+          const isFirstPage = currentPage === 1;
+          if (course_id && isFirstPage) {
+            if (index < 1) return styles.tableRowLime6
+            else if (index < 2) return styles.tableRowLime4
+            else if (index < 3) return styles.tableRowLime2
+            else return styles.tableRowLime1
+          } else if (isFirstPage) {
+            if (index < 1) return styles.tableRowLime6
+            else if (index < 2) return styles.tableRowLime4
+            else if (index < 3) return styles.tableRowLime2
+            else return styles.tableRowLime1
+          } else{
+            return styles.tableRowLime1
           }
         }}
         dataSource={data}
