@@ -140,7 +140,7 @@ const AssignmentForm = () => {
             {
               required: true,
               message: 'A positive number must be entered.',
-              pattern: new RegExp(/^[0-9]+$/)
+              pattern: new RegExp(/^[0-9]+(\.[0-9]+)?$/)
             }
           ]}>
           <Input type="number" />

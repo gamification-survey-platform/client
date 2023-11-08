@@ -78,8 +78,8 @@ const AddSurvey = () => {
         assignment_id,
         survey: {
           ...fields,
-          date_due: new Date(date_due.format('MM/DD/YYYY hh:mm')),
-          date_released: new Date(date_released.format('MM/DD/YYYY hh:mm')),
+          date_due: new Date(date_due.format('MM/DD/YYYY hh:mm A')),
+          date_released: new Date(date_released.format('MM/DD/YYYY hh:mm A')),
           other_info: fields.other_info || '',
           trivia
         }

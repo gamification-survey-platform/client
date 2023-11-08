@@ -46,9 +46,10 @@ const StudentReviewsList = ({
   const lateReviews = artifactReviews.filter((r) => r.status === 'LATE')
   const completedReviews = artifactReviews.filter((r) => r.status === 'COMPLETED')
   const optionalReviews = artifactReviews.filter((r) => r.status === 'OPTIONAL_INCOMPLETE')
-
+  console.log('optionalReviews', artifactReviews)
   useEffect(() => {
     dispatch(resetSurvey())
+
   }, [])
 
   return (
@@ -63,7 +64,7 @@ const StudentReviewsList = ({
         {showPending ? (
           <ReviewList title={'Pending Necessary Reviews'} color="gold" reviews={pendingReviews} />
         ) : null}
-        {showOptional? (
+        {showOptional && pendingReviews.length === 0? (
           <ReviewList title={
             <span>
             Optional Reviews {' '}
@@ -74,7 +75,12 @@ const StudentReviewsList = ({
           } 
           color="blue" 
           reviews={optionalReviews} />
-        ) : null}
+        ) : (<ReviewList title={            <span>
+          Optional Reviews {' '}
+          <Tooltip title="The optional reviews will show when you finish all the necessary reviews">
+            <span style={{ cursor: 'help' }}>?</span>
+          </Tooltip>
+        </span>} color="gold" reviews={[]}/>)}
         {/* {showOptional && pendingReviews.length === 0 ? (
           <ReviewList title={'Optional Reviews'} color="blue" reviews={optionalReviews} />
         ) : null} */}
