@@ -26,25 +26,36 @@ const Leaderboard = () => {
       } else {
         response = await getPlatformLeaderboard();
       }
-      
-      if (response.status === 200) {
-        const sortedData = response.data.sort((a, b) => b.course_experience - a.course_experience);
-  
-        // Map over the data to assign rankings, giving the same rank to users with the same experience.
-        let rank = 0;
-        let prevExperience = null;
-        const dataWithRanking = sortedData.map((d, index) => {
-          // Increment rank only if the current experience is less than the previous one.
-          if (prevExperience !== d.course_experience) {
-            rank = index + 1;
-            prevExperience = d.course_experience;
-          }
-  
-          return { ...d, key: index, ranking: rank };
-        });
-  
-        setData(dataWithRanking);
+
+      var data = null
+      if (course_id) {
+        const res = await getCourseLeaderboard({ course_id: course.pk })
+        if (res.status === 200) {
+          data = res.data
+            .sort((a, b) => b.course_experience - a.course_experience)
+        }
+      } else {
+        const res = await getPlatformLeaderboard()
+        if (res.status === 200) {
+          data = res.data
+            .sort((a, b) => b.exp - a.exp)
+        }
       }
+      
+      // Map over the data to assign rankings, giving the same rank to users with the same experience.
+      let rank = 0;
+      let prevExperience = null;
+      const dataWithRanking = data.map((d, index) => {
+        // Increment rank only if the current experience is less than the previous one.
+        if (prevExperience !== d.course_experience) {
+          rank = index + 1;
+          prevExperience = d.course_experience;
+        }
+
+        return { ...d, key: index, ranking: rank };
+      });
+
+      setData(dataWithRanking);
     };
   
     fetchLeaderboard();
@@ -99,7 +110,7 @@ const Leaderboard = () => {
   ]
 
   const paginationConfig = {
-    pageSize: 20, 
+    defaultPageSize: 20, 
     onChange: (page) => {
       setCurrentPage(page);
     },
