@@ -1,11 +1,15 @@
 .tableRowLime6 {
-  background-color: #d4efdf; /* A very light green, almost white, for the top ranks */
+  background-color: #bff0d2; /* A very light green, almost white, for the top ranks */
 }
 
 .tableRowLime4 {
-  background-color: #e9f7ef; /* A slightly darker shade of light green for the middle ranks */
+  background-color: #d3f1de; /* A slightly darker shade of light green for the middle ranks */
 }
 
 .tableRowLime2 {
-  background-color: #e9f7ef; /* A soft green for ranks that are still high but not at the very top */
+  background-color: #e3f8ed; /* A soft green for ranks that are still high but not at the very top */
+}
+
+.tableRowLime1 {
+  background-color: #f5f9f7; /* A soft green for ranks that are still high but not at the very top */
 }

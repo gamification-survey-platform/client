@@ -143,8 +143,9 @@ const AssignmentForm = () => {
               pattern: new RegExp(/^[0-9]+(\.[0-9]+)?$/)
             }
           ]}>
-          <Input type="number" />
+          <Input type="number" step="0.01" /> {/* Added step attribute to allow decimal values */}
         </Form.Item>
+
         <Form.Item
           label="Minimum reviewers"
           name="min_reviewers"

@@ -7,6 +7,7 @@ import coursesSelector from '../../store/courses/selectors'
 import userSelector from '../../store/user/selectors'
 import { LinkContainer } from 'react-router-bootstrap'
 import useMessage from 'antd/es/message/useMessage'
+import { gamified_mode } from '../../gamified'
 
 const Courses = () => {
   const navigate = useNavigate()
@@ -81,13 +82,13 @@ const Courses = () => {
       dataIndex: 'leaderboard',
       key: 'leaderboard',
       render: (_, course) => {
-        return (
+        return gamified_mode() ? (
           <LinkContainer to={`/courses/${course.course_number}/leaderboard`}>
             <Tag role="button" color="magenta">
               Leaderboard
             </Tag>
           </LinkContainer>
-        )
+      ): null
       }
     },
     {
