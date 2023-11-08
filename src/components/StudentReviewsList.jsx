@@ -59,16 +59,30 @@ const StudentReviewsList = ({
           <ReviewList title={'Reopened Reviews'} color="magenta" reviews={reopenReviews} />
         ) : null}
         {showLate ? (
-          <ReviewList title={'Late Reviews'} color="volcano" reviews={lateReviews} />
+          <ReviewList title={
+            <span>
+            Late Reviews {' '}
+            <Tooltip title="5 points each">
+              <span style={{ cursor: 'help' }}>?</span>
+            </Tooltip>
+          </span>
+          } color="volcano" reviews={lateReviews} />
         ) : null}
         {showPending ? (
-          <ReviewList title={'Pending Necessary Reviews'} color="gold" reviews={pendingReviews} />
+          <ReviewList title={
+            <span>
+            Mandatory Reviews {' '}
+            <Tooltip title="10 points each">
+              <span style={{ cursor: 'help' }}>?</span>
+            </Tooltip>
+          </span>
+          } color="gold" reviews={pendingReviews} />
         ) : null}
         {showOptional && pendingReviews.length === 0? (
           <ReviewList title={
             <span>
             Optional Reviews {' '}
-            <Tooltip title="The optional reviews will show when you finish all the necessary reviews">
+            <Tooltip title="15 points each">
               <span style={{ cursor: 'help' }}>?</span>
             </Tooltip>
           </span>
@@ -77,7 +91,7 @@ const StudentReviewsList = ({
           reviews={optionalReviews} />
         ) : (<ReviewList title={            <span>
           Optional Reviews {' '}
-          <Tooltip title="The optional reviews will show when you finish all the necessary reviews">
+          <Tooltip title="15 points each. The optional reviews will show when you finish all the mandatory reviews">
             <span style={{ cursor: 'help' }}>?</span>
           </Tooltip>
         </span>} color="gold" reviews={[]}/>)}
