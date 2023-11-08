@@ -7,7 +7,7 @@ import dayjs from 'dayjs'
 import { useParams } from 'react-router'
 import { createAssignment, editAssignment } from '../../api/assignments'
 import { useForm } from 'antd/es/form/Form'
-import moment from 'moment-timezone';
+// import moment from 'moment-timezone';
 
 const AssignmentForm = () => {
   const [messageApi, contextHolder] = message.useMessage()
@@ -116,7 +116,7 @@ const AssignmentForm = () => {
             }}
             format="YYYY-MM-DD h:mm A"
             disabledDate={(current) => current && current < dayjs()}
-            moment={moment.tz('America/Los_Angeles')}
+            // moment={moment.tz('America/Los_Angeles')}
           />
         </Form.Item>
         <Form.Item
@@ -130,7 +130,7 @@ const AssignmentForm = () => {
             }}
             format="YYYY-MM-DD h:mm A"
             disabledDate={(current) => current && current < dayjs()}
-            moment={moment.tz('America/Los_Angeles')}
+            // moment={moment.tz('America/Los_Angeles')}
           />
         </Form.Item>
         <Form.Item
@@ -143,7 +143,7 @@ const AssignmentForm = () => {
               pattern: new RegExp(/^[0-9]+(\.[0-9]+)?$/)
             }
           ]}>
-          <Input type="number" step="0.01" /> {/* Added step attribute to allow decimal values */}
+          <Input type="number"/> {/* Added step attribute to allow decimal values */}
         </Form.Item>
 
         <Form.Item
