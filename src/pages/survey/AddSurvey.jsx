@@ -9,6 +9,7 @@ import dayjs from 'dayjs'
 import Checkbox from 'antd/es/checkbox/Checkbox'
 import SurveyTrivia from './SurveyTrivia'
 import { QuestionCircleTwoTone } from '@ant-design/icons'
+import moment from 'moment-timezone';
 
 const AddSurvey = () => {
   const [messageApi, contextHolder] = message.useMessage()
@@ -169,9 +170,13 @@ const AddSurvey = () => {
               name="date_released"
               rules={[{ required: true, message: 'Please input a release date.' }]}>
               <DatePicker
-                showTime={{ format: 'h:mm A' }}
+                showTime={{ 
+                  format: 'h:mm A',
+                  use12Hours: true,
+                }}
                 format="YYYY-MM-DD h:mm A"
                 disabledDate={(current) => current && current < dayjs()}
+                moment={moment.tz('America/Los_Angeles')}
               />
             </Form.Item>
             <Form.Item
@@ -179,9 +184,13 @@ const AddSurvey = () => {
               name="date_due"
               rules={[{ required: true, message: 'Please input a release date.' }]}>
               <DatePicker
-                showTime={{ format: 'h:mm A' }}
+                showTime={{ 
+                  format: 'h:mm A',
+                  use12Hours: true,
+                }}
                 format="YYYY-MM-DD h:mm A"
                 disabledDate={(current) => current && current < dayjs()}
+                moment={moment.tz('America/Los_Angeles')}
               />
             </Form.Item>
           </>

@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import { useParams } from 'react-router'
 import { createAssignment, editAssignment } from '../../api/assignments'
 import { useForm } from 'antd/es/form/Form'
+import moment from 'moment-timezone';
 
 const AssignmentForm = () => {
   const [messageApi, contextHolder] = message.useMessage()
@@ -48,8 +49,8 @@ const AssignmentForm = () => {
       const formObj = {
         ...fields,
         course: selectedCourse.pk,
-        date_due: date_due.format('MM/DD/YYYY hh:mm'),
-        date_released: date_released.format('MM/DD/YYYY hh:mm'),
+        date_due: date_due.format('MM/DD/YYYY hh:mm A'),
+        date_released: date_released.format('MM/DD/YYYY hh:mm A'),
         review_assign_policy: 'A'
       }
       const res = editingAssignment
@@ -109,9 +110,13 @@ const AssignmentForm = () => {
           name="date_released"
           rules={[{ required: true, message: 'Please input a release date.' }]}>
           <DatePicker
-            showTime={{ format: 'h:mm A' }}
+            showTime={{ 
+              format: 'h:mm A', 
+              use12Hours: true,
+            }}
             format="YYYY-MM-DD h:mm A"
             disabledDate={(current) => current && current < dayjs()}
+            moment={moment.tz('America/Los_Angeles')}
           />
         </Form.Item>
         <Form.Item
@@ -119,9 +124,13 @@ const AssignmentForm = () => {
           name="date_due"
           rules={[{ required: true, message: 'Please input a due date.' }]}>
           <DatePicker
-            showTime={{ format: 'h:mm A' }}
+            showTime={{ 
+              format: 'h:mm A', 
+              use12Hours: true,
+            }}
             format="YYYY-MM-DD h:mm A"
             disabledDate={(current) => current && current < dayjs()}
+            moment={moment.tz('America/Los_Angeles')}
           />
         </Form.Item>
         <Form.Item
