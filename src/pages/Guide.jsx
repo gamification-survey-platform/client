@@ -1,12 +1,17 @@
-import { Table } from 'antd'
-import Typography from 'antd/es/typography/Typography'
+import { Table } from 'antd';
+import Typography from 'antd/es/typography/Typography';
 
 const Guide = () => {
   const columns = [
     { title: 'Element', dataIndex: 'element', align: 'center', key: 'element' },
     { title: 'Access Level', dataIndex: 'level', key: 'level', align: 'center' },
     { title: 'Description', dataIndex: 'description', key: 'description' }
-  ]
+  ];
+
+  const pointsColumns = [
+    { title: 'Action', dataIndex: 'action', key: 'action' },
+    { title: 'Points', dataIndex: 'points', key: 'points' }
+  ];
 
   let dataSource = [
     {
@@ -51,8 +56,48 @@ const Guide = () => {
       description:
         'Allows the user to publish a survey theme. Published themes are given a name and are available for other users to choose. Upon achieving level 2.'
     }
-  ]
-  dataSource = dataSource.map((d, i) => ({ ...d, key: i }))
+  ];
+
+  let pointsSource = [
+    {
+      key: '1',
+      action: 'Setting first name and last name in profile for the first time',
+      points: '10pt'
+    },
+    {
+      key: '2',
+      action: 'Submit assignment',
+      points: '5pt'
+    },
+    {
+      key: '3',
+      action: 'Complete a mandatory survey',
+      points: '10pt'
+    },
+    {
+      key: '4',
+      action: 'Complete an optional survey',
+      points: '15pt'
+    },
+    {
+      key: '5',
+      action: 'Complete a late survey',
+      points: '5pt'
+    },
+    {
+      key: '6',
+      action: 'Poke other students to review',
+      points: '2pt'
+    },
+    {
+      key: '7',
+      action: 'Daily streak, 3 days in a row',
+      points: '10pt'
+    }
+  ];
+
+  dataSource = dataSource.map((d, i) => ({ ...d, key: i }));
+  
   return (
     <div className="m-5">
       <Typography.Title level={2}>Welcome to Gamification Platform!</Typography.Title>
@@ -68,16 +113,17 @@ const Guide = () => {
       <Typography.Text>
         We have introduced multiple levels of gamification in the platform that the user will
         growing access to as they work more with the platform. A user can increase their platform
-        level and accumulate course points by interacting with the platform in three ways:
-        submitting an assignment (20 points), submitting a peer review (10 points), or getting a
-        trivia answer correct (5 points).
+        level and accumulate course points by interacting with the platform.
       </Typography.Text>
       <br />
-      <Typography.Text>These gamification elements are explained below</Typography.Text>
       <Typography.Title level={4} className="my-3">
         Platform Level Gamification Elements
       </Typography.Title>
       <Table className="text-center" columns={columns} dataSource={dataSource} />
+      <Typography.Title level={4} className="my-3">
+        Points Gamification Elements
+      </Typography.Title>
+      <Table className="text-center" columns={pointsColumns} dataSource={pointsSource} />
       <Typography.Text>
         These elements are associated with a single user&apos;s account. As the user progresses
         through courses, they will accumulate more experience that can be used to unlock the above
@@ -116,7 +162,8 @@ const Guide = () => {
         This is an evolving project that is open to expansion! We look to add more features soon!
       </Typography.Text>
     </div>
-  )
-}
+  );
+};
 
-export default Guide
+export default Guide;
+

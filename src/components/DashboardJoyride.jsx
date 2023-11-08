@@ -78,7 +78,7 @@ const DashboardJoyride = ({ isFirstLogin }) => {
       content: (
         <>
           <p><strong>Gamification:</strong> Visualize your progress and stay motivated!</p>
-          <p>This element shows your work progress. Try to fill up the triangle by completing tasks and engaging with the platform!</p>
+          <p>This element shows your work progress. Try to fill up the triangle by completing tasks and engaging with the platform! Do you want to know our reward points scheme? Please check the table on Guide!</p>
         </>
       ),
       placement: 'bottom',
