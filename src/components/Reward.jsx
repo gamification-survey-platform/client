@@ -39,6 +39,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
   const course = courses.find(({ course_name }) => course_name === belong_to)
   const { points: userPoints } = course
   const [open, setOpen] = useState(false)
+  const isUserInstructor = course?.is_staff;
   const deleteReward = async () => {
     try {
       const res = await deleteCourseReward({
@@ -87,7 +88,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
         <Divider />
         <strong className="text-success">{inventory} remaining</strong>
       </div>
-      {course.user_role === 'Instructor' ? (
+      {isUserInstructor ? (
         <div className="text-center">
           <Divider />
           <Row justify="center">
@@ -121,7 +122,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
         </div>
       )}
     </Card>
-  )
-}
+  );
+};
 
-export default Reward
+export default Reward;
