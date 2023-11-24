@@ -12,12 +12,13 @@ import coursesSelector from '../store/courses/selectors'
 import { addCoursePoints } from '../store/courses/coursesSlice'
 
 const Cover = ({ type, picture }) => {
+  const imageStyle = { width: '100%', height: '200px', objectFit: 'cover' };
   if (type === 'Other' && picture) {
-    return <Image preview={false} src={`${picture}`} className="p-5" />
+    return <Image preview={false} src={`${picture}`} style={imageStyle} />
   } else if (type === 'Late Submission') {
-    return <Image preview={false} src={Calendar} className="p-5" />
+    return <Image preview={false} src={Calendar} style={imageStyle} />
   } else if (type === 'Bonus') {
-    return <Image preview={false} src={TreasureChest} className="p-5" />
+    return <Image preview={false} src={TreasureChest} style={imageStyle} />
   }
   return null
 }
@@ -75,7 +76,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
   return (
     <Card
       className="m-1 w-25"
-      style={{ color: inventory === 0 ? 'grey' : 'black' }}
+      style={{ color: inventory === 0 ? 'grey' : 'black', width: '250px', margin: '5px' }}
       cover={<Cover type={type} picture={picture} />}>
       <Card.Meta title={name} style={{ color: inventory === 0 ? 'grey!important' : 'black' }} />
       <div className="m-1 text-left">

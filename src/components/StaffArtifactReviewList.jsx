@@ -95,8 +95,13 @@ const ArtifactReviewers = ({
     }
   }
 
+  const listStyle = {
+    maxHeight: '400px',
+    overflow: 'auto',
+  };
+
   return (
-    <div ref={dropRef}>
+    <div ref={dropRef} style={listStyle}>
       {contextHolder}
       <List
         header={<Typography.Title level={5}>Reviewee: {reviewing}</Typography.Title>}
