@@ -65,6 +65,8 @@ const Home = () => {
     loadData()
   }, [])
 
+  const imageStyle = { width: '100%', height: '150px', objectFit: 'cover' };
+  const cardContentStyle = { height: '200px' };
   return spin ? (
     <Spinner show={spin} />
   ) : (
@@ -77,11 +79,12 @@ const Home = () => {
                 <Card
                   className="text-center w-100"
                   cover={
-                    <Image preview={false} src={course.picture ? course.picture : DefaultImage} />
+                    <Image preview={false} src={course.picture ? course.picture : DefaultImage} style={imageStyle}/>
                   }
                   key={i}
-                  style={{minWidth:200}}
+                  style={{minWidth:200, overflow: 'hidden'}}
                   >
+                  <div style={cardContentStyle}>
                   <Space direction="vertical" size="middle" align="center">
                     <Row justify="center" className="text-center">
                       <p>{course.course_name}</p>
@@ -97,6 +100,7 @@ const Home = () => {
                       </Link>
                     </Row>
                   </Space>
+                  </div>
                 </Card>
               </Col>
             )
