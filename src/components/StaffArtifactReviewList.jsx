@@ -253,7 +253,11 @@ const StaffArtifactReviewList = () => {
         />
       </Col>
       <Col span={19} offset={1}>
-        <Space direction="horizontal">
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+          gap: '16px'
+        }}>
           {Object.keys(artifactReviews).map((reviewing, i) => {
             return (
               <ArtifactReviewers
@@ -268,7 +272,7 @@ const StaffArtifactReviewList = () => {
               />
             )
           })}
-        </Space>
+        </div>
       </Col>
     </DndProvider>
   )
