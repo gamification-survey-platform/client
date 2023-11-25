@@ -155,7 +155,7 @@ const AssignmentDetails = () => {
   ) : (
     <div className="m-5">
       {contextHolder}
-      <Row>
+      <Row gutter={24}>
         <Col span={17}>
           <div className="text-center">
             <Typography.Title level={3}>{assignment.assignment_name}</Typography.Title>
@@ -171,11 +171,13 @@ const AssignmentDetails = () => {
           <Divider />
           <Typography.Text>{assignment.description}</Typography.Text>
         </Col>
-        {user.is_staff ? (
-          <StaffSubmissionList />
-        ) : (
-          <StudentReviewsList artifactReviews={artifactReviews} />
-        )}
+        <Col span={7}>
+          {user.is_staff ? (
+            <StaffSubmissionList />
+          ) : (
+            <StudentReviewsList artifactReviews={artifactReviews} />
+          )}
+        </Col>
       </Row>
       <Divider />
       <Row>
@@ -239,7 +241,7 @@ const AssignmentDetails = () => {
         )}
       </Row>
     </div>
-  )
+  );
 }
 
 export default AssignmentDetails
