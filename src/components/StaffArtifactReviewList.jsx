@@ -244,7 +244,7 @@ const StaffArtifactReviewList = () => {
       <Col span={24} className="mb-3">
         <Typography.Title level={5}>Drag and Drop Reviewers to Reassign</Typography.Title>
       </Col>
-      <Col span={4} style={{ borderRight: 'solid 1px #d9d9d9', paddingRight: '20px', maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
+      <Col span={4} style={{ borderRight: 'solid 1px #d9d9d9', paddingRight: '20px', maxHeight: '250vh', overflowY: 'auto' }}>
         <List
           dataSource={members}
           bordered
