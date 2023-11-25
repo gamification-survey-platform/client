@@ -96,8 +96,9 @@ const ArtifactReviewers = ({
   }
 
   const listStyle = {
-    maxHeight: '400px',
+    maxHeight: 'calc(100vh - 200px)',
     overflow: 'auto',
+    padding: '8px',
   };
 
   return (
@@ -111,9 +112,9 @@ const ArtifactReviewers = ({
           const styles = item.hovering ? { opacity: 0.5 } : {}
           if (item.status === 'COMPLETED') {
             return (
-              <List.Item style={{ backgroundColor: '#d9d9d9' }}>
+              <List.Item style={{ ...styles, backgroundColor: '#d9d9d9', flexDirection: 'column', alignItems: 'flex-start' }}>
                 <Typography.Text>{item.reviewer}</Typography.Text>
-                <Button className="ml-1" danger onClick={(e) => reopenReview(e, item.id)}>
+                <Button className="ml-1" danger onClick={(e) => reopenReview(e, item.id)} style={{ marginTop: '4px' }}>
                   Reopen
                 </Button>
               </List.Item>
@@ -243,12 +244,12 @@ const StaffArtifactReviewList = () => {
       <Col span={24} className="mb-3">
         <Typography.Title level={5}>Drag and Drop Reviewers to Reassign</Typography.Title>
       </Col>
-      <Col span={4} style={{ borderRight: 'solid 1px #d9d9d9', paddingRight: 40 }}>
+      <Col span={4} style={{ borderRight: 'solid 1px #d9d9d9', paddingRight: '20px', maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
         <List
           dataSource={members}
           bordered
           header={<Typography.Title level={5}>Reviewers</Typography.Title>}
-          renderItem={(item) => <Member member={item} handleCancel={handleCancel} />}
+          renderItem={(item) => <Member member={item} handleCancel={handleCancel} style={{ padding: '4px' }} />}
         />
       </Col>
       <Col span={19} offset={1}>
