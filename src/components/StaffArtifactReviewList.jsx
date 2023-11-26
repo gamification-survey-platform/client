@@ -5,7 +5,7 @@ import {
   getAssignmentArtifactReviews,
   editArtifactReviewStatus
 } from '../api/artifactReview'
-import { Space, List, Col, Typography, Button } from 'antd'
+import { Space, List, Col, Typography, Button, Tag } from 'antd'
 import { getMembers } from '../api/members'
 import { useParams } from 'react-router'
 import { useSelector } from 'react-redux'
@@ -105,6 +105,14 @@ const ArtifactReviewers = ({
     }
   }
 
+  const reviewStatusLabel = (status) => {
+    if (status === 'INCOMPLETE') {
+      return <Tag color="red" style={{ marginLeft: 8 }}>Mandatory</Tag>;
+    } else {
+      return <Tag color="blue" style={{ marginLeft: 8 }}>Optional</Tag>;
+    }
+  };
+
   const listStyle = {
     maxHeight: 'none',
     overflow: 'auto',
@@ -127,6 +135,7 @@ const ArtifactReviewers = ({
         dataSource={uniqueReviewers}
         renderItem={(item) => {
           const styles = item.hovering ? { opacity: 0.5 } : {}
+          const statusLabel = item.status === 'COMPLETED' ? null : reviewStatusLabel(item.status);
           if (item.status === 'COMPLETED') {
             return (
               <List.Item style={{styles}}>
@@ -142,12 +151,15 @@ const ArtifactReviewers = ({
           return (
             <List.Item style={styles}>
               <Typography.Text>{item.reviewer}</Typography.Text>
+              <Space style={{ marginLeft: 'auto' }}></Space>
+              {statusLabel}
               <CloseCircleOutlined
                 role="button"
                 onClick={() => removeReviewer(reviewing, item.reviewer)}
+                style={{ marginLeft: 'auto' }}
               />
             </List.Item>
-          )
+          );
         }}
       />
     </div>
