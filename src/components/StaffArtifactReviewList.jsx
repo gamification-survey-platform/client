@@ -14,6 +14,7 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { CloseCircleOutlined } from '@ant-design/icons'
 import useMessage from 'antd/es/message/useMessage'
+import { RedoOutlined } from '@ant-design/icons';
 
 const Member = forwardRef(({ member, handleCancel }, ref) => {
   const [{ isDragging }, dragRef] = useDrag(
@@ -96,9 +97,16 @@ const ArtifactReviewers = ({
   }
 
   const listStyle = {
-    maxHeight: 'calc(100vh - 200px)',
+    maxHeight: 'none',
     overflow: 'auto',
     padding: '8px',
+  };
+
+  const reopenIconStyle = {
+    fontSize: '16px',
+    color: '#1890ff',
+    cursor: 'pointer',
+    margin: '4px'
   };
 
   return (
@@ -112,13 +120,15 @@ const ArtifactReviewers = ({
           const styles = item.hovering ? { opacity: 0.5 } : {}
           if (item.status === 'COMPLETED') {
             return (
-              <List.Item style={{ ...styles, backgroundColor: '#d9d9d9', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <List.Item style={{styles}}>
                 <Typography.Text>{item.reviewer}</Typography.Text>
-                <Button className="ml-1" danger onClick={(e) => reopenReview(e, item.id)} style={{ marginTop: '4px' }}>
-                  Reopen
-                </Button>
+                <RedoOutlined
+                  onClick={(e) => reopenReview(e, item.id)}
+                  style={reopenIconStyle}
+                  title="Reopen Review" 
+                />
               </List.Item>
-            )
+            );
           }
           return (
             <List.Item style={styles}>
