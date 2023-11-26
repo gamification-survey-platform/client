@@ -257,6 +257,10 @@ const StaffArtifactReviewList = () => {
     }
   }
 
+  const sortedArtifactReviews = Object.entries(artifactReviews).sort((a, b) => {
+    return b[1].length - a[1].length;
+  }).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+
   return (
     <DndProvider backend={HTML5Backend}>
       {contextHolder}
@@ -277,24 +281,23 @@ const StaffArtifactReviewList = () => {
           gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
           gap: '16px'
         }}>
-          {Object.keys(artifactReviews).map((reviewing, i) => {
-            return (
-              <ArtifactReviewers
-                key={i}
-                reviewing={reviewing}
-                reviewers={artifactReviews[reviewing]}
-                handleHover={handleHover}
-                handleDrop={handleDrop}
-                removeReviewer={removeReviewer}
-                setArtifactReviews={setArtifactReviews}
-                artifactReviews={artifactReviews}
-              />
-            )
-          })}
+          {/* Map over the sorted entries */}
+          {Object.keys(sortedArtifactReviews).map((reviewing, i) => (
+            <ArtifactReviewers
+              key={i}
+              reviewing={reviewing}
+              reviewers={sortedArtifactReviews[reviewing]}
+              handleHover={handleHover}
+              handleDrop={handleDrop}
+              removeReviewer={removeReviewer}
+              setArtifactReviews={setArtifactReviews}
+              artifactReviews={artifactReviews}
+            />
+          ))}
         </div>
       </Col>
     </DndProvider>
-  )
+  );
 }
 
 export default StaffArtifactReviewList
