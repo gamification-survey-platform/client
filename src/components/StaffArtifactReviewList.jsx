@@ -14,6 +14,7 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { CloseCircleOutlined } from '@ant-design/icons'
 import useMessage from 'antd/es/message/useMessage'
+import { RedoOutlined } from '@ant-design/icons';
 
 const Member = forwardRef(({ member, handleCancel }, ref) => {
   const [{ isDragging }, dragRef] = useDrag(
@@ -66,6 +67,15 @@ const ArtifactReviewers = ({
     [reviewers, handleHover, handleDrop]
   )
 
+  const uniqueReviewers = reviewers.reduce((acc, current) => {
+    const x = acc.find(item => item.reviewer === current.reviewer);
+    if (!x) {
+      return acc.concat([current]);
+    } else {
+      return acc;
+    }
+  }, []);
+
   const reopenReview = async (e, artifact_review_id) => {
     e.preventDefault()
     e.stopPropagation()
@@ -96,9 +106,16 @@ const ArtifactReviewers = ({
   }
 
   const listStyle = {
-    maxHeight: 'calc(100vh - 200px)',
+    maxHeight: 'none',
     overflow: 'auto',
     padding: '8px',
+  };
+
+  const reopenIconStyle = {
+    fontSize: '16px',
+    color: '#1890ff',
+    cursor: 'pointer',
+    margin: '4px'
   };
 
   return (
@@ -107,18 +124,20 @@ const ArtifactReviewers = ({
       <List
         header={<Typography.Title level={5}>Reviewee: {reviewing}</Typography.Title>}
         bordered
-        dataSource={reviewers}
+        dataSource={uniqueReviewers}
         renderItem={(item) => {
           const styles = item.hovering ? { opacity: 0.5 } : {}
           if (item.status === 'COMPLETED') {
             return (
-              <List.Item style={{ ...styles, backgroundColor: '#d9d9d9', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <List.Item style={{styles}}>
                 <Typography.Text>{item.reviewer}</Typography.Text>
-                <Button className="ml-1" danger onClick={(e) => reopenReview(e, item.id)} style={{ marginTop: '4px' }}>
-                  Reopen
-                </Button>
+                <RedoOutlined
+                  onClick={(e) => reopenReview(e, item.id)}
+                  style={reopenIconStyle}
+                  title="Reopen Review" 
+                />
               </List.Item>
-            )
+            );
           }
           return (
             <List.Item style={styles}>
@@ -238,6 +257,10 @@ const StaffArtifactReviewList = () => {
     }
   }
 
+  const sortedArtifactReviews = Object.entries(artifactReviews).sort((a, b) => {
+    return b[1].length - a[1].length;
+  }).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+
   return (
     <DndProvider backend={HTML5Backend}>
       {contextHolder}
@@ -258,24 +281,23 @@ const StaffArtifactReviewList = () => {
           gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
           gap: '16px'
         }}>
-          {Object.keys(artifactReviews).map((reviewing, i) => {
-            return (
-              <ArtifactReviewers
-                key={i}
-                reviewing={reviewing}
-                reviewers={artifactReviews[reviewing]}
-                handleHover={handleHover}
-                handleDrop={handleDrop}
-                removeReviewer={removeReviewer}
-                setArtifactReviews={setArtifactReviews}
-                artifactReviews={artifactReviews}
-              />
-            )
-          })}
+          {/* Map over the sorted entries */}
+          {Object.keys(sortedArtifactReviews).map((reviewing, i) => (
+            <ArtifactReviewers
+              key={i}
+              reviewing={reviewing}
+              reviewers={sortedArtifactReviews[reviewing]}
+              handleHover={handleHover}
+              handleDrop={handleDrop}
+              removeReviewer={removeReviewer}
+              setArtifactReviews={setArtifactReviews}
+              artifactReviews={artifactReviews}
+            />
+          ))}
         </div>
       </Col>
     </DndProvider>
-  )
+  );
 }
 
 export default StaffArtifactReviewList
