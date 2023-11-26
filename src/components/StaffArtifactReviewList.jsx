@@ -67,6 +67,15 @@ const ArtifactReviewers = ({
     [reviewers, handleHover, handleDrop]
   )
 
+  const uniqueReviewers = reviewers.reduce((acc, current) => {
+    const x = acc.find(item => item.reviewer === current.reviewer);
+    if (!x) {
+      return acc.concat([current]);
+    } else {
+      return acc;
+    }
+  }, []);
+
   const reopenReview = async (e, artifact_review_id) => {
     e.preventDefault()
     e.stopPropagation()
@@ -115,7 +124,7 @@ const ArtifactReviewers = ({
       <List
         header={<Typography.Title level={5}>Reviewee: {reviewing}</Typography.Title>}
         bordered
-        dataSource={reviewers}
+        dataSource={uniqueReviewers}
         renderItem={(item) => {
           const styles = item.hovering ? { opacity: 0.5 } : {}
           if (item.status === 'COMPLETED') {
