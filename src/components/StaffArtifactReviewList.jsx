@@ -270,7 +270,7 @@ const StaffArtifactReviewList = () => {
   }
 
   const sortedArtifactReviews = Object.entries(artifactReviews).sort((a, b) => {
-    return b[1].length - a[1].length;
+    return a[1].length - b[1].length;
   }).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
 
   return (
