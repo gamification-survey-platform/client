@@ -17,21 +17,43 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
   const courses = useSelector(coursesSelector)
   const course = courses.find(({ course_number }) => course_number === course_id)
   const [showOldImage, setShowOldImage] = useState(!!editingReward)
+  const [fileList, setFileList] = useState([]);
+
+  const handleFileChange = (info) => {
+    setFileList(info.fileList);
+  
+    if (info.fileList.length > 0 && info.fileList[0].originFileObj) {
+      setPicture(info.fileList[0].originFileObj);
+    } else {
+      setPicture(null);
+    }
+  };   
 
   const typeWatch = Form.useWatch('type', form)
   useEffect(() => {
-    form.resetFields()
-    setShowQuantity(false)
-    setShowFile(false)
     if (editingReward) {
+      form.setFieldsValue({
+        name: editingReward.name,
+        description: editingReward.description,
+        type: editingReward.type,
+        inventory: editingReward.inventory,
+        points: editingReward.points,
+        is_active: editingReward.is_active,
+      });
+  
       if (editingReward.picture) {
-        setPicture(editingReward.picture)
-        setShowOldImage(true)
-        setShowFile(true)
+        setFileList([{
+          uid: '-1', 
+          name: 'ExistingImage.png',
+          status: 'done',
+          url: editingReward.picture,
+        }]);
+      } else {
+        setFileList([]);
       }
-      form.setFieldsValue(editingReward)
     }
-  }, [open])
+  }, [editingReward, form]);
+  
 
   useEffect(() => {
     if (typeWatch === 'Bonus' || typeWatch === 'Late Submission') {
@@ -163,32 +185,24 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
           {showOldImage ? <Image width={200} src={editingReward.picture} /> : null}
         </Form.Item>
         {showFile ? (
-          <Form.Item
-            name="picture"
-            label="Image Showcase"
-            rules={[
-              {
-                required: true,
-                message: 'Image must be provided'
-              }
-            ]}>
-            <Upload
-              accept="image/png, image/jpeg"
-              maxCount={1}
-              valuePropName="fileList"
-              beforeUpload={(file) => {
-                setPicture(file)
-                setShowOldImage(false)
-                messageApi.open({ type: 'success', content: 'Updated image.' })
-                return false
-              }}>
-              <Button>
-                {editingReward
-                  ? 'Change above reward showcase'
-                  : 'Please upload an image showcasing the reward.'}
-              </Button>
-            </Upload>
-          </Form.Item>
+        <Form.Item
+          name="picture"
+          label="Image Showcase"
+        >
+          <Upload
+            accept="image/png, image/jpeg"
+            maxCount={1}
+            fileList={fileList}
+            onChange={handleFileChange}
+            beforeUpload={() => false}
+          >
+            <Button>
+              {editingReward
+                ? 'Change Image (Optional)'
+                : 'Upload Image'}
+            </Button>
+          </Upload>
+        </Form.Item>
         ) : null}
       </Form>
     </Modal>
