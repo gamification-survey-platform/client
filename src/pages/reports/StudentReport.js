@@ -114,12 +114,14 @@ const StudentReport = () => {
                     let data
                     if (statistics && statistics.sections[title]) {
                       const questionStatistics = statistics.sections[title][text]
-                      const { labels, counts } = questionStatistics
-                      const rawData = labels.reduce(
-                        (prev, l, i) => ({ ...prev, [l]: counts[i] }),
-                        {}
-                      )
-                      data = { data: rawData, title: text }
+                      if (questionStatistics) {
+                        const { labels, counts } = questionStatistics
+                        const rawData = labels.reduce(
+                          (prev, l, i) => ({ ...prev, [l]: counts[i] }),
+                          {}
+                        )
+                        data = { data: rawData, title: text }
+                      }
                     }
 
                     return (
