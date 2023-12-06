@@ -12,6 +12,7 @@
     "bootstrap": "^5.2.3",
     "connected-react-router": "^6.9.3",
     "d3": "^7.8.2",
+    "jimp": "^0.22.10",
     "lodash": "^4.17.21",
     "moment-timezone": "^0.5.43",
     "papaparse": "^5.4.1",

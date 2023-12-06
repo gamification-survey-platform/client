@@ -1,5 +1,6 @@
 import api from './apiUtils'
 import { writeToS3 } from '../utils/s3helpers'
+// const Jimp = require('jimp');
 
 const editProfile = async ({ user_id, data }) => {
   try {
@@ -9,6 +10,8 @@ const editProfile = async ({ user_id, data }) => {
     throw new Error(error.response.data.message)
   }
 }
+
+
 
 const updateProfilePic = async ({ user_id, file }) => {
   try {
