@@ -144,7 +144,10 @@ const CourseForm = () => {
           rules={[{ required: true, message: 'Please input an syllabus' }]}>
           <Input.TextArea rows={6} />
         </Form.Item>
-        <Form.Item name="picture">
+        <Form.Item
+          label = "Course Picture"
+          name = 'picture'
+          rules={[{ required: true, message: 'Please input a course cover' }]}>
           <Upload
             maxCount={1}
             accept="image/png, image/jpeg"
@@ -153,7 +156,7 @@ const CourseForm = () => {
               return false
             }}>
             <Button>
-              {editingCourse && editingCourse.picture ? 'Reset' : 'Set'} course picture
+              {editingCourse && editingCourse.picture ? 'Reset' : 'Click to Upload'}
             </Button>
           </Upload>
           {editingCourse && editingCourse.picture ? (
