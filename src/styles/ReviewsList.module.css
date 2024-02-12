@@ -1,4 +1,24 @@
-.tag {
-  border-width: medium;
-  font-weight: bold;
+.text-center {
+  text-align: center;
+}
+
+.reviewTitle {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 10px; 
+}
+
+.space-vertical .ant-space-item {
+  margin-bottom: 15px;
+}
+
+.infoIcon {
+  background-color: white;
+  border-radius: 50%;
+  font-size: 16px;
+  color: #1890ff;
+  cursor: default;
+  margin-left: 5px;
 }
