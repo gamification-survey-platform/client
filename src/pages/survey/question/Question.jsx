@@ -604,16 +604,18 @@ const Question = (question) => {
                 }}
                 onClick={() => setQuestionModalOpen(true)}
               />
-              <DeleteTwoTone
-                twoToneColor="#dc3545"
-                style={{
-                  fontSize: '1em',
-                  margin: 10,
-                  pointerEvents: 'auto',
-                  cursor: 'pointer'
-                }}
-                onClick={handleDeleteQuestion}
-              />
+              {question_type !== 'SLIDEREVIEW' && (
+                <DeleteTwoTone
+                  twoToneColor="#dc3545"
+                  style={{
+                    fontSize: '1em',
+                    margin: 10,
+                    pointerEvents: 'auto',
+                    cursor: 'pointer'
+                  }}
+                  onClick={handleDeleteQuestion}
+                />
+              )}
             </Col>
           )}
           <AddQuestionModal
