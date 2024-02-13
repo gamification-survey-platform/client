@@ -566,16 +566,20 @@ const Question = (question) => {
   else if (question_type === 'NUMBER' && !isNaN(questionProps.min) && !isNaN(questionProps.max))
     questionText = `${text} (Enter a number in between [${questionProps.min}, ${questionProps.max}])`
   else questionText = text
+
+  // Add a new class to handle text overflow in the question text
+  let questionTextClass = `questionTextContainer ${styles.questionText}`;
+  if (questionProps.is_required) {
+    questionTextClass += ' required-field';
+  }
+
   return (
-    <div id={id} className="mb-5">
+    <div id={id} className={`${styles.questionWrapper} mb-5`}>
       <Form.Item
-        className={isMultipleChoice && styles.questionWrapper}
-        rules={[
-          { required: questionProps.is_required, message: 'Please complete the above question.' }
-        ]}
+        rules={[{ required: questionProps.is_required, message: 'Please complete the above question.' }]}
         label={
           <div
-            className={questionProps.is_required ? 'required-field py-3' : 'py-3'}
+            className={questionTextClass}
             style={{ opacity: isDragging ? 0.2 : 1 }}
             ref={dragDropRef}>
             {questionText}

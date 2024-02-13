@@ -1,8 +1,15 @@
 .questionWrapper {
   margin-bottom: 0;
-  height: 20px;
+  display: flex;
+  flex-direction: column;
 }
 
 .input {
   width: 180px;
+}
+
+.questionTextContainer {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
