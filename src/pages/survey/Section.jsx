@@ -104,16 +104,18 @@ const Section = ({ sectionIdx, artifact, handleReorderSections }) => {
                     }}
                     onClick={() => setSectionModalOpen(true)}
                   />
-                  <DeleteTwoTone
-                    twoToneColor="#dc3545"
-                    style={{
-                      fontSize: '2em',
-                      margin: 10,
-                      pointerEvents: 'auto',
-                      cursor: 'pointer'
-                    }}
-                    onClick={handleDeleteSection}
-                  />
+                  {title !== "Artifact" && (
+                    <DeleteTwoTone
+                      twoToneColor="#dc3545"
+                      style={{
+                        fontSize: '2em',
+                        margin: 10,
+                        pointerEvents: 'auto',
+                        cursor: 'pointer'
+                      }}
+                      onClick={handleDeleteSection}
+                    />
+                  )}
                   <AddQuestionModal
                     sectionIdx={sectionIdx}
                     open={questionModalOpen}
