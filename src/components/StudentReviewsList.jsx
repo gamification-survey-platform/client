@@ -5,13 +5,15 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { resetSurvey } from '../store/survey/surveySlice'
 import { Tooltip } from 'antd';
+import { InfoCircleOutlined } from '@ant-design/icons';
 
 const ReviewList = ({ title, color, reviews }) => {
   const { course_id } = useParams()
 
   return (
     <>
-      <Typography.Title level={5}>{title}</Typography.Title>
+      <Typography.Title level={5} className={styles.reviewTitle}>{title}</Typography.Title>
+
       {reviews.map((review) => {
         const { course_number, assignment_id, assignment_type } = review
         let tagTitle = ''
@@ -63,7 +65,7 @@ const StudentReviewsList = ({
             <span>
             Late Reviews {' '}
             <Tooltip title="5 points each">
-              <span style={{ cursor: 'help' }}>?</span>
+              <InfoCircleOutlined className={styles.infoIcon} />
             </Tooltip>
           </span>
           } color="volcano" reviews={lateReviews} />
@@ -73,7 +75,7 @@ const StudentReviewsList = ({
             <span>
             Mandatory Reviews {' '}
             <Tooltip title="10 points each">
-              <span style={{ cursor: 'help' }}>?</span>
+              <InfoCircleOutlined className={styles.infoIcon} />
             </Tooltip>
           </span>
           } color="gold" reviews={pendingReviews} />
@@ -83,7 +85,7 @@ const StudentReviewsList = ({
             <span>
             Optional Reviews {' '}
             <Tooltip title="15 points each">
-              <span style={{ cursor: 'help' }}>?</span>
+              <InfoCircleOutlined className={styles.infoIcon} />
             </Tooltip>
           </span>
           } 
