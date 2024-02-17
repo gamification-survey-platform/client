@@ -71,8 +71,15 @@ const CourseForm = () => {
       try {
         const courseData = { ...form.getFieldsValue(), andrew_id: user.andrewId }
         courseData.semester = `${courseData.semester} ${courseData.semesterYear}`
-        const formattedPicture = await formatCoursePicture(coursePicture)
-        courseData.picture = formattedPicture
+        // if user upload a new picture, set a new picture. Otherwise, use the original picture from editingCourse 
+        if (coursePicture) {
+          console.log('Processing new course picture');
+          const formattedPicture = await formatCoursePicture();
+          courseData.picture = formattedPicture;
+        } else if (editingCourse.picture) {
+          courseData.picture = editingCourse.picture;
+        }
+
         delete courseData.semesterYear
         const res = editingCourse
           ? await editCourseApi({ course_id: editingCourse.pk, course: courseData })
@@ -156,7 +163,7 @@ const CourseForm = () => {
               return false
             }}>
             <Button>
-              {editingCourse && editingCourse.picture ? 'Reset' : 'Click to Upload'}
+              {editingCourse && editingCourse.picture ? 'Reset' : 'Click to Upload'} course picture
             </Button>
           </Upload>
           {editingCourse && editingCourse.picture ? (
