@@ -192,6 +192,11 @@ const AssignmentDetails = () => {
             )}
 
             <Col span={6}>
+            
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <Button type="primary" style={{ marginTop: '20px', width: '150px', fontSize: '16px'}}>Resubmit</Button>
+            </div>
+
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <Space direction="vertical" className="mt-3">
                 {!artifact && (
@@ -208,10 +213,10 @@ const AssignmentDetails = () => {
                   </Row>
                 )}
                 {artifact && (
-                  <Row className="text-center" style={{ marginBottom: '10px' }}>
+                  <Row className="text-center" style={{ marginBottom: '0px' }}>
                     <Link
                       to={`/courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact.artifact_pk}/reports`}>
-                      <Button type="primary" style={{ marginTop: '10px', width: '150px' }}>View Reports</Button>
+                      <Button type="primary" style={{ marginTop: '-5px', width: '150px', fontSize: '16px'}}>View Reports</Button>
                     </Link>
                   </Row>
                 )}
@@ -238,12 +243,6 @@ const AssignmentDetails = () => {
                   })}
                 </Space>
               ) : null}
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Button type="primary" style={{ marginTop: '18px', width: '150px' }}>Current Submission</Button>
-                <Button type="primary" style={{ marginTop: '10px', width: '150px' }}>Resubmit</Button>
-                <Button type="primary" style={{ marginTop: '10px', width: '150px' }}>Submission History</Button>
               </div>
             </Col>
           </>
