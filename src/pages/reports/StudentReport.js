@@ -170,20 +170,23 @@ const StudentReport = () => {
                           {question_type !== 'SLIDEREVIEW' && question_type !== 'SCALEMULTIPLECHOICE' && (
                             <>
                               <Row className="ml-3">
-                                <Typography.Title level={5}>Answers</Typography.Title>
+                                <Typography.Title level={5}>Answers: </Typography.Title>
                               </Row>
-                              {artifact_reviews.map((review, i) => {
-                                return (
-                                  <Row key={i} className="ml-5">
-                                    {review.map((r, i) => r.text).join(', ')}
+                              {artifact_reviews.map((review, i) => (
+                                <Row key={i} className="ml-5 align-items-center" style={{ marginBottom: '0px' }}>
+                                  <Col style={{ padding: '5px', display: 'flex', alignItems: 'center', opacity: review.length > 0 ? '1' : '0.5' }}>
+                                    {review.length > 0 && review.some(r => r.text)
+                                      ? review.map((r, index) => r.text).filter(text => text).join(', ')
+                                      : "No feedback was provided by this reviewer on this question."
+                                    }
+                                  </Col>
+                                  <Col xs="auto">
                                     <QuestionCircleTwoTone
-                                      className="ml-3"
-                                      role="button"
                                       onClick={() => handleFeedbackClick(section, question, review)}
                                     />
-                                  </Row>
-                                )
-                              })}
+                                  </Col>
+                                </Row>
+                              ))}
                             </>
                           )}
                         </Col>
