@@ -180,12 +180,19 @@ const AssignmentDetails = () => {
         </Col>
       </Row>
       <Divider />
-      <Row>
+      <Row gutter={24}>
         {user.is_staff ? (
           <StaffArtifactReviewList />
         ) : (
           <>
-            <Col span={5}>
+            {artifact && (
+              <Col span={18}>
+                <PdfPreview artifact={artifact} />
+              </Col>
+            )}
+
+            <Col span={6}>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
               <Space direction="vertical" className="mt-3">
                 {!artifact && (
                   <Row>
@@ -201,10 +208,10 @@ const AssignmentDetails = () => {
                   </Row>
                 )}
                 {artifact && (
-                  <Row className="text-center">
+                  <Row className="text-center" style={{ marginBottom: '10px' }}>
                     <Link
                       to={`/courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact.artifact_pk}/reports`}>
-                      <Button type="primary">View Reports</Button>
+                      <Button type="primary" style={{ marginTop: '10px', width: '150px' }}>View Reports</Button>
                     </Link>
                   </Row>
                 )}
@@ -231,12 +238,14 @@ const AssignmentDetails = () => {
                   })}
                 </Space>
               ) : null}
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <Button type="primary" style={{ marginTop: '18px', width: '150px' }}>Current Submission</Button>
+                <Button type="primary" style={{ marginTop: '10px', width: '150px' }}>Resubmit</Button>
+                <Button type="primary" style={{ marginTop: '10px', width: '150px' }}>Submission History</Button>
+              </div>
             </Col>
-            {artifact && (
-              <Col span={2} offset={4}>
-                <PdfPreview artifact={artifact} />
-              </Col>
-            )}
           </>
         )}
       </Row>
