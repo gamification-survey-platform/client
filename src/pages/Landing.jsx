@@ -25,7 +25,8 @@ const Landing = () => {
     try {
       const res = await loginApi({ andrewId, password })
       if (res.status === 200) {
-        const { token, ...rest } = res.data
+        const { token, id, ...rest } = res.data
+        localStorage.setItem('userId', id)
         dispatch(setUser(rest))
         navigate('/dashboard')
       }
@@ -37,72 +38,71 @@ const Landing = () => {
   }
 
   const handleRegister = async (e) => {
-    e.preventDefault();
-    const { andrewId, password } = form.getFieldsValue();
+    e.preventDefault()
+    const { andrewId, password } = form.getFieldsValue()
     try {
-        await form.validateFields(['andrewId', 'password']);
+      await form.validateFields(['andrewId', 'password'])
     } catch (e) {
-        console.error(e);
-        messageApi.open({ type: 'error', content: 'Please fill out the relevant fields!' });
-        return;
+      console.error(e)
+      messageApi.open({ type: 'error', content: 'Please fill out the relevant fields!' })
+      return
     }
     try {
-        const res = await registerApi({ andrewId, password });
-        if (res.status === 200) {
+      const res = await registerApi({ andrewId, password })
+      if (res.status === 200) {
+        messageApi.open({
+          type: 'success',
+          content: `Successfully registered! Please login to continue.`
+        })
+        try {
+          const addMemberResponse = await addMember({
+            course_id: '20230516',
+            memberId: andrewId,
+            memberRole: 'Student'
+          })
+          const addMemberResponse2 = await addMember({
+            course_id: '20230521',
+            memberId: andrewId,
+            memberRole: 'Student'
+          })
+          if (addMemberResponse.status === 201) {
             messageApi.open({
-                type: 'success',
-                content: `Successfully registered! Please login to continue.`
-            });
-            try {
-                const addMemberResponse = await addMember({
-                    course_id: "20230516",
-                    memberId: andrewId,
-                    memberRole: 'Student'
-                });
-                const addMemberResponse2 = await addMember({
-                    course_id: "20230521",
-                    memberId: andrewId,
-                    memberRole: 'Student'
-                });
-                if (addMemberResponse.status === 201) {
-                    messageApi.open({
-                        type: 'success',
-                        content: `You've been registered to Welcome course as well!`
-                    });
-                } else {
-                    console.error(addMemberResponse);
-                    messageApi.open({
-                        type: 'error',
-                        content: 'There was an issue registering you to Welcome course.'
-                    });
-                }
-                if (addMemberResponse2.status === 201) {
-                    messageApi.open({
-                        type: 'success',
-                        content: `You've been registered to Get to Know the Platform course as well!`
-                    });
-                }
-                else {
-                    console.error(addMemberResponse2);
-                    messageApi.open({
-                        type: 'error',
-                        content: 'There was an issue registering you to Get to Know the Platform course.'
-                    });
-                }
-            } catch (e) {
-                console.error(e);
-                messageApi.open({
-                    type: 'error',
-                    content: 'Failed to automatically register to welcome course.'
-                });
-            }
-        form.setFieldsValue({ andrewId: '', password: '' }); 
+              type: 'success',
+              content: `You've been registered to Welcome course as well!`
+            })
+          } else {
+            console.error(addMemberResponse)
+            messageApi.open({
+              type: 'error',
+              content: 'There was an issue registering you to Welcome course.'
+            })
+          }
+          if (addMemberResponse2.status === 201) {
+            messageApi.open({
+              type: 'success',
+              content: `You've been registered to Get to Know the Platform course as well!`
+            })
+          } else {
+            console.error(addMemberResponse2)
+            messageApi.open({
+              type: 'error',
+              content: 'There was an issue registering you to Get to Know the Platform course.'
+            })
+          }
+        } catch (e) {
+          console.error(e)
+          messageApi.open({
+            type: 'error',
+            content: 'Failed to automatically register to welcome course.'
+          })
         }
+        form.setFieldsValue({ andrewId: '', password: '' })
+      }
     } catch (e) {
-        console.error(e);
-        messageApi.open({ type: 'error', content: e.message });
+      console.error(e)
+      messageApi.open({ type: 'error', content: e.message })
     }
-}
+  }
 
   const handleEnter = (e) => e.keyCode === 13 && handleLogin(e)
 
@@ -126,29 +126,26 @@ const Landing = () => {
               Let&lsquo;s get started.
             </Typography.Title>
           </Row>
-          <Form
-            form={form}
-            onFinish={handleLogin}
-            onKeyUp={handleEnter}
-            className="login-form"
-          >
+          <Form form={form} onFinish={handleLogin} onKeyUp={handleEnter} className="login-form">
             <Form.Item
               name="andrewId"
               rules={[{ required: true, message: 'Please input your Andrew ID!' }]}
-              className="login-form-item"
-            >
+              className="login-form-item">
               <Input prefix={<UserOutlined />} placeholder="Andrew ID" />
             </Form.Item>
             <Form.Item
               name="password"
               rules={[{ required: true, message: 'Please input your Password!' }]}
-              className="login-form-item"
-            >
+              className="login-form-item">
               <Input.Password prefix={<LockOutlined />} placeholder="Password" />
             </Form.Item>
             <Row justify="center">
               <Form.Item>
-                <Button type="primary" htmlType="submit" className="login-form-button" onClick={handleLogin}>
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  className="login-form-button"
+                  onClick={handleLogin}>
                   Log in
                 </Button>
               </Form.Item>

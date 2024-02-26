@@ -3,7 +3,12 @@ import { Button, Form, message, Popover, Input, DatePicker, Space } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useSelector } from 'react-redux'
 import { useLocation, useNavigate, useParams } from 'react-router'
-import { createSurvey, deleteSurveyTemplate, editSurveyTemplate } from '../../api/survey'
+import {
+  createSurvey,
+  deleteSurveyTemplate,
+  editSurveyTemplate,
+  getAllSurvey
+} from '../../api/survey'
 import coursesSelector from '../../store/courses/selectors'
 import dayjs from 'dayjs'
 import Checkbox from 'antd/es/checkbox/Checkbox'
@@ -23,6 +28,9 @@ const AddSurvey = () => {
   const [enableTrivia, setEnableTrivia] = useState(false)
   const [hints, setHints] = useState([])
 
+  const [surveys, setSurveys] = useState([])
+  const [selectedSurvey, setSelectedSurvey] = useState(-1)
+
   useEffect(() => {
     if (editingSurvey) {
       form.setFieldsValue(editingSurvey)
@@ -39,11 +47,64 @@ const AddSurvey = () => {
         })
       }
     }
+    fetchSurveys()
   }, [])
-  const handleSubmit = async (event) => {
+
+  const fetchSurveys = async () => {
+    // Fetch surveys from the server
+    try {
+      const res = await getSurveys() // Implement this function to fetch surveys
+      setSurveys(res)
+    } catch (error) {
+      console.error('Error fetching surveys:', error)
+    }
+  }
+
+  const getSurveys = async () => {
+    const surveyData = {
+      user_id: localStorage.getItem('userId')
+    }
+
+    const res = await getAllSurvey(surveyData)
+    return res.data
+  }
+
+  const handleCreate = async (event) => {
     event.preventDefault()
     event.stopPropagation()
     try {
+      const surveyId = selectedSurvey
+
+      if (surveyId != null && surveyId != -1) {
+        const fields = form.getFieldsValue()
+        const { date_due, date_released } = fields
+        const now = dayjs()
+        if (!date_due || !date_released) {
+          messageApi.open({ type: 'error', content: 'Please input date due and/or date release.' })
+          throw new Error()
+        } else if (!date_released.isAfter(now)) {
+          messageApi.open({ type: 'error', content: 'Date release must be in the future.' })
+          throw new Error()
+        } else if (!date_released.isBefore(date_due)) {
+          messageApi.open({ type: 'error', content: 'Date due must be after date release.' })
+          throw new Error()
+        }
+
+        const surveyData = {
+          course_id: selectedCourse.pk,
+          assignment_id,
+          survey: {
+            survey_id: surveyId,
+            date_due: new Date(date_due.format('MM/DD/YYYY hh:mm A')),
+            date_released: new Date(date_released.format('MM/DD/YYYY hh:mm A'))
+          }
+        }
+
+        const res = await createSurvey(surveyData)
+        if (res.status === 201 || res.status === 200) navigate(-1)
+        return
+      }
+
       const fields = form.getFieldsValue()
       const { date_due, date_released } = fields
       const now = dayjs()
@@ -57,6 +118,7 @@ const AddSurvey = () => {
         messageApi.open({ type: 'error', content: 'Date due must be after date release.' })
         throw new Error()
       }
+
       let trivia = {}
       if (enableTrivia) {
         trivia = {
@@ -78,6 +140,8 @@ const AddSurvey = () => {
         assignment_id,
         survey: {
           ...fields,
+          survey_id: -1,
+          user_id: localStorage.getItem('userId'),
           date_due: new Date(date_due.format('MM/DD/YYYY hh:mm A')),
           date_released: new Date(date_released.format('MM/DD/YYYY hh:mm A')),
           other_info: fields.other_info || '',
@@ -147,7 +211,7 @@ const AddSurvey = () => {
   return (
     <div className="m-3">
       {contextHolder}
-      <Form form={form} initialValues={editingSurvey ? {} : { template_name: 'Default Template' }}>
+      <Form form={form} initialValues={{ template_name: 'Default Template' }}>
         <Form.Item
           label="Template Name"
           name="template_name"
@@ -163,38 +227,37 @@ const AddSurvey = () => {
         <Form.Item label="Other information" name="other_info">
           <Input.TextArea rows={4} cols={10} />
         </Form.Item>
-        {editingSurvey ? null : (
-          <>
-            <Form.Item
-              label="Date released"
-              name="date_released"
-              rules={[{ required: true, message: 'Please input a release date.' }]}>
-              <DatePicker
-                showTime={{ 
-                  format: 'h:mm A',
-                  use12Hours: true,
-                }}
-                format="YYYY-MM-DD h:mm A"
-                disabledDate={(current) => current && current < dayjs()}
-                // moment={moment.tz('America/Los_Angeles')}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Date due"
-              name="date_due"
-              rules={[{ required: true, message: 'Please input a release date.' }]}>
-              <DatePicker
-                showTime={{ 
-                  format: 'h:mm A',
-                  use12Hours: true,
-                }}
-                format="YYYY-MM-DD h:mm A"
-                disabledDate={(current) => current && current < dayjs()}
-                // moment={moment.tz('America/Los_Angeles')}
-              />
-            </Form.Item>
-          </>
-        )}
+
+        <>
+          <Form.Item
+            label="Date released"
+            name="date_released"
+            rules={[{ required: true, message: 'Please input a release date.' }]}>
+            <DatePicker
+              showTime={{
+                format: 'h:mm A',
+                use12Hours: true
+              }}
+              format="YYYY-MM-DD h:mm A"
+              disabledDate={(current) => current && current < dayjs()}
+              // moment={moment.tz('America/Los_Angeles')}
+            />
+          </Form.Item>
+          <Form.Item
+            label="Date due"
+            name="date_due"
+            rules={[{ required: true, message: 'Please input a release date.' }]}>
+            <DatePicker
+              showTime={{
+                format: 'h:mm A',
+                use12Hours: true
+              }}
+              format="YYYY-MM-DD h:mm A"
+              disabledDate={(current) => current && current < dayjs()}
+              // moment={moment.tz('America/Los_Angeles')}
+            />
+          </Form.Item>
+        </>
         <Form.Item
           name="enableTrivia"
           valuePropName="checked"
@@ -225,7 +288,8 @@ const AddSurvey = () => {
         </Form.Item>
         {enableTrivia ? <SurveyTrivia hints={hints} setHints={setHints} /> : null}
         <Form.Item className="text-center">
-          {editingSurvey ? (
+          {
+            /* {editingSurvey ? (
             <>
               <Button type="primary" className="mx-3" onClick={handleEditTemplate}>
                 Edit Template
@@ -234,13 +298,26 @@ const AddSurvey = () => {
                 Delete Template
               </Button>
             </>
-          ) : (
-            <Button className="mt-3" type="primary" onClick={handleSubmit}>
+          ) :  */
+            <Button className="mt-3" type="primary" onClick={handleCreate}>
               Create
             </Button>
-          )}
+          }
         </Form.Item>
       </Form>
+      <div>
+        <select value={selectedSurvey} onChange={(e) => setSelectedSurvey(e.target.value)}>
+          <option value={-1}>None</option>
+          {surveys.map((survey) => (
+            <option key={survey.pk} value={survey.pk}>
+              {survey.name}
+            </option>
+          ))}
+        </select>
+        <button className="mt-3" type="primary" onClick={handleCreate} disabled={!selectedSurvey}>
+          Create
+        </button>
+      </div>
     </div>
   )
 }

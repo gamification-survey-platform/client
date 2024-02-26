@@ -12,11 +12,20 @@ const getSurvey = async ({ course_id, assignment_id }) => {
 
 const getSurveyDetails = async ({ course_id, assignment_id }) => {
   try {
-    const res = await api.get(`/courses/${course_id}/assignments/${assignment_id}/surveys`)
+    const res = await api.get(`/courses/${course_id}/assignments/${assignment_id}/survey`)
     return res
   } catch (error) {
     // Return response to indicate no survey exists
     return error.response
+  }
+}
+
+const getAllSurvey = async ({ user_id }) => {
+  try {
+    const res = await api.get(`surveys/${user_id}`)
+    return res
+  } catch (error) {
+    throw new Error(error.response.data.message)
   }
 }
 
@@ -67,5 +76,6 @@ export {
   createSurvey,
   saveSurvey,
   editSurveyTemplate,
-  deleteSurveyTemplate
+  deleteSurveyTemplate,
+  getAllSurvey
 }
