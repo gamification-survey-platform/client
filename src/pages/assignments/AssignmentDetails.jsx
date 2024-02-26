@@ -150,6 +150,12 @@ const AssignmentDetails = () => {
     setSubmission,
     handleSubmit
   }
+
+  const adjustedSubmissionProps = {
+    ...submissionProps,
+    isResubmitting: !!artifact, // Add this line. It converts artifact presence to a boolean
+  };
+
   return spin ? (
     <Spinner show={spin} />
   ) : (
@@ -190,12 +196,27 @@ const AssignmentDetails = () => {
                 <PdfPreview artifact={artifact} />
               </Col>
             )}
-
             <Col span={6}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
-                {artifact && (
-                   <Button type="primary" style={{ marginTop: '20px', width: '150px', fontSize: '16px'}}>Resubmit</Button>
-                )}
+              {artifact && (
+                <>
+                  {/* <Typography.Title level={5} style={{ marginTop: '20px' }}>
+                    Resubmit Your Assignment
+                  </Typography.Title> */}
+                  <Row>
+                    {assignment.submission_type === 'URL' && (
+                      <FileSubmission {...adjustedSubmissionProps} />
+                    )}
+                    {assignment.submission_type === 'File' && (
+                      <FileSubmission {...adjustedSubmissionProps} />
+                    )}
+                    {assignment.submission_type === 'Text' && (
+                      <FileSubmission {...adjustedSubmissionProps} />
+                    )}
+                  </Row>
+                </>
+              )}
+
                 <Space direction="vertical" className="mt-3">
                   {
                   !artifact && (
@@ -216,7 +237,9 @@ const AssignmentDetails = () => {
                     <Row className="text-center" style={{ marginBottom: '0px' }}>
                       <Link
                         to={`/courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact.artifact_pk}/reports`}>
-                        <Button type="primary" style={{ marginTop: '-5px', width: '150px', fontSize: '16px'}}>View Reports</Button>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                          <Button type="primary">View Reports</Button>
+                        </div>
                       </Link>
                     </Row>
                   )}
