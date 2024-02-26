@@ -1,7 +1,7 @@
 import { Form, Input, Upload, Button } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 
-const FileSubmission = ({ submission, setSubmission, handleSubmit, inputRef }) => {
+const FileSubmission = ({ submission, setSubmission, handleSubmit, inputRef, isResubmitting}) => {
   return (
     <Form>
       <Form.Item label="Submit assignment">
@@ -16,7 +16,7 @@ const FileSubmission = ({ submission, setSubmission, handleSubmit, inputRef }) =
         </Upload>
       </Form.Item>
       <Button type="primary" disabled={!submission} onClick={handleSubmit}>
-        Submit
+      {isResubmitting ? 'Resubmit' : 'Submit'}
       </Button>
     </Form>
   )

@@ -150,6 +150,12 @@ const AssignmentDetails = () => {
     setSubmission,
     handleSubmit
   }
+
+  const adjustedSubmissionProps = {
+    ...submissionProps,
+    isResubmitting: !!artifact, // Add this line. It converts artifact presence to a boolean
+  };
+
   return spin ? (
     <Spinner show={spin} />
   ) : (
@@ -190,59 +196,76 @@ const AssignmentDetails = () => {
                 <PdfPreview artifact={artifact} />
               </Col>
             )}
-
             <Col span={6}>
-            
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <Button type="primary" style={{ marginTop: '20px', width: '150px', fontSize: '16px'}}>Resubmit</Button>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <Space direction="vertical" className="mt-3">
-                {!artifact && (
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {artifact && (
+                <>
+                  {/* <Typography.Title level={5} style={{ marginTop: '20px' }}>
+                    Resubmit Your Assignment
+                  </Typography.Title> */}
                   <Row>
                     {assignment.submission_type === 'URL' && (
-                      <FileSubmission {...submissionProps} />
+                      <FileSubmission {...adjustedSubmissionProps} />
                     )}
                     {assignment.submission_type === 'File' && (
-                      <FileSubmission {...submissionProps} />
+                      <FileSubmission {...adjustedSubmissionProps} />
                     )}
                     {assignment.submission_type === 'Text' && (
-                      <FileSubmission {...submissionProps} />
+                      <FileSubmission {...adjustedSubmissionProps} />
                     )}
                   </Row>
-                )}
-                {artifact && (
-                  <Row className="text-center" style={{ marginBottom: '0px' }}>
-                    <Link
-                      to={`/courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact.artifact_pk}/reports`}>
-                      <Button type="primary" style={{ marginTop: '-5px', width: '150px', fontSize: '16px'}}>View Reports</Button>
-                    </Link>
-                  </Row>
-                )}
-              </Space>
-              {artifactReviewers ? (
+                </>
+              )}
+
                 <Space direction="vertical" className="mt-3">
-                  <Typography.Title level={4}>Your Pending Reviewers</Typography.Title>
-                  <Typography.Text>Poke them to remind them to review!</Typography.Text>
-                  {artifactReviewers.map((reviewer, i) => {
-                    const { reviewer: reviewerAndrewId, user: reviewer_id, pokable } = reviewer
-                    return (
-                      <Button
-                        disabled={!pokable}
-                        key={i}
-                        onClick={(e) => handlePokeReviewer(e, reviewerAndrewId, reviewer_id)}>
-                        <FaHandPointRight
-                          size={'1.5em'}
-                          className="mr-3"
-                          style={{ color: pokable ? 'gold' : '' }}
-                        />
-                        {reviewerAndrewId}
-                      </Button>
-                    )
-                  })}
+                  {
+                  !artifact && (
+                    <Row>
+                      {assignment.submission_type === 'URL' && (
+                        <FileSubmission {...submissionProps} />
+                      )}
+                      {assignment.submission_type === 'File' && (
+                        <FileSubmission {...submissionProps} />
+                      )}
+                      {assignment.submission_type === 'Text' && (
+                        <FileSubmission {...submissionProps} />
+                      )}
+                    </Row>
+                  )}
+
+                  {artifact && (
+                    <Row className="text-center" style={{ marginBottom: '0px' }}>
+                      <Link
+                        to={`/courses/${course_id}/assignments/${assignment_id}/artifacts/${artifact.artifact_pk}/reports`}>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
+                          <Button type="primary">View Reports</Button>
+                        </div>
+                      </Link>
+                    </Row>
+                  )}
                 </Space>
-              ) : null}
+                {artifactReviewers ? (
+                  <Space direction="vertical" className="mt-3">
+                    <Typography.Title level={4}>Your Pending Reviewers</Typography.Title>
+                    <Typography.Text>Poke them to remind them to review!</Typography.Text>
+                    {artifactReviewers.map((reviewer, i) => {
+                      const { reviewer: reviewerAndrewId, user: reviewer_id, pokable } = reviewer
+                      return (
+                        <Button
+                          disabled={!pokable}
+                          key={i}
+                          onClick={(e) => handlePokeReviewer(e, reviewerAndrewId, reviewer_id)}>
+                          <FaHandPointRight
+                            size={'1.5em'}
+                            className="mr-3"
+                            style={{ color: pokable ? 'gold' : '' }}
+                          />
+                          {reviewerAndrewId}
+                        </Button>
+                      )
+                    })}
+                  </Space>
+                ) : null}
               </div>
             </Col>
           </>
