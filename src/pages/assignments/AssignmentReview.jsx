@@ -5,6 +5,7 @@ import Spinner from '../../components/Spinner'
 import Section from '../survey/Section'
 import { useDispatch, useSelector } from 'react-redux'
 import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
+import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
 import { getArtifact } from '../../api/artifacts'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
 import { useForm } from 'antd/es/form/Form'
@@ -19,6 +20,7 @@ import coursesSelector from '../../store/courses/selectors'
 import RespondToFeedbackRequestModal from '../../components/RespondToFeedbackRequestModal'
 import Lottie from 'react-lottie'
 import coin from '../../assets/coin.json'
+import { postGPT } from '../../api/gpt'
 
 const AssignmentReview = () => {
   const { state = null } = useLocation()
@@ -119,6 +121,44 @@ const AssignmentReview = () => {
     }
   }
 
+  const getGPTScoreAndFeedback = async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (form.validateFields()) {
+      try {
+        const question_ids = []
+        const answers = []
+        survey.sections.forEach((s) => {
+          s.questions.forEach((q) => {
+            const { question_type, answer } = q
+            if (question_type === 'TEXTAREA') {
+              question_ids.push(q.pk)
+              answer.forEach((a) => answers.push(a.text))
+            }
+          })
+        })
+
+        const res = await postGPT({
+          question_ids,
+          answers,
+          artifact_review_id: review_id
+        })
+        if (res.status === 200) {
+          const { score, feedback_array } = res.data
+          console.log(score, feedback_array)
+          // TODO: 
+          // 1. make the button a cute robot! Hovering over it will show that it's gpt assistant
+          // 2. show each feedback, possibly next to its corresponding question and answer
+          // 3. modify handleSaveReview to show hint to use gpt assistant next time when score < 6
+        }
+      } catch (e) {
+        console.error(e)
+        messageApi.open({ type: 'error', content: e.message })
+      }
+    }
+  }
+
+
   const handleSaveReview = async (e) => {
     e.preventDefault()
     e.stopPropagation()
@@ -161,6 +201,7 @@ const AssignmentReview = () => {
           dispatch(addCoursePoints({ course_id, points }))
           navigate(-1)
         }
+        await getGPTScoreAndFeedback(e)
       } catch (e) {
         console.error(e)
         messageApi.open({ type: 'error', content: e.message })
@@ -210,7 +251,7 @@ const AssignmentReview = () => {
                 ))}
                 <div style={{ position: 'fixed', right: 10, top: 80 }}>
                   {localStorage.getItem('bonus') === '0 Points' ||
-                  localStorage.getItem('bonus') === null ? null : (
+                    localStorage.getItem('bonus') === null ? null : (
                     <div
                       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span>
@@ -224,6 +265,11 @@ const AssignmentReview = () => {
                         }}>{`${localStorage.getItem('bonus')}`}</strong>
                     </div>
                   )}
+                </div>
+                <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
+                  <Button type="primary" onClick={getGPTScoreAndFeedback}>
+                    GPT
+                  </Button>
                 </div>
                 <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
                   <Button type="primary" onClick={handleSaveReview}>
