@@ -4,15 +4,17 @@ import styles from '../styles/ReviewsList.module.css'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { resetSurvey } from '../store/survey/surveySlice'
-import { Tooltip } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd'
+import { InfoCircleOutlined } from '@ant-design/icons'
 
 const ReviewList = ({ title, color, reviews }) => {
   const { course_id } = useParams()
 
   return (
     <>
-      <Typography.Title level={5} className={styles.reviewTitle}>{title}</Typography.Title>
+      <Typography.Title level={5} className={styles.reviewTitle}>
+        {title}
+      </Typography.Title>
 
       {reviews.map((review) => {
         const { course_number, assignment_id, assignment_type } = review
@@ -51,7 +53,6 @@ const StudentReviewsList = ({
   console.log('optionalReviews', artifactReviews)
   useEffect(() => {
     dispatch(resetSurvey())
-
   }, [])
 
   return (
@@ -61,42 +62,60 @@ const StudentReviewsList = ({
           <ReviewList title={'Reopened Reviews'} color="magenta" reviews={reopenReviews} />
         ) : null}
         {showLate ? (
-          <ReviewList title={
-            <span>
-            Late Reviews {' '}
-            <Tooltip title="5 points each">
-              <InfoCircleOutlined className={styles.infoIcon} />
-            </Tooltip>
-          </span>
-          } color="volcano" reviews={lateReviews} />
+          <ReviewList
+            title={
+              <span>
+                Late Reviews{' '}
+                <Tooltip title="5 points each">
+                  <InfoCircleOutlined className={styles.infoIcon} />
+                </Tooltip>
+              </span>
+            }
+            color="volcano"
+            reviews={lateReviews}
+          />
         ) : null}
         {showPending ? (
-          <ReviewList title={
-            <span>
-            Mandatory Reviews {' '}
-            <Tooltip title="10 points each">
-              <InfoCircleOutlined className={styles.infoIcon} />
-            </Tooltip>
-          </span>
-          } color="gold" reviews={pendingReviews} />
+          <ReviewList
+            title={
+              <span>
+                Mandatory Reviews{' '}
+                <Tooltip title="10 points each">
+                  <InfoCircleOutlined className={styles.infoIcon} />
+                </Tooltip>
+              </span>
+            }
+            color="gold"
+            reviews={pendingReviews}
+          />
         ) : null}
-        {showOptional && pendingReviews.length === 0? (
-          <ReviewList title={
-            <span>
-            Optional Reviews {' '}
-            <Tooltip title="15 points each">
-              <InfoCircleOutlined className={styles.infoIcon} />
-            </Tooltip>
-          </span>
-          } 
-          color="blue" 
-          reviews={optionalReviews} />
-        ) : (<ReviewList title={            <span>
-          Optional Reviews {' '}
-          <Tooltip title="15 points each. The optional reviews will show when you finish all the mandatory reviews">
-            <span style={{ cursor: 'help' }}>?</span>
-          </Tooltip>
-        </span>} color="gold" reviews={[]}/>)}
+        {showOptional && pendingReviews.length === 0 ? (
+          <ReviewList
+            title={
+              <span>
+                Optional Reviews{' '}
+                <Tooltip title="15 points each">
+                  <InfoCircleOutlined className={styles.infoIcon} />
+                </Tooltip>
+              </span>
+            }
+            color="blue"
+            reviews={optionalReviews}
+          />
+        ) : (
+          <ReviewList
+            title={
+              <span>
+                Optional Reviews{' '}
+                <Tooltip title="15 points each. The optional reviews will show when you finish all the mandatory reviews">
+                  <span style={{ cursor: 'help' }}>?</span>
+                </Tooltip>
+              </span>
+            }
+            color="gold"
+            reviews={[]}
+          />
+        )}
         {/* {showOptional && pendingReviews.length === 0 ? (
           <ReviewList title={'Optional Reviews'} color="blue" reviews={optionalReviews} />
         ) : null} */}

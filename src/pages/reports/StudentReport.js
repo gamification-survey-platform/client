@@ -127,7 +127,10 @@ const StudentReport = () => {
                     return (
                       <Row key={i}>
                         <Col span={data ? 10 : 20}>
-                          <Typography.Title level={4} id={`${section.pk}-${question.pk}`} style={{ marginTop: 150, marginLeft: 40 }}>
+                          <Typography.Title
+                            level={4}
+                            id={`${section.pk}-${question.pk}`}
+                            style={{ marginTop: 150, marginLeft: 40 }}>
                             {text}
                           </Typography.Title>
                           {question_type === 'SLIDEREVIEW' && (
@@ -167,28 +170,42 @@ const StudentReport = () => {
                               </Typography.Title>
                             </Row>
                           ) : null}
-                          {question_type !== 'SLIDEREVIEW' && question_type !== 'SCALEMULTIPLECHOICE' && (
-                            <>
-                              <Row className="ml-3">
-                                <Typography.Title level={5}>Answers: </Typography.Title>
-                              </Row>
-                              {artifact_reviews.map((review, i) => (
-                                <Row key={i} className="ml-5 align-items-center" style={{ marginBottom: '0px' }}>
-                                  <Col style={{ padding: '5px', display: 'flex', alignItems: 'center', opacity: review.length > 0 ? '1' : '0.5' }}>
-                                    {review.length > 0 && review.some(r => r.text)
-                                      ? review.map((r, index) => r.text).filter(text => text).join(', ')
-                                      : "No feedback was provided by this reviewer on this question."
-                                    }
-                                  </Col>
-                                  <Col xs="auto">
-                                    <QuestionCircleTwoTone
-                                      onClick={() => handleFeedbackClick(section, question, review)}
-                                    />
-                                  </Col>
+                          {question_type !== 'SLIDEREVIEW' &&
+                            question_type !== 'SCALEMULTIPLECHOICE' && (
+                              <>
+                                <Row className="ml-3">
+                                  <Typography.Title level={5}>Answers: </Typography.Title>
                                 </Row>
-                              ))}
-                            </>
-                          )}
+                                {artifact_reviews.map((review, i) => (
+                                  <Row
+                                    key={i}
+                                    className="ml-5 align-items-center"
+                                    style={{ marginBottom: '0px' }}>
+                                    <Col
+                                      style={{
+                                        padding: '5px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        opacity: review.length > 0 ? '1' : '0.5'
+                                      }}>
+                                      {review.length > 0 && review.some((r) => r.text)
+                                        ? review
+                                            .map((r, index) => r.text)
+                                            .filter((text) => text)
+                                            .join(', ')
+                                        : 'No feedback was provided by this reviewer on this question.'}
+                                    </Col>
+                                    <Col xs="auto">
+                                      <QuestionCircleTwoTone
+                                        onClick={() =>
+                                          handleFeedbackClick(section, question, review)
+                                        }
+                                      />
+                                    </Col>
+                                  </Row>
+                                ))}
+                              </>
+                            )}
                         </Col>
                         {data && !responseToRequestFeedbackData ? (
                           <Col span={8}>

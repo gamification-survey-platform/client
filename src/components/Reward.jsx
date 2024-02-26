@@ -1,18 +1,15 @@
 import { Card, Divider, Image, Button, Row } from 'antd'
 import { useState } from 'react'
-import config from '../utils/constants'
 import Calendar from '../assets/calendar.jpg'
-import Computer from '../assets/computer.png'
 import TreasureChest from '../assets/treasure_chest.png'
 import { useDispatch, useSelector } from 'react-redux'
-import userSelector from '../store/user/selectors'
 import RewardsModal from '../pages/courses/RewardsModal'
 import { deleteCourseReward, purchaseCourseReward } from '../api/rewards'
 import coursesSelector from '../store/courses/selectors'
 import { addCoursePoints } from '../store/courses/coursesSlice'
 
 const Cover = ({ type, picture }) => {
-  const imageStyle = { width: '100%', height: '200px', objectFit: 'cover' };
+  const imageStyle = { width: '100%', height: '200px', objectFit: 'cover' }
   if (type === 'Other' && picture) {
     return <Image preview={false} src={`${picture}`} style={imageStyle} />
   } else if (type === 'Late Submission') {
@@ -40,7 +37,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
   const course = courses.find(({ course_name }) => course_name === belong_to)
   const { points: userPoints } = course
   const [open, setOpen] = useState(false)
-  const isUserInstructor = course?.is_staff;
+  const isUserInstructor = course?.is_staff
   const deleteReward = async () => {
     try {
       const res = await deleteCourseReward({
@@ -123,7 +120,7 @@ const Reward = ({ rewards, setRewards, ...reward }) => {
         </div>
       )}
     </Card>
-  );
-};
+  )
+}
 
-export default Reward;
+export default Reward

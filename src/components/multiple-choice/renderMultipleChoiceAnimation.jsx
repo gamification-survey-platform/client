@@ -188,7 +188,6 @@ const renderScene = ({
     .style('font-weight', 'bold')
     .attr('y', objectSize - 3)
 
-
   d3.selectAll('.text').each(function (d) {
     const node = d3.select(this).node()
     const textRect = node.getBBox()

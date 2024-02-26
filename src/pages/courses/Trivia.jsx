@@ -1,11 +1,9 @@
-import { useState } from 'react'
 import Form from 'antd/es/form/Form'
 import Input from 'antd/es/input/Input'
 import { Button, Row } from 'antd'
-import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 import { DeleteTwoTone } from '@ant-design/icons'
 
-const SurveyTrivia = ({ hints, setHints }) => {
+const Trivia = ({ hints, setHints }) => {
   const handleDeleteHint = (idx) => {
     const newHints = hints.filter((_, i) => i !== idx)
     setHints(newHints)
@@ -51,4 +49,4 @@ const SurveyTrivia = ({ hints, setHints }) => {
   )
 }
 
-export default SurveyTrivia
+export default Trivia

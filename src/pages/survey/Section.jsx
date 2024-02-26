@@ -104,7 +104,7 @@ const Section = ({ sectionIdx, artifact, handleReorderSections }) => {
                     }}
                     onClick={() => setSectionModalOpen(true)}
                   />
-                  {title !== "Artifact" && (
+                  {title !== 'Artifact' && (
                     <DeleteTwoTone
                       twoToneColor="#dc3545"
                       style={{

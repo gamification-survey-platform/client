@@ -11,7 +11,6 @@ import useMessage from 'antd/es/message/useMessage'
 import dayjs from 'dayjs'
 
 const CourseRewards = () => {
-  const user = useSelector(userSelector)
   const courses = useSelector(coursesSelector)
   const [rewards, setRewards] = useState([])
   const [purchases, setPurchases] = useState([])

@@ -11,8 +11,6 @@ const editProfile = async ({ user_id, data }) => {
   }
 }
 
-
-
 const updateProfilePic = async ({ user_id, file }) => {
   try {
     const formData = new FormData()
