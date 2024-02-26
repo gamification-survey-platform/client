@@ -12,7 +12,7 @@ const FileSubmission = ({ submission, setSubmission, handleSubmit, inputRef, isR
             setSubmission(file)
             return false
           }}>
-          <Button icon={<UploadOutlined />}>Click to upload submission</Button>
+          <Button icon={<UploadOutlined />}>Click to upload</Button>
         </Upload>
       </Form.Item>
       <Button type="primary" disabled={!submission} onClick={handleSubmit}>
