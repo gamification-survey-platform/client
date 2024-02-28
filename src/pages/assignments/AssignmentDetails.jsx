@@ -191,18 +191,21 @@ const AssignmentDetails = () => {
           <StaffArtifactReviewList />
         ) : (
           <>
-            {artifact && (
-              <Col span={18}>
-                <PdfPreview artifact={artifact} />
-              </Col>
+          <Col span={18}>
+            {artifact ? (
+              <PdfPreview artifact={artifact} />
+            ) : (
+              // Placeholder for PDF Preview when no artifact is present
+              <div style={{ height: '500px', width: '95%', backgroundColor: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                <Typography.Text type="secondary">Click the button on the right to submit your assignment.</Typography.Text>
+
+              </div>
             )}
+          </Col>
             <Col span={6}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
               {artifact && (
                 <>
-                  {/* <Typography.Title level={5} style={{ marginTop: '20px' }}>
-                    Resubmit Your Assignment
-                  </Typography.Title> */}
                   <Row>
                     {assignment.submission_type === 'URL' && (
                       <FileSubmission {...adjustedSubmissionProps} />
