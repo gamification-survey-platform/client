@@ -46,7 +46,6 @@ const AddSurvey = () => {
   const getSurveys = async () => {
     const user_id = localStorage.getItem('userId')
     const res = await getAllSurveyByUserId(user_id)
-    console.log(res.data)
     return res.data
   }
 
@@ -58,7 +57,6 @@ const AddSurvey = () => {
     const res = await getSurveyById(surveyId)
     setDetailModalVisible(true)
     setSurveyDetail(res.data)
-    console.log(res.data)
   }
 
   const renderSurveyDetail = (surveyDetail) => {
@@ -66,17 +64,12 @@ const AddSurvey = () => {
       <div>
         <p>Name: {surveyDetail.name}</p>
         <p>Instruction: {surveyDetail.instructions}</p>
-        <p>Sections:</p>
+        <p>Questions:</p>
         {surveyDetail.sections.map((section, index) => (
           <div key={index}>
-            <p>Section {index + 1}</p>
-            <p>Title: {section.title}</p>
-            <p>Is Required: {section.is_required ? 'Yes' : 'No'}</p>
-            <p>Questions:</p>
             {section.questions.map((question, qIndex) => (
               <div key={qIndex}>
-                <p>Question:</p>
-                <p>Text: {question.text}</p>
+                <p>{question.text}</p>
               </div>
             ))}
           </div>
@@ -157,48 +150,10 @@ const AddSurvey = () => {
         }
       }
       const res = await createSurvey(surveyData)
-      console.log(res.data)
       if (res.status === 201 || res.status === 200) navigate(-1)
       else messageApi.open({ type: 'error', content: `Failed to create survey.` })
     } catch (e) {
-      console.log(e)
       messageApi.open({ type: 'error', content: `Failed to create survey.` })
-    }
-  }
-  const handleEditTemplate = async (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-    try {
-      const survey = form.getFieldsValue()
-      let trivia = {}
-      const res = await editSurveyTemplate({
-        feedback_survey_id: editingSurvey.pk,
-        survey: { other_info: '', trivia, ...survey }
-      })
-      if (res.status === 200) {
-        navigate(-1)
-      }
-    } catch (e) {
-      messageApi.open({
-        type: 'error',
-        content: `Failed to edit survey template. Template not found.`
-      })
-    }
-  }
-
-  const handleDeleteTemplate = async (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-    try {
-      const res = await deleteSurveyTemplate({ feedback_survey_id: editingSurvey.pk })
-      if (res.status === 204) {
-        navigate(`/courses/${course_id}/assignments`)
-      }
-    } catch (e) {
-      messageApi.open({
-        type: 'error',
-        content: `Failed to delete survey template. Template not found.`
-      })
     }
   }
 
@@ -254,16 +209,6 @@ const AddSurvey = () => {
         </>
         <Form.Item className="text-center">
           {
-            /* {editingSurvey ? (
-            <>
-              <Button type="primary" className="mx-3" onClick={handleEditTemplate}>
-                Edit Template
-              </Button>
-              <Button type="primary" danger className="mx-3" onClick={handleDeleteTemplate}>
-                Delete Template
-              </Button>
-            </>
-          ) :  */
             <Button className="mt-3" type="primary" onClick={handleCreate}>
               Create
             </Button>
@@ -271,30 +216,43 @@ const AddSurvey = () => {
         </Form.Item>
       </Form>
       <Button type="primary" onClick={handleViewAllSurveys}>
-        View All Surveys
+        View Templates
       </Button>
       {selectedSurvey !== undefined && (
         <div>
-          <p>Selected Survey: {selectedSurvey.name}</p>
-          <Button onClick={() => setSelectedSurvey(undefined)}>Cancel Selection</Button>
+          <p>Selected Template: {selectedSurvey.name}</p>
+          <p>
+            <Button onClick={() => handleShowSurveyDetail(selectedSurvey.pk)}>View Detail</Button>
+          </p>
+          <p>
+            <Button onClick={() => setSelectedSurvey(undefined)}>Cancel Selection</Button>
+          </p>
         </div>
       )}
 
       <Modal
-        title="All Surveys"
+        title="All Templates"
         visible={modalVisible}
         onCancel={() => setModalVisible(false)}
         footer={null}>
         <div>
           {/* Conditionally render based on surveys length */}
           {surveys.length === 0 ? (
-            <p>No surveys available.</p>
+            <p>No templates available</p>
           ) : (
             surveys.map((survey) => (
-              <div key={survey.pk}>
+              <div
+                key={survey.pk}
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span>{survey.name}</span>
-                <Button onClick={() => handleShowSurveyDetail(survey.pk)}>Detail</Button>
-                <Button onClick={() => handleSelectSurvey(survey)}>Select</Button>
+                <span>
+                  <Button className="mr-2" onClick={() => handleShowSurveyDetail(survey.pk)}>
+                    Detail
+                  </Button>
+                  <Button className="mr-2" onClick={() => handleSelectSurvey(survey)}>
+                    Select
+                  </Button>
+                </span>
               </div>
             ))
           )}
