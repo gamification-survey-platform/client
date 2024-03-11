@@ -11,8 +11,11 @@ import {
   InputNumber,
   Checkbox,
   Upload,
-  Image as AntdImage
+  Image as AntdImage,
+  Popover,
+  Space
 } from 'antd'
+import { QuestionCircleTwoTone } from '@ant-design/icons'
 import dayjs from 'dayjs'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router'
@@ -22,11 +25,14 @@ import coursesSelector from '../../store/courses/selectors'
 import userSelector from '../../store/user/selectors'
 import { dataURLtoFile } from '../../utils/imageUtils'
 import { useForm } from 'antd/es/form/Form'
+import CourseTrivia from './CourseTrivia'
 
 const CourseForm = () => {
   const dispatch = useDispatch()
+  const [hints, setHints] = useState([]);
   const user = useSelector(userSelector)
   const courses = useSelector(coursesSelector)
+  const [enableTrivia, setEnableTrivia] = useState(false)
   const [messageApi, contextHolder] = message.useMessage()
   const [coursePicture, setCoursePicture] = useState()
   const navigate = useNavigate()
@@ -35,6 +41,17 @@ const CourseForm = () => {
   const editingCourse = courses.find((course) => course.course_number === params.course_id)
   useEffect(() => {
     if (editingCourse && form) {
+      if (editingCourse.trivia) {
+        form.setFieldValue('enableTrivia', true)
+        const { question, answer, hints } = editingCourse.trivia
+        setEnableTrivia(true)
+        form.setFieldValue('question', question)
+        form.setFieldValue('answer', answer)
+        setHints(hints)
+        hints.forEach((hint, i) => {
+          form.setFieldValue(`hint-${i}`, hint)
+        })
+      }
       const semester = editingCourse.semester.split(' ')[0]
       const semesterYear = editingCourse.semester.split(' ')[1]
       form.setFieldsValue({ ...editingCourse, semester, semesterYear })
@@ -67,9 +84,9 @@ const CourseForm = () => {
     event.preventDefault()
     event.stopPropagation()
     form.validateFields()
+    const fields = form.getFieldsValue()
     if (form.validateFields()) {
       try {
-        const courseData = { ...form.getFieldsValue(), andrew_id: user.andrewId }
         courseData.semester = `${courseData.semester} ${courseData.semesterYear}`
         // if user upload a new picture, set a new picture. Otherwise, use the original picture from editingCourse 
         if (coursePicture) {
@@ -79,7 +96,23 @@ const CourseForm = () => {
         } else if (editingCourse.picture) {
           courseData.picture = editingCourse.picture;
         }
-
+        let trivia = {}
+        if (enableTrivia) {
+          trivia = {
+            question: fields.question,
+            answer: fields.answer,
+            hints: []
+          }
+          delete fields['question']
+          delete fields['answer']
+          Object.keys(fields).forEach((key) => {
+            if (key.startsWith('hint')) {
+              trivia.hints.push(fields[key])
+              delete fields[key]
+            }
+          })
+        }
+        const courseData = { ...form.getFieldsValue(), andrew_id: user.andrewId}
         delete courseData.semesterYear
         const res = editingCourse
           ? await editCourseApi({ course_id: editingCourse.pk, course: courseData })
@@ -170,6 +203,35 @@ const CourseForm = () => {
             <AntdImage src={editingCourse.picture} width={50} className="mt-3" />
           ) : null}
         </Form.Item>
+        <Form.Item
+          name="enableTrivia"
+          valuePropName="checked"
+          label={
+            <div>
+              Enable Trivia
+              <Popover
+                content={() => (
+                  <Space style={{ maxWidth: 500 }} direction="vertical">
+                    <div>
+                      Enabling this feature displays a question (concerning the course, instructor
+                      or any other topic of choice) that a person filling in the survey can guess.
+                    </div>
+                    <div>
+                      As the user progresses with filling in the survey, hints will be displayed to
+                      facilitate guessing the trivia&apos;s answer.
+                    </div>
+                  </Space>
+                )}>
+                {' '}
+                <QuestionCircleTwoTone
+                  style={{ fontSize: '1.2em', pointerEvents: 'auto', cursor: 'pointer' }}
+                />
+              </Popover>
+            </div>
+          }>
+          <Checkbox value={enableTrivia} onChange={() => setEnableTrivia(!enableTrivia)} />
+        </Form.Item>
+        {enableTrivia ? <CourseTrivia hints={hints} setHints={setHints} /> : null}
         <Form.Item label="Visible" name="visible" valuePropName="checked">
           <Checkbox />
         </Form.Item>

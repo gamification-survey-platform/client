@@ -5,7 +5,7 @@ import { Button, Row } from 'antd'
 import useFormInstance from 'antd/es/form/hooks/useFormInstance'
 import { DeleteTwoTone } from '@ant-design/icons'
 
-const SurveyTrivia = ({ hints, setHints }) => {
+const CourseTrivia = ({ hints, setHints }) => {
   const handleDeleteHint = (idx) => {
     const newHints = hints.filter((_, i) => i !== idx)
     setHints(newHints)
@@ -51,4 +51,4 @@ const SurveyTrivia = ({ hints, setHints }) => {
   )
 }
 
-export default SurveyTrivia
+export default CourseTrivia
