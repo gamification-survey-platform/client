@@ -30,7 +30,7 @@ const Guide = () => {
       element: 'Survey Gamification',
       level: 'All',
       description:
-        'Filling out the survey is a gamified process. The process is gamified by the instructor enabling certain features for multiple choice questions, text questions, and adding survey trivia.'
+        'Filling out the survey is a gamified process. The process is gamified by the instructor enabling certain features for multiple choice questions, text questions.'
     },
     {
       element: 'Preset Theme Selection',
