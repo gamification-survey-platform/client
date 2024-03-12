@@ -14,7 +14,7 @@ import { DndProvider, useDrag, useDrop } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { CloseCircleOutlined } from '@ant-design/icons'
 import useMessage from 'antd/es/message/useMessage'
-import { RedoOutlined } from '@ant-design/icons';
+import { RedoOutlined } from '@ant-design/icons'
 
 const Member = forwardRef(({ member, handleCancel }, ref) => {
   const [{ isDragging }, dragRef] = useDrag(
@@ -68,13 +68,13 @@ const ArtifactReviewers = ({
   )
 
   const uniqueReviewers = reviewers.reduce((acc, current) => {
-    const x = acc.find(item => item.reviewer === current.reviewer);
+    const x = acc.find((item) => item.reviewer === current.reviewer)
     if (!x) {
-      return acc.concat([current]);
+      return acc.concat([current])
     } else {
-      return acc;
+      return acc
     }
-  }, []);
+  }, [])
 
   const reopenReview = async (e, artifact_review_id) => {
     e.preventDefault()
@@ -107,24 +107,32 @@ const ArtifactReviewers = ({
 
   const reviewStatusLabel = (status) => {
     if (status === 'INCOMPLETE') {
-      return <Tag color="red" style={{ marginLeft: 8 }}>Mandatory</Tag>;
+      return (
+        <Tag color="red" style={{ marginLeft: 8 }}>
+          Mandatory
+        </Tag>
+      )
     } else {
-      return <Tag color="blue" style={{ marginLeft: 8 }}>Optional</Tag>;
+      return (
+        <Tag color="blue" style={{ marginLeft: 8 }}>
+          Optional
+        </Tag>
+      )
     }
-  };
+  }
 
   const listStyle = {
     maxHeight: 'none',
     overflow: 'auto',
-    padding: '8px',
-  };
+    padding: '8px'
+  }
 
   const reopenIconStyle = {
     fontSize: '16px',
     color: '#1890ff',
     cursor: 'pointer',
     margin: '4px'
-  };
+  }
 
   return (
     <div ref={dropRef} style={listStyle}>
@@ -135,18 +143,18 @@ const ArtifactReviewers = ({
         dataSource={uniqueReviewers}
         renderItem={(item) => {
           const styles = item.hovering ? { opacity: 0.5 } : {}
-          const statusLabel = item.status === 'COMPLETED' ? null : reviewStatusLabel(item.status);
+          const statusLabel = item.status === 'COMPLETED' ? null : reviewStatusLabel(item.status)
           if (item.status === 'COMPLETED') {
             return (
-              <List.Item style={{styles}}>
+              <List.Item style={{ styles }}>
                 <Typography.Text>{item.reviewer}</Typography.Text>
                 <RedoOutlined
                   onClick={(e) => reopenReview(e, item.id)}
                   style={reopenIconStyle}
-                  title="Reopen Review" 
+                  title="Reopen Review"
                 />
               </List.Item>
-            );
+            )
           }
           return (
             <List.Item style={styles}>
@@ -159,7 +167,7 @@ const ArtifactReviewers = ({
                 style={{ marginLeft: 'auto' }}
               />
             </List.Item>
-          );
+          )
         }}
       />
     </div>
@@ -269,9 +277,11 @@ const StaffArtifactReviewList = () => {
     }
   }
 
-  const sortedArtifactReviews = Object.entries(artifactReviews).sort((a, b) => {
-    return a[1].length - b[1].length;
-  }).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {});
+  const sortedArtifactReviews = Object.entries(artifactReviews)
+    .sort((a, b) => {
+      return a[1].length - b[1].length
+    })
+    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -279,20 +289,30 @@ const StaffArtifactReviewList = () => {
       <Col span={24} className="mb-3">
         <Typography.Title level={5}>Drag and Drop Reviewers to Reassign</Typography.Title>
       </Col>
-      <Col span={4} style={{ borderRight: 'solid 1px #d9d9d9', paddingRight: '20px', maxHeight: '250vh', overflowY: 'auto' }}>
+      <Col
+        span={4}
+        style={{
+          borderRight: 'solid 1px #d9d9d9',
+          paddingRight: '20px',
+          maxHeight: '250vh',
+          overflowY: 'auto'
+        }}>
         <List
           dataSource={members}
           bordered
           header={<Typography.Title level={5}>Reviewers</Typography.Title>}
-          renderItem={(item) => <Member member={item} handleCancel={handleCancel} style={{ padding: '4px' }} />}
+          renderItem={(item) => (
+            <Member member={item} handleCancel={handleCancel} style={{ padding: '4px' }} />
+          )}
         />
       </Col>
       <Col span={19} offset={1}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-          gap: '16px'
-        }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+            gap: '16px'
+          }}>
           {/* Map over the sorted entries */}
           {Object.keys(sortedArtifactReviews).map((reviewing, i) => (
             <ArtifactReviewers
@@ -309,7 +329,7 @@ const StaffArtifactReviewList = () => {
         </div>
       </Col>
     </DndProvider>
-  );
+  )
 }
 
 export default StaffArtifactReviewList

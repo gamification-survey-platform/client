@@ -153,8 +153,8 @@ const AssignmentDetails = () => {
 
   const adjustedSubmissionProps = {
     ...submissionProps,
-    isResubmitting: !!artifact, // Add this line. It converts artifact presence to a boolean
-  };
+    isResubmitting: !!artifact // Add this line. It converts artifact presence to a boolean
+  }
 
   return spin ? (
     <Spinner show={spin} />
@@ -219,10 +219,8 @@ const AssignmentDetails = () => {
                   </Row>
                 </>
               )}
-
                 <Space direction="vertical" className="mt-3">
-                  {
-                  !artifact && (
+                  {!artifact && (
                     <Row>
                       {assignment.submission_type === 'URL' && (
                         <FileSubmission {...submissionProps} />
@@ -275,7 +273,7 @@ const AssignmentDetails = () => {
         )}
       </Row>
     </div>
-  );
+  )
 }
 
 export default AssignmentDetails

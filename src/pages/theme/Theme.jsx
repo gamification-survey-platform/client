@@ -14,7 +14,6 @@ const Theme = () => {
   const [form] = useForm()
   const { name, color } = useSelector(themeSelector)
   const [_, token] = useToken()
-  // const { level } = useSelector(userSelector)
   const level = 0
   useEffect(() => {
     if (color && Object.keys(color).length) {

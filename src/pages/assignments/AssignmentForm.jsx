@@ -110,9 +110,9 @@ const AssignmentForm = () => {
           name="date_released"
           rules={[{ required: true, message: 'Please input a release date.' }]}>
           <DatePicker
-            showTime={{ 
-              format: 'h:mm A', 
-              use12Hours: true,
+            showTime={{
+              format: 'h:mm A',
+              use12Hours: true
             }}
             format="YYYY-MM-DD h:mm A"
             disabledDate={(current) => current && current < dayjs()}
@@ -124,9 +124,9 @@ const AssignmentForm = () => {
           name="date_due"
           rules={[{ required: true, message: 'Please input a due date.' }]}>
           <DatePicker
-            showTime={{ 
-              format: 'h:mm A', 
-              use12Hours: true,
+            showTime={{
+              format: 'h:mm A',
+              use12Hours: true
             }}
             format="YYYY-MM-DD h:mm A"
             disabledDate={(current) => current && current < dayjs()}

@@ -102,7 +102,7 @@ const AssignmentSurvey = () => {
           <Col span={10}>
             <Row>
               <Button danger onClick={handleEditSurvey}>
-                Edit or Modify Survey Template
+                Create a new Survey
               </Button>
             </Row>
             <Row>

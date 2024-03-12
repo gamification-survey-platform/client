@@ -46,7 +46,7 @@ const Courses = () => {
               Assignments
             </Tag>
           </LinkContainer>
-        );
+        )
       }
     },
     {
@@ -88,7 +88,7 @@ const Courses = () => {
               Leaderboard
             </Tag>
           </LinkContainer>
-      ): null
+        ) : null
       }
     },
     {

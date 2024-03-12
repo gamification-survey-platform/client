@@ -16,50 +16,48 @@ const Leaderboard = () => {
   const [data, setData] = useState()
   const { course_id } = useParams()
   const courses = useSelector(coursesSelector)
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1)
   const course = courses.find((course) => course.course_number === course_id)
   useEffect(() => {
     const fetchLeaderboard = async () => {
-      let response;
+      let response
       if (course_id) {
-        response = await getCourseLeaderboard({ course_id: course.pk });
+        response = await getCourseLeaderboard({ course_id: course.pk })
       } else {
-        response = await getPlatformLeaderboard();
+        response = await getPlatformLeaderboard()
       }
 
       var data = null
       if (course_id) {
         const res = await getCourseLeaderboard({ course_id: course.pk })
         if (res.status === 200) {
-          data = res.data
-            .sort((a, b) => b.course_experience - a.course_experience)
+          data = res.data.sort((a, b) => b.course_experience - a.course_experience)
         }
       } else {
         const res = await getPlatformLeaderboard()
         if (res.status === 200) {
-          data = res.data
-            .sort((a, b) => b.exp - a.exp)
+          data = res.data.sort((a, b) => b.exp - a.exp)
         }
       }
-      
+
       // Map over the data to assign rankings, giving the same rank to users with the same experience.
-      let rank = 0;
-      let prevExperience = null;
+      let rank = 0
+      let prevExperience = null
       const dataWithRanking = data.map((d, index) => {
         // Increment rank only if the current experience is less than the previous one.
         if (prevExperience !== d.course_experience) {
-          rank = index + 1;
-          prevExperience = d.course_experience;
+          rank = index + 1
+          prevExperience = d.course_experience
         }
 
-        return { ...d, key: index, ranking: rank };
-      });
+        return { ...d, key: index, ranking: rank }
+      })
 
-      setData(dataWithRanking);
-    };
-  
-    fetchLeaderboard();
-  }, [course_id]);
+      setData(dataWithRanking)
+    }
+
+    fetchLeaderboard()
+  }, [course_id])
 
   const columns = [
     {
@@ -110,36 +108,39 @@ const Leaderboard = () => {
   ]
 
   const paginationConfig = {
-    defaultPageSize: 20, 
+    defaultPageSize: 20,
     onChange: (page) => {
-      setCurrentPage(page);
-    },
-  };
+      setCurrentPage(page)
+    }
+  }
 
   return (
     <div className="m-5">
-      {gamified_mode(user) ? (<Table pagination={paginationConfig}
-        rowClassName={(record, index) => {
-          const isFirstPage = currentPage === 1;
-          if (course_id && isFirstPage) {
-            if (index < 1) return styles.tableRowLime6
-            else if (index < 2) return styles.tableRowLime4
-            else if (index < 3) return styles.tableRowLime2
-            else return styles.tableRowLime1
-          } else if (isFirstPage) {
-            if (index < 1) return styles.tableRowLime6
-            else if (index < 2) return styles.tableRowLime4
-            else if (index < 3) return styles.tableRowLime2
-            else return styles.tableRowLime1
-          } else{
-            return styles.tableRowLime1
-          }
-        }}
-        dataSource={data}
-        columns={columns}
-      />) : (<div className='h4'> 
-        Currently unavailable
-      </div>)}
+      {gamified_mode(user) ? (
+        <Table
+          pagination={paginationConfig}
+          rowClassName={(record, index) => {
+            const isFirstPage = currentPage === 1
+            if (course_id && isFirstPage) {
+              if (index < 1) return styles.tableRowLime6
+              else if (index < 2) return styles.tableRowLime4
+              else if (index < 3) return styles.tableRowLime2
+              else return styles.tableRowLime1
+            } else if (isFirstPage) {
+              if (index < 1) return styles.tableRowLime6
+              else if (index < 2) return styles.tableRowLime4
+              else if (index < 3) return styles.tableRowLime2
+              else return styles.tableRowLime1
+            } else {
+              return styles.tableRowLime1
+            }
+          }}
+          dataSource={data}
+          columns={columns}
+        />
+      ) : (
+        <div className="h4">Currently unavailable</div>
+      )}
     </div>
   )
 }

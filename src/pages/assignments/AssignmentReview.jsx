@@ -291,7 +291,7 @@ const AssignmentReview = () => {
                 {survey.sections.map((_, i) => (
                   <Section key={i} sectionIdx={i} artifact={artifact} />
                 ))}
-                {gamified_mode() &&survey.sentiment ? (
+                {gamified_mode() && survey.sentiment ? (
                   <div
                     style={{
                       position: 'fixed',

@@ -5,7 +5,7 @@ import DefaultImage from '../assets/default.jpg'
 import { Upload, Row, Col, Form, Image, Button, Typography } from 'antd'
 
 import { useForm } from 'antd/es/form/Form'
-import { Switch} from 'antd'
+import { Switch } from 'antd'
 import Input from 'antd/es/input/Input'
 import { editProfile, updateProfilePic } from '../api/profile'
 import useMessage from 'antd/es/message/useMessage'
@@ -14,7 +14,6 @@ import { set_gamified_mode } from '../gamified'
 import { gamified_mode } from '../gamified'
 
 const Profile = () => {
-
   const user = useSelector(userSelector)
   const [editing, setEditing] = useState(false)
   const [messageApi, contextHolder] = useMessage()
@@ -29,7 +28,7 @@ const Profile = () => {
   })
   const initialValues = { first_name, last_name, email, date_joined }
 
-  const gamificationModeChange = (checked) =>{
+  const gamificationModeChange = (checked) => {
     set_gamified_mode(checked)
   }
 
@@ -42,7 +41,7 @@ const Profile = () => {
         const data = form.getFieldsValue()
         const user_id = user.pk
         const res = await editProfile({ user_id, data })
-        console.log("example", data)
+        console.log('example', data)
         dispatch(setUser(res.data))
         setEditing(false)
       } catch (e) {
@@ -124,8 +123,12 @@ const Profile = () => {
               <Input disabled />
             </Form.Item>
             {/* Currently do not allow to user to change gamification mode, switch is hidden */}
-            <Form.Item name="gamification_mode" label="Gamification mode" valuePropName="checked" hidden>
-              <Switch defaultChecked = {gamified_mode(user)} onChange={gamificationModeChange}/>
+            <Form.Item
+              name="gamification_mode"
+              label="Gamification mode"
+              valuePropName="checked"
+              hidden>
+              <Switch defaultChecked={gamified_mode(user)} onChange={gamificationModeChange} />
             </Form.Item>
           </Form>
         </Col>

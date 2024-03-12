@@ -1,20 +1,6 @@
-import {
-  Typography,
-  Form,
-  ColorPicker,
-  Row,
-  Button,
-  theme,
-  Space,
-  Divider,
-  Upload,
-  Image as AntdImage,
-  Input
-} from 'antd'
+import { Typography, Form, ColorPicker, Row, Button, theme, Space } from 'antd'
 import { useForm } from 'antd/es/form/Form'
 import { useSelector } from 'react-redux'
-import { useToken } from 'antd/es/theme/internal'
-import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { setColorTheme } from '../../store/theme/themeSlice'
 import { editTheme } from '../../api/theme'
@@ -24,7 +10,6 @@ import styles from '../../styles/Theme.module.css'
 
 const CustomizeColorForm = () => {
   const { level } = useSelector(userSelector)
-  const form = useForm()
   const [messageApi, contextHolder] = useMessage()
   const { defaultAlgorithm, defaultSeed } = theme
   const mapToken = defaultAlgorithm(defaultSeed)

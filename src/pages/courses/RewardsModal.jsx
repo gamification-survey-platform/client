@@ -17,17 +17,17 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
   const courses = useSelector(coursesSelector)
   const course = courses.find(({ course_number }) => course_number === course_id)
   const [showOldImage, setShowOldImage] = useState(!!editingReward)
-  const [fileList, setFileList] = useState([]);
+  const [fileList, setFileList] = useState([])
 
   const handleFileChange = (info) => {
-    setFileList(info.fileList);
-  
+    setFileList(info.fileList)
+
     if (info.fileList.length > 0 && info.fileList[0].originFileObj) {
-      setPicture(info.fileList[0].originFileObj);
+      setPicture(info.fileList[0].originFileObj)
     } else {
-      setPicture(null);
+      setPicture(null)
     }
-  };   
+  }
 
   const typeWatch = Form.useWatch('type', form)
   useEffect(() => {
@@ -38,22 +38,23 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
         type: editingReward.type,
         inventory: editingReward.inventory,
         points: editingReward.points,
-        is_active: editingReward.is_active,
-      });
-  
+        is_active: editingReward.is_active
+      })
+
       if (editingReward.picture) {
-        setFileList([{
-          uid: '-1', 
-          name: 'ExistingImage.png',
-          status: 'done',
-          url: editingReward.picture,
-        }]);
+        setFileList([
+          {
+            uid: '-1',
+            name: 'ExistingImage.png',
+            status: 'done',
+            url: editingReward.picture
+          }
+        ])
       } else {
-        setFileList([]);
+        setFileList([])
       }
     }
-  }, [editingReward, form]);
-  
+  }, [editingReward, form])
 
   useEffect(() => {
     if (typeWatch === 'Bonus' || typeWatch === 'Late Submission') {
@@ -185,24 +186,16 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
           {showOldImage ? <Image width={200} src={editingReward.picture} /> : null}
         </Form.Item>
         {showFile ? (
-        <Form.Item
-          name="picture"
-          label="Image Showcase"
-        >
-          <Upload
-            accept="image/png, image/jpeg"
-            maxCount={1}
-            fileList={fileList}
-            onChange={handleFileChange}
-            beforeUpload={() => false}
-          >
-            <Button>
-              {editingReward
-                ? 'Change Image (Optional)'
-                : 'Upload Image'}
-            </Button>
-          </Upload>
-        </Form.Item>
+          <Form.Item name="picture" label="Image Showcase">
+            <Upload
+              accept="image/png, image/jpeg"
+              maxCount={1}
+              fileList={fileList}
+              onChange={handleFileChange}
+              beforeUpload={() => false}>
+              <Button>{editingReward ? 'Change Image (Optional)' : 'Upload Image'}</Button>
+            </Upload>
+          </Form.Item>
         ) : null}
       </Form>
     </Modal>
