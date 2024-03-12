@@ -56,12 +56,12 @@ const Landing = () => {
         })
         try {
           const addMemberResponse = await addMember({
-            course_id: '20230516',
+            course_id: '1',
             memberId: andrewId,
             memberRole: 'Student'
           })
           const addMemberResponse2 = await addMember({
-            course_id: '20230521',
+            course_id: '2',
             memberId: andrewId,
             memberRole: 'Student'
           })
