@@ -13,6 +13,7 @@ import StudentReviewsList from '../components/StudentReviewsList'
 import { getTheme } from '../api/theme'
 import { setColorTheme, setCursor, setIconTheme, setTheme } from '../store/theme/themeSlice'
 import { gamified_mode } from '../gamified'
+import TriviaPopup from './TriviaPopup'
 
 const Home = () => {
   const user = useSelector(userSelector)
@@ -101,6 +102,13 @@ const Home = () => {
                         <Link to={`/courses/${course.course_number}/assignments`}>
                           <Button>Assignments</Button>
                         </Link>
+                      </Row>
+                      <Row justify="center">
+                        {!user.is_staff && gamified_mode(user) ? (
+                          <Button>
+                            <TriviaPopup />
+                          </Button>
+                        ) : null}
                       </Row>
                     </Space>
                   </div>
