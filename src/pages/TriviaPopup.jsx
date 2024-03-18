@@ -16,19 +16,18 @@ const TriviaPopup = ({ courseId, courses }) => {
     const showPreviousHint = () => setCurrentHintIndex(prevIndex => Math.max(prevIndex - 1, 0))
 
     useEffect(() => {
-        if (visible && selectedCourse && selectedCourse.pk) {
+        if (selectedCourse && selectedCourse.pk) {
             const fetchTrivia = async () => {
-                try {
-                    const res = await getCourseTrivia(selectedCourse.pk);
-                    setTrivia(res || null); 
-                } catch (error) {
-                    console.error('Fetching trivia failed:', error)
+                const res = await getCourseTrivia(selectedCourse.pk)
+                if (res && Object.keys(res).length > 0) {
+                    setTrivia(res)
+                } else {
                     setTrivia(null)
                 }
-            };
-            fetchTrivia();
+            }
+            fetchTrivia()
         }
-    }, [selectedCourse, visible]);
+    }, [selectedCourse])
 
     const handleAnswerSubmit = () => {
         if (trivia && trivia.answer.toLowerCase().trim() === userAnswer.toLowerCase().trim()) {
@@ -48,7 +47,13 @@ const TriviaPopup = ({ courseId, courses }) => {
 
     return (
         <>
-            <Button type="link" onClick={() => setVisible(true)} style={{ marginTop: -10 }}>🚀 Trivia</Button>
+            <Button 
+                type="link" 
+                onClick={() => setVisible(true)} 
+                style={{ marginTop: '-10px', color: trivia ? '#1890ff' : '#d9d9d9' }}
+            >
+                🚀 Trivia
+            </Button>
             <Modal
                 bodyStyle={{ padding: '20px' }} 
                 title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Trivia Time!</div>}
