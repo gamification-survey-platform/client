@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Button, Input, message } from 'antd'
+import { Modal, Button, Input, message, Card } from 'antd'
 import { getCourseTrivia} from '../api/trivia'
+import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 
 const TriviaPopup = ({ courseId, courses }) => {
     const courseNumber = courseId;
@@ -13,7 +14,10 @@ const TriviaPopup = ({ courseId, courses }) => {
     const [userAnswer, setUserAnswer] = useState('');
     const [messageApi, contextHolder] = message.useMessage()
     const selectedCourse = courses.find(course => course.course_number === courseNumber);
-
+    // Functions for handling hint navigation
+    const [currentHintIndex, setCurrentHintIndex] = useState(0);
+    const showNextHint = () => setCurrentHintIndex((prevIndex) => Math.min(prevIndex + 1, trivia.hints.length - 1));
+    const showPreviousHint = () => setCurrentHintIndex((prevIndex) => Math.max(prevIndex - 1, 0));
     useEffect(() => {
         const fetchTrivia = async () => {
             if (selectedCourse && selectedCourse.pk) {
@@ -41,30 +45,37 @@ const TriviaPopup = ({ courseId, courses }) => {
         }
     };
 
-    const showModal = () => setVisible(true);
     const handleClose = () => {
         setVisible(false);
         setUserAnswer('');
-    };
+    }
 
     return (
         <>
-            <Button type="link" onClick={showModal} style={{ marginTop: -10 }}>🚀 Trivia</Button>
+            <Button type="link" onClick={() => setVisible(true)} style={{ marginTop: -10 }}>🚀 Trivia</Button>
             <Modal
-                title="Trivia Time!"
+                title={<div style={{ fontWeight: 'bold', fontSize: '24px' }}>Trivia Time!</div>}
                 visible={visible}
-                onCancel={handleClose}
+                onCancel={() => setVisible(false)}
+                width={800}
                 footer={[
                     <Button key="submit" type="primary" onClick={handleAnswerSubmit}>
                         Submit Answer
                     </Button>,
                 ]}
             >
-                <div className="trivia-content">
-                    <p>{trivia.question}</p>
-                    {trivia.hints.map((hint, index) => (
-                        <p key={index}>Hint: {hint}</p>
-                    ))}
+                <div className="trivia-content" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <Card title="Question" style={{ fontSize: '18px' }}>
+                        {trivia.question}
+                    </Card>
+                    <Card title="Hint" extra={
+                        <>
+                            <Button icon={<LeftOutlined />} onClick={showPreviousHint} disabled={currentHintIndex === 0} />
+                            <Button icon={<RightOutlined />} onClick={showNextHint} disabled={currentHintIndex === trivia.hints.length - 1} />
+                        </>
+                    }>
+                        {trivia.hints[currentHintIndex]}
+                    </Card>
                     <Input
                         value={userAnswer}
                         onChange={(e) => setUserAnswer(e.target.value)}
@@ -75,7 +86,7 @@ const TriviaPopup = ({ courseId, courses }) => {
             </Modal>
             {contextHolder}
         </>
-    );
-};
+    )
+}
 
 export default TriviaPopup;
