@@ -61,7 +61,7 @@ const Landing = () => {
             memberRole: 'Student'
           })
           const addMemberResponse2 = await addMember({
-            course_id: '2',
+            course_id: '3',
             memberId: andrewId,
             memberRole: 'Student'
           })
@@ -80,13 +80,13 @@ const Landing = () => {
           if (addMemberResponse2.status === 201) {
             messageApi.open({
               type: 'success',
-              content: `You've been registered to Get to Know the Platform course as well!`
+              content: `You've been registered to How to Provide Effective Feedback course as well!`
             })
           } else {
             console.error(addMemberResponse2)
             messageApi.open({
               type: 'error',
-              content: 'There was an issue registering you to Get to Know the Platform course.'
+              content: 'There was an issue registering you to How to Provide Effective Feedback course.'
             })
           }
         } catch (e) {
