@@ -54,26 +54,36 @@ const TriviaPopup = ({ courseId, courses }) => {
         <>
             <Button type="link" onClick={() => setVisible(true)} style={{ marginTop: -10 }}>🚀 Trivia</Button>
             <Modal
-                title={<div style={{ fontWeight: 'bold', fontSize: '24px' }}>Trivia Time!</div>}
+                title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Trivia Time!</div>}
                 visible={visible}
                 onCancel={() => setVisible(false)}
-                width={800}
+                width={800} 
                 footer={[
-                    <Button key="submit" type="primary" onClick={handleAnswerSubmit}>
+                    <Button key="submit" type="primary" onClick={handleAnswerSubmit} size="large" style={{ height: '50px', fontSize: '18px' }}>
                         Submit Answer
                     </Button>,
                 ]}
+                bodyStyle={{ padding: '20px' }} 
             >
                 <div className="trivia-content" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    <Card title="Question" style={{ fontSize: '18px' }}>
+                    <Card 
+                        title="Question" 
+                        headStyle={{ fontSize: '22px', color: '#3d405b' }} 
+                        bodyStyle={{ fontSize: '18px', color: '#4B0082' }}
+                    >
                         {trivia.question}
                     </Card>
-                    <Card title="Hint" extra={
-                        <>
-                            <Button icon={<LeftOutlined />} onClick={showPreviousHint} disabled={currentHintIndex === 0} />
-                            <Button icon={<RightOutlined />} onClick={showNextHint} disabled={currentHintIndex === trivia.hints.length - 1} />
-                        </>
-                    }>
+                    <Card 
+                        title={`Hint ${currentHintIndex + 1}/${trivia.hints.length}`} 
+                        extra={
+                            <>
+                                <Button icon={<LeftOutlined />} onClick={showPreviousHint} disabled={currentHintIndex === 0} />
+                                <Button icon={<RightOutlined />} onClick={showNextHint} disabled={currentHintIndex === trivia.hints.length - 1} />
+                            </>
+                        }
+                        headStyle={{ fontSize: '22px', color: '#3d405b' }}
+                        bodyStyle={{ fontSize: '18px', color: '#4B0082' }}
+                    >
                         {trivia.hints[currentHintIndex]}
                     </Card>
                     <Input
@@ -81,6 +91,8 @@ const TriviaPopup = ({ courseId, courses }) => {
                         onChange={(e) => setUserAnswer(e.target.value)}
                         placeholder="Type your answer here"
                         onPressEnter={handleAnswerSubmit}
+                        size="large" 
+                        style={{ fontSize: '18px' }}
                     />
                 </div>
             </Modal>
