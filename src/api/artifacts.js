@@ -40,6 +40,7 @@ const submitArtifact = async ({ course_id, assignment_id, submission }) => {
       await writeToS3({ url, fields, method: 'POST', file: submission })
       return res
     } else {
+      console.log(res)
       return res
     }
   } catch (error) {

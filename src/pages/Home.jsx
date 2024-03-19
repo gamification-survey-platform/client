@@ -6,7 +6,7 @@ import userSelector from '../store/user/selectors'
 import { setCourses } from '../store/courses/coursesSlice'
 import coursesSelector from '../store/courses/selectors'
 import { getUserCourses } from '../api/courses'
-import { getUserArtifactReviews } from '../api/artifactReview'
+import { getUserArtifactReviews, getOptionalReview } from '../api/artifactReview'
 import { Space, Row, Col, Card, Image, Button } from 'antd'
 import Spinner from '../components/Spinner'
 import StudentReviewsList from '../components/StudentReviewsList'
@@ -35,8 +35,15 @@ const Home = () => {
       }
       try {
         const res = await getUserArtifactReviews(user.andrew_id)
+        const optionalReviews = await getOptionalReview(user.andrew_id)
         if (res.status === 200) {
-          setArtifactReviews(res.data)
+          const reviews = res.data
+          if (optionalReviews.status == 200) {
+            console.log('yes')
+            console.log(optionalReviews.data)
+            reviews.append(optionalReviews.data)
+          }
+          setArtifactReviews(reviews.data)
         }
       } catch (e) {
         console.error(e.message)
@@ -72,6 +79,9 @@ const Home = () => {
     <Spinner show={spin} />
   ) : (
     <Row>
+      {user.is_staff ? null : (
+        <StudentReviewsList artifactReviews={artifactReviews} showCompleted={false} />
+      )}
       <Col span={user.is_staff ? 24 : 17}>
         <Row gutter={10} className="m-3">
           {courses.map((course, i) => {
@@ -118,9 +128,6 @@ const Home = () => {
           })}
         </Row>
       </Col>
-      {user.is_staff ? null : (
-        <StudentReviewsList artifactReviews={artifactReviews} showCompleted={false} />
-      )}
     </Row>
   )
 }

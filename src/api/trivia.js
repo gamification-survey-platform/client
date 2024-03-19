@@ -9,4 +9,4 @@ const getCourseTrivia = async (course_id) => {
   }
 }
 
-export { getCourseTrivia}
+export { getCourseTrivia }
