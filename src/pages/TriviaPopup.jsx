@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button, Input, message, Card } from 'antd'
-import { getCourseTrivia } from '../api/trivia'
+import { getCourseTrivia, markTriviaAsCompleted } from '../api/trivia'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 
 const TriviaPopup = ({ courseId, courses }) => {
     const [visible, setVisible] = useState(false)
     const [trivias, setTrivias] = useState([])
+    const [allCompleted, setAllCompleted] = useState(false)
     const [currentTriviaIndex, setCurrentTriviaIndex] = useState(0)
     const [userAnswer, setUserAnswer] = useState('')
     const [currentHintIndex, setCurrentHintIndex] = useState(0)
@@ -19,8 +20,8 @@ const TriviaPopup = ({ courseId, courses }) => {
                 if (res && res.length > 0) {
                     setTrivias(res)
                     setCurrentTriviaIndex(0)
-                } else {
-                    setTrivias([])
+                } else if (res.status === 204) {
+                setAllCompleted(true)
                 }
             }
             fetchTrivia()
@@ -44,17 +45,23 @@ const TriviaPopup = ({ courseId, courses }) => {
 
     const handleAnswerSubmit = () => {
         if (trivias[currentTriviaIndex] && trivias[currentTriviaIndex].answer.toLowerCase().trim() === userAnswer.toLowerCase().trim()) {
-            messageApi.open({ type: 'success', content: 'Correct answer! 🎉' });
-            nextTrivia()
-            setUserAnswer('')
-            if (currentTriviaIndex === trivias.length - 1) {
-                handleClose()
+            messageApi.open({ type: 'success', content: 'Correct answer! 🎉' }) 
+            if (currentTriviaIndex < trivias.length) {
+                markTriviaAsCompleted(trivias[currentTriviaIndex].id) 
+                nextTrivia()
+                } else {
+                    setAllCompleted(true)
+                    handleClose()
+                }
+                setUserAnswer('')
+                if (currentTriviaIndex === trivias.length - 1) {
+                    handleClose()
+                }
+            } else {
+                messageApi.open({ type: 'error', content: 'Wrong answer. Try again!' })
+                setUserAnswer('')
             }
-        } else {
-            messageApi.open({ type: 'error', content: 'Wrong answer. Try again!' });
-            setUserAnswer('');
-        }
-    };
+    }
 
     const handleClose = () => {
         setVisible(false)
@@ -72,6 +79,21 @@ const TriviaPopup = ({ courseId, courses }) => {
             >
                 🚀 Trivia
             </Button>
+            {allCompleted && (
+                <Modal
+                title="Congratulations!"
+                visible={allCompleted}
+                onOk={() => setAllCompleted(false)}
+                onCancel={() => setAllCompleted(false)}
+                footer={[
+                    <Button key="ok" type="primary" onClick={() => setAllCompleted(false)}>
+                    OK
+                    </Button>
+                ]}
+                >
+                <p>You have completed all trivia for this course. Look at other courses for more trivia fun! 🎓🚀</p>
+                </Modal>
+            )}
             <Modal
                 bodyStyle={{ padding: '20px' }} 
                 title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Trivia Time!</div>}
