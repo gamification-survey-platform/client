@@ -227,7 +227,7 @@ const CourseForm = () => {
         </Form.Item>
         {enableTrivia && (
         <Trivia triviaList={triviaList} setTriviaList={setTriviaList} />)}
-        <div className="text-center">
+        <div className="text-center" style={{ marginTop: '30px' }}>
           <Button type="primary" onClick={handleSubmit}>
             {editingCourse ? 'Edit' : 'Create'}
           </Button>

@@ -15,12 +15,12 @@ const TriviaItem = ({ trivia, index, onTriviaChange, onRemove }) => {
   }
 
   const removeHint = (hintIndex) => {
-    const newHints = trivia.hints.filter((_, i) => i !== hintIndex);
+    const newHints = trivia.hints.filter((_, i) => i !== hintIndex)
     onTriviaChange(index, { ...trivia, hints: newHints })
   }
 
   return (
-    <div>
+    <div style={{ marginBottom: '20px' }}>
       <Form.Item
         name={`trivia[${index}].question`}
         label="Trivia Question"
@@ -48,23 +48,34 @@ const TriviaItem = ({ trivia, index, onTriviaChange, onRemove }) => {
         >
           <Input.Group compact>
             <Input
-              style={{ width: 'calc(100% - 40px)' }}
+              style={{ width: 'calc(100% - 50px)' }} 
               value={hint}
               onChange={(e) => handleHintChange(hintIndex, e.target.value)}
             />
             <Button
-              type="danger"
+              danger
               onClick={() => removeHint(hintIndex)}
               icon={<MinusCircleOutlined />}
+              style={{ marginLeft: '10px' }}
             />
           </Input.Group>
         </Form.Item>
       ))}
-      <Button type="dashed" onClick={addHint} block icon={<PlusOutlined />}>
+      <Button
+        type="dashed"
+        onClick={addHint}
+        block
+        icon={<PlusOutlined />}
+        style={{ marginBottom: '10px' }}
+      >
         Add Hint
       </Button>
       {index > 0 && (
-        <Button type="link" onClick={() => onRemove(index)}>
+        <Button
+          type="link"
+          onClick={() => onRemove(index)}
+          style={{ color: '#ff4d4f' }}
+        >
           Remove Trivia
         </Button>
       )}
@@ -86,7 +97,6 @@ const Trivia = ({ triviaList, setTriviaList }) => {
   const removeTrivia = (index) => {
     setTriviaList(triviaList.filter((_, i) => i !== index))
   }
-
   return (
     <div>
       {triviaList.map((trivia, index) => (
@@ -98,7 +108,13 @@ const Trivia = ({ triviaList, setTriviaList }) => {
           onRemove={removeTrivia}
         />
       ))}
-      <Button type="dashed" onClick={addTrivia} block icon={<PlusOutlined />}>
+      <Button
+        type="primary"
+        onClick={addTrivia}
+        block
+        icon={<PlusOutlined />}
+        style={{ marginTop: '20px', color: 'white' }}
+      >
         Add Trivia
       </Button>
     </div>
