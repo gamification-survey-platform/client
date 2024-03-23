@@ -7,7 +7,7 @@ const TriviaPopup = ({ courseId, courses }) => {
     const [visible, setVisible] = useState(false)
     const [trivias, setTrivias] = useState([])
     const [currentTriviaIndex, setCurrentTriviaIndex] = useState(0)
-    const [userAnswer, setUserAnswer] = useState('');
+    const [userAnswer, setUserAnswer] = useState('')
     const [currentHintIndex, setCurrentHintIndex] = useState(0)
     const [messageApi, contextHolder] = message.useMessage()
     const selectedCourse = courses.find(course => course.course_number === courseId)
