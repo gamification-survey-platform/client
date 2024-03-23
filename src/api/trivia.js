@@ -9,15 +9,10 @@ const getCourseTrivia = async (course_id) => {
   }
 }
 
-const token = localStorage.getItem('token');
-
 const markTriviaAsCompleted = async (triviaId) => {
   try {
-    const res = await api.post(`trivia/${triviaId}/complete`, {}, {
-      headers: {
-        'Authorization': `Token ${token}`
-      }
-    });
+    const res = await api.post(`trivia/${triviaId}/complete`
+    );
     return res.data;
   } catch (error) {
     throw new Error(error.response.data.message || 'Could not mark trivia as completed');
