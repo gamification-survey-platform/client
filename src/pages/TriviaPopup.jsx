@@ -65,7 +65,7 @@ const TriviaPopup = ({ courseId, courses }) => {
         if (trivias[currentTriviaIndex] && trivias[currentTriviaIndex].answer.toLowerCase().trim() === userAnswer.toLowerCase().trim()) {
             try {
                 const response = await markTriviaAsCompleted(trivias[currentTriviaIndex].id, hintsUsed)
-                messageApi.open({ type: 'success', content: `Correct answer! 🎉 You gained ${response.points} points.` })
+                messageApi.open({ type: 'success', content: `Correct answer! 🎉 You gained ${calculatePoints()} points.` })
                 const updatedTrivias = trivias.filter((_, index) => index !== currentTriviaIndex)
                 setHintsUsed(0)
                 setTrivias(updatedTrivias);
