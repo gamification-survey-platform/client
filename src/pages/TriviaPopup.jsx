@@ -131,7 +131,7 @@ const TriviaPopup = ({ courseId, courses }) => {
                         <Button key="next" onClick={nextTrivia} disabled={currentTriviaIndex === trivias.length - 1}>
                             Next Trivia
                         </Button>,
-                        <Button key="submit" type="primary" onClick={handleAnswerSubmit}>Submit to (Earn {calculatePoints()} points)</Button>
+                        <Button key="submit" type="primary" onClick={handleAnswerSubmit}>Submit and earn {calculatePoints()} points</Button>
                     ] : null}
                 >
                     {trivias.length > 0 ? (
@@ -148,7 +148,7 @@ const TriviaPopup = ({ courseId, courses }) => {
                                     title={`Hint ${currentHintIndex + 1}/${trivias[currentTriviaIndex].hints.length}`}
                                     extra={
                                         <>
-                                            <Button key="prev" onClick={previousTrivia} disabled={currentTriviaIndex === 0}>Previous</Button>,
+                                            <Button key="prev" onClick={previousTrivia} disabled={currentTriviaIndex === 0}>Previous</Button>
                                             <Button key="next" onClick={() => { setHintsUsed(hintsUsed + 1); showNextHint(); }} disabled={currentHintIndex >= trivias[currentTriviaIndex].hints.length - 1}>Next Hint (-{calculatePoints() / 2} points)</Button>
                                         </>
                                     }
