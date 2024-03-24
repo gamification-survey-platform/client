@@ -16,12 +16,20 @@ const TriviaPopup = ({ courseId, courses }) => {
     useEffect(() => {
         if (selectedCourse && selectedCourse.pk) {
             const fetchTrivia = async () => {
-                const res = await getCourseTrivia(selectedCourse.pk)
-                if (res && res.length > 0) {
-                    setTrivias(res)
-                    setCurrentTriviaIndex(0)
-                } else if (res.status === 204) {
-                setAllCompleted(true)
+                try {
+                    const res = await getCourseTrivia(selectedCourse.pk)
+                    if (res && res.length > 0) {
+                        setTrivias(res)
+                        setCurrentTriviaIndex(0)
+                    } 
+                } catch (error) {
+                    if (error.response && error.response.status === 204) {
+                        setTrivias([])
+                    } else if (error.response && error.response.status === 208) {
+                        setAllCompleted(true)
+                    } else {
+                        message.error(error.toString())
+                    }
                 }
             }
             fetchTrivia()
@@ -87,8 +95,6 @@ const TriviaPopup = ({ courseId, courses }) => {
                 <Modal
                 title="Congratulations!"
                 visible={allCompleted}
-                onOk={() => setAllCompleted(false)}
-                onCancel={() => setAllCompleted(false)}
                 footer={[
                     <Button key="ok" type="primary" onClick={() => setAllCompleted(false)}>
                     OK
