@@ -93,7 +93,9 @@ const TriviaPopup = ({ courseId, courses }) => {
             </Button>
             {allCompleted && (
                 <Modal
-                title="Congratulations!"
+                bodyStyle={{ padding: '20px' }} 
+                title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Congratulations!</div>}
+                width={800}
                 visible={allCompleted}
                 footer={[
                     <Button key="ok" type="primary" onClick={() => setAllCompleted(false)}>
@@ -101,7 +103,7 @@ const TriviaPopup = ({ courseId, courses }) => {
                     </Button>
                 ]}
                 >
-                <p>You have completed all trivia for this course. Look at other courses for more trivia fun! 🎓🚀</p>
+                <p  style={{fontSize: '22px'}}>🎆🎆🎉🎉You have completed all trivia for this course. Look at other courses for more trivia fun! 🎓🚀</p>
                 </Modal>
             )}
             <Modal
