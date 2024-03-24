@@ -92,7 +92,6 @@ const CourseForm = () => {
       try {
         const fields = form.getFieldValue()
         const courseData = { ...fields, andrew_id: user.andrewId, trivia: triviaList }
-        console.log(courseData)
         courseData.semester = `${courseData.semester} ${courseData.semesterYear}`
         // if user upload a new picture, set a new picture. Otherwise, use the original picture from editingCourse
         if (coursePicture) {
@@ -104,7 +103,6 @@ const CourseForm = () => {
         }
 
         delete courseData.semesterYear
-        console.log(courseData)
         const res = editingCourse
           ? await editCourseApi({ course_id: editingCourse.pk, course: courseData })
           : await createCourseApi(courseData)
