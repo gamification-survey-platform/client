@@ -157,7 +157,7 @@ const TriviaPopup = ({ courseId, courses }) => {
                     </div>
                 ) : (
                     <p style={{ fontSize: '20px', textAlign: 'center', color: '#36454F', backgroundColor: '#f0f8ff', padding: '20px', borderRadius: '15px', border: '2px dashed #36454F', marginTop: '20px'}}>
-                        😅 Oh no! It seems like this course has no trivia! Please explore other courses for more trivia fun! 🎓🚀
+                        😅 Oh no! We do not have trivia for you! Please explore other courses for more trivia fun! 🎓🚀
                     </p>
                 )}
             </Modal>
