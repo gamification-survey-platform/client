@@ -10,6 +10,7 @@ const TriviaPopup = ({ courseId, courses }) => {
     const [currentTriviaIndex, setCurrentTriviaIndex] = useState(0)
     const [userAnswer, setUserAnswer] = useState('')
     const [currentHintIndex, setCurrentHintIndex] = useState(0)
+    const [hintsUsed, setHintsUsed] = useState(0)
     const [messageApi, contextHolder] = message.useMessage()
     const selectedCourse = courses.find(course => course.course_number === courseId)
 
@@ -54,8 +55,8 @@ const TriviaPopup = ({ courseId, courses }) => {
     const handleAnswerSubmit = async () => {
         if (trivias[currentTriviaIndex] && trivias[currentTriviaIndex].answer.toLowerCase().trim() === userAnswer.toLowerCase().trim()) {
             try {
-                await markTriviaAsCompleted(trivias[currentTriviaIndex].id)
-                messageApi.open({ type: 'success', content: 'Correct answer! 🎉' })
+                const response = await markTriviaAsCompleted(trivias[currentTriviaIndex].id, hintsUsed)
+                messageApi.open({ type: 'success', content: `Correct answer! 🎉 You gained ${response.points} points.` })
                 const updatedTrivias = trivias.filter((_, index) => index !== currentTriviaIndex)
                 setTrivias(updatedTrivias);
                 if (updatedTrivias.length > 0) {
@@ -138,8 +139,8 @@ const TriviaPopup = ({ courseId, courses }) => {
                                 title={`Hint ${currentHintIndex + 1}/${trivias[currentTriviaIndex].hints.length}`} 
                                 extra={
                                     <>
-                                        <Button icon={<LeftOutlined />} onClick={showPreviousHint} disabled={currentHintIndex === 0} />
-                                        <Button icon={<RightOutlined />} onClick={showNextHint} disabled={currentHintIndex === trivias[currentTriviaIndex].hints.length - 1} />
+                                        <Button icon={<LeftOutlined />} onClick={showPreviousHint} disabled={currentHintIndex === 0}></Button>,
+                                        <Button icon={<RightOutlined />} onClick={() => { setHintsUsed(hintsUsed + 1); showNextHint(); }} disabled={currentHintIndex >= trivias[currentTriviaIndex].hints.length - 1}></Button>
                                     </>
                                 }
                                 headStyle={{ fontSize: '22px', color: '#3d405b' }}
