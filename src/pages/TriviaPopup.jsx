@@ -22,6 +22,7 @@ const TriviaPopup = ({ courseId, courses }) => {
                     if (res && res.length > 0) {
                         setTrivias(res)
                         setCurrentTriviaIndex(0)
+                        setHintsUsed(0)
                     } 
                 } catch (error) {
                     if (error.response && error.response.status === 204) {
@@ -52,12 +53,21 @@ const TriviaPopup = ({ courseId, courses }) => {
         }
     }
 
+    const calculatePoints = () => {
+        let points = 12
+        for (let i = 0; i < hintsUsed; i++) {
+            points = Math.max(0, Math.floor(points / 2))
+        }
+        return points
+    }
+
     const handleAnswerSubmit = async () => {
         if (trivias[currentTriviaIndex] && trivias[currentTriviaIndex].answer.toLowerCase().trim() === userAnswer.toLowerCase().trim()) {
             try {
                 const response = await markTriviaAsCompleted(trivias[currentTriviaIndex].id, hintsUsed)
                 messageApi.open({ type: 'success', content: `Correct answer! 🎉 You gained ${response.points} points.` })
                 const updatedTrivias = trivias.filter((_, index) => index !== currentTriviaIndex)
+                setHintsUsed(0)
                 setTrivias(updatedTrivias);
                 if (updatedTrivias.length > 0) {
                     const newIndex = currentTriviaIndex >= updatedTrivias.length ? updatedTrivias.length - 1 : currentTriviaIndex
@@ -107,63 +117,63 @@ const TriviaPopup = ({ courseId, courses }) => {
                 <p  style={{fontSize: '22px'}}>🎆🎆🎉🎉You have completed all trivia for this course. Look at other courses for more trivia fun! 🎓🚀</p>
                 </Modal>
             )}
-            <Modal
-                bodyStyle={{ padding: '20px' }} 
-                title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Trivia Time!</div>}
-                visible={visible}
-                onCancel={() => setVisible(false)}
-                width={800}
-                footer={(trivias.length > 0 && [
-                    <Button key="prev" onClick={previousTrivia} disabled={currentTriviaIndex === 0}>
-                        Previous Trivia
-                    </Button>,
-                    <Button key="next" onClick={nextTrivia} disabled={currentTriviaIndex === trivias.length - 1}>
-                        Next Trivia
-                    </Button>,
-                    <Button key="submit" type="primary" onClick={handleAnswerSubmit}>
-                        Submit Answer
-                    </Button>
-                ])}
-            >
-                {trivias.length > 0 ? (
-                    <div className="trivia-content" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                        <Card 
-                            title={`Question ${currentTriviaIndex + 1}/${trivias.length}`} 
-                            headStyle={{ fontSize: '22px', color: '#3d405b' }} 
-                            bodyStyle={{ fontSize: '18px', color: '#4B0082' }}
-                        >
-                            {trivias[currentTriviaIndex].question}
-                        </Card>
-                        {trivias[currentTriviaIndex].hints && trivias[currentTriviaIndex].hints.length > 0 && (
-                            <Card 
-                                title={`Hint ${currentHintIndex + 1}/${trivias[currentTriviaIndex].hints.length}`} 
-                                extra={
-                                    <>
-                                        <Button icon={<LeftOutlined />} onClick={showPreviousHint} disabled={currentHintIndex === 0}></Button>,
-                                        <Button icon={<RightOutlined />} onClick={() => { setHintsUsed(hintsUsed + 1); showNextHint(); }} disabled={currentHintIndex >= trivias[currentTriviaIndex].hints.length - 1}></Button>
-                                    </>
-                                }
+            {visible && (
+                <Modal
+                    bodyStyle={{ padding: '20px' }} 
+                    title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Trivia Time!</div>}
+                    visible={visible}
+                    onCancel={() => setVisible(false)}
+                    width={800}
+                    footer={trivias.length > 0 ? [
+                        <Button key="prev" onClick={previousTrivia} disabled={currentTriviaIndex === 0}>
+                            Previous Trivia
+                        </Button>,
+                        <Button key="next" onClick={nextTrivia} disabled={currentTriviaIndex === trivias.length - 1}>
+                            Next Trivia
+                        </Button>,
+                        <Button key="submit" type="primary" onClick={handleAnswerSubmit}>Submit to (Earn {calculatePoints()} points)</Button>
+                    ] : null}
+                >
+                    {trivias.length > 0 ? (
+                        <div className="trivia-content" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                            <Card
+                                title={`Question ${currentTriviaIndex + 1}/${trivias.length}`}
                                 headStyle={{ fontSize: '22px', color: '#3d405b' }}
                                 bodyStyle={{ fontSize: '18px', color: '#4B0082' }}
                             >
-                                {trivias[currentTriviaIndex].hints[currentHintIndex]}
+                                {trivias[currentTriviaIndex].question}
                             </Card>
-                        )}
-                        <Input
-                            value={userAnswer}
-                            onChange={(e) => setUserAnswer(e.target.value)}
-                            placeholder="Type your answer here"
-                            onPressEnter={handleAnswerSubmit}
-                            size="large"
-                            style={{ fontSize: '18px' }}
-                        />
-                    </div>
-                ) : (
-                    <p style={{ fontSize: '20px', textAlign: 'center', color: '#36454F', backgroundColor: '#f0f8ff', padding: '20px', borderRadius: '15px', border: '2px dashed #36454F', marginTop: '20px'}}>
-                        😅 Oh no! We do not have trivia for you! Please explore other courses for more trivia fun! 🎓🚀
-                    </p>
-                )}
-            </Modal>
+                            {trivias[currentTriviaIndex].hints && trivias[currentTriviaIndex].hints.length > 0 && (
+                                <Card
+                                    title={`Hint ${currentHintIndex + 1}/${trivias[currentTriviaIndex].hints.length}`}
+                                    extra={
+                                        <>
+                                            <Button key="prev" onClick={previousTrivia} disabled={currentTriviaIndex === 0}>Previous</Button>,
+                                            <Button key="next" onClick={() => { setHintsUsed(hintsUsed + 1); showNextHint(); }} disabled={currentHintIndex >= trivias[currentTriviaIndex].hints.length - 1}>Next Hint (-{calculatePoints() / 2} points)</Button>
+                                        </>
+                                    }
+                                    headStyle={{ fontSize: '22px', color: '#3d405b' }}
+                                    bodyStyle={{ fontSize: '18px', color: '#4B0082' }}
+                                >
+                                    {trivias[currentTriviaIndex].hints[currentHintIndex]}
+                                </Card>
+                            )}
+                            <Input
+                                value={userAnswer}
+                                onChange={(e) => setUserAnswer(e.target.value)}
+                                placeholder="Type your answer here"
+                                onPressEnter={handleAnswerSubmit}
+                                size="large"
+                                style={{ fontSize: '18px' }}
+                            />
+                        </div>
+                    ) : (
+                        <p style={{ fontSize: '20px', textAlign: 'center', color: '#36454F', backgroundColor: '#f0f8ff', padding: '20px', borderRadius: '15px', border: '2px dashed #36454F', marginTop: '20px'}}>
+                            😅 There is no trivia available for you! Please explore other courses for more trivia challenges and fun! 🎓🚀
+                        </p>
+                    )}
+                </Modal>
+            )}
             {contextHolder}
         </>
     )
