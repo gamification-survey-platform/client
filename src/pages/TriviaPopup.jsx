@@ -1,48 +1,85 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button, Input, message, Card } from 'antd'
-import { getCourseTrivia } from '../api/trivia'
+import { getCourseTrivia, markTriviaAsCompleted } from '../api/trivia'
 import { LeftOutlined, RightOutlined } from '@ant-design/icons'
 
 const TriviaPopup = ({ courseId, courses }) => {
-    const courseNumber = courseId;
     const [visible, setVisible] = useState(false)
-    const [trivia, setTrivia] = useState(null)
-    const [userAnswer, setUserAnswer] = useState('');
+    const [trivias, setTrivias] = useState([])
+    const [allCompleted, setAllCompleted] = useState(false)
+    const [currentTriviaIndex, setCurrentTriviaIndex] = useState(0)
+    const [userAnswer, setUserAnswer] = useState('')
     const [currentHintIndex, setCurrentHintIndex] = useState(0)
     const [messageApi, contextHolder] = message.useMessage()
-    const selectedCourse = courses.find(course => course.course_number === courseNumber)
-
-    const showNextHint = () => setCurrentHintIndex(prevIndex => Math.min(prevIndex + 1, trivia?.hints.length - 1))
-    const showPreviousHint = () => setCurrentHintIndex(prevIndex => Math.max(prevIndex - 1, 0))
+    const selectedCourse = courses.find(course => course.course_number === courseId)
 
     useEffect(() => {
         if (selectedCourse && selectedCourse.pk) {
             const fetchTrivia = async () => {
-                const res = await getCourseTrivia(selectedCourse.pk)
-                if (res && Object.keys(res).length > 0) {
-                    setTrivia(res)
-                } else {
-                    setTrivia(null)
+                try {
+                    const res = await getCourseTrivia(selectedCourse.pk)
+                    if (res && res.length > 0) {
+                        setTrivias(res)
+                        setCurrentTriviaIndex(0)
+                    } 
+                } catch (error) {
+                    if (error.response && error.response.status === 204) {
+                        setTrivias([])
+                    } else if (error.response && error.response.status === 208) {
+                        setAllCompleted(true)
+                    } else {
+                        message.error(error.toString())
+                    }
                 }
             }
             fetchTrivia()
         }
     }, [selectedCourse])
 
-    const handleAnswerSubmit = () => {
-        if (trivia && trivia.answer.toLowerCase().trim() === userAnswer.toLowerCase().trim()) {
-            messageApi.open({ type: 'success', content: 'Correct answer! 🎉' });
-            handleClose();
-        } else {
-            messageApi.open({ type: 'error', content: 'Wrong answer. Try again!' });
-            setUserAnswer('');
+    const showNextHint = () => setCurrentHintIndex(prevIndex => Math.min(prevIndex + 1, trivias[currentTriviaIndex]?.hints.length - 1))
+    const showPreviousHint = () => setCurrentHintIndex(prevIndex => Math.max(prevIndex - 1, 0))
+    const nextTrivia = () => {
+        if (currentTriviaIndex < trivias.length - 1) {
+            setCurrentTriviaIndex(currentTriviaIndex + 1)
+            setCurrentHintIndex(0)
         }
-    };
+    }
+    const previousTrivia = () => {
+        if (currentTriviaIndex > 0) {
+            setCurrentTriviaIndex(currentTriviaIndex - 1)
+            setCurrentHintIndex(0)
+        }
+    }
+
+    const handleAnswerSubmit = async () => {
+        if (trivias[currentTriviaIndex] && trivias[currentTriviaIndex].answer.toLowerCase().trim() === userAnswer.toLowerCase().trim()) {
+            try {
+                await markTriviaAsCompleted(trivias[currentTriviaIndex].id)
+                messageApi.open({ type: 'success', content: 'Correct answer! 🎉' })
+                const updatedTrivias = trivias.filter((_, index) => index !== currentTriviaIndex)
+                setTrivias(updatedTrivias);
+                if (updatedTrivias.length > 0) {
+                    const newIndex = currentTriviaIndex >= updatedTrivias.length ? updatedTrivias.length - 1 : currentTriviaIndex
+                    setCurrentTriviaIndex(newIndex)
+                    setCurrentHintIndex(0)
+                } else {
+                    setAllCompleted(true)
+                    handleClose()
+                }
+            } catch (error) {
+                messageApi.open({ type: 'error', content: 'Failed to mark trivia as completed. Please try again.' });
+            }
+        } else {
+            messageApi.open({ type: 'error', content: 'Wrong answer. Try again!' })
+        }
+        setUserAnswer('')
+    }
 
     const handleClose = () => {
-        setVisible(false);
-        setUserAnswer('');
-        setCurrentHintIndex(0);
+        setVisible(false)
+        setUserAnswer('')
+        setCurrentHintIndex(0)
+        setCurrentTriviaIndex(0)
     };
 
     return (
@@ -50,40 +87,65 @@ const TriviaPopup = ({ courseId, courses }) => {
             <Button 
                 type="link" 
                 onClick={() => setVisible(true)} 
-                style={{ marginTop: '-10px', color: trivia ? '#1890ff' : '#d9d9d9' }}
+                style={{ marginTop: '-10px', color: trivias.length > 0 ? '#1890ff' : '#d9d9d9' }}
             >
                 🚀 Trivia
             </Button>
+            {allCompleted && (
+                <Modal
+                bodyStyle={{ padding: '20px' }} 
+                title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Congratulations!</div>}
+                width={800}
+                visible={allCompleted}
+                footer={[
+                    <Button key="ok" type="primary" onClick={() => setAllCompleted(false)}>
+                    OK
+                    </Button>
+                ]}
+                >
+                <p  style={{fontSize: '22px'}}>🎆🎆🎉🎉You have completed all trivia for this course. Look at other courses for more trivia fun! 🎓🚀</p>
+                </Modal>
+            )}
             <Modal
                 bodyStyle={{ padding: '20px' }} 
                 title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Trivia Time!</div>}
                 visible={visible}
                 onCancel={() => setVisible(false)}
                 width={800}
-                footer={trivia && (
-                    <Button key="submit" type="primary" onClick={handleAnswerSubmit} size="large" style={{ height: '50px', fontSize: '18px' }}>
+                footer={(trivias.length > 0 && [
+                    <Button key="prev" onClick={previousTrivia} disabled={currentTriviaIndex === 0}>
+                        Previous Trivia
+                    </Button>,
+                    <Button key="next" onClick={nextTrivia} disabled={currentTriviaIndex === trivias.length - 1}>
+                        Next Trivia
+                    </Button>,
+                    <Button key="submit" type="primary" onClick={handleAnswerSubmit}>
                         Submit Answer
                     </Button>
-                )}
+                ])}
             >
-                {trivia ? (
+                {trivias.length > 0 ? (
                     <div className="trivia-content" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                        {trivia.question && (
-                            <Card title="Question" headStyle={{ fontSize: '22px', color: '#3d405b' }} bodyStyle={{ fontSize: '18px', color: '#4B0082' }}>
-                                {trivia.question}
-                            </Card>
-                        )}
-                        {trivia.hints && trivia.hints.length > 0 && (
-                            <Card title={`Hint ${currentHintIndex + 1}/${trivia.hints.length}`} extra={
-                                <>
-                                    <Button icon={<LeftOutlined />} onClick={showPreviousHint} disabled={currentHintIndex === 0} />
-                                    <Button icon={<RightOutlined />} onClick={showNextHint} disabled={currentHintIndex === trivia.hints.length - 1} />
-                                </>
-                            }
-                            headStyle={{ fontSize: '22px', color: '#3d405b' }}
+                        <Card 
+                            title={`Question ${currentTriviaIndex + 1}/${trivias.length}`} 
+                            headStyle={{ fontSize: '22px', color: '#3d405b' }} 
                             bodyStyle={{ fontSize: '18px', color: '#4B0082' }}
+                        >
+                            {trivias[currentTriviaIndex].question}
+                        </Card>
+                        {trivias[currentTriviaIndex].hints && trivias[currentTriviaIndex].hints.length > 0 && (
+                            <Card 
+                                title={`Hint ${currentHintIndex + 1}/${trivias[currentTriviaIndex].hints.length}`} 
+                                extra={
+                                    <>
+                                        <Button icon={<LeftOutlined />} onClick={showPreviousHint} disabled={currentHintIndex === 0} />
+                                        <Button icon={<RightOutlined />} onClick={showNextHint} disabled={currentHintIndex === trivias[currentTriviaIndex].hints.length - 1} />
+                                    </>
+                                }
+                                headStyle={{ fontSize: '22px', color: '#3d405b' }}
+                                bodyStyle={{ fontSize: '18px', color: '#4B0082' }}
                             >
-                                {trivia.hints[currentHintIndex]}
+                                {trivias[currentTriviaIndex].hints[currentHintIndex]}
                             </Card>
                         )}
                         <Input
@@ -97,7 +159,7 @@ const TriviaPopup = ({ courseId, courses }) => {
                     </div>
                 ) : (
                     <p style={{ fontSize: '20px', textAlign: 'center', color: '#36454F', backgroundColor: '#f0f8ff', padding: '20px', borderRadius: '15px', border: '2px dashed #36454F', marginTop: '20px'}}>
-                        😅 Oh no! It seems like this course has no trivia! Please explore other courses for more trivia fun! 🎓🚀
+                        😅 Oh no! We do not have trivia for you! Please explore other courses for more trivia fun! 🎓🚀
                     </p>
                 )}
             </Modal>
@@ -106,4 +168,4 @@ const TriviaPopup = ({ courseId, courses }) => {
     )
 }
 
-export default TriviaPopup;
+export default TriviaPopup

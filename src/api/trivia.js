@@ -9,4 +9,14 @@ const getCourseTrivia = async (course_id) => {
   }
 }
 
-export { getCourseTrivia}
+const markTriviaAsCompleted = async (triviaId) => {
+  try {
+    const res = await api.post(`trivia/${triviaId}/complete`
+    );
+    return res.data;
+  } catch (error) {
+    throw new Error(error.response.data.message || 'Could not mark trivia as completed');
+  }
+}
+
+export { getCourseTrivia, markTriviaAsCompleted }
