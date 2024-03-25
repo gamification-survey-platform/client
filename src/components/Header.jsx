@@ -34,6 +34,7 @@ import Notification from './Notification'
 import styles from '../styles/Header.module.css'
 import DashboardJoyride from './DashboardJoyride'
 import { gamified_mode } from '../gamified'
+import Badge1 from '../assets/Badge1.webp'
 
 const rankings = [
   { title: 'Bronze', image: Bronze },
@@ -210,6 +211,11 @@ const AppHeader = ({ children }) => {
             <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
           <Row>
+          <Tooltip title="First Trivia Completed" color={'gold'} placement="left">
+            <div className="mr-3">
+              <Image src={Badge1} preview={false} width={50} />
+            </div>
+          </Tooltip>
             <Tooltip title="Start Tutorial" color={'gold'} placement="left">
               <div className="mr-3">
                 <DashboardJoyride isFirstLogin={user?.is_first_login || false} />
