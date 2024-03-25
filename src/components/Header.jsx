@@ -34,7 +34,7 @@ import Notification from './Notification'
 import styles from '../styles/Header.module.css'
 import DashboardJoyride from './DashboardJoyride'
 import { gamified_mode } from '../gamified'
-import Badge1 from '../assets/Badge1.webp'
+import Badge1 from '../assets/badges/Badge1.webp'
 
 const rankings = [
   { title: 'Bronze', image: Bronze },
