@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Modal, Button, Input, message, Card } from 'antd'
 import { getCourseTrivia, markTriviaAsCompleted } from '../api/trivia'
-import { LeftOutlined, RightOutlined } from '@ant-design/icons'
+import { LeftOutlined, RightOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 
 const TriviaPopup = ({ courseId, courses }) => {
     const [visible, setVisible] = useState(false)
@@ -9,7 +9,7 @@ const TriviaPopup = ({ courseId, courses }) => {
     const [allCompleted, setAllCompleted] = useState(false)
     const [currentTriviaIndex, setCurrentTriviaIndex] = useState(0)
     const [userAnswer, setUserAnswer] = useState('')
-    const [currentHintIndex, setCurrentHintIndex] = useState(0)
+    const [currentHintIndex, setCurrentHintIndex] = useState(-1)
     const [hintsUsed, setHintsUsed] = useState(0)
     const [messageApi, contextHolder] = message.useMessage()
     const selectedCourse = courses.find(course => course.course_number === courseId)
@@ -43,13 +43,13 @@ const TriviaPopup = ({ courseId, courses }) => {
     const nextTrivia = () => {
         if (currentTriviaIndex < trivias.length - 1) {
             setCurrentTriviaIndex(currentTriviaIndex + 1)
-            setCurrentHintIndex(0)
+            setCurrentHintIndex(-1)
         }
     }
     const previousTrivia = () => {
         if (currentTriviaIndex > 0) {
             setCurrentTriviaIndex(currentTriviaIndex - 1)
-            setCurrentHintIndex(0)
+            setCurrentHintIndex(-1)
         }
     }
 
@@ -72,7 +72,7 @@ const TriviaPopup = ({ courseId, courses }) => {
                 if (updatedTrivias.length > 0) {
                     const newIndex = currentTriviaIndex >= updatedTrivias.length ? updatedTrivias.length - 1 : currentTriviaIndex
                     setCurrentTriviaIndex(newIndex)
-                    setCurrentHintIndex(0)
+                    setCurrentHintIndex(-1)
                 } else {
                     setAllCompleted(true)
                     handleClose()
@@ -86,10 +86,15 @@ const TriviaPopup = ({ courseId, courses }) => {
         setUserAnswer('')
     }
 
+    const useHint = () => {
+        setCurrentHintIndex(0)
+        setHintsUsed(1)
+    };
+
     const handleClose = () => {
         setVisible(false)
         setUserAnswer('')
-        setCurrentHintIndex(0)
+        setCurrentHintIndex(-1)
         setCurrentTriviaIndex(0)
     };
 
@@ -143,13 +148,23 @@ const TriviaPopup = ({ courseId, courses }) => {
                             >
                                 {trivias[currentTriviaIndex].question}
                             </Card>
-                            {trivias[currentTriviaIndex].hints && trivias[currentTriviaIndex].hints.length > 0 && (
+                            {currentHintIndex === -1 && trivias[currentTriviaIndex].hints.length > 0 && (
+                            <Card 
+                                title="Hint Available"
+                                headStyle={{ fontSize: '18px', color: '#3d405b' }}
+                                bodyStyle={{ fontSize: '16px', color: '#4B0082' }}
+                            >
+                                <p>Using a hint will decrease your points to 6 points for this question.</p>
+                                <Button type="primary" onClick={useHint} icon={<QuestionCircleOutlined />}>Use Hint</Button>
+                            </Card>
+                            )}
+                            {currentHintIndex >= 0 && trivias[currentTriviaIndex].hints.length > 0 && (
                                 <Card
                                     title={`Hint ${currentHintIndex + 1}/${trivias[currentTriviaIndex].hints.length}`}
                                     extra={
                                         <>
-                                            <Button key="prev" onClick={previousTrivia} disabled={currentTriviaIndex === 0}>Previous</Button>
-                                            <Button key="next" onClick={() => { setHintsUsed(hintsUsed + 1); showNextHint(); }} disabled={currentHintIndex >= trivias[currentTriviaIndex].hints.length - 1}>Next Hint (-{calculatePoints() / 2} points)</Button>
+                                            <Button key="prev" onClick={showPreviousHint} disabled={currentHintIndex === 0}>Previous</Button>
+                                            <Button key="next" onClick={() => { setHintsUsed(hintsUsed + 1); showNextHint(); }} disabled={currentHintIndex >= trivias[currentTriviaIndex].hints.length - 1}>Next Hint (-{Math.ceil(calculatePoints() / 2)} points)</Button>
                                         </>
                                     }
                                     headStyle={{ fontSize: '22px', color: '#3d405b' }}
