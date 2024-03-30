@@ -160,7 +160,7 @@ const TriviaPopup = ({ courseId, courses }) => {
                                 bodyStyle={{ fontSize: '16px', color: '#4B0082' }}
                             >
                                 <p>Using a hint will decrease your points to 6 points for this question.</p>
-                                <Button type="primary" onClick={useHint} icon={<QuestionCircleOutlined />}>Use Hint</Button>
+                                <Button type="primary" onClick={useHint} icon={<QuestionCircleOutlined />}>Use Hint (<Badge count={`-${6}`} style={{ backgroundColor: '#f5222d', marginLeft: 4, marginRight:4 }} />Points)</Button>
                             </Card>
                             )}
                             {currentHintIndex >= 0 && trivias[currentTriviaIndex].hints.length > 0 && (
