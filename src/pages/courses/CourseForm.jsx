@@ -26,6 +26,7 @@ import { dataURLtoFile } from '../../utils/imageUtils'
 import { useForm } from 'antd/es/form/Form'
 import Trivia from './Trivia'
 import { QuestionCircleTwoTone } from '@ant-design/icons'
+import { getCourseTrivia } from '../../api/trivia'
 
 const CourseForm = () => {
   const dispatch = useDispatch()
@@ -42,25 +43,45 @@ const CourseForm = () => {
   
   useEffect(() => {
     if (editingCourse && form) {
-      const semester = editingCourse.semester.split(' ')[0]
-      const semesterYear = editingCourse.semester.split(' ')[1]
-      if (editingCourse.trivia && editingCourse.trivia.length) {
-        setEnableTrivia(true)
-        form.setFieldValue('enableTrivia', true)
-        const formattedTriviaList = editingCourse.trivia.map(triviaItem => {
-          return {
-            question: triviaItem.question,
-            answer: triviaItem.answer,
-            hints: triviaItem.hints || []
+      const semester = editingCourse.semester.split(' ')[0];
+      const semesterYear = editingCourse.semester.split(' ')[1];
+      
+      // We are setting fields values that we know right now.
+      form.setFieldsValue({ ...editingCourse, semester, semesterYear });
+    
+      const fetchTrivia = async () => {
+        try {
+          const triviaData = await getCourseTrivia(editingCourse.pk);
+          if (triviaData && triviaData.length > 0) {
+            setEnableTrivia(true);
+            setTriviaList(triviaData.map(trivia => ({
+              question: trivia.question,
+              answer: trivia.answer,
+              hints: trivia.hints || [''],
+            })));
+            // Now set the form fields for trivia.
+            form.setFieldsValue({
+              trivia: triviaData.map(trivia => ({
+                question: trivia.question,
+                answer: trivia.answer,
+                hints: trivia.hints || [''],
+              })),
+            });
+          } else {
+            setEnableTrivia(false);
+            setTriviaList([{ question: '', answer: '', hints: [''] }]);
           }
-        })
-        setTriviaList(formattedTriviaList)
-      } else {
-        setTriviaList([{ question: '', answer: '', hints: [''] }])
-      }
-      form.setFieldsValue({ ...editingCourse, semester, semesterYear })
+        } catch (error) {
+          console.error('Error fetching trivia:', error);
+          setEnableTrivia(false);
+          setTriviaList([{ question: '', answer: '', hints: [''] }]);
+        }
+      };
+    
+      // Call the function to fetch trivia data.
+      fetchTrivia();
     }
-  }, [editingCourse, form])
+  }, [editingCourse, form]);
 
   const formatCoursePicture = async () => {
     const promise = new Promise((resolve) => {
