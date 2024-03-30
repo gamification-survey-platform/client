@@ -110,7 +110,7 @@ const TriviaPopup = ({ courseId, courses }) => {
             {allCompleted && (
                 <Modal
                 bodyStyle={{ padding: '20px' }} 
-                title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Congratulations!</div>}
+                title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Trivia Completed!</div>}
                 width={800}
                 visible={allCompleted}
                 footer={[
