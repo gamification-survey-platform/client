@@ -81,7 +81,7 @@ const TriviaPopup = ({ courseId, courses }) => {
                     handleClose()
                 }
             } catch (error) {
-                messageApi.open({ type: 'error', content: 'Wrong answer. You can try again!' });
+                messageApi.open({ type: 'error', content: 'Failed to record trivia attempt. Please try again later.' });
             }
         setUserAnswer('')
     }
