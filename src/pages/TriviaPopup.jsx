@@ -62,10 +62,13 @@ const TriviaPopup = ({ courseId, courses }) => {
     }
 
     const handleAnswerSubmit = async () => {
-        if (trivias[currentTriviaIndex] && trivias[currentTriviaIndex].answer.toLowerCase().trim() === userAnswer.toLowerCase().trim()) {
             try {
-                const response = await markTriviaAsCompleted(trivias[currentTriviaIndex].id, hintsUsed)
-                messageApi.open({ type: 'success', content: `Correct answer! 🎉 You gained ${calculatePoints()} points.` })
+                const response = await markTriviaAsCompleted(trivias[currentTriviaIndex].id, hintsUsed, userAnswer)
+                if (response.is_correct) {
+                    messageApi.open({ type: 'success', content: `Correct answer! 🎉 You gained ${response.points} points.` });
+                } else {
+                    messageApi.open({ type: 'error', content: 'Wrong answer. But you can try other trivias!' });
+                }
                 const updatedTrivias = trivias.filter((_, index) => index !== currentTriviaIndex)
                 setHintsUsed(0)
                 setTrivias(updatedTrivias);
@@ -78,11 +81,8 @@ const TriviaPopup = ({ courseId, courses }) => {
                     handleClose()
                 }
             } catch (error) {
-                messageApi.open({ type: 'error', content: 'Failed to mark trivia as completed. Please try again.' });
+                messageApi.open({ type: 'error', content: 'Wrong answer. You can try again!' });
             }
-        } else {
-            messageApi.open({ type: 'error', content: 'Wrong answer. Try again!' })
-        }
         setUserAnswer('')
     }
 
