@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Button, Input, message, Card } from 'antd'
+import { Modal, Button, Input, message, Card, Badge } from 'antd'
 import { getCourseTrivia, markTriviaAsCompleted } from '../api/trivia'
 import { LeftOutlined, RightOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 
@@ -136,7 +136,12 @@ const TriviaPopup = ({ courseId, courses }) => {
                         <Button key="next" onClick={nextTrivia} disabled={currentTriviaIndex === trivias.length - 1}>
                             Next Trivia
                         </Button>,
-                        <Button key="submit" type="primary" onClick={handleAnswerSubmit}>Submit and earn {calculatePoints()} points</Button>
+                        <Button key="submit" type="primary" onClick={handleAnswerSubmit}>
+                        Submit and earn 
+                        <Badge count={calculatePoints()} style={{ backgroundColor: '#00A86B', marginLeft: 4, marginRight:4 }} />
+                        points
+                        </Button>
+
                     ] : null}
                 >
                     {trivias.length > 0 ? (
@@ -164,7 +169,12 @@ const TriviaPopup = ({ courseId, courses }) => {
                                     extra={
                                         <>
                                             <Button key="prev" onClick={showPreviousHint} disabled={currentHintIndex === 0}>Previous</Button>
-                                            <Button key="next" onClick={() => { setHintsUsed(hintsUsed + 1); showNextHint(); }} disabled={currentHintIndex >= trivias[currentTriviaIndex].hints.length - 1}>Next Hint (-{Math.ceil(calculatePoints() / 2)} points)</Button>
+                                            <Button key="next" onClick={() => { setHintsUsed(hintsUsed + 1); showNextHint(); }} 
+                                            disabled={currentHintIndex >= trivias[currentTriviaIndex].hints.length - 1}>
+                                            Next Hint (
+                                            <Badge count={`-${Math.ceil(calculatePoints() / 2)}`} style={{ backgroundColor: '#f5222d', marginLeft: 4, marginRight:4 }} />
+                                            points)
+                                            </Button>
                                         </>
                                     }
                                     headStyle={{ fontSize: '22px', color: '#3d405b' }}
