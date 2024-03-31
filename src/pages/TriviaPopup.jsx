@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Modal, Button, Input, message, Card } from 'antd'
+import { Modal, Button, Input, message, Card, Badge } from 'antd'
 import { getCourseTrivia, markTriviaAsCompleted } from '../api/trivia'
 import { LeftOutlined, RightOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 
@@ -62,10 +62,13 @@ const TriviaPopup = ({ courseId, courses }) => {
     }
 
     const handleAnswerSubmit = async () => {
-        if (trivias[currentTriviaIndex] && trivias[currentTriviaIndex].answer.toLowerCase().trim() === userAnswer.toLowerCase().trim()) {
             try {
-                const response = await markTriviaAsCompleted(trivias[currentTriviaIndex].id, hintsUsed)
-                messageApi.open({ type: 'success', content: `Correct answer! 🎉 You gained ${calculatePoints()} points.` })
+                const response = await markTriviaAsCompleted(trivias[currentTriviaIndex].id, hintsUsed, userAnswer)
+                if (response.is_correct) {
+                    messageApi.open({ type: 'success', content: `Correct answer! 🎉 You gained ${response.points} points.` });
+                } else {
+                    messageApi.open({ type: 'error', content: 'Wrong answer. But you can try other trivias!' });
+                }
                 const updatedTrivias = trivias.filter((_, index) => index !== currentTriviaIndex)
                 setHintsUsed(0)
                 setTrivias(updatedTrivias);
@@ -78,11 +81,8 @@ const TriviaPopup = ({ courseId, courses }) => {
                     handleClose()
                 }
             } catch (error) {
-                messageApi.open({ type: 'error', content: 'Failed to mark trivia as completed. Please try again.' });
+                messageApi.open({ type: 'error', content: 'Failed to record trivia attempt. Please try again later.' });
             }
-        } else {
-            messageApi.open({ type: 'error', content: 'Wrong answer. Try again!' })
-        }
         setUserAnswer('')
     }
 
@@ -110,7 +110,7 @@ const TriviaPopup = ({ courseId, courses }) => {
             {allCompleted && (
                 <Modal
                 bodyStyle={{ padding: '20px' }} 
-                title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Congratulations!</div>}
+                title={<div style={{ fontWeight: 'bold', fontSize: '24px', color: '#3e79f7' }}>Trivia Completed!</div>}
                 width={800}
                 visible={allCompleted}
                 footer={[
@@ -136,7 +136,12 @@ const TriviaPopup = ({ courseId, courses }) => {
                         <Button key="next" onClick={nextTrivia} disabled={currentTriviaIndex === trivias.length - 1}>
                             Next Trivia
                         </Button>,
-                        <Button key="submit" type="primary" onClick={handleAnswerSubmit}>Submit and earn {calculatePoints()} points</Button>
+                        <Button key="submit" type="primary" onClick={handleAnswerSubmit}>
+                        Submit and earn 
+                        <Badge count={calculatePoints()} style={{ backgroundColor: '#00A86B', marginLeft: 4, marginRight:4 }} />
+                        points
+                        </Button>
+
                     ] : null}
                 >
                     {trivias.length > 0 ? (
@@ -155,7 +160,7 @@ const TriviaPopup = ({ courseId, courses }) => {
                                 bodyStyle={{ fontSize: '16px', color: '#4B0082' }}
                             >
                                 <p>Using a hint will decrease your points to 6 points for this question.</p>
-                                <Button type="primary" onClick={useHint} icon={<QuestionCircleOutlined />}>Use Hint</Button>
+                                <Button type="primary" onClick={useHint} icon={<QuestionCircleOutlined />}>Use Hint (<Badge count={`-${6}`} style={{ backgroundColor: '#f5222d', marginLeft: 4, marginRight:4 }} />Points)</Button>
                             </Card>
                             )}
                             {currentHintIndex >= 0 && trivias[currentTriviaIndex].hints.length > 0 && (
@@ -164,7 +169,12 @@ const TriviaPopup = ({ courseId, courses }) => {
                                     extra={
                                         <>
                                             <Button key="prev" onClick={showPreviousHint} disabled={currentHintIndex === 0}>Previous</Button>
-                                            <Button key="next" onClick={() => { setHintsUsed(hintsUsed + 1); showNextHint(); }} disabled={currentHintIndex >= trivias[currentTriviaIndex].hints.length - 1}>Next Hint (-{Math.ceil(calculatePoints() / 2)} points)</Button>
+                                            <Button key="next" onClick={() => { setHintsUsed(hintsUsed + 1); showNextHint(); }} 
+                                            disabled={currentHintIndex >= trivias[currentTriviaIndex].hints.length - 1}>
+                                            Next Hint (
+                                            <Badge count={`-${Math.ceil(calculatePoints() / 2)}`} style={{ backgroundColor: '#f5222d', marginLeft: 4, marginRight:4 }} />
+                                            points)
+                                            </Button>
                                         </>
                                     }
                                     headStyle={{ fontSize: '22px', color: '#3d405b' }}
