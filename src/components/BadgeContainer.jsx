@@ -3,7 +3,6 @@ import { Image, Tooltip } from 'antd';
 import AvatarBadge from '../assets/badges/Avatar-Alchemist.png';
 import CommentCaptainSilverBadge from '../assets/badges/Open-ended-feedback/Silver/Comment-Captain.png';
 import CommentCaptainGoldBadge from '../assets/badges/Open-ended-feedback/Gold/Comment-Captain.png';
-import PeerReviewGoldBadge from '../assets/badges/Open-ended-feedback/Gold/Peer-review-provided.png';
 
 const BadgeContainer = () => (
   <div
@@ -32,11 +31,6 @@ const BadgeContainer = () => (
     <Tooltip title="Comment Captain" color={'#FFDF00'} placement="left">
       <div style={{ margin: '0 4px' }}>
         <Image src={CommentCaptainGoldBadge} preview={false} width={50} height={50} />
-      </div>
-    </Tooltip>
-    <Tooltip title="Peer Reviewer" color={'#CD7F32'} placement="left">
-      <div style={{ margin: '0 4px' }}>
-        <Image src={PeerReviewGoldBadge} preview={false} width={50} height={50} />
       </div>
     </Tooltip>
   </div>
