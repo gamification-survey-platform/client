@@ -212,7 +212,7 @@ const AppHeader = ({ children }) => {
             <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
           <div>
-            <BadgeContainer />
+            <BadgeContainer user={user} />
           </div>
           <Row>
             <Tooltip title="Start Tutorial" color={'gold'} placement="left">
