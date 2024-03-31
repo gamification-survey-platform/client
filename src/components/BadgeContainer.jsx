@@ -1,7 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, Tooltip } from 'antd';
 import { motion } from 'framer-motion';
 import AvatarBadge from '../assets/badges/Avatar-Alchemist.png';
+import CommentCrusaderBronzeImage from '../assets/badges/Open-ended-feedback/Bronze/Comment-Crusader.png';
+import CommentCrusaderSilverImage from '../assets/badges/Open-ended-feedback/Silver/Comment-Crusader.png';
+import CommentCrusaderGoldImage from '../assets/badges/Open-ended-feedback/Gold/Comment-Crusader.png';
+import CommentCaptainBronzeImage from '../assets/badges/Open-ended-feedback/Bronze/Comment-Captain.png';
+import CommentCaptainSilverImage from '../assets/badges/Open-ended-feedback/Silver/Comment-Captain.png';
+import CommentCaptainGoldImage from '../assets/badges/Open-ended-feedback/Gold/Comment-Captain.png';
+import CuriousCommenterBronzeImage from '../assets/badges/Open-ended-feedback/Bronze/Curious-Commenter.png';
+import CuriousCommenterSilverImage from '../assets/badges/Open-ended-feedback/Silver/Curious-Commenter.png';
+import CuriousCommenterGoldImage from '../assets/badges/Open-ended-feedback/Gold/Curious-Commenter.png';
+import PeerReviewBronzeImage from '../assets/badges/Peer-review/Bronze.png';
+import PeerReviewSilverImage from '../assets/badges/Peer-review/Silver.png';
+import PeerReviewGoldImage from '../assets/badges/Peer-review/Gold.png';
 
 const BadgeContainer = ({ user }) => {
   const variants = {
