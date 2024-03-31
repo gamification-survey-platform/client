@@ -1,9 +1,9 @@
 import React from 'react';
 import { Image, Tooltip } from 'antd';
 import AvatarBadge from '../assets/badges/Avatar-Alchemist.png';
-import CommentCaptainSilverBadge from '../assets/badges/Silver/Comment-Captain.png';
-import CommentCaptainGoldBadge from '../assets/badges/Gold/Comment-Captain.png';
-import PeerReviewGoldBadge from '../assets/badges/Gold/Peer-review-provided.png';
+import CommentCaptainSilverBadge from '../assets/badges/Open-ended-feedback/Silver/Comment-Captain.png';
+import CommentCaptainGoldBadge from '../assets/badges/Open-ended-feedback/Gold/Comment-Captain.png';
+import PeerReviewGoldBadge from '../assets/badges/Open-ended-feedback/Gold/Peer-review-provided.png';
 
 const BadgeContainer = () => (
   <div
