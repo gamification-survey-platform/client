@@ -43,6 +43,23 @@ const BadgeContainer = () => {
     fetchCompletedReviews()
   }, [user])
 
+  useEffect(() => {
+    const fetchAnswerHistory = async () => {
+      if (user) {
+        try {
+          const user_id = user.pk
+          const response = await getAnswerHistory()
+          const reviewsData = response.data.filter(history => history.user === user_id);
+          setAnswerHistory(reviewsData.length)
+        } catch (error) {
+          console.error('Error fetching Answer History:', error)
+        }
+      }
+    }
+
+    fetchAnswerHistory()
+  }, [user])
+
   const getPeerReviewBadge = () => {
     if (completedReviews >= 10) {
       return PeerReviewGoldImage;
