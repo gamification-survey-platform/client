@@ -1,5 +1,5 @@
 import { Space, Row, Typography, Tag, Button, Modal } from 'antd'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useNavigate } from 'react-router-dom'
 import styles from '../styles/ReviewsList.module.css'
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
@@ -9,69 +9,17 @@ import { InfoCircleOutlined } from '@ant-design/icons'
 import ReactTurntable from 'react-turntable'
 import 'react-turntable/assets/index.css'
 
-const ReviewList = ({ title, color, reviews }) => {
+const ReviewList = ({ title, reviews, color }) => {
   const { course_id } = useParams()
-
-  return (
-    <>
-      <Typography.Title level={5} className={styles.reviewTitle}>
-        {title}
-      </Typography.Title>
-
-      {reviews.map((review) => {
-        const { course_number, assignment_id, assignment_type } = review
-        let tagTitle = ''
-        if (!course_id) tagTitle += `${course_number}: `
-        if (assignment_type === 'Team') tagTitle += `Team `
-        tagTitle += `${review.reviewing}`
-        return (
-          <Link
-            key={review.id}
-            to={`/courses/${course_number}/assignments/${assignment_id}/reviews/${review.id}`}>
-            <Tag role="button" color={color} className={styles.tag}>
-              {tagTitle}
-            </Tag>
-          </Link>
-        )
-      })}
-    </>
-  )
-}
-
-const StudentReviewsList = ({ artifactReviews }) => {
-  const dispatch = useDispatch()
-  const reopenReviews = artifactReviews.filter((r) => r.status === 'REOPEN')
-  const pendingReviews = artifactReviews.filter((r) => r.status === 'INCOMPLETE')
-  const lateReviews = artifactReviews.filter((r) => r.status === 'LATE')
-  const completedReviews = artifactReviews.filter((r) => r.status === 'COMPLETED')
-  const optionalReviews = artifactReviews.filter((r) => r.status === 'OPTIONAL_INCOMPLETE')
-  console.log('optionalReviews', artifactReviews)
-  useEffect(() => {
-    dispatch(resetSurvey())
-  }, [])
-  console.log('review', artifactReviews)
-
+  const navigate = useNavigate()
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [resultModalVisible, setResultModalVisible] = useState(false)
   const [turntableResult, setTurntableResult] = useState('')
+  const [navigationUrl, setNavigationUrl] = useState('')
+  const [selectedReview, setSelectedReview] = useState('')
+  const reviewToPrizeMap = new Map()
 
-  const showReopen = reopenReviews.length == 0 ? false : true
-  const showLate = lateReviews.length == 0 ? false : true
-  const showPending = pendingReviews.length == 0 ? false : true
-  const showCompleted = completedReviews.length == 0 ? false : true
-  const showOptional = optionalReviews.length == 0 ? false : true
-
-  // const [showReopen, setShowReopen] = useState(false)
-  // const [showPending, setShowPending] = useState(false)
-  // const [showLate, setShowLate] = useState(false)
-  // const [showOptional, setShowOptional] = useState(false)
-  // const [showCompleted, setShowCompleted] = useState(false)
-
-  const showModal = () => {
-    setIsModalVisible(true)
-  }
-
-  const prizes = ['Coupon', 'x2 Points', 'x4 Points', 'x6 Points']
+  const prizes = ['x2 Points', '+5 Points', '+1 Points', '+2 Points']
   const options = {
     prizes,
     width: 500,
@@ -89,56 +37,151 @@ const StudentReviewsList = ({ artifactReviews }) => {
     duration: 5000,
     clickText: 'Click',
     onStart() {
-      //If you want before the rotate do some...
-      console.log('start...')
-      //If you want stop rotate you can return false
       return true
     },
     onComplete(prize) {
-      console.log('prize:', prize)
       setTurntableResult(prize)
-      setIsModalVisible(false) // Close the turntable modal once spinning is done
+      setIsModalVisible(false) // Close the turntable modal
       setResultModalVisible(true) // Show result modal
     }
   }
 
+  const handleTagClick = (reviewUrl, color, e, review_id) => {
+    e.preventDefault()
+    setNavigationUrl(reviewUrl)
+    setSelectedReview(review_id)
+
+    if (color === 'blue') {
+      if (localStorage.getItem('selectedReview') == review_id) {
+        navigate(reviewUrl)
+      } else if (localStorage.getItem('bonus') !== null) {
+        if (reviewToPrizeMap.has(review_id)) {
+          navigate(reviewUrl)
+        } else {
+          setIsModalVisible(true)
+        }
+      } else {
+        localStorage.setItem('selectedReview', review_id)
+        setIsModalVisible(true)
+      }
+    } else if (color !== 'grey') {
+      localStorage.removeItem('bonus')
+      navigate(reviewUrl)
+    }
+  }
+
+  const handleCloseResultModal = () => {
+    setResultModalVisible(false)
+    if (navigationUrl) {
+      localStorage.setItem('bonus', turntableResult)
+      reviewToPrizeMap.set(selectedReview, turntableResult)
+      localStorage.setItem('selectedReview', selectedReview)
+      navigate(navigationUrl)
+    }
+  }
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+      <Typography.Title
+        level={5}
+        className={styles.reviewTitle}
+        style={{ marginBottom: '0', marginRight: '10px' }}>
+        {title}
+      </Typography.Title>
+
+      <Modal
+        title="Lottery"
+        visible={isModalVisible}
+        width={600}
+        footer={[
+          <Button key="ok" type="primary" onClick={() => setIsModalVisible(false)}>
+            OK
+          </Button>
+        ]}
+        closable={false}
+        centered>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <ReactTurntable {...options} />
+        </div>
+      </Modal>
+
+      <Modal
+        title="Lottery Result"
+        visible={resultModalVisible}
+        footer={[
+          <Button key="ok" type="primary" onClick={handleCloseResultModal}>
+            OK
+          </Button>
+        ]}
+        centered>
+        <p>{`Congratulations! Your optional review will have a bonus of: ${turntableResult}`}</p>
+      </Modal>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+        {reviews.map((review) => {
+          const reviewUrl = `/courses/${review.course_number}/assignments/${review.assignment_id}/reviews/${review.id}`
+
+          return color === 'grey' ? (
+            <Tag
+              key={review.id}
+              color={color}
+              className={styles.tag}
+              onClick={(e) => handleTagClick(reviewUrl, color, e, review.id)}
+              style={{
+                cursor: 'pointer',
+                textDecorationLine: 'line-through',
+                textDecorationStyle: 'solid'
+              }}>
+              {`${review.course_number}: ${review.assignment_type === 'Team' ? 'Team ' : ''}${
+                review.reviewing
+              }`}
+            </Tag>
+          ) : (
+            <Tag
+              key={review.id}
+              color={color}
+              className={styles.tag}
+              onClick={(e) => handleTagClick(reviewUrl, color, e, review.id)}
+              style={{
+                cursor: 'pointer'
+              }}>
+              {`${review.course_number}: ${review.assignment_type === 'Team' ? 'Team ' : ''}${
+                review.reviewing
+              }`}
+            </Tag>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+const StudentReviewsList = ({ artifactReviews }) => {
+  const dispatch = useDispatch()
+  const reopenReviews = artifactReviews.filter((r) => r.status == 'REOPEN')
+  const pendingReviews = artifactReviews.filter((r) => r.status == 'INCOMPLETE')
+  const lateReviews = artifactReviews.filter((r) => r.status == 'LATE')
+  const optionalReviews = artifactReviews.filter((r) => r.status == 'OPTIONAL_INCOMPLETE')
+  useEffect(() => {
+    dispatch(resetSurvey())
+  }, [])
+
+  const showReopen = reopenReviews.length == 0 ? false : true
+  const showLate = lateReviews.length == 0 ? false : true
+  const showPending = pendingReviews.length == 0 ? false : true
+  const showOptional = optionalReviews.length == 0 ? false : true
+
+  const optionalReviewsColor = !showReopen && !showLate && !showPending ? 'blue' : 'grey'
+
   return (
     <div>
       <Space
-        direction="horizontal"
+        direction="vertical"
         size="middle"
         className="text-center"
         style={{ width: '100%', justifyContent: 'center' }}>
         <Row className="border-bottom p-5 my-3 ml-3">
-          <Space direction="horizontal" size="middle" className="text-center">
-            <Button onClick={showModal}>Dummy</Button>
-            <Modal
-              title="Lottery"
-              visible={isModalVisible}
-              width={600}
-              footer={[
-                <Button key="ok" type="primary" onClick={() => setIsModalVisible(false)}>
-                  OK
-                </Button>
-              ]}
-              closable={false}
-              centered>
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <ReactTurntable {...options} />
-              </div>
-            </Modal>
-            <Modal
-              title="Lottery Result"
-              visible={resultModalVisible}
-              footer={[
-                // Custom footer that includes only the OK button
-                <Button key="ok" type="primary" onClick={() => setResultModalVisible(false)}>
-                  OK
-                </Button>
-              ]}
-              centered>
-              <p>{`Congratulations! You won: ${turntableResult}`}</p>
-            </Modal>
+          <Space direction="vertical" size="middle" className="text-center">
             {showReopen ? (
               <ReviewList title={'Reopened Reviews'} color="magenta" reviews={reopenReviews} />
             ) : null}
@@ -170,38 +213,26 @@ const StudentReviewsList = ({ artifactReviews }) => {
                 reviews={pendingReviews}
               />
             ) : null}
-            {showOptional && pendingReviews.length === 0 ? (
-              <ReviewList
-                title={
-                  <span>
-                    Optional Reviews{' '}
-                    <Tooltip title="15 points each">
-                      <InfoCircleOutlined className={styles.infoIcon} />
-                    </Tooltip>
-                  </span>
-                }
-                color="blue"
-                reviews={optionalReviews}
-              />
-            ) : (
-              <ReviewList
-                title={
-                  <span>
-                    {/* Optional Reviews{' '} */}
-                    <Tooltip title="15 points each. The optional reviews will show when you finish all the mandatory reviews">
-                      <span style={{ cursor: 'help' }}>?</span>
-                    </Tooltip>
-                  </span>
-                }
-                color="gold"
-                reviews={[]}
-              />
-            )}
-            {/* {showOptional && pendingReviews.length === 0 ? (
-          <ReviewList title={'Optional Reviews'} color="blue" reviews={optionalReviews} />
-        ) : null} */}
-            {showCompleted ? (
-              <ReviewList title={'Completed Reviews'} color="green" reviews={completedReviews} />
+            {showOptional ? (
+              <p>
+                <ReviewList
+                  title={
+                    <span>
+                      Optional Reviews{' '}
+                      <Tooltip
+                        title={
+                          optionalReviews
+                            ? '15 points each, will be available after completing all other reviews'
+                            : '15 point, will have a bonus based on the lottery result'
+                        }>
+                        <InfoCircleOutlined className={styles.infoIcon} />
+                      </Tooltip>
+                    </span>
+                  }
+                  color={optionalReviewsColor}
+                  reviews={optionalReviews}
+                />
+              </p>
             ) : null}
           </Space>
         </Row>

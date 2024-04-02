@@ -160,6 +160,9 @@ const AssignmentDetails = () => {
     <Spinner show={spin} />
   ) : (
     <div className="m-5">
+      {user.is_staff ? null : artifactReviews.length === 0 ? null : (
+        <StudentReviewsList artifactReviews={artifactReviews} showCompleted={false} />
+      )}
       {contextHolder}
       <Row gutter={24}>
         <Col span={17}>
@@ -177,13 +180,7 @@ const AssignmentDetails = () => {
           <Divider />
           <Typography.Text>{assignment.description}</Typography.Text>
         </Col>
-        <Col span={7}>
-          {user.is_staff ? (
-            <StaffSubmissionList />
-          ) : (
-            <StudentReviewsList artifactReviews={artifactReviews} />
-          )}
-        </Col>
+        <Col span={7}>{user.is_staff ? <StaffSubmissionList /> : null}</Col>
       </Row>
       <Divider />
       <Row gutter={24}>

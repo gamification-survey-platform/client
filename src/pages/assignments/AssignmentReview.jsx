@@ -138,11 +138,13 @@ const AssignmentReview = () => {
           })
         })
 
+        const bonus = localStorage.getItem('bonus')
         const res = await saveArtifactReview({
           course_id: course.pk,
           assignment_id: assignment_id,
           review_id,
-          review
+          review,
+          bonus: bonus === undefined ? 'No Bonus' : bonus
         })
         if (res.status === 200) {
           const { exp, level, next_exp_level, points } = res.data
@@ -216,6 +218,14 @@ const AssignmentReview = () => {
                     />
                   </div>
                 ) : null}
+                <div style={{ position: 'fixed', right: 10, top: 80 }}>
+                  {localStorage.getItem('bonus') === undefined ||
+                  localStorage.getItem('bonus') === null ? null : (
+                    <Typography.Title level={2} className="mr-3">
+                      Bonus: {localStorage.getItem('bonus')}
+                    </Typography.Title>
+                  )}
+                </div>
                 <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
                   <Button type="primary" onClick={handleSaveReview}>
                     Submit Review

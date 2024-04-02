@@ -34,16 +34,10 @@ const Home = () => {
         console.error(e.message)
       }
       try {
-        const res = await getUserArtifactReviews(user.andrew_id)
-        const optionalReviews = await getOptionalReview(user.andrew_id)
+        const res = await getUserArtifactReviews(localStorage.getItem('userId'))
         if (res.status === 200) {
           const reviews = res.data
-          if (optionalReviews.status == 200) {
-            console.log('yes')
-            console.log(optionalReviews.data)
-            reviews.append(optionalReviews.data)
-          }
-          setArtifactReviews(reviews.data)
+          setArtifactReviews(reviews)
         }
       } catch (e) {
         console.error(e.message)
@@ -78,57 +72,59 @@ const Home = () => {
   return spin ? (
     <Spinner show={spin} />
   ) : (
-    <Row>
-      {user.is_staff ? null : (
+    <div>
+      {user.is_staff ? null : artifactReviews.length === 0 ? null : (
         <StudentReviewsList artifactReviews={artifactReviews} showCompleted={false} />
       )}
-      <Col span={user.is_staff ? 24 : 17}>
-        <Row gutter={10} className="m-3">
-          {courses.map((course, i) => {
-            return (
-              <Col key={i} span={6} className="mx-3 my-3">
-                <Card
-                  className="text-center w-100"
-                  cover={
-                    <Image
-                      preview={false}
-                      src={course.picture ? course.picture : DefaultImage}
-                      style={imageStyle}
-                    />
-                  }
-                  key={i}
-                  style={{ minWidth: 200, overflow: 'hidden' }}>
-                  <div style={cardContentStyle}>
-                    <Space direction="vertical" size="middle" align="center">
-                      <Row justify="center" className="text-center">
-                        <p>{course.course_name}</p>
-                      </Row>
-                      <Row justify="center">
-                        <Link to={`/courses/${course.course_number}/details`}>
-                          <Button type="primary">Course Details</Button>
-                        </Link>
-                      </Row>
-                      <Row justify="center">
-                        <Link to={`/courses/${course.course_number}/assignments`}>
-                          <Button>Assignments</Button>
-                        </Link>
-                      </Row>
-                      <Row justify="center">
-                        {!user.is_staff && gamified_mode(user) ? (
-                          <Button>
-                            <TriviaPopup courseId={course.course_number} courses={courses} />
-                          </Button>
-                        ) : null}
-                      </Row>
-                    </Space>
-                  </div>
-                </Card>
-              </Col>
-            )
-          })}
-        </Row>
-      </Col>
-    </Row>
+      <Row>
+        <Col span={user.is_staff ? 24 : 17}>
+          <Row gutter={10} className="m-3">
+            {courses.map((course, i) => {
+              return (
+                <Col key={i} span={6} className="mx-3 my-3">
+                  <Card
+                    className="text-center w-100"
+                    cover={
+                      <Image
+                        preview={false}
+                        src={course.picture ? course.picture : DefaultImage}
+                        style={imageStyle}
+                      />
+                    }
+                    key={i}
+                    style={{ minWidth: 200, overflow: 'hidden' }}>
+                    <div style={cardContentStyle}>
+                      <Space direction="vertical" size="middle" align="center">
+                        <Row justify="center" className="text-center">
+                          <p>{course.course_name}</p>
+                        </Row>
+                        <Row justify="center">
+                          <Link to={`/courses/${course.course_number}/details`}>
+                            <Button type="primary">Course Details</Button>
+                          </Link>
+                        </Row>
+                        <Row justify="center">
+                          <Link to={`/courses/${course.course_number}/assignments`}>
+                            <Button>Assignments</Button>
+                          </Link>
+                        </Row>
+                        <Row justify="center">
+                          {!user.is_staff && gamified_mode(user) ? (
+                            <Button>
+                              <TriviaPopup courseId={course.course_number} courses={courses} />
+                            </Button>
+                          ) : null}
+                        </Row>
+                      </Space>
+                    </div>
+                  </Card>
+                </Col>
+              )
+            })}
+          </Row>
+        </Col>
+      </Row>
+    </div>
   )
 }
 
