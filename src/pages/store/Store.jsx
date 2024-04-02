@@ -18,14 +18,22 @@ const Store = () => {
 
   useEffect(() => {
     const fetchRewards = async () => {
-      courses.forEach(async (course) => {
+      const fetchPromises = courses.map(async (course) => {
         const res = await getCourseRewards({ course_id: course.pk })
         if (res.status === 200) {
-          setCourseNames([...courseNames, course.course_name])
-          setRewards([...rewards, ...res.data])
+          return { courseName: course.course_name, rewards: res.data }
+        } else {
+          return { courseName: course.course_name, rewards: [] }
         }
       })
+      Promise.all(fetchPromises).then((results) => {
+        const newCourseNames = results.map((r) => r.courseName)
+        const newRewards = results.flatMap((r) => r.rewards)
+        setCourseNames(newCourseNames)
+        setRewards(newRewards)
+      })
     }
+
     fetchRewards()
   }, [])
 

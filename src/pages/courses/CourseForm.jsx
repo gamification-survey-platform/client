@@ -37,22 +37,26 @@ const CourseForm = () => {
   const [form] = useForm()
   const params = useParams()
   const [enableTrivia, setEnableTrivia] = useState(false)
-  const [hints, setHints] = useState([])
+  const [triviaList, setTriviaList] = useState([{ question: '', answer: '', hints: [''] }])
   const editingCourse = courses.find((course) => course.course_number === params.course_id)
+
   useEffect(() => {
     if (editingCourse && form) {
       const semester = editingCourse.semester.split(' ')[0]
       const semesterYear = editingCourse.semester.split(' ')[1]
-      if (editingCourse.trivia) {
-        form.setFieldValue('enableTrivia', true)
-        const { question, answer, hints } = editingCourse.trivia
+      if (editingCourse.trivia && editingCourse.trivia.length) {
         setEnableTrivia(true)
-        form.setFieldValue('question', question)
-        form.setFieldValue('answer', answer)
-        setHints(hints)
-        hints.forEach((hint, i) => {
-          form.setFieldValue(`hint-${i}`, hint)
+        form.setFieldValue('enableTrivia', true)
+        const formattedTriviaList = editingCourse.trivia.map((triviaItem) => {
+          return {
+            question: triviaItem.question,
+            answer: triviaItem.answer,
+            hints: triviaItem.hints || []
+          }
         })
+        setTriviaList(formattedTriviaList)
+      } else {
+        setTriviaList([{ question: '', answer: '', hints: [''] }])
       }
       form.setFieldsValue({ ...editingCourse, semester, semesterYear })
     }
@@ -87,7 +91,7 @@ const CourseForm = () => {
     if (form.validateFields()) {
       try {
         const fields = form.getFieldValue()
-        const courseData = { ...fields, andrew_id: user.andrewId }
+        const courseData = { ...fields, andrew_id: user.andrewId, trivia: triviaList }
         courseData.semester = `${courseData.semester} ${courseData.semesterYear}`
         // if user upload a new picture, set a new picture. Otherwise, use the original picture from editingCourse
         if (coursePicture) {
@@ -99,7 +103,6 @@ const CourseForm = () => {
         }
 
         delete courseData.semesterYear
-        console.log(courseData)
         const res = editingCourse
           ? await editCourseApi({ course_id: editingCourse.pk, course: courseData })
           : await createCourseApi(courseData)
@@ -220,8 +223,8 @@ const CourseForm = () => {
           }>
           <Checkbox value={enableTrivia} onChange={() => setEnableTrivia(!enableTrivia)} />
         </Form.Item>
-        {enableTrivia ? <Trivia hints={hints} setHints={setHints} /> : null}
-        <div className="text-center">
+        {enableTrivia && <Trivia triviaList={triviaList} setTriviaList={setTriviaList} />}
+        <div className="text-center" style={{ marginTop: '30px' }}>
           <Button type="primary" onClick={handleSubmit}>
             {editingCourse ? 'Edit' : 'Create'}
           </Button>
