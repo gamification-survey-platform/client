@@ -15,21 +15,26 @@ import PeerReviewBronzeImage from '../assets/badges/Peer-review/Bronze.png'
 import PeerReviewSilverImage from '../assets/badges/Peer-review/Silver.png'
 import PeerReviewGoldImage from '../assets/badges/Peer-review/Gold.png'
 import { getHistoricalArtifactReviews } from '../api/historicalReview'
+import { useSelector } from 'react-redux'
+import userSelector from '../store/user/selectors'
 
-const BadgeContainer = ({ user }) => {
+const BadgeContainer = () => {
   const [completedReviews, setCompletedReviews] = useState(0)
   const variants = {
     hidden: { scale: 0, opacity: 0 },
     visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } }
   }
+  const user = useSelector(userSelector)
 
   useEffect(() => {
     const fetchCompletedReviews = async () => {
       if (user) {
         try {
-          const user_id = localStorage.getItem('userId')
-          const response = await getHistoricalArtifactReviews(user_id)
-          const reviewsData = response.data.filter(review => review.user_id === user.id && review.status === 'COMPLETED')
+          const user_id = user.pk
+          const response = await getHistoricalArtifactReviews()
+          console.log('response data:', response)
+          const reviewsData = response.data.filter(review => review.user === user_id && review.status === 'COMPLETED');
+          console.log('reviews data:', reviewsData)
           setCompletedReviews(reviewsData.length)
         } catch (error) {
           console.error('Error fetching completed reviews:', error)
