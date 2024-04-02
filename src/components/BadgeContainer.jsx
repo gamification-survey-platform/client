@@ -15,11 +15,13 @@ import PeerReviewBronzeImage from '../assets/badges/Peer-review/Bronze.png'
 import PeerReviewSilverImage from '../assets/badges/Peer-review/Silver.png'
 import PeerReviewGoldImage from '../assets/badges/Peer-review/Gold.png'
 import { getHistoricalArtifactReviews } from '../api/historicalReview'
+import { getAnswerHistory } from '../api/historicalReview'
 import { useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
 
 const BadgeContainer = () => {
   const [completedReviews, setCompletedReviews] = useState(0)
+  const [answerHistoryPoints, setAnswerHistoryPoints] = useState(0)
   const variants = {
     hidden: { scale: 0, opacity: 0 },
     visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } }
@@ -44,21 +46,39 @@ const BadgeContainer = () => {
   }, [user])
 
   useEffect(() => {
+    const calculateTotalPoints = (reviewsData) => {
+      return reviewsData.reduce((total, currentReview) => {
+        return total + currentReview.clarity_score + currentReview.relevance_score + currentReview.specificity_score;
+      }, 0);
+    };
+  
     const fetchAnswerHistory = async () => {
       if (user) {
         try {
-          const user_id = user.pk
-          const response = await getAnswerHistory()
-          const reviewsData = response.data.filter(history => history.user === user_id);
-          setAnswerHistory(reviewsData.length)
+          const user_id = user.pk;
+          const response = await getAnswerHistory();
+          const userReviewsData = response.data.filter(history => history.user_id === user_id);
+          const totalPoints = calculateTotalPoints(userReviewsData);
+          setAnswerHistoryPoints(totalPoints);
         } catch (error) {
-          console.error('Error fetching Answer History:', error)
+          console.error('Error fetching Answer History:', error);
         }
       }
-    }
+    };
+  
+    fetchAnswerHistory();
+  }, [user]);  
 
-    fetchAnswerHistory()
-  }, [user])
+  const getAnswerHistoryBadge = () => {
+    if (answerHistoryPoints >= 500) return CommentCrusaderBronzeImage;
+    if (answerHistoryPoints >= 400 > 300) return CommentCrusaderSilverImage;
+    if (answerHistoryPoints >= 300 > 200) return CommentCrusaderGoldImage;
+    if (answerHistoryPoints >= 200 > 100) return CommentCaptainBronzeImage;
+    if (answerHistoryPoints >= 100 > 50) return CommentCaptainSilverImage;
+    return null;
+  };
+
+  const answerHistoryBadge = getAnswerHistoryBadge();
 
   const getPeerReviewBadge = () => {
     if (completedReviews >= 10) {
@@ -99,6 +119,15 @@ const BadgeContainer = () => {
           <motion.div initial="hidden" animate="visible" variants={variants}>
             <Image src={peerReviewBadge} preview={false} width={55} height={55} />
           </motion.div>
+          </div>
+        </Tooltip>
+      )}
+      {answerHistoryBadge && (
+        <Tooltip title="You're doing great! 🌟🌟" color={'#FFD700'} placement="right">
+          <div style={{ margin: '0 4px' }}>
+            <motion.div initial="hidden" animate="visible" variants={variants}>
+              <Image src={answerHistoryBadge} preview={false} width={55} height={55} />
+            </motion.div>
           </div>
         </Tooltip>
       )}
