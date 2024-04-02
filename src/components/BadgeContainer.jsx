@@ -14,7 +14,7 @@ import CuriousCommenterGoldImage from '../assets/badges/Open-ended-feedback/Gold
 import PeerReviewBronzeImage from '../assets/badges/Peer-review/Bronze.png'
 import PeerReviewSilverImage from '../assets/badges/Peer-review/Silver.png'
 import PeerReviewGoldImage from '../assets/badges/Peer-review/Gold.png'
-import { getUserArtifactReviews } from '../api/artifactReview'
+import { getHistoricalArtifactReviews } from '../api/historicalReview'
 
 const BadgeContainer = ({ user }) => {
   const [completedReviews, setCompletedReviews] = useState(0)
@@ -27,7 +27,8 @@ const BadgeContainer = ({ user }) => {
     const fetchCompletedReviews = async () => {
       if (user) {
         try {
-          const response = await getUserArtifactReviews()
+          const user_id = localStorage.getItem('userId')
+          const response = await getHistoricalArtifactReviews(user_id)
           const reviewsData = response.data.filter(review => review.user_id === user.id && review.status === 'COMPLETED')
           setCompletedReviews(reviewsData.length)
         } catch (error) {
@@ -64,7 +65,7 @@ const BadgeContainer = ({ user }) => {
       }}
     >
       {user && user.image && (
-        <Tooltip title="Avatar Alchemist" color={'#FFD700'} placement="left">
+        <Tooltip title="Avatar Alchemist! Good Job!" color={'#FFD700'} placement="left">
           <div style={{ margin: '0 4px' }}>
           <motion.div initial="hidden" animate="visible" variants={variants}>
             <Image src={AvatarBadge} preview={false} width={50} height={50} />
@@ -73,7 +74,7 @@ const BadgeContainer = ({ user }) => {
         </Tooltip>
       )}
       {peerReviewBadge && (
-        <Tooltip title="Peer Review Provided" color={'#FFD700'} placement="left">
+        <Tooltip title="Peer Review Badge. Try to provide more!" color={'#FFD700'} placement="left">
           <div style={{ margin: '0 4px' }}>
           <motion.div initial="hidden" animate="visible" variants={variants}>
             <Image src={peerReviewBadge} preview={false} width={50} height={50} />
