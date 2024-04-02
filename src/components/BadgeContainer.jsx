@@ -70,7 +70,7 @@ const BadgeContainer = () => {
       }}
     >
       {user && user.image && (
-        <Tooltip title="Avatar Alchemist!👍 Good Job!🔥🔥" color={'#FFD700'} placement="left">
+        <Tooltip title="Avatar Alchemist!👍 Good Job!🔥🔥" color={'#000080'} placement="left">
           <div style={{ margin: '0 4px' }}>
           <motion.div initial="hidden" animate="visible" variants={variants}>
             <Image src={AvatarBadge} preview={false} width={50} height={50} />
@@ -79,7 +79,7 @@ const BadgeContainer = () => {
         </Tooltip>
       )}
       {peerReviewBadge && (
-        <Tooltip title="Peer Review Badge. Try to submit more reviews!🚀🚀" color={'#FFD700'} placement="left">
+        <Tooltip title="Peer Review Badge. Try to submit more reviews!🚀🚀" color={'#008080'} placement="left">
           <div style={{ margin: '0 4px' }}>
           <motion.div initial="hidden" animate="visible" variants={variants}>
             <Image src={peerReviewBadge} preview={false} width={50} height={50} />
