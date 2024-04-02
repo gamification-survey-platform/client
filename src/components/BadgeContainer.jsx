@@ -21,7 +21,7 @@ import userSelector from '../store/user/selectors'
 
 const BadgeContainer = () => {
   const [completedReviews, setCompletedReviews] = useState(0)
-  const [answerHistoryPoints, setAnswerHistoryPoints] = useState(0)
+  const [singleRowBadge, setSingleRowBadge] = useState(null)
   const variants = {
     hidden: { scale: 0, opacity: 0 },
     visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } }
@@ -46,9 +46,23 @@ const BadgeContainer = () => {
   }, [user])
 
   useEffect(() => {
+    const calculateBadgeFromSingleRow = (reviewsData) => {
+      let highestSingle = 0;
+      reviewsData.forEach(review => {
+        const total = review.relevance_score + review.clarity_score + review.specificity_score;
+        if (total > highestSingle) {
+          highestSingle = total;
+        }
+      });
+      if (highestSingle >= 8) return CommentCrusaderBronzeImage;
+      if (highestSingle >= 7) return CommentCaptainBronzeImage;
+      if (highestSingle >= 6) return CuriousCommenterBronzeImage;
+      return null;
+    };
+  
     const calculateTotalPoints = (reviewsData) => {
       return reviewsData.reduce((total, currentReview) => {
-        return total + currentReview.clarity_score + currentReview.relevance_score + currentReview.specificity_score;
+        return total + currentReview.relevance_score + currentReview.clarity_score + currentReview.specificity_score;
       }, 0);
     };
   
@@ -57,8 +71,10 @@ const BadgeContainer = () => {
         try {
           const user_id = user.pk;
           const response = await getAnswerHistory();
-          const userReviewsData = response.data.filter(history => history.user_id === user_id);
+          const userReviewsData = response.data.filter(history => history.user === user_id);
+          const singleRowBadge = calculateBadgeFromSingleRow(userReviewsData);
           const totalPoints = calculateTotalPoints(userReviewsData);
+          setSingleRowBadge(singleRowBadge);
           setAnswerHistoryPoints(totalPoints);
         } catch (error) {
           console.error('Error fetching Answer History:', error);
@@ -67,18 +83,19 @@ const BadgeContainer = () => {
     };
   
     fetchAnswerHistory();
-  }, [user]);  
-
-  const getAnswerHistoryBadge = () => {
-    if (answerHistoryPoints >= 500) return CommentCrusaderBronzeImage;
-    if (answerHistoryPoints >= 400 > 300) return CommentCrusaderSilverImage;
-    if (answerHistoryPoints >= 300 > 200) return CommentCrusaderGoldImage;
-    if (answerHistoryPoints >= 200 > 100) return CommentCaptainBronzeImage;
-    if (answerHistoryPoints >= 100 > 50) return CommentCaptainSilverImage;
+  }, [user]);
+  
+  const getBadgeBasedOnTotalPoints = () => {
+    if (answerHistoryPoints >= 500) return CommentCrusaderGoldImage;
+    if (answerHistoryPoints >= 400) return CommentCrusaderSilverImage;
+    if (answerHistoryPoints >= 300) return CommentCrusaderBronzeImage;
+    if (answerHistoryPoints >= 200) return CommentCaptainGoldImage;
+    if (answerHistoryPoints >= 100) return CommentCaptainSilverImage;
+    if (answerHistoryPoints >= 50) return CommentCaptainBronzeImage;
     return null;
   };
-
-  const answerHistoryBadge = getAnswerHistoryBadge();
+  
+  const totalPointsBadge = getBadgeBasedOnTotalPoints();
 
   const getPeerReviewBadge = () => {
     if (completedReviews >= 10) {
@@ -122,15 +139,24 @@ const BadgeContainer = () => {
           </div>
         </Tooltip>
       )}
-      {answerHistoryBadge && (
-        <Tooltip title="You're doing great! 🌟🌟" color={'#FFD700'} placement="right">
-          <div style={{ margin: '0 4px' }}>
-            <motion.div initial="hidden" animate="visible" variants={variants}>
-              <Image src={answerHistoryBadge} preview={false} width={55} height={55} />
-            </motion.div>
-          </div>
-        </Tooltip>
-      )}
+    {singleRowBadge && (
+      <Tooltip title="Great job on that detailed answer! 🎯" color={'#FFD700'} placement="top">
+        <div style={{ margin: '0 4px' }}>
+          <motion.div initial="hidden" animate="visible" variants={variants}>
+            <Image src={singleRowBadge} preview={false} width={55} height={55} />
+          </motion.div>
+        </div>
+      </Tooltip>
+    )}
+    {totalPointsBadge && (
+      <Tooltip title="Outstanding contribution! Keep it up! 🚀" color={'#FFD700'} placement="top">
+        <div style={{ margin: '0 4px' }}>
+          <motion.div initial="hidden" animate="visible" variants={variants}>
+            <Image src={totalPointsBadge} preview={false} width={55} height={55} />
+          </motion.div>
+        </div>
+      </Tooltip>
+    )}
     </div>
   )
 }
