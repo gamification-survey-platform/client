@@ -9,8 +9,6 @@ import CommentCaptainBronzeImage from '../assets/badges/Open-ended-feedback/Bron
 import CommentCaptainSilverImage from '../assets/badges/Open-ended-feedback/Silver/Comment-Captain.png'
 import CommentCaptainGoldImage from '../assets/badges/Open-ended-feedback/Gold/Comment-Captain.png'
 import CuriousCommenterBronzeImage from '../assets/badges/Open-ended-feedback/Bronze/Curious-Commenter.png'
-import CuriousCommenterSilverImage from '../assets/badges/Open-ended-feedback/Silver/Curious-Commenter.png'
-import CuriousCommenterGoldImage from '../assets/badges/Open-ended-feedback/Gold/Curious-Commenter.png'
 import PeerReviewBronzeImage from '../assets/badges/Peer-review/Bronze.png'
 import PeerReviewSilverImage from '../assets/badges/Peer-review/Silver.png'
 import PeerReviewGoldImage from '../assets/badges/Peer-review/Gold.png'
@@ -22,6 +20,7 @@ import userSelector from '../store/user/selectors'
 const BadgeContainer = () => {
   const [completedReviews, setCompletedReviews] = useState(0)
   const [singleRowBadge, setSingleRowBadge] = useState(null)
+  const [answerHistoryPoints, setAnswerHistoryPoints] = useState(0)
   const variants = {
     hidden: { scale: 0, opacity: 0 },
     visible: { scale: 1, opacity: 1, transition: { duration: 0.5 } }
@@ -46,9 +45,9 @@ const BadgeContainer = () => {
   }, [user])
 
   useEffect(() => {
-    const calculateBadgeFromSingleRow = (reviewsData) => {
+    const calculateBadgeFromSingleRow = (userReviewsData) => {
       let highestSingle = 0;
-      reviewsData.forEach(review => {
+      userReviewsData.forEach(review => {
         const total = review.relevance_score + review.clarity_score + review.specificity_score;
         if (total > highestSingle) {
           highestSingle = total;
@@ -60,8 +59,8 @@ const BadgeContainer = () => {
       return null;
     };
   
-    const calculateTotalPoints = (reviewsData) => {
-      return reviewsData.reduce((total, currentReview) => {
+    const calculateTotalPoints = (userReviewsData) => {
+      return userReviewsData.reduce((total, currentReview) => {
         return total + currentReview.relevance_score + currentReview.clarity_score + currentReview.specificity_score;
       }, 0);
     };
