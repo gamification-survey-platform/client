@@ -9,6 +9,8 @@ import CommentCaptainBronzeImage from '../assets/badges/Open-ended-feedback/Bron
 import CommentCaptainSilverImage from '../assets/badges/Open-ended-feedback/Silver/Comment-Captain.png'
 import CommentCaptainGoldImage from '../assets/badges/Open-ended-feedback/Gold/Comment-Captain.png'
 import CuriousCommenterBronzeImage from '../assets/badges/Open-ended-feedback/Bronze/Curious-Commenter.png'
+import CuriousCommenterSilverImage from '../assets/badges/Open-ended-feedback/Silver/Curious-Commenter.png'
+import CuriousCommenterGoldImage from '../assets/badges/Open-ended-feedback/Gold/Curious-Commenter.png'
 import PeerReviewBronzeImage from '../assets/badges/Peer-review/Bronze.png'
 import PeerReviewSilverImage from '../assets/badges/Peer-review/Silver.png'
 import PeerReviewGoldImage from '../assets/badges/Peer-review/Gold.png'
@@ -53,8 +55,8 @@ const BadgeContainer = () => {
           highestSingle = total;
         }
       });
-      if (highestSingle >= 8) return CommentCrusaderBronzeImage;
-      if (highestSingle >= 7) return CommentCaptainBronzeImage;
+      if (highestSingle >= 8) return CuriousCommenterGoldImage;
+      if (highestSingle >= 7) return CuriousCommenterSilverImage;
       if (highestSingle >= 6) return CuriousCommenterBronzeImage;
       return null;
     };
@@ -139,7 +141,7 @@ const BadgeContainer = () => {
         </Tooltip>
       )}
     {singleRowBadge && (
-      <Tooltip title="Great job on that detailed answer! 🎯" color={'#FFD700'} placement="top">
+      <Tooltip title="Great job on that detailed answer! 🎯" color={'#FF1493'} placement="top">
         <div style={{ margin: '0 4px' }}>
           <motion.div initial="hidden" animate="visible" variants={variants}>
             <Image src={singleRowBadge} preview={false} width={55} height={55} />
@@ -148,7 +150,7 @@ const BadgeContainer = () => {
       </Tooltip>
     )}
     {totalPointsBadge && (
-      <Tooltip title="Outstanding contribution! Keep it up! 🚀" color={'#FFD700'} placement="top">
+      <Tooltip title="Outstanding contribution! Keep it up! 🚀" color={'#654321'} placement="top">
         <div style={{ margin: '0 4px' }}>
           <motion.div initial="hidden" animate="visible" variants={variants}>
             <Image src={totalPointsBadge} preview={false} width={55} height={55} />
