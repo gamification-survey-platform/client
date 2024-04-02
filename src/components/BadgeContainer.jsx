@@ -32,9 +32,7 @@ const BadgeContainer = () => {
         try {
           const user_id = user.pk
           const response = await getHistoricalArtifactReviews()
-          console.log('response data:', response)
           const reviewsData = response.data.filter(review => review.user === user_id && review.status === 'COMPLETED');
-          console.log('reviews data:', reviewsData)
           setCompletedReviews(reviewsData.length)
         } catch (error) {
           console.error('Error fetching completed reviews:', error)
@@ -70,10 +68,10 @@ const BadgeContainer = () => {
       }}
     >
       {user && user.image && (
-        <Tooltip title="Avatar Alchemist!👍 Good Job!🔥🔥" color={'#000080'} placement="left">
+        <Tooltip title="Avatar Alchemist!👍 Good Job!🔥🔥" color={'#36454F'} placement="left">
           <div style={{ margin: '0 4px' }}>
           <motion.div initial="hidden" animate="visible" variants={variants}>
-            <Image src={AvatarBadge} preview={false} width={50} height={50} />
+            <Image src={AvatarBadge} preview={false} width={55} height={55} />
           </motion.div>
           </div>
         </Tooltip>
@@ -82,7 +80,7 @@ const BadgeContainer = () => {
         <Tooltip title="Peer Review Badge. Try to submit more reviews!🚀🚀" color={'#008080'} placement="left">
           <div style={{ margin: '0 4px' }}>
           <motion.div initial="hidden" animate="visible" variants={variants}>
-            <Image src={peerReviewBadge} preview={false} width={50} height={50} />
+            <Image src={peerReviewBadge} preview={false} width={55} height={55} />
           </motion.div>
           </div>
         </Tooltip>
