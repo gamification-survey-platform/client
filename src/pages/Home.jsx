@@ -34,11 +34,20 @@ const Home = () => {
         console.error(e.message)
       }
       try {
-        const res = await getUserArtifactReviews(localStorage.getItem('userId'))
-        if (res.status === 200) {
-          const reviews = res.data
-          setArtifactReviews(reviews)
+        const openReviews = await getUserArtifactReviews(localStorage.getItem('userId'))
+
+        const reviews = []
+        if (openReviews.status === 200) {
+          openReviews.data.forEach((e) => {
+            reviews.push(e)
+          })
         }
+
+        const optionalReview = await getOptionalReview(localStorage.getItem('userId'))
+        if (optionalReview.status == 200 && optionalReview.data.length > 0) {
+          reviews.push(optionalReview.data[0])
+        }
+        setArtifactReviews(reviews)
       } catch (e) {
         console.error(e.message)
       }
