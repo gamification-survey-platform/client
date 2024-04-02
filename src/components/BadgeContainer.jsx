@@ -123,7 +123,7 @@ const BadgeContainer = () => {
       }}
     >
       {user && user.image && (
-        <Tooltip title="Avatar Alchemist!👍 Good Job!🔥🔥" color={'#36454F'} placement="left">
+        <Tooltip title="Avatar Alchemist Badge!👍 Good Job!🔥🔥" color={'#36454F'} placement="left">
           <div style={{ margin: '0 4px' }}>
           <motion.div initial="hidden" animate="visible" variants={variants}>
             <Image src={AvatarBadge} preview={false} width={55} height={55} />
@@ -141,7 +141,7 @@ const BadgeContainer = () => {
         </Tooltip>
       )}
     {singleRowBadge && (
-      <Tooltip title="Great job on that detailed answer! 🎯" color={'#FF1493'} placement="top">
+      <Tooltip title="First outstanding feedback badge! Great job on that detailed answer! 🎯" color={'#FF1493'} placement="top">
         <div style={{ margin: '0 4px' }}>
           <motion.div initial="hidden" animate="visible" variants={variants}>
             <Image src={singleRowBadge} preview={false} width={55} height={55} />
@@ -150,7 +150,7 @@ const BadgeContainer = () => {
       </Tooltip>
     )}
     {totalPointsBadge && (
-      <Tooltip title="Outstanding contribution! Keep it up! 🚀" color={'#654321'} placement="top">
+      <Tooltip title="Badge for all feedback you provided! Outstanding contribution! Keep it up! You will make extra points for next review!🚀" color={'#654321'} placement="top">
         <div style={{ margin: '0 4px' }}>
           <motion.div initial="hidden" animate="visible" variants={variants}>
             <Image src={totalPointsBadge} preview={false} width={55} height={55} />
