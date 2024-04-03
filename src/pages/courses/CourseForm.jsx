@@ -39,7 +39,7 @@ const CourseForm = () => {
   const [enableTrivia, setEnableTrivia] = useState(false)
   const [triviaList, setTriviaList] = useState([{ question: '', answer: '', hints: [''] }])
   const editingCourse = courses.find((course) => course.course_number === params.course_id)
-  
+
   useEffect(() => {
     if (editingCourse && form) {
       const semester = editingCourse.semester.split(' ')[0]
@@ -47,7 +47,7 @@ const CourseForm = () => {
       if (editingCourse.trivia && editingCourse.trivia.length) {
         setEnableTrivia(true)
         form.setFieldValue('enableTrivia', true)
-        const formattedTriviaList = editingCourse.trivia.map(triviaItem => {
+        const formattedTriviaList = editingCourse.trivia.map((triviaItem) => {
           return {
             question: triviaItem.question,
             answer: triviaItem.answer,
@@ -223,8 +223,7 @@ const CourseForm = () => {
           }>
           <Checkbox value={enableTrivia} onChange={() => setEnableTrivia(!enableTrivia)} />
         </Form.Item>
-        {enableTrivia && (
-        <Trivia triviaList={triviaList} setTriviaList={setTriviaList} />)}
+        {enableTrivia && <Trivia triviaList={triviaList} setTriviaList={setTriviaList} />}
         <div className="text-center" style={{ marginTop: '30px' }}>
           <Button type="primary" onClick={handleSubmit}>
             {editingCourse ? 'Edit' : 'Create'}

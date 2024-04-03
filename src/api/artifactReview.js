@@ -33,21 +33,18 @@ const getAssignmentArtifactReviews = async ({ course_id, assignment_id }) => {
   }
 }
 
-const getUserArtifactReviews = async () => {
+const getUserArtifactReviews = async (userId) => {
   try {
-    const res = await api.get(`artifact_reviews/`)
-    console.log(res)
+    const res = await api.get(`artifact_reviews/${userId}`)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
   }
 }
 
-const getOptionalReview = async ({ course_id, assignment_id, user_id }) => {
+const getOptionalReview = async (userId) => {
   try {
-    const res = await api.get(
-      `courses/${course_id}/assignments/${assignment_id}/user/${user_id}/optional_review`
-    )
+    const res = await api.get(`optional_reviews/${userId}`)
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
@@ -65,12 +62,13 @@ const getArtifactReview = async ({ course_id, assignment_id, review_id }) => {
   }
 }
 
-const saveArtifactReview = async ({ course_id, assignment_id, review_id, review }) => {
+const saveArtifactReview = async ({ course_id, assignment_id, review_id, review, bonus }) => {
   try {
     const res = await api.patch(
       `courses/${course_id}/assignments/${assignment_id}/artifact_reviews/${review_id}/`,
       {
-        artifact_review_detail: review
+        artifact_review_detail: review,
+        bonus: bonus
       }
     )
     return res

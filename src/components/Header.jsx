@@ -34,7 +34,7 @@ import Notification from './Notification'
 import styles from '../styles/Header.module.css'
 import DashboardJoyride from './DashboardJoyride'
 import { gamified_mode } from '../gamified'
-import BadgeContainer from './BadgeContainer';
+import BadgeContainer from './BadgeContainer'
 
 const rankings = [
   { title: 'Bronze', image: Bronze },
@@ -212,7 +212,7 @@ const AppHeader = ({ children }) => {
             <Image src={Logo} preview={false} width={300} />
           </LinkContainer>
           <div>
-            <BadgeContainer/>
+            <BadgeContainer />
           </div>
           <Row>
             <Tooltip title="Start Tutorial" color={'gold'} placement="left">

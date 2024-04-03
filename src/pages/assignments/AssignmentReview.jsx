@@ -15,10 +15,10 @@ import { setUser } from '../../store/user/userSlice'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { addCoursePoints } from '../../store/courses/coursesSlice'
-import { getSentimentEmoji } from '../survey/sentiment'
 import coursesSelector from '../../store/courses/selectors'
 import RespondToFeedbackRequestModal from '../../components/RespondToFeedbackRequestModal'
-import { gamified_mode } from '../../gamified'
+import Lottie from 'react-lottie'
+import coin from '../../assets/coin.json'
 
 const AssignmentReview = () => {
   const { state = null } = useLocation()
@@ -110,6 +110,15 @@ const AssignmentReview = () => {
     )
   }, [])
 
+  const coinOption = {
+    loop: true,
+    autoplay: true,
+    animationData: coin,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  }
+
   const handleSaveReview = async (e) => {
     e.preventDefault()
     e.stopPropagation()
@@ -138,11 +147,13 @@ const AssignmentReview = () => {
           })
         })
 
+        const bonus = localStorage.getItem('bonus')
         const res = await saveArtifactReview({
           course_id: course.pk,
           assignment_id: assignment_id,
           review_id,
-          review
+          review,
+          bonus: bonus === undefined ? 'No Bonus' : bonus
         })
         if (res.status === 200) {
           const { exp, level, next_exp_level, points } = res.data
@@ -156,7 +167,6 @@ const AssignmentReview = () => {
       }
     }
   }
-
 
   return (
     <>
@@ -198,25 +208,23 @@ const AssignmentReview = () => {
                 {survey.sections.map((_, i) => (
                   <Section key={i} sectionIdx={i} artifact={artifact} />
                 ))}
-                {gamified_mode() && survey.sentiment ? (
-                  <div
-                    style={{
-                      position: 'fixed',
-                      bottom: 35,
-                      right: 10,
-                      display: 'flex',
-                      alignItems: 'center'
-                    }}>
-                    <Typography.Title level={5} className="mr-3">
-                      Survey sentiment:
-                    </Typography.Title>
-                    <h1
-                      dangerouslySetInnerHTML={{
-                        __html: `${getSentimentEmoji(survey.sentiment)}`
-                      }}
-                    />
-                  </div>
-                ) : null}
+                <div style={{ position: 'fixed', right: 10, top: 80 }}>
+                  {localStorage.getItem('bonus') === '0 Points' ||
+                  localStorage.getItem('bonus') === null ? null : (
+                    <div
+                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <span>
+                        <Lottie options={coinOption} width={70} height={70} />
+                      </span>
+                      <strong
+                        style={{
+                          fontFamily: 'Arial, sans-serif',
+                          color: 'gold',
+                          fontSize: '25px'
+                        }}>{`${localStorage.getItem('bonus')}`}</strong>
+                    </div>
+                  )}
+                </div>
                 <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
                   <Button type="primary" onClick={handleSaveReview}>
                     Submit Review

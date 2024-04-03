@@ -141,16 +141,6 @@ const Section = ({ sectionIdx, artifact, handleReorderSections }) => {
                   handleReorderQuestions={handleReorderQuestions}
                 />
               ))}
-            {gamified_mode(user) && section.sentiment ? (
-              <Row justify="end" className="m-3" align="middle">
-                <Typography.Title level={3} className="mr-3">
-                  Section mood:
-                </Typography.Title>
-                <h1
-                  dangerouslySetInnerHTML={{ __html: `${getSentimentEmoji(section.sentiment)}` }}
-                />
-              </Row>
-            ) : null}
           </div>
         </Collapse.Panel>
       </Collapse>

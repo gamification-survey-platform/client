@@ -24,8 +24,7 @@ const TriviaItem = ({ trivia, index, onTriviaChange, onRemove }) => {
       <Form.Item
         name={`trivia[${index}].question`}
         label="Trivia Question"
-        rules={[{ required: true, message: 'Please input a trivia question.' }]}
-      >
+        rules={[{ required: true, message: 'Please input a trivia question.' }]}>
         <Input
           value={trivia.question}
           onChange={(e) => onTriviaChange(index, { ...trivia, question: e.target.value })}
@@ -34,21 +33,17 @@ const TriviaItem = ({ trivia, index, onTriviaChange, onRemove }) => {
       <Form.Item
         name={`trivia[${index}].answer`}
         label="Trivia Answer"
-        rules={[{ required: true, message: 'Please input a trivia answer.' }]}
-      >
+        rules={[{ required: true, message: 'Please input a trivia answer.' }]}>
         <Input
           value={trivia.answer}
           onChange={(e) => onTriviaChange(index, { ...trivia, answer: e.target.value })}
         />
       </Form.Item>
       {trivia.hints.map((hint, hintIndex) => (
-        <Form.Item
-          label={`Hint #${hintIndex + 1}`}
-          key={hintIndex}
-        >
+        <Form.Item label={`Hint #${hintIndex + 1}`} key={hintIndex}>
           <Input.Group compact>
             <Input
-              style={{ width: 'calc(100% - 50px)' }} 
+              style={{ width: 'calc(100% - 50px)' }}
               value={hint}
               onChange={(e) => handleHintChange(hintIndex, e.target.value)}
             />
@@ -66,16 +61,11 @@ const TriviaItem = ({ trivia, index, onTriviaChange, onRemove }) => {
         onClick={addHint}
         block
         icon={<PlusOutlined />}
-        style={{ marginBottom: '10px' }}
-      >
+        style={{ marginBottom: '10px' }}>
         Add Hint
       </Button>
       {index > 0 && (
-        <Button
-          type="link"
-          onClick={() => onRemove(index)}
-          style={{ color: '#ff4d4f' }}
-        >
+        <Button type="link" onClick={() => onRemove(index)} style={{ color: '#ff4d4f' }}>
           Remove Trivia
         </Button>
       )}
@@ -85,9 +75,9 @@ const TriviaItem = ({ trivia, index, onTriviaChange, onRemove }) => {
 
 const Trivia = ({ triviaList, setTriviaList }) => {
   const handleTriviaChange = (index, updatedTrivia) => {
-    const newTriviaList = [...triviaList];
-    newTriviaList[index] = updatedTrivia;
-    setTriviaList(newTriviaList);
+    const newTriviaList = [...triviaList]
+    newTriviaList[index] = updatedTrivia
+    setTriviaList(newTriviaList)
   }
 
   const addTrivia = () => {
@@ -113,8 +103,7 @@ const Trivia = ({ triviaList, setTriviaList }) => {
         onClick={addTrivia}
         block
         icon={<PlusOutlined />}
-        style={{ marginTop: '20px', color: 'white' }}
-      >
+        style={{ marginTop: '20px', color: 'white' }}>
         Add Trivia
       </Button>
     </div>

@@ -26,14 +26,14 @@ const Store = () => {
           return { courseName: course.course_name, rewards: [] }
         }
       })
-      Promise.all(fetchPromises).then(results => {
-        const newCourseNames = results.map(r => r.courseName)
-        const newRewards = results.flatMap(r => r.rewards)
+      Promise.all(fetchPromises).then((results) => {
+        const newCourseNames = results.map((r) => r.courseName)
+        const newRewards = results.flatMap((r) => r.rewards)
         setCourseNames(newCourseNames)
         setRewards(newRewards)
       })
     }
-  
+
     fetchRewards()
   }, [])
 

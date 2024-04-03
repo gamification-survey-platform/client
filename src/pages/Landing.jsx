@@ -86,7 +86,8 @@ const Landing = () => {
             console.error(addMemberResponse2)
             messageApi.open({
               type: 'error',
-              content: 'There was an issue registering you to How to Provide Effective Feedback course.'
+              content:
+                'There was an issue registering you to How to Provide Effective Feedback course.'
             })
           }
         } catch (e) {
