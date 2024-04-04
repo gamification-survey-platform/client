@@ -11,6 +11,7 @@ import lottery from '../assets/lottery.json'
 import Lottie from 'react-lottie'
 import confetti from '../assets/confetti.json'
 import coin from '../assets/coin.json'
+import info from '../assets/info.json'
 
 const ReviewList = ({ title, reviews, color }) => {
   const { course_id } = useParams()
@@ -221,9 +222,11 @@ const ReviewList = ({ title, reviews, color }) => {
                 color: '#a9a9a9',
                 opacity: '0.5'
               }}>
-              {`${review.course_number}: ${review.assignment_type === 'Team' ? 'Team ' : ''}${
-                review.reviewing
-              }`}
+              <span className={styles['patua-one-regular']}>
+                {`${review.course_number}: ${review.assignment_type === 'Team' ? 'Team ' : ''}${
+                  review.reviewing
+                }`}
+              </span>
             </Tag>
           ) : (
             <Tag
@@ -234,9 +237,11 @@ const ReviewList = ({ title, reviews, color }) => {
               style={{
                 cursor: 'pointer'
               }}>
-              {`${review.course_number}: ${review.assignment_type === 'Team' ? 'Team ' : ''}${
-                review.reviewing
-              }`}
+              <span className={styles['patua-one-regular']}>
+                {`${review.course_number}: ${review.assignment_type === 'Team' ? 'Team ' : ''}${
+                  review.reviewing
+                }`}
+              </span>
             </Tag>
           )
         })}
@@ -271,6 +276,15 @@ const StudentReviewsList = ({ artifactReviews }) => {
     }
   }
 
+  const infoOption = {
+    loop: true,
+    autoplay: true,
+    animationData: info,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
+  }
+
   return (
     <div>
       <Space
@@ -281,17 +295,32 @@ const StudentReviewsList = ({ artifactReviews }) => {
         <Row className="border-bottom p-5 my-3 ml-3">
           <Space direction="vertical" size="middle" className="text-center">
             {showReopen ? (
-              <ReviewList title={'Reopened Reviews'} color="magenta" reviews={reopenReviews} />
+              <ReviewList
+                title={
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span className={styles['bungee-spice-regular']}>Reopened Reviews: </span>
+                    <Tooltip title="Please review again">
+                      <div>
+                        <Lottie options={infoOption} width={25} height={25} />
+                      </div>
+                    </Tooltip>
+                  </div>
+                }
+                color="magenta"
+                reviews={reopenReviews}
+              />
             ) : null}
             {showLate ? (
               <ReviewList
                 title={
-                  <span>
-                    Late Reviews{' '}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span className={styles['bungee-spice-regular']}>Late Reviews: </span>
                     <Tooltip title="5 points each">
-                      <InfoCircleOutlined className={styles.infoIcon} />
+                      <div>
+                        <Lottie options={infoOption} width={25} height={25} />
+                      </div>
                     </Tooltip>
-                  </span>
+                  </div>
                 }
                 color="volcano"
                 reviews={lateReviews}
@@ -300,39 +329,39 @@ const StudentReviewsList = ({ artifactReviews }) => {
             {showPending ? (
               <ReviewList
                 title={
-                  <span>
-                    Mandatory Reviews{' '}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span className={styles['bungee-spice-regular']}>Mandatory Reviews: </span>
                     <Tooltip title="10 points each">
-                      <InfoCircleOutlined className={styles.infoIcon} />
+                      <div>
+                        <Lottie options={infoOption} width={25} height={25} />
+                      </div>
                     </Tooltip>
-                  </span>
+                  </div>
                 }
                 color="gold"
                 reviews={pendingReviews}
               />
             ) : null}
             {
-              <p>
-                <ReviewList
-                  title={
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span>Optional Reviews </span>
-                      <Tooltip
-                        title={
-                          showOptional && optionalReviewsColor !== 'grey'
-                            ? '15 point, bonus depends on the lottery result'
-                            : '15 point each, will be available after completing all other reviews'
-                        }>
-                        <div>
-                          <Lottie options={lotteryOption} width={50} height={50} />
-                        </div>
-                      </Tooltip>
-                    </div>
-                  }
-                  color={optionalReviewsColor}
-                  reviews={optionalReviews}
-                />
-              </p>
+              <ReviewList
+                title={
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span className={styles['bungee-spice-regular']}>Optional Reviews: </span>
+                    <Tooltip
+                      title={
+                        showOptional && optionalReviewsColor !== 'grey'
+                          ? '15 point, bonus depends on the lottery result'
+                          : '15 point each, will be available after completing all other reviews'
+                      }>
+                      <div>
+                        <Lottie options={lotteryOption} width={50} height={50} />
+                      </div>
+                    </Tooltip>
+                  </div>
+                }
+                color={optionalReviewsColor}
+                reviews={optionalReviews}
+              />
             }
           </Space>
         </Row>
