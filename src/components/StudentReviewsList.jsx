@@ -120,7 +120,7 @@ const ReviewList = ({ title, reviews, color }) => {
 
       <Modal
         title="Lottery"
-        visible={isModalVisible}
+        open={isModalVisible}
         width={600}
         footer={[
           <Button
@@ -152,7 +152,7 @@ const ReviewList = ({ title, reviews, color }) => {
       </Modal>
 
       <Modal
-        visible={resultModalVisible}
+        open={resultModalVisible}
         footer={[
           <Button key="ok" type="primary" onClick={handleCloseResultModal}>
             OK
@@ -187,24 +187,26 @@ const ReviewList = ({ title, reviews, color }) => {
         )}
 
         {!animationPlayed && prize !== '0 Points' && (
-          <Lottie
-            options={confettiOption}
+          <div
             style={{
               position: 'fixed',
               top: '50%',
               left: '50%',
               transform: 'translate(-50%, -50%)',
               zIndex: 1000
-            }}
-            height="100%"
-            width="100%"
-            eventListeners={[
-              {
-                eventName: 'complete',
-                callback: () => setAnimationPlayed(true)
-              }
-            ]}
-          />
+            }}>
+            <Lottie
+              options={confettiOption}
+              height="100%"
+              width="100%"
+              eventListeners={[
+                {
+                  eventName: 'complete',
+                  callback: () => setAnimationPlayed(true)
+                }
+              ]}
+            />
+          </div>
         )}
       </Modal>
 
