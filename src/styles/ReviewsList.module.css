@@ -22,3 +22,16 @@
   cursor: default;
   margin-left: 5px;
 }
+
+.bungee-spice-regular {
+  font-family: "Bungee Spice", sans-serif;
+  font-weight: 400;
+  color: #1890ff;
+  font-style: normal;
+}
+
+.patua-one-regular {
+  font-family: "Patua One", serif;
+  font-weight: 400;
+  font-style: normal;
+}
