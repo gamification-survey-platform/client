@@ -119,7 +119,9 @@ const Home = () => {
                         </Row>
                         <Row justify="center">
                           {!user.is_staff && gamified_mode(user) ? (
-                            <TriviaPopup courseId={course.course_number} courses={courses} />
+                            <Button>
+                              <TriviaPopup courseId={course.course_number} courses={courses} />
+                            </Button>
                           ) : null}
                         </Row>
                       </Space>
