@@ -13,7 +13,7 @@ import confetti from '../assets/confetti.json'
 import coin from '../assets/coin.json'
 import info from '../assets/info.json'
 
-const ReviewList = ({ title, reviews, color }) => {
+const ReviewList = ({ title, reviews, color, bgColor }) => {
   const { course_id } = useParams()
   const navigate = useNavigate()
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -57,7 +57,7 @@ const ReviewList = ({ title, reviews, color }) => {
     { option: '0 Points', style: { backgroundColor: 'darkcyan', textColor: 'white' } }
   ]
 
-  const handleTagClick = (reviewUrl, color, e, review_id) => {
+  const handleTagClick = (reviewUrl, color, e, review_id, bgColor) => {
     e.preventDefault()
     setNavigationUrl(reviewUrl)
     setSelectedReview(review_id)
@@ -214,7 +214,7 @@ const ReviewList = ({ title, reviews, color }) => {
         {reviews.map((review) => {
           const reviewUrl = `/courses/${review.course_number}/assignments/${review.assignment_id}/reviews/${review.id}`
           return color === 'grey' ? (
-            <Tag
+            <Button
               key={review.id}
               className={styles.tag}
               onClick={(e) => handleTagClick(reviewUrl, color, e, review.id)}
@@ -229,22 +229,24 @@ const ReviewList = ({ title, reviews, color }) => {
                   review.reviewing
                 }`}
               </span>
-            </Tag>
+            </Button>
           ) : (
-            <Tag
+            <Button
               key={review.id}
-              color={color}
               className={styles.tag}
               onClick={(e) => handleTagClick(reviewUrl, color, e, review.id)}
               style={{
-                cursor: 'pointer'
+                cursor: 'pointer',
+                color: color,
+                borderColor: color,
+                backgroundColor: bgColor
               }}>
               <span className={styles['patua-one-regular']}>
                 {`${review.course_number}: ${review.assignment_type === 'Team' ? 'Team ' : ''}${
                   review.reviewing
                 }`}
               </span>
-            </Tag>
+            </Button>
           )
         })}
       </div>
@@ -267,7 +269,7 @@ const StudentReviewsList = ({ artifactReviews }) => {
   const showPending = pendingReviews.length == 0 ? false : true
   const showOptional = optionalReviews.length == 0 ? false : true
 
-  const optionalReviewsColor = !showReopen && !showLate && !showPending ? 'blue' : 'grey'
+  const optionalReviewsColor = !showReopen && !showLate && !showPending ? '#003eb3' : 'grey'
 
   const lotteryOption = {
     loop: true,
@@ -300,7 +302,9 @@ const StudentReviewsList = ({ artifactReviews }) => {
               <ReviewList
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span className={styles['bungee-spice-regular']}>Reopened Reviews: </span>
+                    <span style={{ color: '#eb2f96' }} className={styles['patua-one-regular']}>
+                      Reopened Reviews:{' '}
+                    </span>
                     <Tooltip title="Please review again">
                       <div>
                         <Lottie options={infoOption} width={25} height={25} />
@@ -308,7 +312,8 @@ const StudentReviewsList = ({ artifactReviews }) => {
                     </Tooltip>
                   </div>
                 }
-                color="magenta"
+                color="#9e1068"
+                bgColor="#ffd6e7"
                 reviews={reopenReviews}
               />
             ) : null}
@@ -316,7 +321,9 @@ const StudentReviewsList = ({ artifactReviews }) => {
               <ReviewList
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span className={styles['bungee-spice-regular']}>Late Reviews: </span>
+                    <span style={{ color: '#fa541c' }} className={styles['patua-one-regular']}>
+                      Late Reviews:{' '}
+                    </span>
                     <Tooltip title="5 points each">
                       <div>
                         <Lottie options={infoOption} width={25} height={25} />
@@ -324,7 +331,8 @@ const StudentReviewsList = ({ artifactReviews }) => {
                     </Tooltip>
                   </div>
                 }
-                color="volcano"
+                color="#ad2102"
+                bgColor="#ffd8bf"
                 reviews={lateReviews}
               />
             ) : null}
@@ -332,7 +340,9 @@ const StudentReviewsList = ({ artifactReviews }) => {
               <ReviewList
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span className={styles['bungee-spice-regular']}>Mandatory Reviews: </span>
+                    <span style={{ color: '#faad14' }} className={styles['patua-one-regular']}>
+                      Mandatory Reviews:{' '}
+                    </span>
                     <Tooltip title="10 points each">
                       <div>
                         <Lottie options={infoOption} width={25} height={25} />
@@ -340,7 +350,8 @@ const StudentReviewsList = ({ artifactReviews }) => {
                     </Tooltip>
                   </div>
                 }
-                color="gold"
+                color="#ad6800"
+                bgColor="#fff1b8"
                 reviews={pendingReviews}
               />
             ) : null}
@@ -348,7 +359,9 @@ const StudentReviewsList = ({ artifactReviews }) => {
               <ReviewList
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span className={styles['bungee-spice-regular']}>Optional Reviews: </span>
+                    <span style={{ color: '#1677ff' }} className={styles['patua-one-regular']}>
+                      Optional Reviews:{' '}
+                    </span>
                     <Tooltip
                       title={
                         showOptional && optionalReviewsColor !== 'grey'
@@ -362,6 +375,7 @@ const StudentReviewsList = ({ artifactReviews }) => {
                   </div>
                 }
                 color={optionalReviewsColor}
+                bgColor="#bae0ff"
                 reviews={optionalReviews}
               />
             }
