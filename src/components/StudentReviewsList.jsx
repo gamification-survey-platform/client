@@ -302,9 +302,7 @@ const StudentReviewsList = ({ artifactReviews }) => {
               <ReviewList
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ color: '#eb2f96' }} className={styles['patua-one-regular']}>
-                      Reopened Reviews:{' '}
-                    </span>
+                    <span style={{ color: '#eb2f96' }}>Reopened Reviews: </span>
                     <Tooltip title="Please review again">
                       <div>
                         <Lottie options={infoOption} width={25} height={25} />
@@ -321,9 +319,7 @@ const StudentReviewsList = ({ artifactReviews }) => {
               <ReviewList
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ color: '#fa541c' }} className={styles['patua-one-regular']}>
-                      Late Reviews:{' '}
-                    </span>
+                    <span style={{ color: '#fa541c' }}>Late Reviews: </span>
                     <Tooltip title="5 points each">
                       <div>
                         <Lottie options={infoOption} width={25} height={25} />
@@ -340,9 +336,7 @@ const StudentReviewsList = ({ artifactReviews }) => {
               <ReviewList
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ color: '#faad14' }} className={styles['patua-one-regular']}>
-                      Mandatory Reviews:{' '}
-                    </span>
+                    <span style={{ color: '#faad14' }}>Mandatory Reviews: </span>
                     <Tooltip title="10 points each">
                       <div>
                         <Lottie options={infoOption} width={25} height={25} />
@@ -359,9 +353,7 @@ const StudentReviewsList = ({ artifactReviews }) => {
               <ReviewList
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{ color: '#1677ff' }} className={styles['patua-one-regular']}>
-                      Optional Reviews:{' '}
-                    </span>
+                    <span style={{ color: '#1677ff' }}>Optional Reviews: </span>
                     <Tooltip
                       title={
                         showOptional && optionalReviewsColor !== 'grey'
