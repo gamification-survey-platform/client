@@ -349,7 +349,7 @@ const StudentReviewsList = ({ artifactReviews }) => {
                 reviews={pendingReviews}
               />
             ) : null}
-            {
+            {showOptional ? (
               <ReviewList
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -370,7 +370,7 @@ const StudentReviewsList = ({ artifactReviews }) => {
                 bgColor="#bae0ff"
                 reviews={optionalReviews}
               />
-            }
+            ) : null}
           </Space>
         </Row>
       </Space>
