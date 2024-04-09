@@ -127,7 +127,10 @@ const ReviewList = ({ title, reviews, color, bgColor }) => {
             key="ok"
             type="primary"
             disabled={mustSpin}
-            onClick={() => setIsModalVisible(false)}>
+            onClick={() => {
+              setIsModalVisible(false)
+              localStorage.removeItem('selectedReview')
+            }}>
             OK
           </Button>
         ]}

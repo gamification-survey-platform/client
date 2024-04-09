@@ -42,12 +42,13 @@ const Home = () => {
             reviews.push(e)
           })
         }
-
-        const optionalReview = await getOptionalReview(localStorage.getItem('userId'))
-        if (optionalReview.status == 200 && optionalReview.data.length > 0) {
-          const data = optionalReview.data[0]
-          if (Object.keys(data).length !== 0) {
-            reviews.push(data)
+        if (reviews.length == 0) {
+          const optionalReview = await getOptionalReview(localStorage.getItem('userId'))
+          if (optionalReview.status == 200 && optionalReview.data.length > 0) {
+            const data = optionalReview.data[0]
+            if (Object.keys(data).length !== 0) {
+              reviews.push(data)
+            }
           }
         }
         setArtifactReviews(reviews)

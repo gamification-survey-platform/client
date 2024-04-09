@@ -14,7 +14,6 @@ import PdfPreview from './PdfPreview'
 import { getArtifactReviewers, getAssignmentArtifactReviews } from '../../api/artifactReview'
 import Spinner from '../../components/Spinner'
 import { setUser } from '../../store/user/userSlice'
-import StudentReviewsList from '../../components/StudentReviewsList'
 import StaffArtifactReviewList from '../../components/StaffArtifactReviewList'
 import StaffSubmissionList from '../../components/StaffSubmissionList'
 import { addCoursePoints } from '../../store/courses/coursesSlice'
@@ -160,9 +159,6 @@ const AssignmentDetails = () => {
     <Spinner show={spin} />
   ) : (
     <div className="m-5">
-      {user.is_staff ? null : artifactReviews.length === 0 ? null : (
-        <StudentReviewsList artifactReviews={artifactReviews} showCompleted={false} />
-      )}
       {contextHolder}
       <Row gutter={24}>
         <Col span={17}>
