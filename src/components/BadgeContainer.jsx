@@ -18,6 +18,7 @@ import { getHistoricalArtifactReviews } from '../api/historicalReview'
 import { getAnswerHistory } from '../api/historicalReview'
 import { useSelector } from 'react-redux'
 import userSelector from '../store/user/selectors'
+import { gamified_mode } from '../gamified'
 
 const BadgeContainer = () => {
   const [completedReviews, setCompletedReviews] = useState(0)
@@ -128,7 +129,7 @@ const BadgeContainer = () => {
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-      {user && user.image && (
+      {gamified_mode(user) && user && user.image && (
         <Tooltip title="Avatar Alchemist Badge!👍 Good Job!🔥🔥" color={'#36454F'} placement="left">
           <div style={{ margin: '0 4px' }}>
             <motion.div initial="hidden" animate="visible" variants={variants}>
@@ -137,7 +138,7 @@ const BadgeContainer = () => {
           </div>
         </Tooltip>
       )}
-      {peerReviewBadge && (
+      {gamified_mode(user) && peerReviewBadge && (
         <Tooltip
           title="Peer Review Badge. Try to submit more reviews!🚀🚀"
           color={'#008080'}
@@ -149,7 +150,7 @@ const BadgeContainer = () => {
           </div>
         </Tooltip>
       )}
-      {singleRowBadge && (
+      {gamified_mode(user) && singleRowBadge && (
         <Tooltip
           title="First outstanding feedback badge! Great job on that detailed answer! 🎯"
           color={'#FF1493'}
@@ -161,7 +162,7 @@ const BadgeContainer = () => {
           </div>
         </Tooltip>
       )}
-      {totalPointsBadge && (
+      {gamified_mode(user) && totalPointsBadge && (
         <Tooltip
           title="Badge for all feedback you provided! Outstanding contribution! Keep it up! You will make extra points for next review!🚀"
           color={'#654321'}
