@@ -62,7 +62,7 @@ const ReviewList = ({ title, reviews, color, bgColor }) => {
     setNavigationUrl(reviewUrl)
     setSelectedReview(review_id)
 
-    if (color === '#003eb') {
+    if (color === '#003eb3') {
       if (localStorage.getItem('selectedReview') == review_id) {
         navigate(reviewUrl)
       } else if (localStorage.getItem('bonus') !== null) {
