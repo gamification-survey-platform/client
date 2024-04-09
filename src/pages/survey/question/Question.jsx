@@ -18,6 +18,7 @@ import coursesSelector from '../../../store/courses/selectors'
 import { useParams } from 'react-router'
 import styles from '../../../styles/Question.module.css'
 import { gamified_mode } from '../../../gamified'
+import { Slider } from 'antd';
 
 const randomEmoji = getRandomEmoji('positive')
 
@@ -223,19 +224,24 @@ const MultipleSelect = ({
   )
 }
 
-export const scaleOptions = {
-  3: ['disagree', 'neutral', 'agree'],
-  5: ['strongly disagree', 'disagree', 'neutral', 'agree', 'strongly agree'],
-  7: [
-    'strongly disagree',
-    'disagree',
-    'weakly disagree',
-    'neutral',
-    'weakly agree',
-    'agree',
-    'strongly agree'
-  ]
-}
+const scaleOptions = {
+  3: ['😭', '😐', '😄'],
+  5: ['😭', '😟', '😐', '🙂', '😄'],
+  7: ['😭', '😟', '🥲', '😐', '🙂', '😊', '😄'],
+};
+const generateFeedbackTexts = (length) => {
+  switch (length) {
+    case 3:
+      return ["Disagree", "Neutral", "Agree"];
+    case 5:
+      return ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"];
+    case 7:
+      return ["Strongly Disagree", "Disagree", "Somewhat Disagree", "Neutral", "Somewhat Agree", "Agree", "Strongly Agree"];
+    default:
+      console.error(`Unsupported scale length: ${length}`);
+      return [];
+  }
+};
 
 const MultipleChoiceScale = ({
   sectionIdx,
@@ -244,88 +250,111 @@ const MultipleChoiceScale = ({
   question_type,
   is_required,
   number_of_scale,
-  gamified
+  gamified,
 }) => {
-  const initialOptions = scaleOptions[number_of_scale].map((text) => ({
-    transitioned: false,
-    text
-  }))
-  const [options, setOptions] = useState(initialOptions)
-  const [initialRender, setInitialRender] = useState(true)
-  const name = `${sectionIdx}-${questionIdx}`
-  const form = useFormInstance()
-  const { scale_multiple_choice_item, scale_multiple_choice_target } = useSelector(themeSelector)
-  const value = Form.useWatch(name, form)
-  const dispatch = useDispatch()
+  const name = `${sectionIdx}-${questionIdx}`;
+  const form = useFormInstance();
+  const dispatch = useDispatch();
+  const [sliderValue, setSliderValue] = useState(2);
+  const emojis = scaleOptions[number_of_scale] || [];
+  const [showOverlay, setShowOverlay] = useState(false);
+  const feedbackTexts = generateFeedbackTexts(emojis.length);
 
-  //use animation
   useEffect(() => {
-    const element = document.getElementById(name)
-    if (answer && answer.length && initialRender) {
-      form.setFieldValue(name, answer[0].text)
-      const newOptions = options.map((opt) => {
-        if (opt.text === answer[0].text) return { ...opt, transitioned: true }
-        else return opt
-      })
-      setOptions(newOptions)
-      const { width, height } = element.getBoundingClientRect()
-      gamified &&
-        renderScene({
-          width,
-          height,
-          ref: element,
-          options: newOptions,
-          item: scale_multiple_choice_item,
-          target: scale_multiple_choice_target,
-          handleSelect,
-          questionType: 'SCALEMULTIPLECHOICE'
-        })
-    } else if (element && initialRender) {
-      const { width, height } = element.getBoundingClientRect()
-      gamified &&
-        renderScene({
-          width,
-          height,
-          ref: element,
-          options,
-          handleSelect,
-          item: scale_multiple_choice_item,
-          target: scale_multiple_choice_target,
-          questionType: 'SCALEMULTIPLECHOICE'
-        })
-    } else if (!initialRender && answer && answer.length) {
-      const newOptions = options.map((opt) => {
-        if (opt.text === answer[0].text) return { ...opt, transitioned: true }
-        else return { ...opt, transitioned: false }
-      })
-      setOptions(newOptions)
-      gamified && renderScene({ ref: element, options: newOptions, update: true })
+    // Initialize with existing answer, if applicable
+    if (answer && answer.length) {
+      const index = emojis.indexOf(answer[0].text);
+      if (index !== -1) {
+        setSliderValue(index);
+      }
     }
-    setInitialRender(false)
-  }, [answer])
+  }, [answer, emojis]);
 
-  useEffect(() => {
-    if (answer && value)
-      dispatch(editAnswer({ questionIdx, sectionIdx, answer: value, question_type }))
-  }, [value])
+  //overlay effct
+  const handleSliderChange = (value) => {
+    setSliderValue(value);
+    const feedbackTexts = generateFeedbackTexts(emojis.length);
+    const selectedFeedbackText = feedbackTexts[value];
+    // Set the form field value
+    form.setFieldValue(name, selectedFeedbackText);
+    // Dispatch an action to update the answer
+    dispatch(editAnswer({ questionIdx, sectionIdx, answer: selectedFeedbackText, question_type }));
+    setShowOverlay(true);
+    setTimeout(() => setShowOverlay(false), 5000); 
+  };
 
-  const handleSelect = (answer) => {
-    form.setFieldValue(name, answer)
-  }
+  const thumbWidth = 30;
+  const getEmojiStyle = (value) => {
+    const offsetPercent = value * (100 / (emojis.length - 1));
+    return {
+      position: 'absolute',
+      left: `calc(${offsetPercent}% - ${(thumbWidth / 2)}px)`,
+      userSelect: 'none',
+      lineHeight: `${thumbWidth}px`,
+      textAlign: 'center',
+      marginTop: `-30px`,
+      fontSize: `25px`,
+    };
+  };
+
+  const overlayPosition = (value) => ({
+    position: 'absolute',
+    left: `calc(${value * (100 / (emojis.length - 1))}% - ${thumbWidth / 2}px)`,
+    transform: 'translateX(-50%)',
+    userSelect: 'none',
+  });
 
   return (
     <Form.Item
       name={name}
-      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
-      <Select
-        options={options.map((option) => ({
-          label: option.text,
-          value: option.text
-        }))}
-      />
+      rules={[{ required: is_required, message: 'Please complete the above question.' }]}
+    >
+      <div style={{ zIndex: 2, position: 'relative' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 10px', }}>
+          {emojis.map((emoji) => (
+            <span key={emoji}>{emoji}</span>
+          ))}
+        </div>
+        <Slider
+          min={0}
+          max={emojis.length - 1}
+          value={sliderValue}
+          onChange={handleSliderChange}
+          step={1}
+          trackStyle={{
+            backgroundColor: 'transparent',
+          }}
+          handleStyle={{
+            visibility: 'hidden', // Make the slider handle invisible
+          }}
+          railStyle={{
+            backgroundImage: 'linear-gradient(to right, red, orange, yellow, green)',
+            height: '8px', 
+          }}
+        />
+        <div style={getEmojiStyle(sliderValue)}>
+          {emojis[sliderValue]}
+        </div>
+        {showOverlay && (
+          <div style={{ ...overlayPosition(sliderValue), marginTop: '-60px' }}>
+            <span style={{
+              backgroundColor: 'rgba(0,0,0,0.75)', 
+              color: 'white', 
+              padding: '5px 10px', 
+              borderRadius: '10px', 
+              whiteSpace: 'nowrap', 
+              width: 'auto', 
+              maxWidth: '100%',  
+            }}>
+              {feedbackTexts[sliderValue]}
+            </span>
+          </div>
+        )}
+
+      </div>
     </Form.Item>
-  )
-}
+  );
+};
 
 const FixedText = ({ sectionIdx, questionIdx, answer, question_type, is_required, gamified }) => {
   const name = `${sectionIdx}-${questionIdx}`
@@ -573,14 +602,14 @@ const Question = (question) => {
         rules={[
           { required: questionProps.is_required, message: 'Please complete the above question.' }
         ]}
-        label={
-          <div
-            className={questionProps.is_required ? 'required-field py-3' : 'py-3'}
-            style={{ opacity: isDragging ? 0.2 : 1 }}
-            ref={dragDropRef}>
-            {questionText}
-          </div>
-        }>
+      >
+        <div
+          className={questionProps.is_required ? 'required-field py-3' : 'py-3'}
+          style={{ opacity: isDragging ? 0.2 : 1 }}
+          ref={dragDropRef}>
+          {questionText}
+        
+      
         <Row>
           <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
             {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
@@ -625,6 +654,7 @@ const Question = (question) => {
             questionIdx={question.questionIdx}
           />
         </Row>
+        </div>
       </Form.Item>
     </div>
   )
