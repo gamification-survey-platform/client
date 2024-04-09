@@ -306,11 +306,13 @@ const StudentReviewsList = ({ artifactReviews, isGamified }) => {
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ color: '#eb2f96' }}>Reopened Reviews: </span>
-                    <Tooltip title="Please review again">
-                      <div>
-                        <Lottie options={infoOption} width={25} height={25} />
-                      </div>
-                    </Tooltip>
+                    {isGamified ? (
+                      <Tooltip title="Please review again">
+                        <div>
+                          <Lottie options={infoOption} width={25} height={25} />
+                        </div>
+                      </Tooltip>
+                    ) : null}
                   </div>
                 }
                 color="#9e1068"
@@ -324,11 +326,13 @@ const StudentReviewsList = ({ artifactReviews, isGamified }) => {
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ color: '#fa541c' }}>Late Reviews: </span>
-                    <Tooltip title="5 points each">
-                      <div>
-                        <Lottie options={infoOption} width={25} height={25} />
-                      </div>
-                    </Tooltip>
+                    {isGamified ? (
+                      <Tooltip title="5 points each">
+                        <div>
+                          <Lottie options={infoOption} width={25} height={25} />
+                        </div>
+                      </Tooltip>
+                    ) : null}
                   </div>
                 }
                 color="#ad2102"
@@ -342,11 +346,13 @@ const StudentReviewsList = ({ artifactReviews, isGamified }) => {
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ color: '#faad14' }}>Mandatory Reviews: </span>
-                    <Tooltip title="10 points each">
-                      <div>
-                        <Lottie options={infoOption} width={25} height={25} />
-                      </div>
-                    </Tooltip>
+                    {isGamified ? (
+                      <Tooltip title="10 points each">
+                        <div>
+                          <Lottie options={infoOption} width={25} height={25} />
+                        </div>
+                      </Tooltip>
+                    ) : null}
                   </div>
                 }
                 color="#ad6800"
@@ -360,22 +366,18 @@ const StudentReviewsList = ({ artifactReviews, isGamified }) => {
                 title={
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{ color: '#1677ff' }}>Optional Reviews: </span>
-                    <Tooltip
-                      title={
-                        showOptional && optionalReviewsColor !== 'grey'
-                          ? '15 point, bonus depends on the lottery result'
-                          : '15 point each, will be available after completing all other reviews'
-                      }>
-                      {isGamified ? (
+                    {isGamified ? (
+                      <Tooltip
+                        title={
+                          showOptional && optionalReviewsColor !== 'grey'
+                            ? '15 point, bonus depends on the lottery result'
+                            : '15 point each, will be available after completing all other reviews'
+                        }>
                         <div>
                           <Lottie options={lotteryOption} width={50} height={50} />
                         </div>
-                      ) : (
-                        <div>
-                          <Lottie options={infoOption} width={25} height={25} />
-                        </div>
-                      )}
-                    </Tooltip>
+                      </Tooltip>
+                    ) : null}
                   </div>
                 }
                 color={optionalReviewsColor}
