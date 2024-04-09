@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
-import { Row, Col, Button, Alert, Form, Typography, message, Input, notification } from 'antd'
+import { Row, Col, Button, Alert, Form, Typography, message, Input, notification, Tooltip, Modal } from 'antd'
 import { useParams, useNavigate, useLocation } from 'react-router'
 import Spinner from '../../components/Spinner'
 import Section from '../survey/Section'
 import { useDispatch, useSelector } from 'react-redux'
-import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
 import { getArtifactReview, saveArtifactReview } from '../../api/artifactReview'
 import { getArtifact } from '../../api/artifacts'
 import ChartWrapper from '../../components/visualization/ChartWrapper'
@@ -21,6 +20,11 @@ import RespondToFeedbackRequestModal from '../../components/RespondToFeedbackReq
 import Lottie from 'react-lottie'
 import coin from '../../assets/coin.json'
 import { postGPT } from '../../api/gpt'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRobot } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+
+
 
 const AssignmentReview = () => {
   const { state = null } = useLocation()
@@ -121,6 +125,10 @@ const AssignmentReview = () => {
     }
   }
 
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [feedbackData, setFeedbackData] = useState([]);
+  const [hasUsedGPTFeedback, setHasUsedGPTFeedback] = useState(false);
+
   const getGPTScoreAndFeedback = async (e) => {
     e.preventDefault()
     e.stopPropagation()
@@ -146,6 +154,9 @@ const AssignmentReview = () => {
         if (res.status === 200) {
           const { score, feedback_array } = res.data
           console.log(score, feedback_array)
+          setFeedbackData(res.data.feedback_array);
+          setFeedbackVisible(true);
+          setHasUsedGPTFeedback(true); 
           // TODO: 
           // 1. make the button a cute robot! Hovering over it will show that it's gpt assistant
           // 2. show each feedback, possibly next to its corresponding question and answer
@@ -267,20 +278,50 @@ const AssignmentReview = () => {
                   )}
                 </div>
                 <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
-                  <Button type="primary" onClick={getGPTScoreAndFeedback}>
-                    GPT
-                  </Button>
+                  <Tooltip title="I am a feedback assistant">
+                    <Button onClick={getGPTScoreAndFeedback} style={{ border: 'none', background: 'transparent' }}>
+                      <FontAwesomeIcon icon={faRobot} style={{ fontSize: '36px' }} />
+                    </Button>
+                  </Tooltip>
                 </div>
                 <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
-                  <Button type="primary" onClick={handleSaveReview}>
-                    Submit Review
-                  </Button>
+                <Tooltip title={
+                  !hasUsedGPTFeedback ? (
+                    <span>
+                      Consider using the GPT feedback assistant for better insights before submitting!   
+                      <FontAwesomeIcon icon={faRobot} style={{ fontSize: '16px', marginLeft: '5px' }} />
+                      <FontAwesomeIcon icon={faArrowLeft} style={{ marginLeft: '5px' }} />
+                    </span>
+                  ) : ""
+                }>
+  <Button type="primary" onClick={handleSaveReview}>
+    Submit Review
+  </Button>
+</Tooltip>
                 </div>
               </>
             }
           </Form>
         </DndProvider>
       )}
+      <Modal
+      title="Robot Pepper"
+      visible={feedbackVisible}
+      onOk={() => setFeedbackVisible(false)}
+      onCancel={() => setFeedbackVisible(false)}
+      footer={null} // Remove default buttons
+    >
+      {feedbackData.map((feedback, index) => (
+        <Alert
+          key={index}
+          message={`Feedback #${index + 1}`}
+          description={feedback}
+          type="info"
+          showIcon
+          style={{ marginBottom: '10px' }}
+        />
+      ))}
+    </Modal>
     </>
   )
 }
