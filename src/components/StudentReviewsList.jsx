@@ -13,7 +13,7 @@ import confetti from '../assets/confetti.json'
 import coin from '../assets/coin.json'
 import info from '../assets/info.json'
 
-const ReviewList = ({ title, reviews, color, bgColor }) => {
+const ReviewList = ({ title, reviews, color, bgColor, isGamified }) => {
   const { course_id } = useParams()
   const navigate = useNavigate()
   const [isModalVisible, setIsModalVisible] = useState(false)
@@ -43,16 +43,16 @@ const ReviewList = ({ title, reviews, color, bgColor }) => {
   const data = [
     { option: 'x2 Points', style: { backgroundColor: 'crimson', textColor: 'white' } },
     { option: '0 Points', style: { backgroundColor: 'deepskyblue', textColor: 'white' } },
-    { option: '+1 Points', style: { backgroundColor: 'forestgreen', textColor: 'white' } },
-    { option: '0 Points', style: { backgroundColor: 'gold', textColor: 'black' } },
-    { option: '+2 Points', style: { backgroundColor: 'darkorange', textColor: 'white' } },
+    { option: '+5 Points', style: { backgroundColor: 'forestgreen', textColor: 'white' } },
+    { option: '+2 Points', style: { backgroundColor: 'gold', textColor: 'black' } },
+    { option: '+1 Points', style: { backgroundColor: 'darkorange', textColor: 'white' } },
     { option: '0 Points', style: { backgroundColor: 'indigo', textColor: 'white' } },
-    { option: '+5 Points', style: { backgroundColor: 'sienna', textColor: 'white' } },
-    { option: '0 Points', style: { backgroundColor: 'royalblue', textColor: 'white' } },
-    { option: '+1 Points', style: { backgroundColor: 'purple', textColor: 'white' } },
-    { option: '0 Points', style: { backgroundColor: 'teal', textColor: 'white' } },
-    { option: '+2 Points', style: { backgroundColor: 'firebrick', textColor: 'white' } },
+    { option: '+1 Points', style: { backgroundColor: 'sienna', textColor: 'white' } },
+    { option: '+5 Points', style: { backgroundColor: 'royalblue', textColor: 'white' } },
+    { option: '+2 Points', style: { backgroundColor: 'purple', textColor: 'white' } },
     { option: '0 Points', style: { backgroundColor: 'darkslateblue', textColor: 'white' } },
+    { option: '+1 Points', style: { backgroundColor: 'teal', textColor: 'white' } },
+    { option: '+2 Points', style: { backgroundColor: 'firebrick', textColor: 'white' } },
     { option: '+1 Points', style: { backgroundColor: 'midnightblue', textColor: 'white' } },
     { option: '0 Points', style: { backgroundColor: 'darkcyan', textColor: 'white' } }
   ]
@@ -63,7 +63,7 @@ const ReviewList = ({ title, reviews, color, bgColor }) => {
     setSelectedReview(review_id)
 
     if (color === '#003eb3') {
-      if (localStorage.getItem('selectedReview') == review_id) {
+      if (localStorage.getItem('selectedReview') == review_id || !isGamified) {
         navigate(reviewUrl)
       } else if (localStorage.getItem('bonus') !== null) {
         if (reviewToPrizeMap.has(review_id)) {
@@ -257,7 +257,7 @@ const ReviewList = ({ title, reviews, color, bgColor }) => {
   )
 }
 
-const StudentReviewsList = ({ artifactReviews }) => {
+const StudentReviewsList = ({ artifactReviews, isGamified }) => {
   const dispatch = useDispatch()
   const reopenReviews = artifactReviews.filter((r) => r.status == 'REOPEN')
   const pendingReviews = artifactReviews.filter((r) => r.status == 'INCOMPLETE')
@@ -316,6 +316,7 @@ const StudentReviewsList = ({ artifactReviews }) => {
                 color="#9e1068"
                 bgColor="#ffd6e7"
                 reviews={reopenReviews}
+                isGamified={isGamified}
               />
             ) : null}
             {showLate ? (
@@ -333,6 +334,7 @@ const StudentReviewsList = ({ artifactReviews }) => {
                 color="#ad2102"
                 bgColor="#ffd8bf"
                 reviews={lateReviews}
+                isGamified={isGamified}
               />
             ) : null}
             {showPending ? (
@@ -350,6 +352,7 @@ const StudentReviewsList = ({ artifactReviews }) => {
                 color="#ad6800"
                 bgColor="#fff1b8"
                 reviews={pendingReviews}
+                isGamified={isGamified}
               />
             ) : null}
             {showOptional ? (
@@ -363,15 +366,22 @@ const StudentReviewsList = ({ artifactReviews }) => {
                           ? '15 point, bonus depends on the lottery result'
                           : '15 point each, will be available after completing all other reviews'
                       }>
-                      <div>
-                        <Lottie options={lotteryOption} width={50} height={50} />
-                      </div>
+                      {isGamified ? (
+                        <div>
+                          <Lottie options={lotteryOption} width={50} height={50} />
+                        </div>
+                      ) : (
+                        <div>
+                          <Lottie options={infoOption} width={25} height={25} />
+                        </div>
+                      )}
                     </Tooltip>
                   </div>
                 }
                 color={optionalReviewsColor}
                 bgColor="#bae0ff"
                 reviews={optionalReviews}
+                isGamified={isGamified}
               />
             ) : null}
           </Space>

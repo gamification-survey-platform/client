@@ -87,7 +87,7 @@ const Home = () => {
   ) : (
     <div>
       {user.is_staff || artifactReviews.length === 0 ? null : (
-        <StudentReviewsList artifactReviews={artifactReviews} showCompleted={false} />
+        <StudentReviewsList artifactReviews={artifactReviews} isGamified={gamified_mode(user)} />
       )}
       <Row>
         <Col span={user.is_staff ? 24 : 17}>
