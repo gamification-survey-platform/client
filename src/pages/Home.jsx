@@ -45,7 +45,10 @@ const Home = () => {
 
         const optionalReview = await getOptionalReview(localStorage.getItem('userId'))
         if (optionalReview.status == 200 && optionalReview.data.length > 0) {
-          reviews.push(optionalReview.data[0])
+          const data = optionalReview.data[0]
+          if (Object.keys(data).length !== 0) {
+            reviews.push(data)
+          }
         }
         setArtifactReviews(reviews)
       } catch (e) {
@@ -82,7 +85,7 @@ const Home = () => {
     <Spinner show={spin} />
   ) : (
     <div>
-      {user.is_staff ? null : artifactReviews.length === 0 ? null : (
+      {user.is_staff || artifactReviews.length === 0 ? null : (
         <StudentReviewsList artifactReviews={artifactReviews} showCompleted={false} />
       )}
       <Row>
