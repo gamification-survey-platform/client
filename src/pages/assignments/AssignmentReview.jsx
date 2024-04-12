@@ -23,6 +23,7 @@ import { postGPT } from '../../api/gpt'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRobot } from '@fortawesome/free-solid-svg-icons';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import Bonus from '../../assets/bonus.png'
 
 
 
@@ -128,8 +129,12 @@ const AssignmentReview = () => {
   const [feedbackVisible, setFeedbackVisible] = useState(false);
   const [feedbackData, setFeedbackData] = useState([]);
   const [hasUsedGPTFeedback, setHasUsedGPTFeedback] = useState(false);
+  const [hasGotGPTPoint, setHasGotGPTPoint] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [gptScore, setGptScore] = useState(-1);
+  const [isLowScoreReminder, setIsLowScoreReminder] = useState(false);
 
-  const getGPTScoreAndFeedback = async (e) => {
+  const getGPTScoreAndFeedback = async (e, showFeedback) => {
     e.preventDefault()
     e.stopPropagation()
     if (form.validateFields()) {
@@ -148,6 +153,10 @@ const AssignmentReview = () => {
             }
           })
         })
+        if (answers.length === 0) {
+          setAlertVisible(true);
+          return
+        }
 
         const res = await postGPT({
           question_ids,
@@ -155,15 +164,15 @@ const AssignmentReview = () => {
           artifact_review_id: review_id
         })
         if (res.status === 200) {
-          const { score, feedback_array } = res.data
-          console.log(score, feedback_array)
+          const { score, feedback_array, got_gpt_point } = res.data
+          console.log(score, feedback_array, got_gpt_point)
+          if (showFeedback) {
+            setFeedbackVisible(true);
+          }
           setFeedbackData(questionData.map((q, idx) => ({ question: q.text, feedback: res.data.feedback_array[idx] })))
-          setFeedbackVisible(true);
-          setHasUsedGPTFeedback(true); 
-          // TODO: 
-          // 1. make the button a cute robot! Hovering over it will show that it's gpt assistant
-          // 2. show each feedback, possibly next to its corresponding question and answer
-          // 3. modify handleSaveReview to show hint to use gpt assistant next time when score < 6
+          setHasUsedGPTFeedback(true);
+          setHasGotGPTPoint(got_gpt_point);
+          setGptScore(score);
         }
       } catch (e) {
         console.error(e)
@@ -176,6 +185,7 @@ const AssignmentReview = () => {
   const handleSaveReview = async (e) => {
     e.preventDefault()
     e.stopPropagation()
+    var hasOpenendedQuestions = false
     if (form.validateFields()) {
       try {
         const review = []
@@ -193,6 +203,9 @@ const AssignmentReview = () => {
                 })
               }
             } else {
+              if (q.question_type === 'TEXTAREA') {
+                hasOpenendedQuestions = true
+              }
               review.push({
                 question_pk: q.pk,
                 answer_text: answer.length ? answer[0].text : ''
@@ -211,15 +224,27 @@ const AssignmentReview = () => {
         })
         if (res.status === 200) {
           const { exp, level, next_exp_level, points } = res.data
+          if (hasOpenendedQuestions) {
+            await getGPTScoreAndFeedback(e, false)
+            if (gptScore >= 0 && gptScore < 6) {
+              setIsLowScoreReminder(true)
+              setAlertVisible(true)
+            }
+          }
           dispatch(setUser({ ...user, exp, level, next_exp_level }))
           dispatch(addCoursePoints({ course_id, points }))
-          navigate(-1)
         }
-        await getGPTScoreAndFeedback(e)
       } catch (e) {
         console.error(e)
         messageApi.open({ type: 'error', content: e.message })
       }
+    }
+  }
+
+  const handleCancel = () => {
+    setAlertVisible(false)
+    if (isLowScoreReminder) {
+      navigate(-1)
     }
   }
 
@@ -282,25 +307,25 @@ const AssignmentReview = () => {
                 </div>
                 <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
                   <Tooltip title="I am a feedback assistant">
-                    <Button onClick={getGPTScoreAndFeedback} style={{ border: 'none', background: 'transparent' }}>
+                    <Button onClick={(e) => getGPTScoreAndFeedback(e, true)} style={{ border: 'none', background: 'transparent' }}>
                       <FontAwesomeIcon icon={faRobot} style={{ fontSize: '36px' }} />
                     </Button>
                   </Tooltip>
                 </div>
                 <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
-                <Tooltip title={
-                  !hasUsedGPTFeedback ? (
-                    <span>
-                      Consider using the GPT feedback assistant for better insights before submitting!   
-                      <FontAwesomeIcon icon={faRobot} style={{ fontSize: '16px', marginLeft: '5px' }} />
-                      <FontAwesomeIcon icon={faArrowLeft} style={{ marginLeft: '5px' }} />
-                    </span>
-                  ) : ""
-                }>
-  <Button type="primary" onClick={handleSaveReview}>
-    Submit Review
-  </Button>
-</Tooltip>
+                  <Tooltip title={
+                    !hasUsedGPTFeedback ? (
+                      <span>
+                        Consider using the GPT feedback assistant for better insights before submitting!
+                        <FontAwesomeIcon icon={faRobot} style={{ fontSize: '16px', marginLeft: '5px' }} />
+                        <FontAwesomeIcon icon={faArrowLeft} style={{ marginLeft: '5px' }} />
+                      </span>
+                    ) : ""
+                  }>
+                    <Button type="primary" onClick={handleSaveReview}>
+                      Submit Review
+                    </Button>
+                  </Tooltip>
                 </div>
               </>
             }
@@ -308,23 +333,43 @@ const AssignmentReview = () => {
         </DndProvider>
       )}
       <Modal
-      title="Robot Pepper's Feedback"
-      visible={feedbackVisible}
-      onOk={() => setFeedbackVisible(false)}
-      onCancel={() => setFeedbackVisible(false)}
-      footer={null}
-    >
-      {feedbackData.map((item, index) => (
+        open={alertVisible}
+        onOk={() => setAlertVisible(false)}
+        onCancel={handleCancel}
+        footer={null}
+      >
         <Alert
-          key={index}
-          message={`Feedback #${index + 1} for "${item.question}"`}
-          description={item.feedback}
-          type="info"
+          message={isLowScoreReminder ? "Reminder" : "Alert"}
+          description={isLowScoreReminder ? "Consider using feedback assistant to provide more specific and helpful feedback next time:)"
+            : "Please only use the feedback assistant if there are open ended questions"}
+          type="warning"
           showIcon
-          style={{ marginBottom: '10px' }}
         />
-      ))}
-    </Modal>
+      </Modal>
+      <Modal
+        title="Robot Pepper's Feedback"
+        visible={feedbackVisible}
+        onOk={() => setFeedbackVisible(false)}
+        onCancel={() => setFeedbackVisible(false)}
+        footer={null}
+      >
+        {hasGotGPTPoint ? (
+          <div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
+            <img src={Bonus} alt="Bonus Icon" width={50} />
+            <p>+5 points for using the feedback assistant for the first time!</p>
+          </div>
+        ) : null}
+        {feedbackData.map((item, index) => (
+          <Alert
+            key={index}
+            message={`Feedback for your answer to "${item.question}"`}
+            description={item.feedback}
+            type="info"
+            showIcon
+            style={{ marginBottom: '10px' }}
+          />
+        ))}
+      </Modal>
     </>
   )
 }
