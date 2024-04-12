@@ -129,7 +129,7 @@ const BadgeContainer = () => {
         alignItems: 'center',
         justifyContent: 'center'
       }}>
-      {gamified_mode(user) && user && user.image && (
+      {!user.is_staff && gamified_mode(user) && user && user.image && (
         <Tooltip title="Avatar Alchemist Badge!👍 Good Job!🔥🔥" color={'#36454F'} placement="left">
           <div style={{ margin: '0 4px' }}>
             <motion.div initial="hidden" animate="visible" variants={variants}>
@@ -138,7 +138,7 @@ const BadgeContainer = () => {
           </div>
         </Tooltip>
       )}
-      {gamified_mode(user) && peerReviewBadge && (
+      {!user.is_staff && gamified_mode(user) && peerReviewBadge && (
         <Tooltip
           title="Peer Review Badge. Try to submit more reviews!🚀🚀"
           color={'#008080'}
@@ -150,7 +150,7 @@ const BadgeContainer = () => {
           </div>
         </Tooltip>
       )}
-      {gamified_mode(user) && singleRowBadge && (
+      {!user.is_staff && gamified_mode(user) && singleRowBadge && (
         <Tooltip
           title="First outstanding feedback badge! Great job on that detailed answer! 🎯"
           color={'#FF1493'}
@@ -162,7 +162,7 @@ const BadgeContainer = () => {
           </div>
         </Tooltip>
       )}
-      {gamified_mode(user) && totalPointsBadge && (
+      {!user.is_staff && gamified_mode(user) && totalPointsBadge && (
         <Tooltip
           title="Badge for all feedback you provided! Outstanding contribution! Keep it up! You will make extra points for next review!🚀"
           color={'#654321'}
