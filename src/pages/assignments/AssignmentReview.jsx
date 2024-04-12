@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Row, Col, Button, Alert, Form, Typography, message, Input, notification } from 'antd'
+import { Row, Col, Button, Alert, Form, Typography, message, Input, notification, Tooltip, Modal } from 'antd'
 import { useParams, useNavigate, useLocation } from 'react-router'
 import Spinner from '../../components/Spinner'
 import Section from '../survey/Section'
@@ -19,6 +19,12 @@ import coursesSelector from '../../store/courses/selectors'
 import RespondToFeedbackRequestModal from '../../components/RespondToFeedbackRequestModal'
 import Lottie from 'react-lottie'
 import coin from '../../assets/coin.json'
+import { postGPT } from '../../api/gpt'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faRobot } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+
+
 
 const AssignmentReview = () => {
   const { state = null } = useLocation()
@@ -119,6 +125,54 @@ const AssignmentReview = () => {
     }
   }
 
+  const [feedbackVisible, setFeedbackVisible] = useState(false);
+  const [feedbackData, setFeedbackData] = useState([]);
+  const [hasUsedGPTFeedback, setHasUsedGPTFeedback] = useState(false);
+
+  const getGPTScoreAndFeedback = async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    if (form.validateFields()) {
+      try {
+        let questionData = [];
+        const question_ids = []
+        const answers = []
+        survey.sections.forEach((s) => {
+          s.questions.forEach((q) => {
+            console.log("abccc ", q);
+            const { question_type, answer } = q
+            if (question_type === 'TEXTAREA') {
+              question_ids.push(q.pk)
+              questionData.push({ id: q.pk, text: q.text })
+              answer.forEach((a) => answers.push(a.text))
+            }
+          })
+        })
+
+        const res = await postGPT({
+          question_ids,
+          answers,
+          artifact_review_id: review_id
+        })
+        if (res.status === 200) {
+          const { score, feedback_array } = res.data
+          console.log(score, feedback_array)
+          setFeedbackData(questionData.map((q, idx) => ({ question: q.text, feedback: res.data.feedback_array[idx] })))
+          setFeedbackVisible(true);
+          setHasUsedGPTFeedback(true); 
+          // TODO: 
+          // 1. make the button a cute robot! Hovering over it will show that it's gpt assistant
+          // 2. show each feedback, possibly next to its corresponding question and answer
+          // 3. modify handleSaveReview to show hint to use gpt assistant next time when score < 6
+        }
+      } catch (e) {
+        console.error(e)
+        messageApi.open({ type: 'error', content: e.message })
+      }
+    }
+  }
+
+
   const handleSaveReview = async (e) => {
     e.preventDefault()
     e.stopPropagation()
@@ -161,6 +215,7 @@ const AssignmentReview = () => {
           dispatch(addCoursePoints({ course_id, points }))
           navigate(-1)
         }
+        await getGPTScoreAndFeedback(e)
       } catch (e) {
         console.error(e)
         messageApi.open({ type: 'error', content: e.message })
@@ -210,7 +265,7 @@ const AssignmentReview = () => {
                 ))}
                 <div style={{ position: 'fixed', right: 10, top: 80 }}>
                   {localStorage.getItem('bonus') === '0 Points' ||
-                  localStorage.getItem('bonus') === null ? null : (
+                    localStorage.getItem('bonus') === null ? null : (
                     <div
                       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span>
@@ -225,16 +280,51 @@ const AssignmentReview = () => {
                     </div>
                   )}
                 </div>
+                <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
+                  <Tooltip title="I am a feedback assistant">
+                    <Button onClick={getGPTScoreAndFeedback} style={{ border: 'none', background: 'transparent' }}>
+                      <FontAwesomeIcon icon={faRobot} style={{ fontSize: '36px' }} />
+                    </Button>
+                  </Tooltip>
+                </div>
                 <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
-                  <Button type="primary" onClick={handleSaveReview}>
-                    Submit Review
-                  </Button>
+                <Tooltip title={
+                  !hasUsedGPTFeedback ? (
+                    <span>
+                      Consider using the GPT feedback assistant for better insights before submitting!   
+                      <FontAwesomeIcon icon={faRobot} style={{ fontSize: '16px', marginLeft: '5px' }} />
+                      <FontAwesomeIcon icon={faArrowLeft} style={{ marginLeft: '5px' }} />
+                    </span>
+                  ) : ""
+                }>
+  <Button type="primary" onClick={handleSaveReview}>
+    Submit Review
+  </Button>
+</Tooltip>
                 </div>
               </>
             }
           </Form>
         </DndProvider>
       )}
+      <Modal
+      title="Robot Pepper's Feedback"
+      visible={feedbackVisible}
+      onOk={() => setFeedbackVisible(false)}
+      onCancel={() => setFeedbackVisible(false)}
+      footer={null}
+    >
+      {feedbackData.map((item, index) => (
+        <Alert
+          key={index}
+          message={`Feedback #${index + 1} for "${item.question}"`}
+          description={item.feedback}
+          type="info"
+          showIcon
+          style={{ marginBottom: '10px' }}
+        />
+      ))}
+    </Modal>
     </>
   )
 }
