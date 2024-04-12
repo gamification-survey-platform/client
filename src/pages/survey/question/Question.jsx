@@ -255,7 +255,7 @@ const MultipleChoiceScale = ({
   const name = `${sectionIdx}-${questionIdx}`;
   const form = useFormInstance();
   const dispatch = useDispatch();
-  const [sliderValue, setSliderValue] = useState(2);
+  const [sliderValue, setSliderValue] = useState(Math.floor(number_of_scale / 2));
   const emojis = scaleOptions[number_of_scale] || [];
   const [showOverlay, setShowOverlay] = useState(false);
   const feedbackTexts = generateFeedbackTexts(emojis.length);
@@ -309,8 +309,8 @@ const MultipleChoiceScale = ({
       name={name}
       rules={[{ required: is_required, message: 'Please complete the above question.' }]}
     >
-      <div style={{ zIndex: 2, position: 'relative' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 10px', }}>
+      <div style={{ zIndex: 2, position: 'relative'}}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 10px' }}>
           {emojis.map((emoji) => (
             <span key={emoji}>{emoji}</span>
           ))}
@@ -602,6 +602,9 @@ const Question = (question) => {
         rules={[
           { required: questionProps.is_required, message: 'Please complete the above question.' }
         ]}
+        style={{ 
+          marginBottom: '80px' 
+        }}
       >
         <div
           className={questionProps.is_required ? 'required-field py-3' : 'py-3'}
