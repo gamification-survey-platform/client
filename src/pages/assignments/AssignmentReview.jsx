@@ -134,13 +134,16 @@ const AssignmentReview = () => {
     e.stopPropagation()
     if (form.validateFields()) {
       try {
+        let questionData = [];
         const question_ids = []
         const answers = []
         survey.sections.forEach((s) => {
           s.questions.forEach((q) => {
+            console.log("abccc ", q);
             const { question_type, answer } = q
             if (question_type === 'TEXTAREA') {
               question_ids.push(q.pk)
+              questionData.push({ id: q.pk, text: q.text })
               answer.forEach((a) => answers.push(a.text))
             }
           })
@@ -154,7 +157,7 @@ const AssignmentReview = () => {
         if (res.status === 200) {
           const { score, feedback_array } = res.data
           console.log(score, feedback_array)
-          setFeedbackData(res.data.feedback_array);
+          setFeedbackData(questionData.map((q, idx) => ({ question: q.text, feedback: res.data.feedback_array[idx] })))
           setFeedbackVisible(true);
           setHasUsedGPTFeedback(true); 
           // TODO: 
@@ -305,17 +308,17 @@ const AssignmentReview = () => {
         </DndProvider>
       )}
       <Modal
-      title="Robot Pepper"
+      title="Robot Pepper's Feedback"
       visible={feedbackVisible}
       onOk={() => setFeedbackVisible(false)}
       onCancel={() => setFeedbackVisible(false)}
-      footer={null} // Remove default buttons
+      footer={null}
     >
-      {feedbackData.map((feedback, index) => (
+      {feedbackData.map((item, index) => (
         <Alert
           key={index}
-          message={`Feedback #${index + 1}`}
-          description={feedback}
+          message={`Feedback #${index + 1} for "${item.question}"`}
+          description={item.feedback}
           type="info"
           showIcon
           style={{ marginBottom: '10px' }}
