@@ -101,10 +101,7 @@ const Section = ({ sectionIdx, artifact }) => {
                   questionIdx={i}
                   handleReorderQuestions={handleReorderQuestions}
                 />
-<<<<<<< Updated upstream
               ))}
-=======
-            ))}
             {gamified_mode(user) && section.sentiment ? (
               <Row justify="end" className="m-3" align="middle">
                 <Typography.Title level={3} className="mr-3">
@@ -113,7 +110,6 @@ const Section = ({ sectionIdx, artifact }) => {
                 <h1 dangerouslySetInnerHTML={{ __html: getSentimentEmoji(section.sentiment) }} />
               </Row>
             ) : null}
->>>>>>> Stashed changes
           </div>
         </Collapse.Panel>
       </Collapse>
