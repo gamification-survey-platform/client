@@ -158,20 +158,6 @@ const AssignmentForm = () => {
           ]}>
           <InputNumber min={1} step={1} />
         </Form.Item>
-        <Form.Item
-          label="Weight (how much of the grade should this contribute towards)"
-          name="weight"
-          rules={[
-            {
-              required: true,
-              message: 'Enter an decimal value between 0 and 1.',
-              pattern: new RegExp(/^0(\.\d+)?$/),
-              min: 0,
-              max: 1
-            }
-          ]}>
-          <InputNumber precision={2} />
-        </Form.Item>
         <Form.Item className="text-center">
           <Button className="ml-3" type="primary" onClick={handleSubmit}>
             {editingAssignment ? 'Edit' : 'Create'}

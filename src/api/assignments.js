@@ -2,7 +2,6 @@ import api from '../api/apiUtils'
 
 const formatAssignment = (assignment) => {
   assignment.total_score = parseFloat(assignment.total_score)
-  assignment.weight = parseFloat(assignment.weight)
   assignment.date_due = new Date(assignment.date_due)
   assignment.date_released = new Date(assignment.date_released)
   return assignment

@@ -18,7 +18,7 @@ import coursesSelector from '../../../store/courses/selectors'
 import { useParams } from 'react-router'
 import styles from '../../../styles/Question.module.css'
 import { gamified_mode } from '../../../gamified'
-import { Slider } from 'antd';
+import { Slider } from 'antd'
 
 const randomEmoji = getRandomEmoji('positive')
 
@@ -227,21 +227,29 @@ const MultipleSelect = ({
 const scaleOptions = {
   3: ['😭', '😐', '😄'],
   5: ['😭', '😟', '😐', '🙂', '😄'],
-  7: ['😭', '😟', '🥲', '😐', '🙂', '😊', '😄'],
-};
+  7: ['😭', '😟', '🥲', '😐', '🙂', '😊', '😄']
+}
 const generateFeedbackTexts = (length) => {
   switch (length) {
     case 3:
-      return ["Disagree", "Neutral", "Agree"];
+      return ['Disagree', 'Neutral', 'Agree']
     case 5:
-      return ["Strongly Disagree", "Disagree", "Neutral", "Agree", "Strongly Agree"];
+      return ['Strongly Disagree', 'Disagree', 'Neutral', 'Agree', 'Strongly Agree']
     case 7:
-      return ["Strongly Disagree", "Disagree", "Somewhat Disagree", "Neutral", "Somewhat Agree", "Agree", "Strongly Agree"];
+      return [
+        'Strongly Disagree',
+        'Disagree',
+        'Somewhat Disagree',
+        'Neutral',
+        'Somewhat Agree',
+        'Agree',
+        'Strongly Agree'
+      ]
     default:
-      console.error(`Unsupported scale length: ${length}`);
-      return [];
+      console.error(`Unsupported scale length: ${length}`)
+      return []
   }
-};
+}
 
 const MultipleChoiceScale = ({
   sectionIdx,
@@ -250,66 +258,65 @@ const MultipleChoiceScale = ({
   question_type,
   is_required,
   number_of_scale,
-  gamified,
+  gamified
 }) => {
-  const name = `${sectionIdx}-${questionIdx}`;
-  const form = useFormInstance();
-  const dispatch = useDispatch();
-  const [sliderValue, setSliderValue] = useState(Math.floor(number_of_scale / 2));
-  const emojis = scaleOptions[number_of_scale] || [];
-  const [showOverlay, setShowOverlay] = useState(false);
-  const feedbackTexts = generateFeedbackTexts(emojis.length);
+  const name = `${sectionIdx}-${questionIdx}`
+  const form = useFormInstance()
+  const dispatch = useDispatch()
+  const [sliderValue, setSliderValue] = useState(Math.floor(number_of_scale / 2))
+  const emojis = scaleOptions[number_of_scale] || []
+  const [showOverlay, setShowOverlay] = useState(false)
+  const feedbackTexts = generateFeedbackTexts(emojis.length)
 
   useEffect(() => {
     // Initialize with existing answer, if applicable
     if (answer && answer.length) {
-      const index = emojis.indexOf(answer[0].text);
+      const index = emojis.indexOf(answer[0].text)
       if (index !== -1) {
-        setSliderValue(index);
+        setSliderValue(index)
       }
     }
-  }, [answer, emojis]);
+  }, [answer, emojis])
 
   //overlay effct
   const handleSliderChange = (value) => {
-    setSliderValue(value);
-    const feedbackTexts = generateFeedbackTexts(emojis.length);
-    const selectedFeedbackText = feedbackTexts[value];
+    setSliderValue(value)
+    const feedbackTexts = generateFeedbackTexts(emojis.length)
+    const selectedFeedbackText = feedbackTexts[value]
     // Set the form field value
-    form.setFieldValue(name, selectedFeedbackText);
+    form.setFieldValue(name, selectedFeedbackText)
     // Dispatch an action to update the answer
-    dispatch(editAnswer({ questionIdx, sectionIdx, answer: selectedFeedbackText, question_type }));
-    setShowOverlay(true);
-    setTimeout(() => setShowOverlay(false), 5000); 
-  };
+    dispatch(editAnswer({ questionIdx, sectionIdx, answer: selectedFeedbackText, question_type }))
+    setShowOverlay(true)
+    setTimeout(() => setShowOverlay(false), 5000)
+  }
 
-  const thumbWidth = 30;
+  const thumbWidth = 30
   const getEmojiStyle = (value) => {
-    const offsetPercent = value * (100 / (emojis.length - 1));
+    const offsetPercent = value * (100 / (emojis.length - 1))
     return {
       position: 'absolute',
-      left: `calc(${offsetPercent}% - ${(thumbWidth / 2)}px)`,
+      left: `calc(${offsetPercent}% - ${thumbWidth / 2}px)`,
       userSelect: 'none',
       lineHeight: `${thumbWidth}px`,
       textAlign: 'center',
       marginTop: `-30px`,
-      fontSize: `25px`,
-    };
-  };
+      fontSize: `25px`
+    }
+  }
 
   const overlayPosition = (value) => ({
     position: 'absolute',
     left: `calc(${value * (100 / (emojis.length - 1))}% - ${thumbWidth / 2}px)`,
     transform: 'translateX(-50%)',
-    userSelect: 'none',
-  });
+    userSelect: 'none'
+  })
 
   return (
     <Form.Item
       name={name}
-      rules={[{ required: is_required, message: 'Please complete the above question.' }]}
-    >
-      <div style={{ zIndex: 2, position: 'relative'}}>
+      rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
+      <div style={{ zIndex: 2, position: 'relative' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 10px' }}>
           {emojis.map((emoji) => (
             <span key={emoji}>{emoji}</span>
@@ -322,39 +329,37 @@ const MultipleChoiceScale = ({
           onChange={handleSliderChange}
           step={1}
           trackStyle={{
-            backgroundColor: 'transparent',
+            backgroundColor: 'transparent'
           }}
           handleStyle={{
-            visibility: 'hidden', // Make the slider handle invisible
+            visibility: 'hidden' // Make the slider handle invisible
           }}
           railStyle={{
             backgroundImage: 'linear-gradient(to right, red, orange, yellow, green)',
-            height: '8px', 
+            height: '8px'
           }}
         />
-        <div style={getEmojiStyle(sliderValue)}>
-          {emojis[sliderValue]}
-        </div>
+        <div style={getEmojiStyle(sliderValue)}>{emojis[sliderValue]}</div>
         {showOverlay && (
           <div style={{ ...overlayPosition(sliderValue), marginTop: '-60px' }}>
-            <span style={{
-              backgroundColor: 'rgba(0,0,0,0.75)', 
-              color: 'white', 
-              padding: '5px 10px', 
-              borderRadius: '10px', 
-              whiteSpace: 'nowrap', 
-              width: 'auto', 
-              maxWidth: '100%',  
-            }}>
+            <span
+              style={{
+                backgroundColor: 'rgba(0,0,0,0.75)',
+                color: 'white',
+                padding: '5px 10px',
+                borderRadius: '10px',
+                whiteSpace: 'nowrap',
+                width: 'auto',
+                maxWidth: '100%'
+              }}>
               {feedbackTexts[sliderValue]}
             </span>
           </div>
         )}
-
       </div>
     </Form.Item>
-  );
-};
+  )
+}
 
 const FixedText = ({ sectionIdx, questionIdx, answer, question_type, is_required, gamified }) => {
   const name = `${sectionIdx}-${questionIdx}`
@@ -602,61 +607,61 @@ const Question = (question) => {
         rules={[
           { required: questionProps.is_required, message: 'Please complete the above question.' }
         ]}
-        style={{ 
-          marginBottom: '80px' 
-        }}
-      >
+        style={{
+          marginBottom: '80px'
+        }}>
         <div
           className={questionProps.is_required ? 'required-field py-3' : 'py-3'}
           style={{ opacity: isDragging ? 0.2 : 1 }}
           ref={dragDropRef}>
           {questionText}
-        
-      
-        <Row>
-          <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
-            {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
-            {question_type === 'MULTIPLESELECT' && <MultipleSelect {...questionProps} />}
-            {question_type === 'SCALEMULTIPLECHOICE' && <MultipleChoiceScale {...questionProps} />}
-            {question_type === 'NUMBER' && <Number {...questionProps} />}
-            {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
-            {question_type === 'MULTIPLETEXT' && <MultiLineText {...questionProps} />}
-            {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
-            {question_type === 'SLIDEREVIEW' && <SlideReview {...questionProps} />}
-          </Col>
-          {survey.instructorView && (
-            <Col span={2}>
-              <EditTwoTone
-                twoToneColor="#ffd43b"
-                style={{
-                  fontSize: '1em',
-                  margin: 10,
-                  pointerEvents: 'auto',
-                  cursor: 'pointer'
-                }}
-                onClick={() => setQuestionModalOpen(true)}
-              />
-              {question_type !== 'SLIDEREVIEW' && (
-                <DeleteTwoTone
-                  twoToneColor="#dc3545"
+
+          <Row>
+            <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
+              {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
+              {question_type === 'MULTIPLESELECT' && <MultipleSelect {...questionProps} />}
+              {question_type === 'SCALEMULTIPLECHOICE' && (
+                <MultipleChoiceScale {...questionProps} />
+              )}
+              {question_type === 'NUMBER' && <Number {...questionProps} />}
+              {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
+              {question_type === 'MULTIPLETEXT' && <MultiLineText {...questionProps} />}
+              {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
+              {question_type === 'SLIDEREVIEW' && <SlideReview {...questionProps} />}
+            </Col>
+            {survey.instructorView && (
+              <Col span={2}>
+                <EditTwoTone
+                  twoToneColor="#ffd43b"
                   style={{
                     fontSize: '1em',
                     margin: 10,
                     pointerEvents: 'auto',
                     cursor: 'pointer'
                   }}
-                  onClick={handleDeleteQuestion}
+                  onClick={() => setQuestionModalOpen(true)}
                 />
-              )}
-            </Col>
-          )}
-          <AddQuestionModal
-            open={questionModalOpen}
-            setOpen={setQuestionModalOpen}
-            sectionIdx={question.sectionIdx}
-            questionIdx={question.questionIdx}
-          />
-        </Row>
+                {question_type !== 'SLIDEREVIEW' && (
+                  <DeleteTwoTone
+                    twoToneColor="#dc3545"
+                    style={{
+                      fontSize: '1em',
+                      margin: 10,
+                      pointerEvents: 'auto',
+                      cursor: 'pointer'
+                    }}
+                    onClick={handleDeleteQuestion}
+                  />
+                )}
+              </Col>
+            )}
+            <AddQuestionModal
+              open={questionModalOpen}
+              setOpen={setQuestionModalOpen}
+              sectionIdx={question.sectionIdx}
+              questionIdx={question.questionIdx}
+            />
+          </Row>
         </div>
       </Form.Item>
     </div>

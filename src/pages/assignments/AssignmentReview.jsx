@@ -1,5 +1,17 @@
 import { useEffect, useState } from 'react'
-import { Row, Col, Button, Alert, Form, Typography, message, Input, notification, Tooltip, Modal } from 'antd'
+import {
+  Row,
+  Col,
+  Button,
+  Alert,
+  Form,
+  Typography,
+  message,
+  Input,
+  notification,
+  Tooltip,
+  Modal
+} from 'antd'
 import { useParams, useNavigate, useLocation } from 'react-router'
 import Spinner from '../../components/Spinner'
 import Section from '../survey/Section'
@@ -20,12 +32,10 @@ import RespondToFeedbackRequestModal from '../../components/RespondToFeedbackReq
 import Lottie from 'react-lottie'
 import coin from '../../assets/coin.json'
 import { postGPT } from '../../api/gpt'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faRobot } from '@fortawesome/free-solid-svg-icons';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faRobot } from '@fortawesome/free-solid-svg-icons'
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import Bonus from '../../assets/bonus.png'
-
-
 
 const AssignmentReview = () => {
   const { state = null } = useLocation()
@@ -126,25 +136,25 @@ const AssignmentReview = () => {
     }
   }
 
-  const [feedbackVisible, setFeedbackVisible] = useState(false);
-  const [feedbackData, setFeedbackData] = useState([]);
-  const [hasUsedGPTFeedback, setHasUsedGPTFeedback] = useState(false);
-  const [hasGotGPTPoint, setHasGotGPTPoint] = useState(false);
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [gptScore, setGptScore] = useState(-1);
-  const [isLowScoreReminder, setIsLowScoreReminder] = useState(false);
+  const [feedbackVisible, setFeedbackVisible] = useState(false)
+  const [feedbackData, setFeedbackData] = useState([])
+  const [hasUsedGPTFeedback, setHasUsedGPTFeedback] = useState(false)
+  const [hasGotGPTPoint, setHasGotGPTPoint] = useState(false)
+  const [alertVisible, setAlertVisible] = useState(false)
+  const [gptScore, setGptScore] = useState(-1)
+  const [isLowScoreReminder, setIsLowScoreReminder] = useState(false)
 
   const getGPTScoreAndFeedback = async (e, showFeedback) => {
     e.preventDefault()
     e.stopPropagation()
     if (form.validateFields()) {
       try {
-        let questionData = [];
+        let questionData = []
         const question_ids = []
         const answers = []
         survey.sections.forEach((s) => {
           s.questions.forEach((q) => {
-            console.log("abccc ", q);
+            console.log('abccc ', q)
             const { question_type, answer } = q
             if (question_type === 'TEXTAREA') {
               question_ids.push(q.pk)
@@ -154,7 +164,7 @@ const AssignmentReview = () => {
           })
         })
         if (answers.length === 0) {
-          setAlertVisible(true);
+          setAlertVisible(true)
           return
         }
 
@@ -167,12 +177,17 @@ const AssignmentReview = () => {
           const { score, feedback_array, got_gpt_point } = res.data
           console.log(score, feedback_array, got_gpt_point)
           if (showFeedback) {
-            setFeedbackVisible(true);
+            setFeedbackVisible(true)
           }
-          setFeedbackData(questionData.map((q, idx) => ({ question: q.text, feedback: res.data.feedback_array[idx] })))
-          setHasUsedGPTFeedback(true);
-          setHasGotGPTPoint(got_gpt_point);
-          setGptScore(score);
+          setFeedbackData(
+            questionData.map((q, idx) => ({
+              question: q.text,
+              feedback: res.data.feedback_array[idx]
+            }))
+          )
+          setHasUsedGPTFeedback(true)
+          setHasGotGPTPoint(got_gpt_point)
+          setGptScore(score)
         }
       } catch (e) {
         console.error(e)
@@ -180,7 +195,6 @@ const AssignmentReview = () => {
       }
     }
   }
-
 
   const handleSaveReview = async (e) => {
     e.preventDefault()
@@ -290,7 +304,7 @@ const AssignmentReview = () => {
                 ))}
                 <div style={{ position: 'fixed', right: 10, top: 80 }}>
                   {localStorage.getItem('bonus') === '0 Points' ||
-                    localStorage.getItem('bonus') === null ? null : (
+                  localStorage.getItem('bonus') === null ? null : (
                     <div
                       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span>
@@ -307,21 +321,30 @@ const AssignmentReview = () => {
                 </div>
                 <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
                   <Tooltip title="I am a feedback assistant">
-                    <Button onClick={(e) => getGPTScoreAndFeedback(e, true)} style={{ border: 'none', background: 'transparent' }}>
+                    <Button
+                      onClick={(e) => getGPTScoreAndFeedback(e, true)}
+                      style={{ border: 'none', background: 'transparent' }}>
                       <FontAwesomeIcon icon={faRobot} style={{ fontSize: '36px' }} />
                     </Button>
                   </Tooltip>
                 </div>
                 <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
-                  <Tooltip title={
-                    !hasUsedGPTFeedback ? (
-                      <span>
-                        Consider using the GPT feedback assistant for better insights before submitting!
-                        <FontAwesomeIcon icon={faRobot} style={{ fontSize: '16px', marginLeft: '5px' }} />
-                        <FontAwesomeIcon icon={faArrowLeft} style={{ marginLeft: '5px' }} />
-                      </span>
-                    ) : ""
-                  }>
+                  <Tooltip
+                    title={
+                      !hasUsedGPTFeedback ? (
+                        <span>
+                          Consider using the GPT feedback assistant for better insights before
+                          submitting!
+                          <FontAwesomeIcon
+                            icon={faRobot}
+                            style={{ fontSize: '16px', marginLeft: '5px' }}
+                          />
+                          <FontAwesomeIcon icon={faArrowLeft} style={{ marginLeft: '5px' }} />
+                        </span>
+                      ) : (
+                        ''
+                      )
+                    }>
                     <Button type="primary" onClick={handleSaveReview}>
                       Submit Review
                     </Button>
@@ -336,12 +359,14 @@ const AssignmentReview = () => {
         open={alertVisible}
         onOk={() => setAlertVisible(false)}
         onCancel={handleCancel}
-        footer={null}
-      >
+        footer={null}>
         <Alert
-          message={isLowScoreReminder ? "Reminder" : "Alert"}
-          description={isLowScoreReminder ? "Consider using feedback assistant to provide more specific and helpful feedback next time:)"
-            : "Please only use the feedback assistant if there are open ended questions"}
+          message={isLowScoreReminder ? 'Reminder' : 'Alert'}
+          description={
+            isLowScoreReminder
+              ? 'Consider using feedback assistant to provide more specific and helpful feedback next time:)'
+              : 'Please only use the feedback assistant if there are open ended questions'
+          }
           type="warning"
           showIcon
         />
@@ -351,8 +376,7 @@ const AssignmentReview = () => {
         visible={feedbackVisible}
         onOk={() => setFeedbackVisible(false)}
         onCancel={() => setFeedbackVisible(false)}
-        footer={null}
-      >
+        footer={null}>
         {hasGotGPTPoint ? (
           <div style={{ marginBottom: '10px', display: 'flex', alignItems: 'center' }}>
             <img src={Bonus} alt="Bonus Icon" width={50} />

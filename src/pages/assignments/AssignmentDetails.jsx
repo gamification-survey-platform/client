@@ -34,7 +34,6 @@ const AssignmentDetails = () => {
     assignment_type: '',
     description: '',
     total_score: 0,
-    weight: 0,
     course: 0,
     date_due: new Date(),
     pk: 0,
@@ -169,7 +168,6 @@ const AssignmentDetails = () => {
             <Divider />
             <Space>
               <Col>Total Score: {assignment.total_score}</Col>
-              <Col>Weight: {assignment.weight}</Col>
               <Col>Due date: {assignment.date_due.toDateString()}</Col>
             </Space>
           </div>
