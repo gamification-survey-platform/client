@@ -41,8 +41,12 @@ const surveySlice = createSlice({
     setSurvey: (state, action) => ({ ...state, ...action.payload }),
     changeView: (state) => ({ ...state, instructorView: !state.instructorView }),
     addSection: (state, action) => {
-      const sections = [{ ...action.payload, questions: [] }, ...state.sections]
-      return { ...state, sections }
+      const newSection = { ...action.payload, questions: [] };
+      if (newSection.title === "Artifact") {
+        state.sections.unshift(newSection);
+      } else {
+        state.sections.push(newSection);
+      }
     },
     editSection: (state, action) => {
       const { section, sectionIdx } = action.payload
