@@ -1,37 +1,37 @@
-import { Row, Col, Typography, Collapse } from 'antd';
-import { EditTwoTone, PlusCircleTwoTone, DeleteTwoTone } from '@ant-design/icons';
-import { useState } from 'react';
-import AddQuestionModal from './AddQuestionModal';
-import Question from './question/Question';
-import AddSectionModal from './AddSectionModal';
-import { useDispatch, useSelector } from 'react-redux';
-import surveySelector from '../../store/survey/selectors';
-import { deleteSection, reorderQuestions } from '../../store/survey/surveySlice';
-import { getSentimentEmoji } from './sentiment'; // Make sure to keep this import
-import { gamified_mode } from '../../gamified';
-import userSelector from '../../store/user/selectors';
+import { Row, Col, Typography, Collapse } from 'antd'
+import { EditTwoTone, PlusCircleTwoTone, DeleteTwoTone } from '@ant-design/icons'
+import { useState } from 'react'
+import AddQuestionModal from './AddQuestionModal'
+import Question from './question/Question'
+import AddSectionModal from './AddSectionModal'
+import { useDispatch, useSelector } from 'react-redux'
+import surveySelector from '../../store/survey/selectors'
+import { deleteSection, reorderQuestions } from '../../store/survey/surveySlice'
+import { getSentimentEmoji } from './sentiment' // Make sure to keep this import
+import { gamified_mode } from '../../gamified'
+import userSelector from '../../store/user/selectors'
 
 const Section = ({ sectionIdx, artifact }) => {
-  const user = useSelector(userSelector);
-  const [questionModalOpen, setQuestionModalOpen] = useState(false);
-  const [sectionModalOpen, setSectionModalOpen] = useState(false);
-  const survey = useSelector(surveySelector);
-  const dispatch = useDispatch();
+  const user = useSelector(userSelector)
+  const [questionModalOpen, setQuestionModalOpen] = useState(false)
+  const [sectionModalOpen, setSectionModalOpen] = useState(false)
+  const survey = useSelector(surveySelector)
+  const dispatch = useDispatch()
 
   const section = survey.sections.find((_, i) => i === sectionIdx) || {
     title: '',
     is_required: false,
     questions: []
-  };
-  const { title, is_required, questions } = section;
-  let className = 'text-left mb-3';
-  if (is_required) className += ' required-field';
+  }
+  const { title, is_required, questions } = section
+  let className = 'text-left mb-3'
+  if (is_required) className += ' required-field'
 
-  const handleDeleteSection = () => dispatch(deleteSection({ sectionIdx }));
+  const handleDeleteSection = () => dispatch(deleteSection({ sectionIdx }))
 
   const handleReorderQuestions = (dragIndex, hoverIndex) => {
-    dispatch(reorderQuestions({ sectionIdx, i: dragIndex, j: hoverIndex }));
-  };
+    dispatch(reorderQuestions({ sectionIdx, i: dragIndex, j: hoverIndex }))
+  }
 
   return (
     <>
@@ -92,16 +92,16 @@ const Section = ({ sectionIdx, artifact }) => {
               )}
             </Row>
             {questions.map((question, i) => (
-                <Question
-                  key={i}
-                  {...question}
-                  sectionIdx={sectionIdx}
-                  artifact={artifact}
-                  index={i}
-                  questionIdx={i}
-                  handleReorderQuestions={handleReorderQuestions}
-                />
-              ))}
+              <Question
+                key={i}
+                {...question}
+                sectionIdx={sectionIdx}
+                artifact={artifact}
+                index={i}
+                questionIdx={i}
+                handleReorderQuestions={handleReorderQuestions}
+              />
+            ))}
             {gamified_mode(user) && section.sentiment ? (
               <Row justify="end" className="m-3" align="middle">
                 <Typography.Title level={3} className="mr-3">
@@ -114,7 +114,7 @@ const Section = ({ sectionIdx, artifact }) => {
         </Collapse.Panel>
       </Collapse>
     </>
-  );
-};
+  )
+}
 
-export default Section;
+export default Section

@@ -33,27 +33,29 @@ const Home = () => {
       } catch (e) {
         console.error(e.message)
       }
-      try {
-        const openReviews = await getUserArtifactReviews(localStorage.getItem('userId'))
+      if (!user.is_staff) {
+        try {
+          const openReviews = await getUserArtifactReviews(localStorage.getItem('userId'))
 
-        const reviews = []
-        if (openReviews.status === 200) {
-          openReviews.data.forEach((e) => {
-            reviews.push(e)
-          })
-        }
-        if (reviews.length == 0) {
-          const optionalReview = await getOptionalReview(localStorage.getItem('userId'))
-          if (optionalReview.status == 200 && optionalReview.data.length > 0) {
-            const data = optionalReview.data[0]
-            if (Object.keys(data).length !== 0) {
-              reviews.push(data)
+          const reviews = []
+          if (openReviews.status === 200) {
+            openReviews.data.forEach((e) => {
+              reviews.push(e)
+            })
+          }
+          if (reviews.length == 0) {
+            const optionalReview = await getOptionalReview(localStorage.getItem('userId'))
+            if (optionalReview.status == 200 && optionalReview.data.length > 0) {
+              const data = optionalReview.data[0]
+              if (Object.keys(data).length !== 0) {
+                reviews.push(data)
+              }
             }
           }
+          setArtifactReviews(reviews)
+        } catch (e) {
+          console.error(e.message)
         }
-        setArtifactReviews(reviews)
-      } catch (e) {
-        console.error(e.message)
       }
       try {
         const res = await getTheme()
