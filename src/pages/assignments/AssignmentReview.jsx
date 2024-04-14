@@ -57,7 +57,7 @@ const AssignmentReview = () => {
   const survey = useSelector(surveySelector)
   const progress = survey.progress
   const [respondToRequestFeedbackData, setRespondToRequestFeedbackData] = useState()
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -150,6 +150,7 @@ const AssignmentReview = () => {
   const getGPTScoreAndFeedback = async (e, showFeedback) => {
     e.preventDefault()
     e.stopPropagation()
+    setLoading(true);
     if (form.validateFields()) {
       try {
         let questionData = []
@@ -167,6 +168,7 @@ const AssignmentReview = () => {
           })
         })
         if (answers.length === 0) {
+          setLoading(false);
           setAlertVisible(true)
           return
         }
@@ -196,6 +198,7 @@ const AssignmentReview = () => {
         console.error(e)
         messageApi.open({ type: 'error', content: e.message })
       }
+      setLoading(false);
     }
   }
 
@@ -269,6 +272,9 @@ const AssignmentReview = () => {
     <>
       {contextHolder}
       {notificationContextHolder}
+      <div style={{ position: 'fixed', zIndex: 1050, width: '100%', height: '100%', display: loading ? 'flex' : 'none', justifyContent: 'center', alignItems: 'center' }}>
+        <Spinner show={loading} />
+      </div>
       {spin ? (
         <Spinner show={spin} />
       ) : (
