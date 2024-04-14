@@ -12,7 +12,6 @@ import { useDrag, useDrop } from 'react-dnd'
 import themeSelector from '../../../store/theme/selectors'
 import userSelector from '../../../store/user/selectors'
 import renderScene from '../../../components/multiple-choice/renderMultipleChoiceAnimation'
-import TextFeedback from '../../../components/TextFeedback'
 import { getRandomEmoji } from './emojis'
 import coursesSelector from '../../../store/courses/selectors'
 import { useParams } from 'react-router'
@@ -390,7 +389,6 @@ const FixedText = ({ sectionIdx, questionIdx, answer, question_type, is_required
         rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
         <Input onBlur={handleBlur} className={styles.input} />
       </Form.Item>
-      {text && gamified && <TextFeedback text={text} />}
     </div>
   )
 }
@@ -539,7 +537,6 @@ const TextArea = ({ sectionIdx, questionIdx, answer, question_type, is_required,
         rules={[{ required: is_required, message: 'Please complete the above question.' }]}>
         <Input.TextArea rows={4} onBlur={handleBlur} />
       </Form.Item>
-      {text && gamified && <TextFeedback text={text} />}
     </div>
   )
 }
