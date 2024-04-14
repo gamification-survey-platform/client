@@ -36,6 +36,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRobot } from '@fortawesome/free-solid-svg-icons'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import Bonus from '../../assets/bonus.png'
+import robotPepper from '../../assets/robotPepper.gif';
+
+<img src={robotPepper} alt="New Robot" style={{ width: 140, height: 140 }} />
 
 const AssignmentReview = () => {
   const { state = null } = useLocation()
@@ -320,20 +323,38 @@ const AssignmentReview = () => {
                   )}
                 </div>
                 <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
-                  <Tooltip title="I am a feedback assistant">
-                    <Button
-                      onClick={(e) => getGPTScoreAndFeedback(e, true)}
-                      style={{ border: 'none', background: 'transparent' }}>
-                      <FontAwesomeIcon icon={faRobot} style={{ fontSize: '36px' }} />
-                    </Button>
+                  <Tooltip title="I am robot Pepper, here to assist with the quality of feedback. Click for insights.">
+                    <Button 
+                        onClick={(e) => getGPTScoreAndFeedback(e, true)} 
+                        onMouseOver={({ currentTarget }) => {
+                          currentTarget.style.opacity = 0.6;
+                        }}
+                        onMouseOut={({ currentTarget }) => {
+                          currentTarget.style.opacity = 1;
+                        }}
+                        style={{ 
+                          border: 'none', 
+                          background: 'transparent', 
+                          padding: '0', 
+                          height: '60px', 
+                          width: '65px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          transition: 'opacity 0.3s'
+                        }}>
+                        <img src={robotPepper} alt="Robot Pepper" style={{ width: '100%', height: '100%' }} />
+                      </Button>
                   </Tooltip>
+
                 </div>
                 <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
                   <Tooltip
                     title={
                       !hasUsedGPTFeedback ? (
                         <span>
-                          Consider using the GPT feedback assistant for better insights before
+                          Consider using the robot Pepper for better insights before
                           submitting!
                           <FontAwesomeIcon
                             icon={faRobot}
