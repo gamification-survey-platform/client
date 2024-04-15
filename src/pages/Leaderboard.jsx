@@ -44,12 +44,18 @@ const Leaderboard = () => {
       let rank = 0
       let prevExperience = null
       const dataWithRanking = data.map((d, index) => {
-        // Increment rank only if the current experience is less than the previous one.
-        if (prevExperience !== d.course_experience) {
-          rank = index + 1
-          prevExperience = d.course_experience
+        if (course_id) {
+          // Increment rank only if the current experience is less than the previous one.
+          if (prevExperience !== d.course_experience) {
+            rank = index + 1
+            prevExperience = d.course_experience
+          }
+        } else {
+          if (prevExperience !== d.exp) {
+            rank = index + 1
+            prevExperience = d.exp
+          }
         }
-
         return { ...d, key: index, ranking: rank }
       })
 
