@@ -35,7 +35,12 @@ import { postGPT } from '../../api/gpt'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRobot } from '@fortawesome/free-solid-svg-icons'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Bonus from '../../assets/bonus.png'
+import robotPepper from '../../assets/robotPepper.gif';
+import fivePoints from '../../assets/5points.png';
+
+<img src={robotPepper} alt="New Robot" style={{ width: 140, height: 140 }} />
 
 const AssignmentReview = () => {
   const { state = null } = useLocation()
@@ -54,7 +59,7 @@ const AssignmentReview = () => {
   const survey = useSelector(surveySelector)
   const progress = survey.progress
   const [respondToRequestFeedbackData, setRespondToRequestFeedbackData] = useState()
-
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -147,6 +152,7 @@ const AssignmentReview = () => {
   const getGPTScoreAndFeedback = async (e, showFeedback) => {
     e.preventDefault()
     e.stopPropagation()
+    setLoading(true);
     if (form.validateFields()) {
       try {
         let questionData = []
@@ -164,6 +170,7 @@ const AssignmentReview = () => {
           })
         })
         if (answers.length === 0) {
+          setLoading(false);
           setAlertVisible(true)
           return
         }
@@ -193,6 +200,7 @@ const AssignmentReview = () => {
         console.error(e)
         messageApi.open({ type: 'error', content: e.message })
       }
+      setLoading(false);
     }
   }
 
@@ -270,6 +278,9 @@ const AssignmentReview = () => {
     <>
       {contextHolder}
       {notificationContextHolder}
+      <div style={{ position: 'fixed', zIndex: 1050, width: '100%', height: '100%', display: loading ? 'flex' : 'none', justifyContent: 'center', alignItems: 'center' }}>
+        <Spinner show={loading} />
+      </div>
       {spin ? (
         <Spinner show={spin} />
       ) : (
@@ -324,20 +335,62 @@ const AssignmentReview = () => {
                   )}
                 </div>
                 <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
-                  <Tooltip title="I am a feedback assistant">
-                    <Button
-                      onClick={(e) => getGPTScoreAndFeedback(e, true)}
-                      style={{ border: 'none', background: 'transparent' }}>
-                      <FontAwesomeIcon icon={faRobot} style={{ fontSize: '36px' }} />
-                    </Button>
+                <Tooltip 
+                  title={
+                    <span>
+                      Get 5 points when you use the robot Pepper for the first time on this assignment!
+                      <FontAwesomeIcon
+                        icon={faArrowRight}
+                        style={{ fontSize: '16px', marginLeft: '5px' }}
+                      />
+                      <FontAwesomeIcon
+                        icon={faRobot}
+                        style={{ fontSize: '16px', marginLeft: '5px' }}
+                      />
+                    </span>
+                  }>
+                  <img src={fivePoints} alt="5 Points Reward" style={{
+                    width: '50px',
+                    height: '50px',
+                    cursor: 'pointer',
+                    position: 'absolute',
+                    top: '10px', 
+                    right: '80px'
+                  }} />
+                </Tooltip>
+                  
+                  <Tooltip title="I am robot Pepper, here to assist with the quality of feedback. Click for insights.">
+                    <Button 
+                        onClick={(e) => getGPTScoreAndFeedback(e, true)} 
+                        onMouseOver={({ currentTarget }) => {
+                          currentTarget.style.opacity = 0.6;
+                        }}
+                        onMouseOut={({ currentTarget }) => {
+                          currentTarget.style.opacity = 1;
+                        }}
+                        style={{ 
+                          border: 'none', 
+                          background: 'transparent', 
+                          padding: '0', 
+                          height: '60px', 
+                          width: '65px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          transition: 'opacity 0.3s'
+                        }}>
+                        <img src={robotPepper} alt="Robot Pepper" style={{ width: '100%', height: '100%' }} />
+                      </Button>
                   </Tooltip>
+
                 </div>
                 <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
                   <Tooltip
                     title={
                       !hasUsedGPTFeedback ? (
                         <span>
-                          Consider using the GPT feedback assistant for better insights before
+                          Consider using the robot Pepper for better insights before
                           submitting!
                           <FontAwesomeIcon
                             icon={faRobot}
