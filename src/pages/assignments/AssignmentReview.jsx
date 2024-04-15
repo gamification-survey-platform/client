@@ -35,8 +35,10 @@ import { postGPT } from '../../api/gpt'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRobot } from '@fortawesome/free-solid-svg-icons'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Bonus from '../../assets/bonus.png'
 import robotPepper from '../../assets/robotPepper.gif';
+import fivePoints from '../../assets/5points.png';
 
 <img src={robotPepper} alt="New Robot" style={{ width: 140, height: 140 }} />
 
@@ -329,6 +331,30 @@ const AssignmentReview = () => {
                   )}
                 </div>
                 <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
+                <Tooltip 
+                  title={
+                    <span>
+                      Get 5 points when you use the robot Pepper for the first time on this assignment!
+                      <FontAwesomeIcon
+                        icon={faArrowRight}
+                        style={{ fontSize: '16px', marginLeft: '5px' }}
+                      />
+                      <FontAwesomeIcon
+                        icon={faRobot}
+                        style={{ fontSize: '16px', marginLeft: '5px' }}
+                      />
+                    </span>
+                  }>
+                  <img src={fivePoints} alt="5 Points Reward" style={{
+                    width: '50px',
+                    height: '50px',
+                    cursor: 'pointer',
+                    position: 'absolute',
+                    top: '10px', 
+                    right: '80px'
+                  }} />
+                </Tooltip>
+                  
                   <Tooltip title="I am robot Pepper, here to assist with the quality of feedback. Click for insights.">
                     <Button 
                         onClick={(e) => getGPTScoreAndFeedback(e, true)} 
