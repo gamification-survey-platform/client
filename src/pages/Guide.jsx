@@ -93,6 +93,61 @@ const Guide = () => {
       key: '7',
       action: 'Daily streak, 3 days in a row',
       points: '10pt'
+    },
+    {
+      key: '8',
+      action: 'Complete trivia without hints',
+      points: '12pt'
+    },
+    {
+      key: '9',
+      action: 'Complete trivia with one hint',
+      points: '6pt'
+    },
+    {
+      key: '10',
+      action: 'Complete trivia with two hints',
+      points: '3pt'
+    },
+    {
+      key: '11',
+      action: 'Earn "Comment Captain Bronze" badge (50-99 points)',
+      points: '20pt bonus on next review'
+    },
+    {
+      key: '12',
+      action: 'Earn "Comment Captain Silver" badge (100-199 points)',
+      points: '50pt bonus on next review'
+    },
+    {
+      key: '13',
+      action: 'Earn "Comment Captain Gold" badge (200-299 points)',
+      points: '90pt bonus on next review'
+    },
+    {
+      key: '14',
+      action: 'Earn "Comment Crusader Bronze" badge (300-399 points)',
+      points: '140pt bonus on next review'
+    },
+    {
+      key: '15',
+      action: 'Earn "Comment Crusader Silver" badge (400-499 points)',
+      points: '200pt bonus on next review'
+    },
+    {
+      key: '16',
+      action: 'Earn "Comment Crusader Gold" badge (500+ points)',
+      points: '275pt bonus on next review'
+    },
+    {
+      key: '17',
+      action: 'Lottery on optional review',
+      points: '15pt + lottery bonus'
+    },
+    {
+      key: '18',
+      action: 'Asking feedback with GPT assistant for the first time',
+      points: '5pt'
     }
   ]
 

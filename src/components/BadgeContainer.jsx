@@ -138,18 +138,6 @@ const BadgeContainer = () => {
           </div>
         </Tooltip>
       )}
-      {!user.is_staff && gamified_mode(user) && peerReviewBadge && (
-        <Tooltip
-          title="Peer Review Badge. Try to submit more reviews!🚀🚀"
-          color={'#008080'}
-          placement="left">
-          <div style={{ margin: '0 4px' }}>
-            <motion.div initial="hidden" animate="visible" variants={variants}>
-              <Image src={peerReviewBadge} preview={false} width={55} height={55} />
-            </motion.div>
-          </div>
-        </Tooltip>
-      )}
       {!user.is_staff && gamified_mode(user) && singleRowBadge && (
         <Tooltip
           title="First outstanding feedback badge! Great job on that detailed answer! 🎯"
@@ -164,7 +152,7 @@ const BadgeContainer = () => {
       )}
       {!user.is_staff && gamified_mode(user) && totalPointsBadge && (
         <Tooltip
-          title="Badge for all feedback you provided! Outstanding contribution! Keep it up! You will make extra points for next review!🚀"
+          title="Badge for all feedback you provided! Outstanding contribution! Keep it up! You might make extra points for next review! See the rules on Guide Page!🚀"
           color={'#654321'}
           placement="top">
           <div style={{ margin: '0 4px' }}>
