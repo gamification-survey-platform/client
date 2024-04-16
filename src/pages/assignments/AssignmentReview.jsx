@@ -62,6 +62,7 @@ const AssignmentReview = () => {
   const [respondToRequestFeedbackData, setRespondToRequestFeedbackData] = useState()
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const [isIconHovered, setIsIconHovered] = useState(false);
 
   useEffect(() => {
     if (state && survey.sections.length) {
@@ -364,26 +365,34 @@ const AssignmentReview = () => {
                         src={fivePoints}
                         alt="5 Points Reward"
                         style={{
-                          width: '50px',
-                          height: '50px',
+                          width: '60px',
+                          height: '60px',
                           cursor: 'pointer',
                           position: 'absolute',
-                          top: '12px',
-                          right: '110px'
+                          top: '25px',
+                          right: '150px'
                         }}
                       />
                     </Tooltip>
                   )}
-
                   <Tooltip title="I am robot Pepper, here to assist with the quality of feedback. Click for insights.">
                     <Button
                       onClick={(e) => getGPTScoreAndFeedback(e, true)}
-                      style={{ border: 'none', background: 'transparent' }}>
-                      <FontAwesomeIcon icon={faRobot} style={{ fontSize: '56px' }} />
+                      onMouseEnter={() => setIsIconHovered(true)}
+                      onMouseLeave={() => setIsIconHovered(false)} 
+                      style={{ border: 'none', background: 'transparent' }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faRobot}
+                        style={{
+                          fontSize: '86px',
+                          color: isIconHovered ? '#30D5C8' : '#333333'
+                        }}
+                      />
                     </Button>
                   </Tooltip>
                 </div>
-                <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
+                <div style={{ position: 'fixed', right: 15, bottom: 10 }}>
                   <Tooltip
                     title={
                       !hasUsedGPTFeedback ? (
