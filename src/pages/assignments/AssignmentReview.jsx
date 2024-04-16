@@ -39,6 +39,7 @@ import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Bonus from '../../assets/bonus.png'
 import robotPepper from '../../assets/robotPepper.gif';
 import fivePoints from '../../assets/5points.png';
+import { gamified_mode } from '../../gamified'
 
 <img src={robotPepper} alt="New Robot" style={{ width: 140, height: 140 }} />
 
@@ -50,6 +51,7 @@ const AssignmentReview = () => {
     ({ course_number }) => parseInt(course_number) === parseInt(course_id)
   )
   const user = useSelector(userSelector)
+  const isGamified = gamified_mode(user);
   const [messageApi, contextHolder] = message.useMessage()
   const [_, notificationContextHolder] = notification.useNotification()
   const [spin, setSpin] = useState(false)
@@ -335,6 +337,7 @@ const AssignmentReview = () => {
                   )}
                 </div>
                 <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
+                { isGamified && (
                 <Tooltip 
                   title={
                     <span>
@@ -358,6 +361,7 @@ const AssignmentReview = () => {
                     right: '80px'
                   }} />
                 </Tooltip>
+                )}
                   
                   <Tooltip title="I am robot Pepper, here to assist with the quality of feedback. Click for insights.">
                     <Button 
