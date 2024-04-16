@@ -35,13 +35,12 @@ import { postGPT } from '../../api/gpt'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faRobot } from '@fortawesome/free-solid-svg-icons'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import Bonus from '../../assets/bonus.png'
-import robotPepper from '../../assets/robotPepper.gif';
-import fivePoints from '../../assets/5points.png';
+import robotPepper from '../../assets/robotPepper.gif'
+import fivePoints from '../../assets/5points.png'
 import { gamified_mode } from '../../gamified'
-
-<img src={robotPepper} alt="New Robot" style={{ width: 140, height: 140 }} />
+;<img src={robotPepper} alt="New Robot" style={{ width: 140, height: 140 }} />
 
 const AssignmentReview = () => {
   const { state = null } = useLocation()
@@ -51,7 +50,7 @@ const AssignmentReview = () => {
     ({ course_number }) => parseInt(course_number) === parseInt(course_id)
   )
   const user = useSelector(userSelector)
-  const isGamified = gamified_mode(user);
+  const isGamified = gamified_mode(user)
   const [messageApi, contextHolder] = message.useMessage()
   const [_, notificationContextHolder] = notification.useNotification()
   const [spin, setSpin] = useState(false)
@@ -61,7 +60,7 @@ const AssignmentReview = () => {
   const survey = useSelector(surveySelector)
   const progress = survey.progress
   const [respondToRequestFeedbackData, setRespondToRequestFeedbackData] = useState()
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -154,7 +153,7 @@ const AssignmentReview = () => {
   const getGPTScoreAndFeedback = async (e, showFeedback) => {
     e.preventDefault()
     e.stopPropagation()
-    setLoading(true);
+    setLoading(true)
     if (form.validateFields()) {
       try {
         let questionData = []
@@ -171,7 +170,7 @@ const AssignmentReview = () => {
           })
         })
         if (answers.length === 0) {
-          setLoading(false);
+          setLoading(false)
           setAlertVisible(true)
           return
         }
@@ -201,7 +200,7 @@ const AssignmentReview = () => {
         console.error(e)
         messageApi.open({ type: 'error', content: e.message })
       }
-      setLoading(false);
+      setLoading(false)
     }
   }
 
@@ -279,7 +278,16 @@ const AssignmentReview = () => {
     <>
       {contextHolder}
       {notificationContextHolder}
-      <div style={{ position: 'fixed', zIndex: 1050, width: '100%', height: '100%', display: loading ? 'flex' : 'none', justifyContent: 'center', alignItems: 'center' }}>
+      <div
+        style={{
+          position: 'fixed',
+          zIndex: 1050,
+          width: '100%',
+          height: '100%',
+          display: loading ? 'flex' : 'none',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
         <Spinner show={loading} />
       </div>
       {spin ? (
@@ -320,7 +328,7 @@ const AssignmentReview = () => {
                 ))}
                 <div style={{ position: 'fixed', right: 10, top: 80 }}>
                   {localStorage.getItem('bonus') === '0 Points' ||
-                    localStorage.getItem('bonus') === null ? null : (
+                  localStorage.getItem('bonus') === null ? null : (
                     <div
                       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span>
@@ -336,42 +344,45 @@ const AssignmentReview = () => {
                   )}
                 </div>
                 <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
-
-                { (isGamified && !hasUsedGPTFeedback) && (
-                <Tooltip 
-                  title={
-                    <span>
-                      Get 5 points when you use the robot Pepper for the first time on this assignment!
-                      <FontAwesomeIcon
-                        icon={faArrowRight}
-                        style={{ fontSize: '16px', marginLeft: '5px' }}
+                  {isGamified && !hasUsedGPTFeedback && (
+                    <Tooltip
+                      title={
+                        <span>
+                          Get 5 points when you use the robot Pepper for the first time on this
+                          assignment!
+                          <FontAwesomeIcon
+                            icon={faArrowRight}
+                            style={{ fontSize: '16px', marginLeft: '5px' }}
+                          />
+                          <FontAwesomeIcon
+                            icon={faRobot}
+                            style={{ fontSize: '16px', marginLeft: '5px' }}
+                          />
+                        </span>
+                      }>
+                      <img
+                        src={fivePoints}
+                        alt="5 Points Reward"
+                        style={{
+                          width: '50px',
+                          height: '50px',
+                          cursor: 'pointer',
+                          position: 'absolute',
+                          top: '10px',
+                          right: '80px'
+                        }}
                       />
-                      <FontAwesomeIcon
-                        icon={faRobot}
-                        style={{ fontSize: '16px', marginLeft: '5px' }}
-                      />
-                    </span>
-                  }>
-                  <img src={fivePoints} alt="5 Points Reward" style={{
-                    width: '50px',
-                    height: '50px',
-                    cursor: 'pointer',
-                    position: 'absolute',
-                    top: '10px', 
-                    right: '80px'
-                  }} />
-                </Tooltip>
-                )}
-                  
+                    </Tooltip>
+                  )}
 
                   <Tooltip title="I am robot Pepper, here to assist with the quality of feedback. Click for insights.">
                     <Button
                       onClick={(e) => getGPTScoreAndFeedback(e, true)}
                       onMouseOver={({ currentTarget }) => {
-                        currentTarget.style.opacity = 0.6;
+                        currentTarget.style.opacity = 0.6
                       }}
                       onMouseOut={({ currentTarget }) => {
-                        currentTarget.style.opacity = 1;
+                        currentTarget.style.opacity = 1
                       }}
                       style={{
                         border: 'none',
@@ -385,18 +396,20 @@ const AssignmentReview = () => {
                         cursor: 'pointer',
                         transition: 'opacity 0.3s'
                       }}>
-                      <img src={robotPepper} alt="Robot Pepper" style={{ width: '100%', height: '100%' }} />
+                      <img
+                        src={robotPepper}
+                        alt="Robot Pepper"
+                        style={{ width: '100%', height: '100%' }}
+                      />
                     </Button>
                   </Tooltip>
-
                 </div>
                 <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
                   <Tooltip
                     title={
                       !hasUsedGPTFeedback ? (
                         <span>
-                          Consider using the robot Pepper for better insights before
-                          submitting!
+                          Consider using the robot Pepper for better insights before submitting!
                           <FontAwesomeIcon
                             icon={faRobot}
                             style={{ fontSize: '16px', marginLeft: '5px' }}
