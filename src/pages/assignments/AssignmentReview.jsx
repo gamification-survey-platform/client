@@ -162,7 +162,6 @@ const AssignmentReview = () => {
         const answers = []
         survey.sections.forEach((s) => {
           s.questions.forEach((q) => {
-            console.log('abccc ', q)
             const { question_type, answer } = q
             if (question_type === 'TEXTAREA') {
               question_ids.push(q.pk)
@@ -337,7 +336,7 @@ const AssignmentReview = () => {
                   )}
                 </div>
                 <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
-                { isGamified && (
+                { (isGamified && !hasUsedGPTFeedback) && (
                 <Tooltip 
                   title={
                     <span>
