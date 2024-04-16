@@ -162,7 +162,6 @@ const AssignmentReview = () => {
         const answers = []
         survey.sections.forEach((s) => {
           s.questions.forEach((q) => {
-            console.log('abccc ', q)
             const { question_type, answer } = q
             if (question_type === 'TEXTAREA') {
               question_ids.push(q.pk)
@@ -337,31 +336,33 @@ const AssignmentReview = () => {
                   )}
                 </div>
                 <div style={{ position: 'fixed', right: 150, bottom: 10 }}>
-                  {isGamified && (
-                    <Tooltip
-                      title={
-                        <span>
-                          Get 5 points when you use the robot Pepper for the first time on this assignment!
-                          <FontAwesomeIcon
-                            icon={faArrowRight}
-                            style={{ fontSize: '16px', marginLeft: '5px' }}
-                          />
-                          <FontAwesomeIcon
-                            icon={faRobot}
-                            style={{ fontSize: '16px', marginLeft: '5px' }}
-                          />
-                        </span>
-                      }>
-                      <img src={fivePoints} alt="5 Points Reward" style={{
-                        width: '50px',
-                        height: '50px',
-                        cursor: 'pointer',
-                        position: 'absolute',
-                        top: '10px',
-                        right: '80px'
-                      }} />
-                    </Tooltip>
-                  )}
+
+                { (isGamified && !hasUsedGPTFeedback) && (
+                <Tooltip 
+                  title={
+                    <span>
+                      Get 5 points when you use the robot Pepper for the first time on this assignment!
+                      <FontAwesomeIcon
+                        icon={faArrowRight}
+                        style={{ fontSize: '16px', marginLeft: '5px' }}
+                      />
+                      <FontAwesomeIcon
+                        icon={faRobot}
+                        style={{ fontSize: '16px', marginLeft: '5px' }}
+                      />
+                    </span>
+                  }>
+                  <img src={fivePoints} alt="5 Points Reward" style={{
+                    width: '50px',
+                    height: '50px',
+                    cursor: 'pointer',
+                    position: 'absolute',
+                    top: '10px', 
+                    right: '80px'
+                  }} />
+                </Tooltip>
+                )}
+                  
 
                   <Tooltip title="I am robot Pepper, here to assist with the quality of feedback. Click for insights.">
                     <Button
