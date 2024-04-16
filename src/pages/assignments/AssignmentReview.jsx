@@ -40,7 +40,7 @@ import Bonus from '../../assets/bonus.png'
 import robotPepper from '../../assets/robotPepper.gif'
 import fivePoints from '../../assets/5points.png'
 import { gamified_mode } from '../../gamified'
-;<img src={robotPepper} alt="New Robot" style={{ width: 140, height: 140 }} />
+  ; <img src={robotPepper} alt="New Robot" style={{ width: 140, height: 140 }} />
 
 const AssignmentReview = () => {
   const { state = null } = useLocation()
@@ -250,7 +250,7 @@ const AssignmentReview = () => {
           dispatch(addCoursePoints({ course_id, points }))
           if (hasOpenendedQuestions) {
             await getGPTScoreAndFeedback(e, false)
-            if (!hasUsedGPTFeedback && gptScore >= 0 && gptScore < 6) {
+            if (gptScore >= 0 && gptScore < 6) {
               setIsLowScoreReminder(true)
               setAlertVisible(true)
             } else {
@@ -328,7 +328,7 @@ const AssignmentReview = () => {
                 ))}
                 <div style={{ position: 'fixed', right: 10, top: 80 }}>
                   {localStorage.getItem('bonus') === '0 Points' ||
-                  localStorage.getItem('bonus') === null ? null : (
+                    localStorage.getItem('bonus') === null ? null : (
                     <div
                       style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <span>
