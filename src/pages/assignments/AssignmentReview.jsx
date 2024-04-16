@@ -37,10 +37,10 @@ import { faRobot } from '@fortawesome/free-solid-svg-icons'
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons'
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons'
 import Bonus from '../../assets/bonus.png'
-import robotPepper from '../../assets/robotPepper.gif'
+
 import fivePoints from '../../assets/5points.png'
 import { gamified_mode } from '../../gamified'
-;<img src={robotPepper} alt="New Robot" style={{ width: 140, height: 140 }} />
+
 
 const AssignmentReview = () => {
   const { state = null } = useLocation()
@@ -62,6 +62,7 @@ const AssignmentReview = () => {
   const [respondToRequestFeedbackData, setRespondToRequestFeedbackData] = useState()
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
+  const [isIconHovered, setIsIconHovered] = useState(false);
 
   useEffect(() => {
     if (state && survey.sections.length) {
@@ -363,47 +364,34 @@ const AssignmentReview = () => {
                         src={fivePoints}
                         alt="5 Points Reward"
                         style={{
-                          width: '50px',
-                          height: '50px',
+                          width: '60px',
+                          height: '60px',
                           cursor: 'pointer',
                           position: 'absolute',
-                          top: '10px',
-                          right: '80px'
+                          top: '25px',
+                          right: '150px'
                         }}
                       />
                     </Tooltip>
                   )}
-
                   <Tooltip title="I am robot Pepper, here to assist with the quality of feedback. Click for insights.">
                     <Button
                       onClick={(e) => getGPTScoreAndFeedback(e, true)}
-                      onMouseOver={({ currentTarget }) => {
-                        currentTarget.style.opacity = 0.6
-                      }}
-                      onMouseOut={({ currentTarget }) => {
-                        currentTarget.style.opacity = 1
-                      }}
-                      style={{
-                        border: 'none',
-                        background: 'transparent',
-                        padding: '0',
-                        height: '60px',
-                        width: '65px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        cursor: 'pointer',
-                        transition: 'opacity 0.3s'
-                      }}>
-                      <img
-                        src={robotPepper}
-                        alt="Robot Pepper"
-                        style={{ width: '100%', height: '100%' }}
+                      onMouseEnter={() => setIsIconHovered(true)}
+                      onMouseLeave={() => setIsIconHovered(false)} 
+                      style={{ border: 'none', background: 'transparent' }}
+                    >
+                      <FontAwesomeIcon
+                        icon={faRobot}
+                        style={{
+                          fontSize: '86px',
+                          color: isIconHovered ? '#30D5C8' : '#333333'
+                        }}
                       />
                     </Button>
                   </Tooltip>
                 </div>
-                <div style={{ position: 'fixed', right: 10, bottom: 10 }}>
+                <div style={{ position: 'fixed', right: 15, bottom: 10 }}>
                   <Tooltip
                     title={
                       !hasUsedGPTFeedback ? (
