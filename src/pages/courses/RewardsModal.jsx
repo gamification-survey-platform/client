@@ -11,7 +11,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
   const [form] = useForm()
   const [showQuantity, setShowQuantity] = useState(false)
   const [messageApi, contextHolder] = useMessage()
-  const [showFile, setShowFile] = useState(false)
+  const [showFile, setShowFile] = useState(true)
   const [picture, setPicture] = useState()
   const { course_id } = useParams()
   const courses = useSelector(coursesSelector)
@@ -59,12 +59,7 @@ const RewardsModal = ({ open, setOpen, setRewards, rewards, editingReward }) => 
   useEffect(() => {
     if (typeWatch === 'Bonus' || typeWatch === 'Late Submission') {
       setShowQuantity(true)
-      setShowFile(false)
-    } else if (typeWatch === 'Other') {
-      setShowFile(true)
-      setShowQuantity(false)
     } else {
-      setShowFile(false)
       setShowQuantity(false)
     }
   }, [typeWatch])

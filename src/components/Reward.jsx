@@ -10,11 +10,20 @@ import { addCoursePoints } from '../store/courses/coursesSlice'
 
 const Cover = ({ type, picture }) => {
   const imageStyle = { width: '100%', height: '200px', objectFit: 'cover' }
-  if (type === 'Other' && picture) {
-    return <Image preview={false} src={`${picture}`} style={imageStyle} />
+  if (type === 'Other') {
+    if (picture) {
+      return <Image preview={false} src={`${picture}`} style={imageStyle} />
+    }
+    return <Image preview={false} src={TreasureChest} style={imageStyle} />
   } else if (type === 'Late Submission') {
+    if (picture) {
+      return <Image preview={false} src={`${picture}`} style={imageStyle} />
+    }
     return <Image preview={false} src={Calendar} style={imageStyle} />
   } else if (type === 'Bonus') {
+    if (picture) {
+      return <Image preview={false} src={`${picture}`} style={imageStyle} />
+    }
     return <Image preview={false} src={TreasureChest} style={imageStyle} />
   }
   return null

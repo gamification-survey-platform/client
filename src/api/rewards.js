@@ -50,9 +50,7 @@ const purchaseCourseReward = async ({ reward_pk }) => {
 const addCourseReward = async ({ course_id, reward, picture }) => {
   try {
     const formData = new FormData()
-    if (reward.type === 'Other') {
-      formData.set('picture', picture)
-    }
+    formData.set('picture', picture)
     Object.keys(reward).forEach((k) => k !== 'picture' && formData.set(k, reward[k]))
     const config = {
       headers: {
