@@ -112,6 +112,18 @@ const ArtifactReviewers = ({
           Mandatory
         </Tag>
       )
+    } else if (status === 'COMPLETED') {
+      return (
+        <Tag color="green" style={{ marginLeft: 8 }}>
+          Mandatory Completed
+        </Tag>
+      )
+    } else if (status === 'OPTIONAL_COMPLETED') {
+      return (
+        <Tag color="cyan" style={{ marginLeft: 8 }}>
+          Optional Completed
+        </Tag>
+      )
     } else {
       return (
         <Tag color="blue" style={{ marginLeft: 8 }}>
@@ -143,11 +155,12 @@ const ArtifactReviewers = ({
         dataSource={uniqueReviewers}
         renderItem={(item) => {
           const styles = item.hovering ? { opacity: 0.5 } : {}
-          const statusLabel = item.status === 'COMPLETED' ? null : reviewStatusLabel(item.status)
-          if (item.status === 'COMPLETED') {
+          const statusLabel = reviewStatusLabel(item.status)
+          if (item.status === 'COMPLETED' || item.status === 'OPTIONAL_COMPLETED') {
             return (
               <List.Item style={{ styles }}>
                 <Typography.Text>{item.reviewer}</Typography.Text>
+                {statusLabel}
                 <RedoOutlined
                   onClick={(e) => reopenReview(e, item.id)}
                   style={reopenIconStyle}

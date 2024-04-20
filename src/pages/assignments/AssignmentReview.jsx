@@ -41,7 +41,6 @@ import Bonus from '../../assets/bonus.png'
 import fivePoints from '../../assets/5points.png'
 import { gamified_mode } from '../../gamified'
 
-
 const AssignmentReview = () => {
   const { state = null } = useLocation()
   const { course_id, assignment_id, review_id } = useParams()
@@ -62,7 +61,7 @@ const AssignmentReview = () => {
   const [respondToRequestFeedbackData, setRespondToRequestFeedbackData] = useState()
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
-  const [isIconHovered, setIsIconHovered] = useState(false);
+  const [isIconHovered, setIsIconHovered] = useState(false)
 
   useEffect(() => {
     if (state && survey.sections.length) {
@@ -378,9 +377,8 @@ const AssignmentReview = () => {
                     <Button
                       onClick={(e) => getGPTScoreAndFeedback(e, true)}
                       onMouseEnter={() => setIsIconHovered(true)}
-                      onMouseLeave={() => setIsIconHovered(false)} 
-                      style={{ border: 'none', background: 'transparent' }}
-                    >
+                      onMouseLeave={() => setIsIconHovered(false)}
+                      style={{ border: 'none', background: 'transparent' }}>
                       <FontAwesomeIcon
                         icon={faRobot}
                         style={{
