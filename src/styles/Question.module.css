@@ -1,8 +1,28 @@
-.questionWrapper {
-  margin-bottom: 0;
-  height: 20px;
+.questionContainer {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
-.input {
-  width: 180px;
+.questionForm {
+  width: 100%;
+}
+
+.questionText {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-size: 16px;
+  width: 100%;
+}
+
+
+.questionControls {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.dragging {
+  opacity: 0.5;
 }
