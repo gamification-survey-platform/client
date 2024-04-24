@@ -608,10 +608,11 @@ const Question = (question) => {
           marginBottom: '80px'
         }}>
         <div
-          className={questionProps.is_required ? 'required-field py-3' : 'py-3'}
-          style={{ opacity: isDragging ? 0.2 : 1 }}
+          className={`${questionProps.is_required ? 'required-field py-3' : 'py-3'} questionText`}
+          style={{ opacity: isDragging ? 0.2 : 1, wordWrap: 'break-word', whiteSpace: 'normal' }}
           ref={dragDropRef}>
           {questionText}
+        </div>
 
           <Row>
             <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
@@ -659,7 +660,6 @@ const Question = (question) => {
               questionIdx={question.questionIdx}
             />
           </Row>
-        </div>
       </Form.Item>
     </div>
   )
