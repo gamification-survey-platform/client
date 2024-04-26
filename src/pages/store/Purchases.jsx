@@ -31,10 +31,7 @@ const Purchases = () => {
       title: 'Date Purchased',
       dataIndex: 'date_purchased',
       key: 'date_purchased',
-      render: (d) => {
-        const dayObject = dayjs(d.date_purchased)
-        return dayObject.format('MM/DD/YYYY')
-      }
+      render: (text, record) => dayjs(record.date_purchased).format('MM/DD/YYYY')
     },
     { title: 'Description', dataIndex: 'description', key: 'description' }
   ]
