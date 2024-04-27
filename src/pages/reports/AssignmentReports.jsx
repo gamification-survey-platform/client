@@ -20,14 +20,16 @@ const AssignmentReport = () => {
       title: 'Andrew ID',
       dataIndex: 'reviewing',
       key: 'reviewing',
-      width: '40%' 
+      width: '40%',
+      sorter: (a, b) => a.reviewing.localeCompare(b.reviewing) // Alphabetical sorting
     },
     {
       title: 'Score',
       dataIndex: 'average_score',
       key: 'average_score',
       width: '20%',
-      render: score => score ? parseFloat(score).toFixed(2) : "No grades"  // Ensure we handle non-numeric cases
+      sorter: (a, b) => a.average_score - b.average_score, // Numerical sorting
+      render: score => score ? parseFloat(score).toFixed(2) : "No grades"
     },
     {
       title: 'Course Number',
