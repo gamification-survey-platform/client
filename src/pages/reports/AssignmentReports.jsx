@@ -19,23 +19,27 @@ const AssignmentReport = () => {
     {
       title: 'Andrew ID',
       dataIndex: 'reviewing',
-      key: 'reviewing'
+      key: 'reviewing',
+      width: '40%' 
     },
     {
       title: 'Score',
       dataIndex: 'average_score',
       key: 'average_score',
-      render: score => score.toFixed(2)  
+      width: '20%',
+      render: score => score ? parseFloat(score).toFixed(2) : "No grades"  // Ensure we handle non-numeric cases
     },
     {
       title: 'Course Number',
       dataIndex: 'course_number',
-      key: 'course_number'
+      key: 'course_number',
+      width: '25%'
     },
     {
       title: 'Assignment ID',
       dataIndex: 'assignment_id',
-      key: 'assignment_id'
+      key: 'assignment_id',
+      width: '15%'
     }
   ];
 
@@ -45,10 +49,12 @@ const AssignmentReport = () => {
         try {
           const response = await getAssignmentArtifactReviewsGrade({ course_id: course.pk, assignment_id });
           if (response.status === 200) {
-            setReportData(response.data.map(item => ({
+            const formattedData = response.data.map(item => ({
               ...item,
-              course_number: course.course_number 
-            })));
+              average_score: item.average_score ? parseFloat(item.average_score).toFixed(2) : "No grades",
+              course_number: course.course_number
+            }));
+            setReportData(formattedData);
           } else {
             message.error('Failed to fetch report data');
           }
@@ -59,7 +65,7 @@ const AssignmentReport = () => {
 
       fetchData();
     }
-  }, [course?.pk, assignment_id]);  
+  }, [course?.pk, assignment_id]);
 
   return (
     <div className="m-5">
@@ -67,6 +73,12 @@ const AssignmentReport = () => {
       <Table dataSource={reportData} columns={columns} />
       <CSVLink
         data={reportData}
+        headers={[
+          { label: "Andrew ID", key: "reviewing" },
+          { label: "Score", key: "average_score" },
+          { label: "Course Number", key: "course_number" },
+          { label: "Assignment ID", key: "assignment_id" }
+        ]}
         filename={`assignment-grade-report-${course_id}-${assignment_id}.csv`}
         className="btn btn-primary"
         style={{ marginTop: '20px' }}
