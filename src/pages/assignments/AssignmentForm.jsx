@@ -158,6 +158,18 @@ const AssignmentForm = () => {
           ]}>
           <InputNumber min={1} step={1} />
         </Form.Item>
+        <Form.Item
+          label="Max optional reviews"
+          name="max_optional_reviews"
+          rules={[
+            {
+              required: true,
+              message: 'A positive number must be entered.',
+              pattern: new RegExp(/^[1-9][0-9]*$/)
+            }
+          ]}>
+          <InputNumber min={1} step={1} />
+        </Form.Item>
         <Form.Item className="text-center">
           <Button className="ml-3" type="primary" onClick={handleSubmit}>
             {editingAssignment ? 'Edit' : 'Create'}

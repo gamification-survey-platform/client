@@ -50,21 +50,44 @@ const ArtifactReviewers = ({
 }) => {
   const [messageApi, contextHolder] = useMessage()
   const { course_id: courseNumber, assignment_id } = useParams()
+
+  const [hoveredItem, setHoveredItem] = useState(null)
+
+  const [lastHovered, setLastHovered] = useState(null)
+
+  // Set up the drop target
   const [, dropRef] = useDrop(
     () => ({
       accept: 'MEMBER',
+
       hover: (item, monitor) => {
-        handleHover(reviewing, item)
+        const currentlyHovering = monitor.isOver()
+
+        // Only update if the hovered item has changed
+        if (currentlyHovering) {
+          if (hoveredItem !== reviewing) {
+            console.log('hovering 2', reviewing)
+            if (hoveredItem !== null) {
+              handleHover(hoveredItem, item, false)
+            }
+            setHoveredItem(reviewing) // Set new hovered item
+            handleHover(reviewing, item, true) // Trigger hover callback
+          } else {
+            handleHover(reviewing, item, true)
+          }
+        }
       },
+
       drop: (item) => {
         handleDrop(reviewing, item)
       },
+
       collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
+        isOver: monitor.isOver(),
         handlerId: monitor.getHandlerId()
       })
     }),
-    [reviewers, handleHover, handleDrop]
+    [hoveredItem, reviewing, handleHover, handleDrop] // Ensure correct dependencies
   )
 
   const uniqueReviewers = reviewers.reduce((acc, current) => {
@@ -226,15 +249,43 @@ const StaffArtifactReviewList = () => {
     setArtifactReviews(originalReviews)
   }, [artifactReviews, setArtifactReviews])
 
+  // const handleHover = useCallback(
+  //   (dropTarget, dragTarget) => {
+  //     const currentReviewers = artifactReviews[dropTarget]
+  //     const hoveringExists = currentReviewers.find(
+  //       ({ reviewer }) => reviewer === dragTarget.andrew_id
+  //     )
+  //     if (hoveringExists || dragTarget.andrew_id === dropTarget) return
+  //     const newReviewers = [...currentReviewers, { reviewer: dragTarget.andrew_id, hovering: true }]
+  //     setArtifactReviews({ ...artifactReviews, [dropTarget]: newReviewers })
+  //   },
+  //   [artifactReviews, setArtifactReviews]
+  // )
+
   const handleHover = useCallback(
-    (dropTarget, dragTarget) => {
+    (dropTarget, dragTarget, isHovering) => {
       const currentReviewers = artifactReviews[dropTarget]
-      const hoveringExists = currentReviewers.find(
-        ({ reviewer }) => reviewer === dragTarget.andrew_id
+
+      const existingHover = currentReviewers.find(
+        ({ reviewer, hovering }) => reviewer === dragTarget.andrew_id && hovering
       )
-      if (hoveringExists || dragTarget.andrew_id === dropTarget) return
-      const newReviewers = [...currentReviewers, { reviewer: dragTarget.andrew_id, hovering: true }]
-      setArtifactReviews({ ...artifactReviews, [dropTarget]: newReviewers })
+
+      if (isHovering) {
+        if (!existingHover && dragTarget.andrew_id !== dropTarget) {
+          const newReviewers = [
+            ...currentReviewers,
+            { reviewer: dragTarget.andrew_id, hovering: true }
+          ]
+          setArtifactReviews({ ...artifactReviews, [dropTarget]: newReviewers })
+        }
+      } else {
+        if (existingHover) {
+          const newReviewers = currentReviewers.filter(
+            ({ reviewer }) => reviewer !== dragTarget.andrew_id
+          )
+          setArtifactReviews({ ...artifactReviews, [dropTarget]: newReviewers })
+        }
+      }
     },
     [artifactReviews, setArtifactReviews]
   )
@@ -290,11 +341,11 @@ const StaffArtifactReviewList = () => {
     }
   }
 
-  const sortedArtifactReviews = Object.entries(artifactReviews)
-    .sort((a, b) => {
-      return a[1].length - b[1].length
-    })
-    .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+  // const sortedArtifactReviews = Object.entries(artifactReviews)
+  //   .sort((a, b) => {
+  //     return a[1].length - b[1].length
+  //   })
+  //   .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -327,11 +378,11 @@ const StaffArtifactReviewList = () => {
             gap: '16px'
           }}>
           {/* Map over the sorted entries */}
-          {Object.keys(sortedArtifactReviews).map((reviewing, i) => (
+          {Object.keys(artifactReviews).map((reviewing, i) => (
             <ArtifactReviewers
               key={i}
               reviewing={reviewing}
-              reviewers={sortedArtifactReviews[reviewing]}
+              reviewers={artifactReviews[reviewing]}
               handleHover={handleHover}
               handleDrop={handleDrop}
               removeReviewer={removeReviewer}

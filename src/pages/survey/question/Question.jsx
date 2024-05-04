@@ -614,52 +614,50 @@ const Question = (question) => {
           {questionText}
         </div>
 
-          <Row>
-            <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
-              {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
-              {question_type === 'MULTIPLESELECT' && <MultipleSelect {...questionProps} />}
-              {question_type === 'SCALEMULTIPLECHOICE' && (
-                <MultipleChoiceScale {...questionProps} />
-              )}
-              {question_type === 'NUMBER' && <Number {...questionProps} />}
-              {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
-              {question_type === 'MULTIPLETEXT' && <MultiLineText {...questionProps} />}
-              {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
-              {question_type === 'SLIDEREVIEW' && <SlideReview {...questionProps} />}
-            </Col>
-            {survey.instructorView && (
-              <Col span={2}>
-                <EditTwoTone
-                  twoToneColor="#ffd43b"
+        <Row>
+          <Col span={question_type !== 'SLIDEREVIEW' ? 12 : 20}>
+            {question_type === 'MULTIPLECHOICE' && <MultipleChoice {...questionProps} />}
+            {question_type === 'MULTIPLESELECT' && <MultipleSelect {...questionProps} />}
+            {question_type === 'SCALEMULTIPLECHOICE' && <MultipleChoiceScale {...questionProps} />}
+            {question_type === 'NUMBER' && <Number {...questionProps} />}
+            {question_type === 'FIXEDTEXT' && <FixedText {...questionProps} />}
+            {question_type === 'MULTIPLETEXT' && <MultiLineText {...questionProps} />}
+            {question_type === 'TEXTAREA' && <TextArea {...questionProps} />}
+            {question_type === 'SLIDEREVIEW' && <SlideReview {...questionProps} />}
+          </Col>
+          {survey.instructorView && (
+            <Col span={2}>
+              <EditTwoTone
+                twoToneColor="#ffd43b"
+                style={{
+                  fontSize: '1em',
+                  margin: 10,
+                  pointerEvents: 'auto',
+                  cursor: 'pointer'
+                }}
+                onClick={() => setQuestionModalOpen(true)}
+              />
+              {question_type !== 'SLIDEREVIEW' && (
+                <DeleteTwoTone
+                  twoToneColor="#dc3545"
                   style={{
                     fontSize: '1em',
                     margin: 10,
                     pointerEvents: 'auto',
                     cursor: 'pointer'
                   }}
-                  onClick={() => setQuestionModalOpen(true)}
+                  onClick={handleDeleteQuestion}
                 />
-                {question_type !== 'SLIDEREVIEW' && (
-                  <DeleteTwoTone
-                    twoToneColor="#dc3545"
-                    style={{
-                      fontSize: '1em',
-                      margin: 10,
-                      pointerEvents: 'auto',
-                      cursor: 'pointer'
-                    }}
-                    onClick={handleDeleteQuestion}
-                  />
-                )}
-              </Col>
-            )}
-            <AddQuestionModal
-              open={questionModalOpen}
-              setOpen={setQuestionModalOpen}
-              sectionIdx={question.sectionIdx}
-              questionIdx={question.questionIdx}
-            />
-          </Row>
+              )}
+            </Col>
+          )}
+          <AddQuestionModal
+            open={questionModalOpen}
+            setOpen={setQuestionModalOpen}
+            sectionIdx={question.sectionIdx}
+            questionIdx={question.questionIdx}
+          />
+        </Row>
       </Form.Item>
     </div>
   )

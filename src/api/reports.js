@@ -54,11 +54,19 @@ const getArtifactAnswers = async ({ course_id, assignment_id, artifact_id }) => 
 
 const getAssignmentArtifactReviewsGrade = async ({ course_id, assignment_id }) => {
   try {
-    const res = await api.get(`courses/${course_id}/assignments/${assignment_id}/artifact_reviews/grades/`)
+    const res = await api.get(
+      `courses/${course_id}/assignments/${assignment_id}/artifact_reviews/grades/`
+    )
     return res
   } catch (error) {
     throw new Error(error.response.data.message)
   }
 }
 
-export { getArtifactAnswers, getStudentStatistics, getKeywords, getInstructorIpsatization, getAssignmentArtifactReviewsGrade }
+export {
+  getArtifactAnswers,
+  getStudentStatistics,
+  getKeywords,
+  getInstructorIpsatization,
+  getAssignmentArtifactReviewsGrade
+}
