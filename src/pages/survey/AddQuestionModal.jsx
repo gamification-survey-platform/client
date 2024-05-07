@@ -90,6 +90,8 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
         payload = { number_of_text: parseInt(formObj.number_of_text) }
       } else if (formObj.question_type === 'NUMBER') {
         payload = { min: parseInt(formObj.min), max: parseInt(formObj.max) }
+      } else if (formObj.question_type === 'TEXTAREA') {
+        payload = { use_genai_assistant: !!formObj.use_genai_assistant }
       }
       const { text, question_type, is_required, gamified, phrased_positively, ...rest } = formObj
       const questionObj = {
@@ -209,6 +211,11 @@ const AddQuestionModal = ({ open, setOpen, sectionIdx, questionIdx }) => {
         )}
         {question_type !== 'MULTIPLESELECT' && (
           <Form.Item name="is_required" label="Required?" valuePropName="checked">
+            <Checkbox />
+          </Form.Item>
+        )}
+        {question_type === 'TEXTAREA' && (
+          <Form.Item name="use_genai_assistant" label="Use genAI assitant?" valuePropName="checked">
             <Checkbox />
           </Form.Item>
         )}

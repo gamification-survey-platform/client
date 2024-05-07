@@ -161,8 +161,8 @@ const AssignmentReview = () => {
         const answers = []
         survey.sections.forEach((s) => {
           s.questions.forEach((q) => {
-            const { question_type, answer } = q
-            if (question_type === 'TEXTAREA') {
+            const { question_type, answer, use_genai_assistant } = q
+            if (question_type === 'TEXTAREA' && use_genai_assistant) {
               question_ids.push(q.pk)
               questionData.push({ id: q.pk, text: q.text })
               answer.forEach((a) => answers.push(a.text))
